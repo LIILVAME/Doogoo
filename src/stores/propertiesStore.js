@@ -39,15 +39,11 @@ export const usePropertiesStore = defineStore(
 
       // Évite les requêtes multiples si déjà en cours (sauf si force = true)
       if (loading.value && !force) {
-        console.log(
-          '⏸️ fetchProperties: Requête déjà en cours, skip (utilise force=true pour bypasser)'
-        )
         return
       }
 
       // Si force = true mais loading est true, on reset loading pour éviter blocage
       if (loading.value && force) {
-        console.warn('⚠️ fetchProperties: Force=true mais loading=true, on reset loading')
         loading.value = false
       }
 

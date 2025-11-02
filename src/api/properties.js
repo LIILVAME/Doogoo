@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabaseClient'
-import { useAuthStore } from '@/stores/authStore'
 import { withErrorHandling } from '@/utils/apiErrorHandler'
 
 /**
@@ -18,16 +17,6 @@ export async function getProperties(userId) {
   }
 
   return withErrorHandling(async () => {
-    console.log('🔍 getProperties API: Début requête Supabase', { userId })
-
-    // Vérifie aussi la session actuelle Supabase pour debug
-    const { data: sessionData } = await supabase.auth.getSession()
-    console.log('🔍 getProperties API: Session Supabase actuelle', {
-      userId: sessionData?.session?.user?.id,
-      email: sessionData?.session?.user?.email,
-      matchesRequestedUserId: sessionData?.session?.user?.id === userId
-    })
-
     const { data, error } = await supabase
       .from('properties')
       .select(
@@ -38,29 +27,6 @@ export async function getProperties(userId) {
       )
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
-
-    console.log('🔍 getProperties API: Réponse Supabase', {
-      dataCount: data?.length || 0,
-      error: error?.message || null,
-      hasData: !!data,
-      data: data
-        ? data.map(p => ({
-            id: p.id,
-            name: p.name,
-            user_id: p.user_id,
-            tenantsCount: p.tenants?.length || 0
-          }))
-        : null,
-      queryUserId: userId
-    })
-
-    // Si aucune donnée et pas d'erreur, vérifie si des propriétés existent (pour debug RLS)
-    if ((!data || data.length === 0) && !error) {
-      console.warn('⚠️ getProperties API: Aucune propriété trouvée pour userId:', userId)
-      console.warn(
-        '💡 Vérification: Essayez dans Supabase Dashboard si des propriétés existent pour cet utilisateur'
-      )
-    }
 
     return { data, error }
   }, 'getProperties')

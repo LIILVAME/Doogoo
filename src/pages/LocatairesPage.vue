@@ -109,13 +109,11 @@ import AddTenantModal from '../components/tenants/AddTenantModal.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
-import { useAuthStore } from '@/stores/authStore'
 import { PAYMENT_STATUS } from '@/utils/constants'
 
 const { t } = useI18n()
 const tenantsStore = useTenantsStore()
 const propertiesStore = usePropertiesStore()
-const authStore = useAuthStore()
 
 // Pull-to-refresh
 const mainElement = ref(null)
@@ -133,70 +131,25 @@ const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
  */
 onMounted(async () => {
   try {
-    console.log('🚀 LocatairesPage onMounted - État initial:', {
-      propertiesCount: propertiesStore.properties.length,
-      loading: propertiesStore.loading,
-      error: propertiesStore.error
-    })
-
     // Force le fetch si pas encore chargé OU si loading est bloqué
     if (propertiesStore.properties.length === 0) {
       if (propertiesStore.loading) {
-        console.warn('⚠️ Loading déjà en cours, on attend...')
         // Attend max 3 secondes que le fetch se termine
         let attempts = 0
         while (propertiesStore.loading && attempts < 30) {
           await new Promise(resolve => setTimeout(resolve, 100))
           attempts++
         }
-        console.log('⏱️ Après attente:', {
-          loading: propertiesStore.loading,
-          propertiesCount: propertiesStore.properties.length
-        })
       }
 
       // Si toujours pas de données après attente (que loading soit true ou false), force un nouveau fetch
       if (propertiesStore.properties.length === 0) {
         if (propertiesStore.loading) {
-          console.warn(
-            '⚠️ Loading toujours bloqué après 3s, on force loading = false et nouveau fetch'
-          )
           // Force loading à false pour débloquer
           propertiesStore.loading = false
         }
-        console.log('🔄 Force nouveau fetch des propriétés')
         await propertiesStore.fetchProperties(true) // force = true pour bypasser le check loading
       }
-    }
-
-    // Debug : Log pour diagnostic (TOUJOURS actif pour diagnostic production)
-    console.log('🔍 LocatairesPage - État après fetch:', {
-      loading: propertiesStore.loading,
-      propertiesCount: propertiesStore.properties.length,
-      tenantsCount: tenants.value.length,
-      filteredTenantsCount: filteredTenants.value.length,
-      error: propertiesStore.error,
-      hasTenants: propertiesStore.properties.some(p => p.tenant !== null),
-      userId: authStore.user?.id,
-      userEmail: authStore.user?.email,
-      properties: propertiesStore.properties.map(p => ({
-        id: p.id,
-        name: p.name,
-        status: p.status,
-        hasTenant: p.tenant !== null,
-        tenant: p.tenant
-      }))
-    })
-
-    // Affiche un message si aucune propriété mais pas d'erreur
-    if (
-      propertiesStore.properties.length === 0 &&
-      !propertiesStore.loading &&
-      !propertiesStore.error
-    ) {
-      console.info(
-        '💡 Aucune propriété trouvée. Vérifiez dans Supabase Dashboard si des données existent pour cet utilisateur.'
-      )
     }
 
     // Note: Realtime est déjà initialisé globalement dans App.vue
@@ -252,19 +205,10 @@ const hasActiveFilters = computed(() => {
  * Filtre les locataires selon le filtre actif
  */
 const filteredTenants = computed(() => {
-  const result =
-    activeFilter.value === 'all'
-      ? tenants.value
-      : tenants.value.filter(tenant => tenant.status === activeFilter.value)
-
-  console.log('🔄 computed filteredTenants appelé:', {
-    activeFilter: activeFilter.value,
-    tenantsCount: tenants.value.length,
-    filteredCount: result.length,
-    result
-  })
-
-  return result
+  if (activeFilter.value === 'all') {
+    return tenants.value
+  }
+  return tenants.value.filter(tenant => tenant.status === activeFilter.value)
 })
 
 /**
