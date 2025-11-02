@@ -80,9 +80,9 @@
         </div>
 
         <!-- Liste des locataires (s'affiche même si vide, le composant gère l'état vide) -->
-        <!-- Force l'affichage si on a des données OU si pas de loading (données déjà chargées) -->
+        <!-- S'affiche dès que le chargement initial est terminé -->
         <TenantsList
-          v-if="!propertiesStore.loading || propertiesStore.properties.length > 0"
+          v-if="!propertiesStore.loading && !propertiesStore.error"
           :tenants="filteredTenants"
           :has-filters="hasActiveFilters"
           @edit-tenant="handleEditTenant"
@@ -216,14 +216,7 @@ onUnmounted(() => {
 })
 
 // Utilise les locataires du store Pinia (synchronisé avec propertiesStore)
-const tenants = computed(() => {
-  const result = tenantsStore.tenants
-  console.log('🔄 computed tenants appelé:', {
-    count: result.length,
-    tenants: result
-  })
-  return result
-})
+const tenants = computed(() => tenantsStore.tenants)
 
 // État local pour filtres et modal
 const activeFilter = ref('all')
