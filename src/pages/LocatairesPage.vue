@@ -34,9 +34,13 @@
           </button>
         </div>
 
-        <!-- État de chargement initial -->
+        <!-- État de chargement initial (première fois, pas de données) -->
         <div
-          v-if="propertiesStore.loading && propertiesStore.properties.length === 0"
+          v-if="
+            propertiesStore.loading &&
+            propertiesStore.properties.length === 0 &&
+            !propertiesStore.error
+          "
           class="text-center py-16"
         >
           <div
@@ -45,9 +49,9 @@
           <p class="text-gray-500">{{ $t('tenants.loading') }}</p>
         </div>
 
-        <!-- Erreur -->
+        <!-- Erreur (uniquement si pas de données en cache) -->
         <div
-          v-else-if="propertiesStore.error && tenants.length === 0"
+          v-else-if="propertiesStore.error && propertiesStore.properties.length === 0"
           class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
         >
           <div class="flex items-center">
@@ -70,12 +74,12 @@
           </div>
         </div>
 
-        <!-- Loader inline si données déjà chargées -->
+        <!-- Loader inline si données déjà chargées (refresh) -->
         <div v-else-if="propertiesStore.loading" class="text-center py-8">
           <InlineLoader />
         </div>
 
-        <!-- Liste des locataires -->
+        <!-- Liste des locataires (s'affiche même si vide, le composant gère l'état vide) -->
         <TenantsList
           v-else
           :tenants="filteredTenants"
@@ -125,9 +129,16 @@ const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
  * Initialise le temps réel pour les mises à jour automatiques
  */
 onMounted(async () => {
-  await propertiesStore.fetchProperties()
-  // Note: Realtime est déjà initialisé globalement dans App.vue
-  // Pas besoin de réinitialiser ici
+  try {
+    // Force le fetch si pas encore chargé
+    if (propertiesStore.properties.length === 0 && !propertiesStore.loading) {
+      await propertiesStore.fetchProperties()
+    }
+    // Note: Realtime est déjà initialisé globalement dans App.vue
+    // Pas besoin de réinitialiser ici
+  } catch (error) {
+    console.error('Erreur lors du chargement des locataires:', error)
+  }
 })
 
 /**
