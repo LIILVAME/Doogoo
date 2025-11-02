@@ -53,8 +53,26 @@ export const usePropertiesStore = defineStore(
       loading.value = true
       error.value = null
 
+      console.log('📡 fetchProperties: Début de la requête API')
+
       try {
-        const result = await propertiesApi.getProperties(authStore.user.id)
+        // Timeout explicite de 10 secondes pour éviter blocage
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error('Timeout: La requête a pris plus de 10 secondes')),
+            10000
+          )
+        })
+
+        const apiPromise = propertiesApi.getProperties(authStore.user.id)
+
+        const result = await Promise.race([apiPromise, timeoutPromise])
+
+        console.log('📡 fetchProperties: Réponse API reçue:', {
+          success: result?.success,
+          dataCount: result?.data?.length,
+          error: result?.error || result?.message
+        })
 
         if (result.success && result.data) {
           lastFetchTime = Date.now()
