@@ -141,6 +141,7 @@
     "paymentStatus": "Payment status",
     "associatedProperty": "Associated property",
     "selectStatus": "Select a status",
+    "selectProperty": "Select a property",
     "placeholders": {
       "name": "Ex: John Doe",
       "rent": "950"
@@ -511,4 +512,3 @@
     "ctaDescription": "Join hundreds of property owners who trust Doogoo"
   }
 }
-

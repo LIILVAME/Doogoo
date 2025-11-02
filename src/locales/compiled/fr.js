@@ -3,510 +3,518 @@
 // Regenerate with: npm run i18n:compile
 
 export default {
-  "common": {
-    "dashboard": "Tableau de bord",
-    "goToDashboard": "Aller au tableau de bord",
-    "loading": "Chargement...",
-    "error": "Erreur",
-    "errorWithColon": "Erreur :",
-    "success": "Succès",
-    "cancel": "Annuler",
-    "save": "Enregistrer",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "add": "Ajouter",
-    "addProperty": "Ajouter un bien",
-    "close": "Fermer",
-    "search": "Rechercher",
-    "filter": "Filtrer",
-    "reset": "Réinitialiser",
-    "viewAll": "Voir tout",
-    "view": "Voir",
-    "noData": "Aucune donnée",
-    "actions": "Actions",
-    "all": "Tous",
-    "date": "Date",
-    "days": "jour(s)",
-    "optional": "optionnel",
-    "selectStatus": "Sélectionner un statut",
-    "selectProperty": "Sélectionner un bien",
-    "unknown": "Inconnu",
-    "refreshing": "Actualisation...",
-    "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+  common: {
+    dashboard: 'Tableau de bord',
+    goToDashboard: 'Aller au tableau de bord',
+    loading: 'Chargement...',
+    error: 'Erreur',
+    errorWithColon: 'Erreur :',
+    success: 'Succès',
+    cancel: 'Annuler',
+    save: 'Enregistrer',
+    delete: 'Supprimer',
+    edit: 'Modifier',
+    add: 'Ajouter',
+    addProperty: 'Ajouter un bien',
+    close: 'Fermer',
+    search: 'Rechercher',
+    filter: 'Filtrer',
+    reset: 'Réinitialiser',
+    viewAll: 'Voir tout',
+    view: 'Voir',
+    noData: 'Aucune donnée',
+    actions: 'Actions',
+    all: 'Tous',
+    date: 'Date',
+    days: 'jour(s)',
+    optional: 'optionnel',
+    selectStatus: 'Sélectionner un statut',
+    selectProperty: 'Sélectionner un bien',
+    unknown: 'Inconnu',
+    refreshing: 'Actualisation...',
+    openMenu: 'Ouvrir le menu',
+    closeMenu: 'Fermer le menu'
   },
-  "sidebar": {
-    "dashboard": "Tableau de bord",
-    "properties": "Biens",
-    "payments": "Paiements",
-    "tenants": "Locataires",
-    "stats": "Statistiques",
-    "reports": "Rapports",
-    "alerts": "Alertes",
-    "settings": "Paramètres",
-    "logout": "Déconnexion",
-    "loggingOut": "Déconnexion...",
-    "language": "Langue"
+  sidebar: {
+    dashboard: 'Tableau de bord',
+    properties: 'Biens',
+    payments: 'Paiements',
+    tenants: 'Locataires',
+    stats: 'Statistiques',
+    reports: 'Rapports',
+    alerts: 'Alertes',
+    settings: 'Paramètres',
+    logout: 'Déconnexion',
+    loggingOut: 'Déconnexion...',
+    language: 'Langue'
   },
-  "dashboard": {
-    "title": "Tableau de bord",
-    "subtitle": "Vue d'ensemble de vos biens immobiliers",
-    "totalProperties": "Biens totaux",
-    "occupied": "Occupés",
-    "vacant": "Vacants",
-    "monthlyRent": "Loyers mensuels",
-    "properties": "Biens",
-    "payments": "Paiements",
-    "recentPayments": "Paiements récents"
+  dashboard: {
+    title: 'Tableau de bord',
+    subtitle: "Vue d'ensemble de vos biens immobiliers",
+    totalProperties: 'Biens totaux',
+    occupied: 'Occupés',
+    vacant: 'Vacants',
+    monthlyRent: 'Loyers mensuels',
+    properties: 'Biens',
+    payments: 'Paiements',
+    recentPayments: 'Paiements récents'
   },
-  "properties": {
-    "title": "Gestion des biens",
-    "subtitle": "Gérez tous vos biens immobiliers",
-    "addProperty": "Ajouter un bien",
-    "editProperty": "Modifier un bien",
-    "noProperties": "Aucun bien enregistré",
-    "noPropertiesDescription": "Commencez par ajouter votre premier bien immobilier",
-    "noPropertiesFound": "Aucun bien trouvé",
-    "noPropertiesFoundWithFilters": "Essayez de modifier vos filtres ou votre recherche",
-    "myProperties": "Mes appartements",
-    "name": "Nom du bien",
-    "address": "Adresse",
-    "city": "Ville",
-    "type": "Type",
-    "rent": "Loyer",
-    "monthlyRent": "Loyer mensuel (€)",
-    "status": "Statut",
-    "occupied": "Occupé",
-    "vacant": "Vacant",
-    "free": "Libre",
-    "underMaintenance": "En maintenance",
-    "selectStatus": "Sélectionner un statut",
-    "selectProperty": "Sélectionner un bien",
-    "tenantInfo": "Informations du locataire",
-    "tenantName": "Nom du locataire",
-    "propertyRent": "Loyer du bien",
-    "placeholders": {
-      "name": "Ex: Appartement T2 - Paris 15e",
-      "address": "Ex: 45 Rue de Vaugirard, 75015 Paris",
-      "city": "Ex: Paris"
+  properties: {
+    title: 'Gestion des biens',
+    subtitle: 'Gérez tous vos biens immobiliers',
+    addProperty: 'Ajouter un bien',
+    editProperty: 'Modifier un bien',
+    noProperties: 'Aucun bien enregistré',
+    noPropertiesDescription: 'Commencez par ajouter votre premier bien immobilier',
+    noPropertiesFound: 'Aucun bien trouvé',
+    noPropertiesFoundWithFilters: 'Essayez de modifier vos filtres ou votre recherche',
+    myProperties: 'Mes appartements',
+    name: 'Nom du bien',
+    address: 'Adresse',
+    city: 'Ville',
+    type: 'Type',
+    rent: 'Loyer',
+    monthlyRent: 'Loyer mensuel (€)',
+    status: 'Statut',
+    occupied: 'Occupé',
+    vacant: 'Vacant',
+    free: 'Libre',
+    underMaintenance: 'En maintenance',
+    selectStatus: 'Sélectionner un statut',
+    selectProperty: 'Sélectionner un bien',
+    tenantInfo: 'Informations du locataire',
+    tenantName: 'Nom du locataire',
+    propertyRent: 'Loyer du bien',
+    placeholders: {
+      name: 'Ex: Appartement T2 - Paris 15e',
+      address: 'Ex: 45 Rue de Vaugirard, 75015 Paris',
+      city: 'Ex: Paris'
     },
-    "searchPlaceholder": "Rechercher un bien par nom, ville ou adresse...",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce bien ?"
+    searchPlaceholder: 'Rechercher un bien par nom, ville ou adresse...',
+    confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce bien ?'
   },
-  "payments": {
-    "title": "Suivi des paiements",
-    "subtitle": "Gérez tous vos paiements locatifs en un seul endroit",
-    "addPayment": "Ajouter un paiement",
-    "editPayment": "Modifier le paiement",
-    "deletePayment": "Supprimer le paiement",
-    "noPayments": "Aucun paiement enregistré",
-    "pending": "À venir",
-    "late": "En retard",
-    "paidThisMonth": "Payés ce mois",
-    "amount": "Montant",
-    "amountEuro": "Montant (€)",
-    "dueDate": "Date d'échéance",
-    "paymentDate": "Date de paiement",
-    "tenant": "Locataire",
-    "property": "Bien",
-    "relatedProperty": "Bien concerné",
-    "status": "Statut",
-    "selectStatus": "Sélectionner un statut",
-    "downloadInvoice": "Télécharger la facture (PDF)",
-    "otherProperty": "Autre (saisie manuelle)",
-    "propertyName": "Nom du bien",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce paiement de {amount} ?",
-    "invoiceDownloaded": "Facture PDF téléchargée avec succès",
-    "invoiceError": "Erreur lors de la génération de la facture",
-    "noPaymentSelected": "Aucun paiement sélectionné",
-    "placeholders": {
-      "tenant": "Ex: Jean Dupont",
-      "amount": "950"
+  payments: {
+    title: 'Suivi des paiements',
+    subtitle: 'Gérez tous vos paiements locatifs en un seul endroit',
+    addPayment: 'Ajouter un paiement',
+    editPayment: 'Modifier le paiement',
+    deletePayment: 'Supprimer le paiement',
+    noPayments: 'Aucun paiement enregistré',
+    pending: 'À venir',
+    late: 'En retard',
+    paidThisMonth: 'Payés ce mois',
+    amount: 'Montant',
+    amountEuro: 'Montant (€)',
+    dueDate: "Date d'échéance",
+    paymentDate: 'Date de paiement',
+    tenant: 'Locataire',
+    property: 'Bien',
+    relatedProperty: 'Bien concerné',
+    status: 'Statut',
+    selectStatus: 'Sélectionner un statut',
+    downloadInvoice: 'Télécharger la facture (PDF)',
+    otherProperty: 'Autre (saisie manuelle)',
+    propertyName: 'Nom du bien',
+    confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce paiement de {amount} ?',
+    invoiceDownloaded: 'Facture PDF téléchargée avec succès',
+    invoiceError: 'Erreur lors de la génération de la facture',
+    noPaymentSelected: 'Aucun paiement sélectionné',
+    placeholders: {
+      tenant: 'Ex: Jean Dupont',
+      amount: '950'
     }
   },
-  "tenants": {
-    "title": "Gestion des locataires",
-    "subtitle": "Gérez vos locataires et leurs informations",
-    "loading": "Chargement des locataires...",
-    "addTenant": "Ajouter un locataire",
-    "totalRent": "Loyers totaux",
-    "editTenant": "Modifier le locataire",
-    "deleteTenant": "Supprimer le locataire",
-    "noTenants": "Aucun locataire enregistré",
-    "name": "Nom",
-    "tenantName": "Nom du locataire",
-    "entryDate": "Date d'entrée",
-    "exitDate": "Date de sortie",
-    "exitDateOptional": "Date de sortie (optionnelle)",
-    "inProgress": "En cours",
-    "rent": "Loyer",
-    "monthlyRent": "Loyer mensuel (€)",
-    "paymentStatus": "Statut de paiement",
-    "associatedProperty": "Bien associé",
-    "selectStatus": "Sélectionner un statut",
-    "placeholders": {
-      "name": "Ex: Jean Dupont",
-      "rent": "950"
+  tenants: {
+    title: 'Gestion des locataires',
+    subtitle: 'Gérez vos locataires et leurs informations',
+    loading: 'Chargement des locataires...',
+    addTenant: 'Ajouter un locataire',
+    totalRent: 'Loyers totaux',
+    editTenant: 'Modifier le locataire',
+    deleteTenant: 'Supprimer le locataire',
+    noTenants: 'Aucun locataire enregistré',
+    name: 'Nom',
+    tenantName: 'Nom du locataire',
+    entryDate: "Date d'entrée",
+    exitDate: 'Date de sortie',
+    exitDateOptional: 'Date de sortie (optionnelle)',
+    inProgress: 'En cours',
+    rent: 'Loyer',
+    monthlyRent: 'Loyer mensuel (€)',
+    paymentStatus: 'Statut de paiement',
+    associatedProperty: 'Bien associé',
+    selectStatus: 'Sélectionner un statut',
+    selectProperty: 'Sélectionner un bien',
+    placeholders: {
+      name: 'Ex: Jean Dupont',
+      rent: '950'
     }
   },
-  "stats": {
-    "title": "Statistiques & Analyses",
-    "subtitle": "Visualisez vos revenus, taux d'occupation et tendances locatives.",
-    "loading": "Chargement des statistiques...",
-    "error": "Erreur",
-    "kpi": {
-      "totalRevenue": "Revenu total",
-      "totalRevenueTooltip": "Somme des paiements reçus sur les 12 derniers mois",
-      "occupancyRate": "Taux d'occupation",
-      "occupancyRateTooltip": "Pourcentage de biens actuellement occupés",
-      "latePayments": "Retards de paiement",
-      "latePaymentsTooltip": "Nombre de paiements en retard",
-      "averageRent": "Loyer moyen",
-      "averageRentTooltip": "Loyer moyen mensuel de vos propriétés"
+  stats: {
+    title: 'Statistiques & Analyses',
+    subtitle: "Visualisez vos revenus, taux d'occupation et tendances locatives.",
+    loading: 'Chargement des statistiques...',
+    error: 'Erreur',
+    kpi: {
+      totalRevenue: 'Revenu total',
+      totalRevenueTooltip: 'Somme des paiements reçus sur les 12 derniers mois',
+      occupancyRate: "Taux d'occupation",
+      occupancyRateTooltip: 'Pourcentage de biens actuellement occupés',
+      latePayments: 'Retards de paiement',
+      latePaymentsTooltip: 'Nombre de paiements en retard',
+      averageRent: 'Loyer moyen',
+      averageRentTooltip: 'Loyer moyen mensuel de vos propriétés'
     },
-    "charts": {
-      "monthlyRevenue": {
-        "title": "Revenus mensuels",
-        "description": "Évolution sur les 12 derniers mois"
+    charts: {
+      monthlyRevenue: {
+        title: 'Revenus mensuels',
+        description: 'Évolution sur les 12 derniers mois'
       },
-      "paymentStatus": {
-        "title": "Répartition des statuts",
-        "description": "Vue d'ensemble des paiements"
+      paymentStatus: {
+        title: 'Répartition des statuts',
+        description: "Vue d'ensemble des paiements"
       },
-      "revenueByProperty": {
-        "title": "Revenus par bien",
-        "description": "Répartition par propriété"
+      revenueByProperty: {
+        title: 'Revenus par bien',
+        description: 'Répartition par propriété'
       },
-      "occupancyRate": {
-        "title": "Taux d'occupation",
-        "description": "Pourcentage de biens occupés",
-        "label": "Taux d'occupation"
+      occupancyRate: {
+        title: "Taux d'occupation",
+        description: 'Pourcentage de biens occupés',
+        label: "Taux d'occupation"
       }
     },
-    "alerts": {
-      "latePayments": {
-        "title": "Attention : Paiements en retard",
-        "message": "Vous avez {count} paiement(s) en retard.",
-        "link": "Voir les détails"
+    alerts: {
+      latePayments: {
+        title: 'Attention : Paiements en retard',
+        message: 'Vous avez {count} paiement(s) en retard.',
+        link: 'Voir les détails'
       }
     }
   },
-  "reports": {
-    "title": "Rapports & Synthèses",
-    "subtitle": "Générez et exportez vos rapports de gestion immobilière.",
-    "loading": "Chargement du rapport...",
-    "filters": {
-      "period": "Période",
-      "type": "Type de rapport",
-      "property": "Filtrer par bien",
-      "allProperties": "Tous les biens",
-      "refresh": "Actualiser"
+  reports: {
+    title: 'Rapports & Synthèses',
+    subtitle: 'Générez et exportez vos rapports de gestion immobilière.',
+    loading: 'Chargement du rapport...',
+    filters: {
+      period: 'Période',
+      type: 'Type de rapport',
+      property: 'Filtrer par bien',
+      allProperties: 'Tous les biens',
+      refresh: 'Actualiser'
     },
-    "types": {
-      "global": "Synthèse globale",
-      "monthly": "Revenus mensuels",
-      "rentalStatus": "Statuts locatifs"
+    types: {
+      global: 'Synthèse globale',
+      monthly: 'Revenus mensuels',
+      rentalStatus: 'Statuts locatifs'
     },
-    "kpi": {
-      "totalRevenue": "Revenu total",
-      "totalRevenueTooltip": "Revenu total perçu sur la période",
-      "rentCollected": "Loyers perçus",
-      "rentCollectedTooltip": "Montant total des loyers collectés",
-      "occupancyRate": "Taux d'occupation",
-      "occupancyRateTooltip": "Pourcentage de biens occupés",
-      "delayedPayments": "Retards",
-      "delayedPaymentsTooltip": "Nombre de paiements en retard"
+    kpi: {
+      totalRevenue: 'Revenu total',
+      totalRevenueTooltip: 'Revenu total perçu sur la période',
+      rentCollected: 'Loyers perçus',
+      rentCollectedTooltip: 'Montant total des loyers collectés',
+      occupancyRate: "Taux d'occupation",
+      occupancyRateTooltip: 'Pourcentage de biens occupés',
+      delayedPayments: 'Retards',
+      delayedPaymentsTooltip: 'Nombre de paiements en retard'
     },
-    "chart": {
-      "revenue": {
-        "title": "Revenus sur la période",
-        "description": "Évolution des revenus",
-        "label": "Revenus"
+    chart: {
+      revenue: {
+        title: 'Revenus sur la période',
+        description: 'Évolution des revenus',
+        label: 'Revenus'
       }
     },
-    "table": {
-      "title": "Récapitulatif par bien",
-      "noData": "Aucune donnée disponible",
-      "days": "jours",
-      "columns": {
-        "property": "Bien",
-        "city": "Ville",
-        "rent": "Loyer",
-        "status": "Statut",
-        "totalPaid": "Total payé",
-        "delayed": "Retard",
-        "occupancy": "Taux d'occupation"
+    table: {
+      title: 'Récapitulatif par bien',
+      noData: 'Aucune donnée disponible',
+      days: 'jours',
+      columns: {
+        property: 'Bien',
+        city: 'Ville',
+        rent: 'Loyer',
+        status: 'Statut',
+        totalPaid: 'Total payé',
+        delayed: 'Retard',
+        occupancy: "Taux d'occupation"
       }
     },
-    "summary": {
-      "text": "Sur la période du {startDate} au {endDate}, vous avez perçu {revenue}, avec un taux d'occupation moyen de {occupancy}%."
+    summary: {
+      text: "Sur la période du {startDate} au {endDate}, vous avez perçu {revenue}, avec un taux d'occupation moyen de {occupancy}%."
     },
-    "actions": {
-      "exportPDF": "Exporter en PDF",
-      "sendEmail": "Envoyer par mail",
-      "comingSoon": "Bientôt disponible",
-      "exportSuccess": "Export réussi"
+    actions: {
+      exportPDF: 'Exporter en PDF',
+      sendEmail: 'Envoyer par mail',
+      comingSoon: 'Bientôt disponible',
+      exportSuccess: 'Export réussi'
     },
-    "export": {
-      "success": "Rapport exporté avec succès"
+    export: {
+      success: 'Rapport exporté avec succès'
     },
-    "noData": {
-      "title": "Aucun rapport disponible",
-      "message": "Sélectionnez une période et cliquez sur Actualiser pour générer un rapport"
+    noData: {
+      title: 'Aucun rapport disponible',
+      message: 'Sélectionnez une période et cliquez sur Actualiser pour générer un rapport'
     }
   },
-  "alerts": {
-    "title": "Alertes",
-    "subtitle": "Surveillez les paiements en retard, fins de bail et événements importants",
-    "loading": "Chargement des alertes...",
-    "noAlerts": "Aucune alerte",
-    "allGood": "Tout est en ordre ! Aucune action requise pour le moment.",
-    "criticalAlerts": "Alertes critiques",
-    "mediumAlerts": "Alertes moyennes",
-    "information": "Informations",
-    "latePayments": "Paiements en retard",
-    "upcomingPayments": "Paiements à venir",
-    "severity": {
-      "critical": "Critique",
-      "important": "Important",
-      "info": "Info"
+  alerts: {
+    title: 'Alertes',
+    subtitle: 'Surveillez les paiements en retard, fins de bail et événements importants',
+    loading: 'Chargement des alertes...',
+    noAlerts: 'Aucune alerte',
+    allGood: 'Tout est en ordre ! Aucune action requise pour le moment.',
+    criticalAlerts: 'Alertes critiques',
+    mediumAlerts: 'Alertes moyennes',
+    information: 'Informations',
+    latePayments: 'Paiements en retard',
+    upcomingPayments: 'Paiements à venir',
+    severity: {
+      critical: 'Critique',
+      important: 'Important',
+      info: 'Info'
     },
-    "daysLate": "Retard",
-    "daysOverdue": "Impayé depuis",
-    "daysUntil": "Dans",
-    "markAsResolved": "Marquer comme résolu",
-    "view": "Voir"
+    daysLate: 'Retard',
+    daysOverdue: 'Impayé depuis',
+    daysUntil: 'Dans',
+    markAsResolved: 'Marquer comme résolu',
+    view: 'Voir'
   },
-  "settings": {
-    "title": "Paramètres",
-    "subtitle": "Gérez vos préférences et informations personnelles",
-    "profile": "Profil",
-    "appPreferences": "Préférences de l'application",
-    "security": "Sécurité",
-    "theme": "Thème",
-    "light": "Clair",
-    "dark": "Sombre",
-    "auto": "Automatique (système)",
-    "currency": "Devise principale",
-    "language": "Langue de l'interface",
-    "languageDescription": "Choisissez la langue de l'interface utilisateur",
-    "currencyDescription": "Tous les montants seront affichés dans cette devise",
-    "alertThreshold": "Seuil d'alerte de retard de paiement (jours)",
-    "alertThresholdDescription": "Nombre de jours après l'échéance avant d'envoyer une alerte",
-    "notifications": "Notifications",
-    "emailNotifications": "Recevoir les notifications par email",
-    "paymentAlerts": "Alertes de paiements en retard",
-    "paymentReminders": "Rappels de paiements à venir",
-    "maintenanceNotifications": "Notifications de maintenance des biens",
-    "savePreferences": "Enregistrer les préférences",
-    "saving": "Sauvegarde...",
-    "preferencesSaved": "Préférences enregistrées avec succès",
-    "sections": {
-      "general": "Général",
-      "notifications": "Notifications",
-      "security": "Sécurité",
-      "languageCurrency": "Langue & Devise",
-      "theme": "Thème",
-      "integrations": "Intégrations"
+  settings: {
+    title: 'Paramètres',
+    subtitle: 'Gérez vos préférences et informations personnelles',
+    profile: 'Profil',
+    appPreferences: "Préférences de l'application",
+    security: 'Sécurité',
+    theme: 'Thème',
+    light: 'Clair',
+    dark: 'Sombre',
+    auto: 'Automatique (système)',
+    currency: 'Devise principale',
+    language: "Langue de l'interface",
+    languageDescription: "Choisissez la langue de l'interface utilisateur",
+    currencyDescription: 'Tous les montants seront affichés dans cette devise',
+    alertThreshold: "Seuil d'alerte de retard de paiement (jours)",
+    alertThresholdDescription: "Nombre de jours après l'échéance avant d'envoyer une alerte",
+    notifications: 'Notifications',
+    emailNotifications: 'Recevoir les notifications par email',
+    paymentAlerts: 'Alertes de paiements en retard',
+    paymentReminders: 'Rappels de paiements à venir',
+    maintenanceNotifications: 'Notifications de maintenance des biens',
+    savePreferences: 'Enregistrer les préférences',
+    saving: 'Sauvegarde...',
+    preferencesSaved: 'Préférences enregistrées avec succès',
+    sections: {
+      general: 'Général',
+      notifications: 'Notifications',
+      security: 'Sécurité',
+      languageCurrency: 'Langue & Devise',
+      theme: 'Thème',
+      integrations: 'Intégrations'
     },
-    "preview": "Aperçu en direct",
-    "previewExample": "Exemple de formatage",
-    "themeLightDescription": "Interface claire et lumineuse",
-    "themeDarkDescription": "Interface sombre pour un confort visuel",
-    "themeAutoDescription": "Suit les préférences système",
-    "integrationsComingSoon": "Intégrations disponibles prochainement",
-    "integrationsDescription": "Connectez Doogoo à vos outils préférés"
+    preview: 'Aperçu en direct',
+    previewExample: 'Exemple de formatage',
+    themeLightDescription: 'Interface claire et lumineuse',
+    themeDarkDescription: 'Interface sombre pour un confort visuel',
+    themeAutoDescription: 'Suit les préférences système',
+    integrationsComingSoon: 'Intégrations disponibles prochainement',
+    integrationsDescription: 'Connectez Doogoo à vos outils préférés'
   },
-  "auth": {
-    "tagline": "Gestion immobilière intelligente",
-    "login": {
-      "title": "Connexion",
-      "subtitle": "Connectez-vous à votre compte",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "••••••••",
-      "forgotPassword": "Mot de passe oublié ?",
-      "noAccount": "Pas encore de compte ?",
-      "cta": "Se connecter",
-      "ctaLoading": "Connexion..."
+  auth: {
+    tagline: 'Gestion immobilière intelligente',
+    login: {
+      title: 'Connexion',
+      subtitle: 'Connectez-vous à votre compte',
+      email: 'Email',
+      emailPlaceholder: 'votre@email.com',
+      password: 'Mot de passe',
+      passwordPlaceholder: '••••••••',
+      forgotPassword: 'Mot de passe oublié ?',
+      noAccount: 'Pas encore de compte ?',
+      cta: 'Se connecter',
+      ctaLoading: 'Connexion...'
     },
-    "signup": {
-      "title": "Créer un compte",
-      "subtitle": "Rejoignez Doogoo en quelques secondes",
-      "fullName": "Nom complet",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "phone": "Téléphone",
-      "phonePlaceholder": "+33 6 12 34 56 78",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "••••••••",
-      "confirmPassword": "Confirmer le mot de passe",
-      "passwordHint": "Au moins 6 caractères",
-      "hasAccount": "Déjà un compte ?",
-      "cta": "Créer mon compte",
-      "ctaLoading": "Création..."
+    signup: {
+      title: 'Créer un compte',
+      subtitle: 'Rejoignez Doogoo en quelques secondes',
+      fullName: 'Nom complet',
+      email: 'Email',
+      emailPlaceholder: 'votre@email.com',
+      phone: 'Téléphone',
+      phonePlaceholder: '+33 6 12 34 56 78',
+      password: 'Mot de passe',
+      passwordPlaceholder: '••••••••',
+      confirmPassword: 'Confirmer le mot de passe',
+      passwordHint: 'Au moins 6 caractères',
+      hasAccount: 'Déjà un compte ?',
+      cta: 'Créer mon compte',
+      ctaLoading: 'Création...'
     },
-    "reset": {
-      "title": "Réinitialiser le mot de passe",
-      "subtitle": "Entrez votre adresse email pour recevoir un lien de réinitialisation",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "cta": "Envoyer le lien",
-      "ctaLoading": "Envoi...",
-      "successTitle": "Email envoyé !",
-      "successMessage": "Un lien de réinitialisation a été envoyé à {email}",
-      "backToLogin": "Retour à la connexion",
-      "newPasswordTitle": "Définir un nouveau mot de passe",
-      "newPasswordSubtitle": "Entrez votre nouveau mot de passe ci-dessous",
-      "newPassword": "Nouveau mot de passe",
-      "newPasswordPlaceholder": "••••••••",
-      "confirmPassword": "Confirmer le mot de passe",
-      "confirmPasswordPlaceholder": "••••••••",
-      "passwordHint": "Au moins 6 caractères",
-      "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
-      "passwordTooWeak": "Le mot de passe est trop faible. Utilisez des lettres et des chiffres",
-      "updateButton": "Valider",
-      "updateSuccess": "Mot de passe réinitialisé avec succès !",
-      "updateError": "Erreur lors de la réinitialisation du mot de passe",
-      "tokenError": "Erreur lors de la vérification du lien. Veuillez demander un nouveau lien de réinitialisation",
-      "noSession": "Session expirée. Veuillez demander un nouveau lien de réinitialisation"
+    reset: {
+      title: 'Réinitialiser le mot de passe',
+      subtitle: 'Entrez votre adresse email pour recevoir un lien de réinitialisation',
+      email: 'Email',
+      emailPlaceholder: 'votre@email.com',
+      cta: 'Envoyer le lien',
+      ctaLoading: 'Envoi...',
+      successTitle: 'Email envoyé !',
+      successMessage: 'Un lien de réinitialisation a été envoyé à {email}',
+      backToLogin: 'Retour à la connexion',
+      newPasswordTitle: 'Définir un nouveau mot de passe',
+      newPasswordSubtitle: 'Entrez votre nouveau mot de passe ci-dessous',
+      newPassword: 'Nouveau mot de passe',
+      newPasswordPlaceholder: '••••••••',
+      confirmPassword: 'Confirmer le mot de passe',
+      confirmPasswordPlaceholder: '••••••••',
+      passwordHint: 'Au moins 6 caractères',
+      passwordMismatch: 'Les mots de passe ne correspondent pas',
+      passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères',
+      passwordTooWeak: 'Le mot de passe est trop faible. Utilisez des lettres et des chiffres',
+      updateButton: 'Valider',
+      updateSuccess: 'Mot de passe réinitialisé avec succès !',
+      updateError: 'Erreur lors de la réinitialisation du mot de passe',
+      tokenError:
+        'Erreur lors de la vérification du lien. Veuillez demander un nouveau lien de réinitialisation',
+      noSession: 'Session expirée. Veuillez demander un nouveau lien de réinitialisation'
     },
-    "confirm": {
-      "title": "Email confirmé",
-      "message": "Votre compte a été confirmé avec succès. Vous pouvez maintenant vous connecter.",
-      "cta": "Aller à la connexion"
+    confirm: {
+      title: 'Email confirmé',
+      message: 'Votre compte a été confirmé avec succès. Vous pouvez maintenant vous connecter.',
+      cta: 'Aller à la connexion'
     },
-    "oauth": {
-      "separator": "OU",
-      "label": "Connexion rapide avec",
-      "google": "Google",
-      "apple": "Apple"
+    oauth: {
+      separator: 'OU',
+      label: 'Connexion rapide avec',
+      google: 'Google',
+      apple: 'Apple'
     }
   },
-  "login": {
-    "title": "Connexion",
-    "subtitle": "Connectez-vous à votre compte",
-    "tagline": "Gestion immobilière intelligente",
-    "email": "Email",
-    "emailPlaceholder": "votre@email.com",
-    "password": "Mot de passe",
-    "passwordPlaceholder": "••••••••",
-    "login": "Se connecter",
-    "logging": "Connexion...",
-    "signup": "Créer un compte",
-    "signupSubtitle": "Rejoignez Doogoo dès aujourd'hui",
-    "creating": "Création...",
-    "forgotPassword": "Mot de passe oublié ?",
-    "noAccount": "Pas encore de compte ?",
-    "hasAccount": "Déjà un compte ?",
-    "fullName": "Nom complet",
-    "phone": "Téléphone",
-    "or": "OU",
-    "loginWithGoogle": "Se connecter avec Google",
-    "loginWithApple": "Se connecter avec Apple",
-    "oauthLoading": "Connexion...",
-    "oauthSuccess": "Connexion réussie",
-    "oauthError": "Connexion via {provider} échouée"
+  login: {
+    title: 'Connexion',
+    subtitle: 'Connectez-vous à votre compte',
+    tagline: 'Gestion immobilière intelligente',
+    email: 'Email',
+    emailPlaceholder: 'votre@email.com',
+    password: 'Mot de passe',
+    passwordPlaceholder: '••••••••',
+    login: 'Se connecter',
+    logging: 'Connexion...',
+    signup: 'Créer un compte',
+    signupSubtitle: "Rejoignez Doogoo dès aujourd'hui",
+    creating: 'Création...',
+    forgotPassword: 'Mot de passe oublié ?',
+    noAccount: 'Pas encore de compte ?',
+    hasAccount: 'Déjà un compte ?',
+    fullName: 'Nom complet',
+    phone: 'Téléphone',
+    or: 'OU',
+    loginWithGoogle: 'Se connecter avec Google',
+    loginWithApple: 'Se connecter avec Apple',
+    oauthLoading: 'Connexion...',
+    oauthSuccess: 'Connexion réussie',
+    oauthError: 'Connexion via {provider} échouée'
   },
-  "currency": {
-    "EUR": "Euro (€)",
-    "USD": "Dollar US ($)",
-    "GBP": "Livre Sterling (£)",
-    "XOF": "Franc CFA (CFA)"
+  currency: {
+    EUR: 'Euro (€)',
+    USD: 'Dollar US ($)',
+    GBP: 'Livre Sterling (£)',
+    XOF: 'Franc CFA (CFA)'
   },
-  "language": {
-    "fr": "Français",
-    "en": "English"
+  language: {
+    fr: 'Français',
+    en: 'English'
   },
-  "toasts": {
-    "invoiceDownloaded": "Facture PDF téléchargée avec succès",
-    "errorGeneratingInvoice": "Erreur lors de la génération de la facture",
-    "propertyAdded": "Bien ajouté avec succès",
-    "propertyUpdated": "Bien mis à jour avec succès",
-    "propertyDeleted": "Bien supprimé avec succès",
-    "paymentAdded": "Paiement ajouté avec succès",
-    "paymentUpdated": "Paiement mis à jour avec succès",
-    "tenantAdded": "Locataire ajouté avec succès",
-    "profileUpdated": "Profil mis à jour avec succès"
+  toasts: {
+    invoiceDownloaded: 'Facture PDF téléchargée avec succès',
+    errorGeneratingInvoice: 'Erreur lors de la génération de la facture',
+    propertyAdded: 'Bien ajouté avec succès',
+    propertyUpdated: 'Bien mis à jour avec succès',
+    propertyDeleted: 'Bien supprimé avec succès',
+    paymentAdded: 'Paiement ajouté avec succès',
+    paymentUpdated: 'Paiement mis à jour avec succès',
+    tenantAdded: 'Locataire ajouté avec succès',
+    profileUpdated: 'Profil mis à jour avec succès'
   },
-  "status": {
-    "paid": "Payé",
-    "pending": "En attente",
-    "late": "En retard",
-    "onTime": "À jour"
+  status: {
+    paid: 'Payé',
+    pending: 'En attente',
+    late: 'En retard',
+    onTime: 'À jour'
   },
-  "security": {
-    "title": "Sécurité & Connexion",
-    "subtitle": "Gérez votre mot de passe, la vérification en deux étapes et vos sessions actives.",
-    "password": {
-      "title": "Mot de passe",
-      "description": "Changez régulièrement votre mot de passe pour sécuriser votre compte.",
-      "changeButton": "Modifier le mot de passe",
-      "modalTitle": "Modifier le mot de passe",
-      "currentPassword": "Mot de passe actuel",
-      "currentPasswordPlaceholder": "Entrez votre mot de passe actuel",
-      "newPassword": "Nouveau mot de passe",
-      "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
-      "confirmPassword": "Confirmer le mot de passe",
-      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
-      "passwordHint": "Minimum 6 caractères",
-      "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
-      "currentPasswordIncorrect": "Le mot de passe actuel est incorrect",
-      "updateButton": "Mettre à jour",
-      "updating": "Mise à jour...",
-      "changedSuccess": "✅ Mot de passe modifié avec succès ! Votre compte reste connecté. Un email de confirmation vous a été envoyé.",
-      "changeError": "Erreur lors du changement de mot de passe",
-      "samePassword": "Le nouveau mot de passe doit être différent de l'ancien",
-      "passwordTooWeak": "Le mot de passe est trop faible. Utilisez au moins 8 caractères avec des lettres, chiffres et caractères spéciaux"
+  security: {
+    title: 'Sécurité & Connexion',
+    subtitle: 'Gérez votre mot de passe, la vérification en deux étapes et vos sessions actives.',
+    password: {
+      title: 'Mot de passe',
+      description: 'Changez régulièrement votre mot de passe pour sécuriser votre compte.',
+      changeButton: 'Modifier le mot de passe',
+      modalTitle: 'Modifier le mot de passe',
+      currentPassword: 'Mot de passe actuel',
+      currentPasswordPlaceholder: 'Entrez votre mot de passe actuel',
+      newPassword: 'Nouveau mot de passe',
+      newPasswordPlaceholder: 'Entrez votre nouveau mot de passe',
+      confirmPassword: 'Confirmer le mot de passe',
+      confirmPasswordPlaceholder: 'Confirmez votre nouveau mot de passe',
+      passwordHint: 'Minimum 6 caractères',
+      passwordMismatch: 'Les mots de passe ne correspondent pas',
+      passwordTooShort: 'Le mot de passe doit contenir au moins 6 caractères',
+      currentPasswordIncorrect: 'Le mot de passe actuel est incorrect',
+      updateButton: 'Mettre à jour',
+      updating: 'Mise à jour...',
+      changedSuccess:
+        '✅ Mot de passe modifié avec succès ! Votre compte reste connecté. Un email de confirmation vous a été envoyé.',
+      changeError: 'Erreur lors du changement de mot de passe',
+      samePassword: "Le nouveau mot de passe doit être différent de l'ancien",
+      passwordTooWeak:
+        'Le mot de passe est trop faible. Utilisez au moins 8 caractères avec des lettres, chiffres et caractères spéciaux'
     },
-    "twoFactor": {
-      "title": "Authentification à deux facteurs",
-      "description": "Ajoutez une couche de sécurité avec la double authentification.",
-      "enabled": "Activé",
-      "disabled": "Désactivé",
-      "enable": "Activer",
-      "disable": "Désactiver",
-      "enabledMessage": "Authentification à deux facteurs activée",
-      "disabledMessage": "Authentification à deux facteurs désactivée"
+    twoFactor: {
+      title: 'Authentification à deux facteurs',
+      description: 'Ajoutez une couche de sécurité avec la double authentification.',
+      enabled: 'Activé',
+      disabled: 'Désactivé',
+      enable: 'Activer',
+      disable: 'Désactiver',
+      enabledMessage: 'Authentification à deux facteurs activée',
+      disabledMessage: 'Authentification à deux facteurs désactivée'
     },
-    "sessions": {
-      "title": "Sessions actives",
-      "description": "Gérez les appareils connectés à votre compte.",
-      "signOutAll": "Déconnexion de tous les appareils",
-      "signingOut": "Déconnexion...",
-      "confirmSignOut": "Êtes-vous sûr de vouloir déconnecter tous vos appareils ? Vous devrez vous reconnecter.",
-      "signedOutSuccess": "Déconnexion réussie de tous les appareils",
-      "signOutError": "Erreur lors de la déconnexion"
+    sessions: {
+      title: 'Sessions actives',
+      description: 'Gérez les appareils connectés à votre compte.',
+      signOutAll: 'Déconnexion de tous les appareils',
+      signingOut: 'Déconnexion...',
+      confirmSignOut:
+        'Êtes-vous sûr de vouloir déconnecter tous vos appareils ? Vous devrez vous reconnecter.',
+      signedOutSuccess: 'Déconnexion réussie de tous les appareils',
+      signOutError: 'Erreur lors de la déconnexion'
     }
   },
-  "connection": {
-    "online": "Connecté — Données synchronisées",
-    "offline": "Hors ligne — Lecture seule"
+  connection: {
+    online: 'Connecté — Données synchronisées',
+    offline: 'Hors ligne — Lecture seule'
   },
-  "degradedMode": {
-    "message": "Mode dégradé — certaines données peuvent être incomplètes"
+  degradedMode: {
+    message: 'Mode dégradé — certaines données peuvent être incomplètes'
   },
-  "landing": {
-    "features": "Fonctionnalités",
-    "testimonials": "Témoignages",
-    "getStarted": "Commencer maintenant",
-    "tryIt": "Essayer",
-    "tryFree": "Essayer gratuitement",
-    "heroTitle": "Supervisez vos biens immobiliers depuis une seule plateforme",
-    "heroDescription": "Monitoring en temps réel, alertes intelligentes, gestion des paiements. Tout ce dont vous avez besoin pour gérer vos biens à distance.",
-    "featuresTitle": "Tout ce dont vous avez besoin",
-    "featuresDescription": "Une solution complète pour la gestion et le monitoring de vos biens immobiliers",
-    "featureMonitoring": "Surveillance en temps réel",
-    "featureMonitoringDesc": "Suivez température, humidité et qualité de l'air en direct depuis votre dashboard",
-    "featureAlerts": "Alertes intelligentes",
-    "featureAlertsDesc": "Recevez des notifications instantanées en cas d'anomalie ou d'incident",
-    "featurePayments": "Gestion des paiements",
-    "featurePaymentsDesc": "Suivez vos loyers et paiements locatifs en temps réel",
-    "testimonialsTitle": "Ce que disent nos clients",
-    "ctaTitle": "Prêt à optimiser la gestion de vos biens ?",
-    "ctaDescription": "Rejoignez des centaines de propriétaires qui font confiance à Doogoo"
+  landing: {
+    features: 'Fonctionnalités',
+    testimonials: 'Témoignages',
+    getStarted: 'Commencer maintenant',
+    tryIt: 'Essayer',
+    tryFree: 'Essayer gratuitement',
+    heroTitle: 'Supervisez vos biens immobiliers depuis une seule plateforme',
+    heroDescription:
+      'Monitoring en temps réel, alertes intelligentes, gestion des paiements. Tout ce dont vous avez besoin pour gérer vos biens à distance.',
+    featuresTitle: 'Tout ce dont vous avez besoin',
+    featuresDescription:
+      'Une solution complète pour la gestion et le monitoring de vos biens immobiliers',
+    featureMonitoring: 'Surveillance en temps réel',
+    featureMonitoringDesc:
+      "Suivez température, humidité et qualité de l'air en direct depuis votre dashboard",
+    featureAlerts: 'Alertes intelligentes',
+    featureAlertsDesc: "Recevez des notifications instantanées en cas d'anomalie ou d'incident",
+    featurePayments: 'Gestion des paiements',
+    featurePaymentsDesc: 'Suivez vos loyers et paiements locatifs en temps réel',
+    testimonialsTitle: 'Ce que disent nos clients',
+    ctaTitle: 'Prêt à optimiser la gestion de vos biens ?',
+    ctaDescription: 'Rejoignez des centaines de propriétaires qui font confiance à Doogoo'
   }
 }

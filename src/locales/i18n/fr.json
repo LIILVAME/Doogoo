@@ -140,6 +140,7 @@
     "paymentStatus": "Statut de paiement",
     "associatedProperty": "Bien associé",
     "selectStatus": "Sélectionner un statut",
+    "selectProperty": "Sélectionner un bien",
     "placeholders": {
       "name": "Ex: Jean Dupont",
       "rent": "950"
@@ -510,4 +511,3 @@
     "ctaDescription": "Rejoignez des centaines de propriétaires qui font confiance à Doogoo"
   }
 }
-

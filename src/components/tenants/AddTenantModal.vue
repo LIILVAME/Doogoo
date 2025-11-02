@@ -2,11 +2,7 @@
   <!-- Overlay -->
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="isOpen"
-        class="fixed inset-0 z-50 overflow-y-auto"
-        @click.self="handleClose"
-      >
+      <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
 
@@ -25,7 +21,12 @@
                 :aria-label="$t('common.close')"
               >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -70,13 +71,17 @@
                     </option>
                   </select>
                   <p v-if="form.propertyId && selectedProperty" class="text-xs text-gray-500 mt-1">
-                    {{ $t('properties.propertyRent') }} : {{ formatCurrency(selectedProperty.rent) }}
+                    {{ $t('properties.propertyRent') }} :
+                    {{ formatCurrency(selectedProperty.rent) }}
                   </p>
                 </div>
 
                 <!-- Date d'entrée -->
                 <div>
-                  <label for="tenant-entry-date" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    for="tenant-entry-date"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     {{ $t('tenants.entryDate') }} <span class="text-red-500">*</span>
                   </label>
                   <input
@@ -90,8 +95,12 @@
 
                 <!-- Date de sortie (optionnelle) -->
                 <div>
-                  <label for="tenant-exit-date" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ $t('tenants.exitDateOptional') }} <span class="text-gray-400 text-xs">({{ $t('common.optional') }})</span>
+                  <label
+                    for="tenant-exit-date"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    {{ $t('tenants.exitDateOptional') }}
+                    <span class="text-gray-400 text-xs">({{ $t('common.optional') }})</span>
                   </label>
                   <input
                     id="tenant-exit-date"
@@ -145,12 +154,14 @@
                 >
                   {{ $t('common.cancel') }}
                 </button>
-                <button
-                  type="submit"
-                  class="btn-primary flex items-center"
-                >
+                <button type="submit" class="btn-primary flex items-center">
                   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                   {{ $t('common.add') }}
                 </button>
@@ -165,14 +176,11 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useI18n } from '@/composables/useLingui'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useToastStore } from '@/stores/toastStore'
 import { formatCurrency } from '@/utils/formatters'
-import { PROPERTY_STATUS } from '@/utils/constants'
+import { PAYMENT_STATUS } from '@/utils/constants'
 import { tenantSchema, validate } from '@/utils/validators'
-
-const { t } = useI18n()
 
 const props = defineProps({
   isOpen: {
@@ -251,7 +259,7 @@ const handlePropertyChange = () => {
  */
 const handleSubmit = () => {
   validationErrors.value = {}
-  
+
   // Prépare les données à soumettre
   const submitData = {
     name: form.value.name.trim(),
@@ -261,16 +269,16 @@ const handleSubmit = () => {
     rent: Number(form.value.rent),
     status: form.value.status || 'on_time'
   }
-  
+
   // Validation avec Zod
   const validationResult = validate(tenantSchema, submitData)
-  
+
   if (!validationResult.success) {
     // Affiche les erreurs de validation
     if (toastStore) {
       toastStore.error(`Validation échouée : ${validationResult.error}`)
     }
-    
+
     // Mappe les erreurs par champ
     if (validationResult.errors) {
       validationResult.errors.forEach(error => {
@@ -284,18 +292,18 @@ const handleSubmit = () => {
         }
       })
     }
-    
+
     return
   }
-  
+
   // Ajoute les champs additionnels non validés par Zod mais nécessaires pour l'UI
   const finalData = {
     ...validationResult.data,
     property: selectedProperty.value?.name || ''
   }
-  
+
   emit('submit', finalData)
-  
+
   resetForm()
   emit('close')
 }
@@ -303,11 +311,14 @@ const handleSubmit = () => {
 /**
  * Réinitialise le formulaire quand le modal se ferme
  */
-watch(() => props.isOpen, (newValue) => {
-  if (!newValue) {
-    resetForm()
+watch(
+  () => props.isOpen,
+  newValue => {
+    if (!newValue) {
+      resetForm()
+    }
   }
-})
+)
 </script>
 
 <style scoped>
@@ -332,4 +343,3 @@ watch(() => props.isOpen, (newValue) => {
   transform: scale(0.95);
 }
 </style>
-

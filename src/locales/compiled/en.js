@@ -3,510 +3,517 @@
 // Regenerate with: npm run i18n:compile
 
 export default {
-  "common": {
-    "dashboard": "Dashboard",
-    "goToDashboard": "Go to dashboard",
-    "loading": "Loading...",
-    "error": "Error",
-    "errorWithColon": "Error:",
-    "success": "Success",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "add": "Add",
-    "addProperty": "Add property",
-    "close": "Close",
-    "search": "Search",
-    "filter": "Filter",
-    "reset": "Reset",
-    "viewAll": "View all",
-    "view": "View",
-    "noData": "No data",
-    "actions": "Actions",
-    "all": "All",
-    "date": "Date",
-    "days": "day(s)",
-    "optional": "optional",
-    "selectStatus": "Select a status",
-    "selectProperty": "Select a property",
-    "unknown": "Unknown",
-    "refreshing": "Refreshing...",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+  common: {
+    dashboard: 'Dashboard',
+    goToDashboard: 'Go to dashboard',
+    loading: 'Loading...',
+    error: 'Error',
+    errorWithColon: 'Error:',
+    success: 'Success',
+    cancel: 'Cancel',
+    save: 'Save',
+    delete: 'Delete',
+    edit: 'Edit',
+    add: 'Add',
+    addProperty: 'Add property',
+    close: 'Close',
+    search: 'Search',
+    filter: 'Filter',
+    reset: 'Reset',
+    viewAll: 'View all',
+    view: 'View',
+    noData: 'No data',
+    actions: 'Actions',
+    all: 'All',
+    date: 'Date',
+    days: 'day(s)',
+    optional: 'optional',
+    selectStatus: 'Select a status',
+    selectProperty: 'Select a property',
+    unknown: 'Unknown',
+    refreshing: 'Refreshing...',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu'
   },
-  "sidebar": {
-    "dashboard": "Dashboard",
-    "properties": "Properties",
-    "payments": "Payments",
-    "tenants": "Tenants",
-    "stats": "Statistics",
-    "reports": "Reports",
-    "alerts": "Alerts",
-    "settings": "Settings",
-    "logout": "Logout",
-    "loggingOut": "Logging out...",
-    "language": "Language"
+  sidebar: {
+    dashboard: 'Dashboard',
+    properties: 'Properties',
+    payments: 'Payments',
+    tenants: 'Tenants',
+    stats: 'Statistics',
+    reports: 'Reports',
+    alerts: 'Alerts',
+    settings: 'Settings',
+    logout: 'Logout',
+    loggingOut: 'Logging out...',
+    language: 'Language'
   },
-  "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Overview of your real estate properties",
-    "totalProperties": "Total properties",
-    "occupied": "Occupied",
-    "vacant": "Vacant",
-    "monthlyRent": "Monthly rent",
-    "properties": "Properties",
-    "payments": "Payments",
-    "recentPayments": "Recent payments"
+  dashboard: {
+    title: 'Dashboard',
+    subtitle: 'Overview of your real estate properties',
+    totalProperties: 'Total properties',
+    occupied: 'Occupied',
+    vacant: 'Vacant',
+    monthlyRent: 'Monthly rent',
+    properties: 'Properties',
+    payments: 'Payments',
+    recentPayments: 'Recent payments'
   },
-  "properties": {
-    "title": "Properties management",
-    "subtitle": "Manage all your real estate properties",
-    "addProperty": "Add property",
-    "editProperty": "Edit property",
-    "noProperties": "No properties registered",
-    "noPropertiesDescription": "Start by adding your first real estate property",
-    "noPropertiesFound": "No property found",
-    "noPropertiesFoundWithFilters": "Try modifying your filters or search",
-    "myProperties": "My apartments",
-    "name": "Property name",
-    "address": "Address",
-    "city": "City",
-    "type": "Type",
-    "rent": "Rent",
-    "monthlyRent": "Monthly rent (€)",
-    "status": "Status",
-    "occupied": "Occupied",
-    "vacant": "Vacant",
-    "free": "Free",
-    "underMaintenance": "Under maintenance",
-    "selectStatus": "Select a status",
-    "selectProperty": "Select a property",
-    "tenantInfo": "Tenant information",
-    "tenantName": "Tenant name",
-    "propertyRent": "Property rent",
-    "placeholders": {
-      "name": "Ex: 2BR Apartment - Paris 15th",
-      "address": "Ex: 45 Rue de Vaugirard, 75015 Paris",
-      "city": "Ex: Paris"
+  properties: {
+    title: 'Properties management',
+    subtitle: 'Manage all your real estate properties',
+    addProperty: 'Add property',
+    editProperty: 'Edit property',
+    noProperties: 'No properties registered',
+    noPropertiesDescription: 'Start by adding your first real estate property',
+    noPropertiesFound: 'No property found',
+    noPropertiesFoundWithFilters: 'Try modifying your filters or search',
+    myProperties: 'My apartments',
+    name: 'Property name',
+    address: 'Address',
+    city: 'City',
+    type: 'Type',
+    rent: 'Rent',
+    monthlyRent: 'Monthly rent (€)',
+    status: 'Status',
+    occupied: 'Occupied',
+    vacant: 'Vacant',
+    free: 'Free',
+    underMaintenance: 'Under maintenance',
+    selectStatus: 'Select a status',
+    selectProperty: 'Select a property',
+    tenantInfo: 'Tenant information',
+    tenantName: 'Tenant name',
+    propertyRent: 'Property rent',
+    placeholders: {
+      name: 'Ex: 2BR Apartment - Paris 15th',
+      address: 'Ex: 45 Rue de Vaugirard, 75015 Paris',
+      city: 'Ex: Paris'
     },
-    "searchPlaceholder": "Search for a property by name, city or address...",
-    "confirmDelete": "Are you sure you want to delete this property?"
+    searchPlaceholder: 'Search for a property by name, city or address...',
+    confirmDelete: 'Are you sure you want to delete this property?'
   },
-  "payments": {
-    "title": "Payment tracking",
-    "subtitle": "Manage all your rental payments in one place",
-    "addPayment": "Add payment",
-    "editPayment": "Edit payment",
-    "deletePayment": "Delete payment",
-    "noPayments": "No payments registered",
-    "pending": "Pending",
-    "late": "Late",
-    "paidThisMonth": "Paid this month",
-    "amount": "Amount",
-    "amountEuro": "Amount (€)",
-    "dueDate": "Due date",
-    "paymentDate": "Payment date",
-    "tenant": "Tenant",
-    "property": "Property",
-    "relatedProperty": "Related property",
-    "status": "Status",
-    "selectStatus": "Select a status",
-    "downloadInvoice": "Download invoice (PDF)",
-    "otherProperty": "Other (manual entry)",
-    "propertyName": "Property name",
-    "confirmDelete": "Are you sure you want to delete this payment of {amount}?",
-    "invoiceDownloaded": "Invoice PDF downloaded successfully",
-    "invoiceError": "Error generating invoice",
-    "noPaymentSelected": "No payment selected",
-    "placeholders": {
-      "tenant": "Ex: John Doe",
-      "amount": "950"
+  payments: {
+    title: 'Payment tracking',
+    subtitle: 'Manage all your rental payments in one place',
+    addPayment: 'Add payment',
+    editPayment: 'Edit payment',
+    deletePayment: 'Delete payment',
+    noPayments: 'No payments registered',
+    pending: 'Pending',
+    late: 'Late',
+    paidThisMonth: 'Paid this month',
+    amount: 'Amount',
+    amountEuro: 'Amount (€)',
+    dueDate: 'Due date',
+    paymentDate: 'Payment date',
+    tenant: 'Tenant',
+    property: 'Property',
+    relatedProperty: 'Related property',
+    status: 'Status',
+    selectStatus: 'Select a status',
+    downloadInvoice: 'Download invoice (PDF)',
+    otherProperty: 'Other (manual entry)',
+    propertyName: 'Property name',
+    confirmDelete: 'Are you sure you want to delete this payment of {amount}?',
+    invoiceDownloaded: 'Invoice PDF downloaded successfully',
+    invoiceError: 'Error generating invoice',
+    noPaymentSelected: 'No payment selected',
+    placeholders: {
+      tenant: 'Ex: John Doe',
+      amount: '950'
     }
   },
-  "tenants": {
-    "title": "Tenants management",
-    "subtitle": "Manage your tenants and their information",
-    "loading": "Loading tenants...",
-    "addTenant": "Add tenant",
-    "totalRent": "Total rents",
-    "editTenant": "Edit tenant",
-    "deleteTenant": "Delete tenant",
-    "noTenants": "No tenants registered",
-    "name": "Name",
-    "tenantName": "Tenant name",
-    "entryDate": "Entry date",
-    "exitDate": "Exit date",
-    "exitDateOptional": "Exit date (optional)",
-    "inProgress": "In progress",
-    "rent": "Rent",
-    "monthlyRent": "Monthly rent (€)",
-    "paymentStatus": "Payment status",
-    "associatedProperty": "Associated property",
-    "selectStatus": "Select a status",
-    "placeholders": {
-      "name": "Ex: John Doe",
-      "rent": "950"
+  tenants: {
+    title: 'Tenants management',
+    subtitle: 'Manage your tenants and their information',
+    loading: 'Loading tenants...',
+    addTenant: 'Add tenant',
+    totalRent: 'Total rents',
+    editTenant: 'Edit tenant',
+    deleteTenant: 'Delete tenant',
+    noTenants: 'No tenants registered',
+    name: 'Name',
+    tenantName: 'Tenant name',
+    entryDate: 'Entry date',
+    exitDate: 'Exit date',
+    exitDateOptional: 'Exit date (optional)',
+    inProgress: 'In progress',
+    rent: 'Rent',
+    monthlyRent: 'Monthly rent (€)',
+    paymentStatus: 'Payment status',
+    associatedProperty: 'Associated property',
+    selectStatus: 'Select a status',
+    selectProperty: 'Select a property',
+    placeholders: {
+      name: 'Ex: John Doe',
+      rent: '950'
     }
   },
-  "stats": {
-    "title": "Statistics & Analytics",
-    "subtitle": "Visualize your revenue, occupancy rate and rental trends.",
-    "loading": "Loading statistics...",
-    "error": "Error",
-    "kpi": {
-      "totalRevenue": "Total Revenue",
-      "totalRevenueTooltip": "Sum of payments received over the last 12 months",
-      "occupancyRate": "Occupancy Rate",
-      "occupancyRateTooltip": "Percentage of currently occupied properties",
-      "latePayments": "Late Payments",
-      "latePaymentsTooltip": "Number of overdue payments",
-      "averageRent": "Average Rent",
-      "averageRentTooltip": "Average monthly rent of your properties"
+  stats: {
+    title: 'Statistics & Analytics',
+    subtitle: 'Visualize your revenue, occupancy rate and rental trends.',
+    loading: 'Loading statistics...',
+    error: 'Error',
+    kpi: {
+      totalRevenue: 'Total Revenue',
+      totalRevenueTooltip: 'Sum of payments received over the last 12 months',
+      occupancyRate: 'Occupancy Rate',
+      occupancyRateTooltip: 'Percentage of currently occupied properties',
+      latePayments: 'Late Payments',
+      latePaymentsTooltip: 'Number of overdue payments',
+      averageRent: 'Average Rent',
+      averageRentTooltip: 'Average monthly rent of your properties'
     },
-    "charts": {
-      "monthlyRevenue": {
-        "title": "Monthly Revenue",
-        "description": "Trend over the last 12 months"
+    charts: {
+      monthlyRevenue: {
+        title: 'Monthly Revenue',
+        description: 'Trend over the last 12 months'
       },
-      "paymentStatus": {
-        "title": "Payment Status Breakdown",
-        "description": "Overview of payments"
+      paymentStatus: {
+        title: 'Payment Status Breakdown',
+        description: 'Overview of payments'
       },
-      "revenueByProperty": {
-        "title": "Revenue by Property",
-        "description": "Breakdown by property"
+      revenueByProperty: {
+        title: 'Revenue by Property',
+        description: 'Breakdown by property'
       },
-      "occupancyRate": {
-        "title": "Occupancy Rate",
-        "description": "Percentage of occupied properties",
-        "label": "Occupancy Rate"
+      occupancyRate: {
+        title: 'Occupancy Rate',
+        description: 'Percentage of occupied properties',
+        label: 'Occupancy Rate'
       }
     },
-    "alerts": {
-      "latePayments": {
-        "title": "Warning: Late Payments",
-        "message": "You have {count} overdue payment(s).",
-        "link": "View details"
+    alerts: {
+      latePayments: {
+        title: 'Warning: Late Payments',
+        message: 'You have {count} overdue payment(s).',
+        link: 'View details'
       }
     }
   },
-  "reports": {
-    "title": "Reports & Summaries",
-    "subtitle": "Generate and export your property management reports.",
-    "loading": "Loading report...",
-    "filters": {
-      "period": "Period",
-      "type": "Report type",
-      "property": "Filter by property",
-      "allProperties": "All properties",
-      "refresh": "Refresh"
+  reports: {
+    title: 'Reports & Summaries',
+    subtitle: 'Generate and export your property management reports.',
+    loading: 'Loading report...',
+    filters: {
+      period: 'Period',
+      type: 'Report type',
+      property: 'Filter by property',
+      allProperties: 'All properties',
+      refresh: 'Refresh'
     },
-    "types": {
-      "global": "Global summary",
-      "monthly": "Monthly revenue",
-      "rentalStatus": "Rental status"
+    types: {
+      global: 'Global summary',
+      monthly: 'Monthly revenue',
+      rentalStatus: 'Rental status'
     },
-    "kpi": {
-      "totalRevenue": "Total Revenue",
-      "totalRevenueTooltip": "Total revenue received for the period",
-      "rentCollected": "Rent Collected",
-      "rentCollectedTooltip": "Total amount of rent collected",
-      "occupancyRate": "Occupancy Rate",
-      "occupancyRateTooltip": "Percentage of occupied properties",
-      "delayedPayments": "Delayed",
-      "delayedPaymentsTooltip": "Number of late payments"
+    kpi: {
+      totalRevenue: 'Total Revenue',
+      totalRevenueTooltip: 'Total revenue received for the period',
+      rentCollected: 'Rent Collected',
+      rentCollectedTooltip: 'Total amount of rent collected',
+      occupancyRate: 'Occupancy Rate',
+      occupancyRateTooltip: 'Percentage of occupied properties',
+      delayedPayments: 'Delayed',
+      delayedPaymentsTooltip: 'Number of late payments'
     },
-    "chart": {
-      "revenue": {
-        "title": "Revenue for the period",
-        "description": "Revenue evolution",
-        "label": "Revenue"
+    chart: {
+      revenue: {
+        title: 'Revenue for the period',
+        description: 'Revenue evolution',
+        label: 'Revenue'
       }
     },
-    "table": {
-      "title": "Summary by property",
-      "noData": "No data available",
-      "days": "days",
-      "columns": {
-        "property": "Property",
-        "city": "City",
-        "rent": "Rent",
-        "status": "Status",
-        "totalPaid": "Total Paid",
-        "delayed": "Delay",
-        "occupancy": "Occupancy Rate"
+    table: {
+      title: 'Summary by property',
+      noData: 'No data available',
+      days: 'days',
+      columns: {
+        property: 'Property',
+        city: 'City',
+        rent: 'Rent',
+        status: 'Status',
+        totalPaid: 'Total Paid',
+        delayed: 'Delay',
+        occupancy: 'Occupancy Rate'
       }
     },
-    "summary": {
-      "text": "For the period from {startDate} to {endDate}, you received {revenue}, with an average occupancy rate of {occupancy}%."
+    summary: {
+      text: 'For the period from {startDate} to {endDate}, you received {revenue}, with an average occupancy rate of {occupancy}%.'
     },
-    "actions": {
-      "exportPDF": "Export to PDF",
-      "sendEmail": "Send by email",
-      "comingSoon": "Coming soon",
-      "exportSuccess": "Export successful"
+    actions: {
+      exportPDF: 'Export to PDF',
+      sendEmail: 'Send by email',
+      comingSoon: 'Coming soon',
+      exportSuccess: 'Export successful'
     },
-    "export": {
-      "success": "Report exported successfully"
+    export: {
+      success: 'Report exported successfully'
     },
-    "noData": {
-      "title": "No report available",
-      "message": "Select a period and click Refresh to generate a report"
+    noData: {
+      title: 'No report available',
+      message: 'Select a period and click Refresh to generate a report'
     }
   },
-  "alerts": {
-    "title": "Alerts",
-    "subtitle": "Monitor late payments, lease ends and important events",
-    "loading": "Loading alerts...",
-    "noAlerts": "No alerts",
-    "allGood": "Everything is fine! No action required at this time.",
-    "criticalAlerts": "Critical alerts",
-    "mediumAlerts": "Medium alerts",
-    "information": "Information",
-    "latePayments": "Late payments",
-    "upcomingPayments": "Upcoming payments",
-    "severity": {
-      "critical": "Critical",
-      "important": "Important",
-      "info": "Info"
+  alerts: {
+    title: 'Alerts',
+    subtitle: 'Monitor late payments, lease ends and important events',
+    loading: 'Loading alerts...',
+    noAlerts: 'No alerts',
+    allGood: 'Everything is fine! No action required at this time.',
+    criticalAlerts: 'Critical alerts',
+    mediumAlerts: 'Medium alerts',
+    information: 'Information',
+    latePayments: 'Late payments',
+    upcomingPayments: 'Upcoming payments',
+    severity: {
+      critical: 'Critical',
+      important: 'Important',
+      info: 'Info'
     },
-    "daysLate": "Late",
-    "daysOverdue": "Overdue for",
-    "daysUntil": "In",
-    "markAsResolved": "Mark as resolved",
-    "view": "View"
+    daysLate: 'Late',
+    daysOverdue: 'Overdue for',
+    daysUntil: 'In',
+    markAsResolved: 'Mark as resolved',
+    view: 'View'
   },
-  "settings": {
-    "title": "Settings",
-    "subtitle": "Manage your preferences and personal information",
-    "profile": "Profile",
-    "appPreferences": "Application preferences",
-    "security": "Security",
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "auto": "Automatic (system)",
-    "currency": "Main currency",
-    "language": "Interface language",
-    "languageDescription": "Choose the interface language",
-    "currencyDescription": "All amounts will be displayed in this currency",
-    "alertThreshold": "Late payment alert threshold (days)",
-    "alertThresholdDescription": "Number of days after due date before sending an alert",
-    "notifications": "Notifications",
-    "emailNotifications": "Receive email notifications",
-    "paymentAlerts": "Late payment alerts",
-    "paymentReminders": "Upcoming payment reminders",
-    "maintenanceNotifications": "Property maintenance notifications",
-    "savePreferences": "Save preferences",
-    "saving": "Saving...",
-    "preferencesSaved": "Preferences saved successfully",
-    "sections": {
-      "general": "General",
-      "notifications": "Notifications",
-      "security": "Security",
-      "languageCurrency": "Language & Currency",
-      "theme": "Theme",
-      "integrations": "Integrations"
+  settings: {
+    title: 'Settings',
+    subtitle: 'Manage your preferences and personal information',
+    profile: 'Profile',
+    appPreferences: 'Application preferences',
+    security: 'Security',
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    auto: 'Automatic (system)',
+    currency: 'Main currency',
+    language: 'Interface language',
+    languageDescription: 'Choose the interface language',
+    currencyDescription: 'All amounts will be displayed in this currency',
+    alertThreshold: 'Late payment alert threshold (days)',
+    alertThresholdDescription: 'Number of days after due date before sending an alert',
+    notifications: 'Notifications',
+    emailNotifications: 'Receive email notifications',
+    paymentAlerts: 'Late payment alerts',
+    paymentReminders: 'Upcoming payment reminders',
+    maintenanceNotifications: 'Property maintenance notifications',
+    savePreferences: 'Save preferences',
+    saving: 'Saving...',
+    preferencesSaved: 'Preferences saved successfully',
+    sections: {
+      general: 'General',
+      notifications: 'Notifications',
+      security: 'Security',
+      languageCurrency: 'Language & Currency',
+      theme: 'Theme',
+      integrations: 'Integrations'
     },
-    "preview": "Live preview",
-    "previewExample": "Formatting example",
-    "themeLightDescription": "Bright and light interface",
-    "themeDarkDescription": "Dark interface for visual comfort",
-    "themeAutoDescription": "Follows system preferences",
-    "integrationsComingSoon": "Integrations coming soon",
-    "integrationsDescription": "Connect Doogoo to your favorite tools"
+    preview: 'Live preview',
+    previewExample: 'Formatting example',
+    themeLightDescription: 'Bright and light interface',
+    themeDarkDescription: 'Dark interface for visual comfort',
+    themeAutoDescription: 'Follows system preferences',
+    integrationsComingSoon: 'Integrations coming soon',
+    integrationsDescription: 'Connect Doogoo to your favorite tools'
   },
-  "auth": {
-    "tagline": "Smart property management",
-    "login": {
-      "title": "Login",
-      "subtitle": "Sign in to your account",
-      "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "password": "Password",
-      "passwordPlaceholder": "••••••••",
-      "forgotPassword": "Forgot password?",
-      "noAccount": "Don't have an account?",
-      "cta": "Sign in",
-      "ctaLoading": "Signing in..."
+  auth: {
+    tagline: 'Smart property management',
+    login: {
+      title: 'Login',
+      subtitle: 'Sign in to your account',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      password: 'Password',
+      passwordPlaceholder: '••••••••',
+      forgotPassword: 'Forgot password?',
+      noAccount: "Don't have an account?",
+      cta: 'Sign in',
+      ctaLoading: 'Signing in...'
     },
-    "signup": {
-      "title": "Create an account",
-      "subtitle": "Join Doogoo in seconds",
-      "fullName": "Full name",
-      "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "phone": "Phone",
-      "phonePlaceholder": "+1 234 567 8900",
-      "password": "Password",
-      "passwordPlaceholder": "••••••••",
-      "confirmPassword": "Confirm password",
-      "passwordHint": "At least 6 characters",
-      "hasAccount": "Already have an account?",
-      "cta": "Create my account",
-      "ctaLoading": "Creating..."
+    signup: {
+      title: 'Create an account',
+      subtitle: 'Join Doogoo in seconds',
+      fullName: 'Full name',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      phone: 'Phone',
+      phonePlaceholder: '+1 234 567 8900',
+      password: 'Password',
+      passwordPlaceholder: '••••••••',
+      confirmPassword: 'Confirm password',
+      passwordHint: 'At least 6 characters',
+      hasAccount: 'Already have an account?',
+      cta: 'Create my account',
+      ctaLoading: 'Creating...'
     },
-    "reset": {
-      "title": "Reset password",
-      "subtitle": "Enter your email address to receive a reset link",
-      "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "cta": "Send link",
-      "ctaLoading": "Sending...",
-      "successTitle": "Email sent!",
-      "successMessage": "A reset link has been sent to {email}",
-      "backToLogin": "Back to login",
-      "newPasswordTitle": "Set a new password",
-      "newPasswordSubtitle": "Enter your new password below",
-      "newPassword": "New password",
-      "newPasswordPlaceholder": "••••••••",
-      "confirmPassword": "Confirm password",
-      "confirmPasswordPlaceholder": "••••••••",
-      "passwordHint": "At least 6 characters",
-      "passwordMismatch": "Passwords do not match",
-      "passwordTooShort": "Password must be at least 6 characters",
-      "passwordTooWeak": "Password is too weak. Use letters and numbers",
-      "updateButton": "Validate",
-      "updateSuccess": "Password reset successfully!",
-      "updateError": "Error resetting password",
-      "tokenError": "Error verifying the link. Please request a new reset link",
-      "noSession": "Session expired. Please request a new reset link"
+    reset: {
+      title: 'Reset password',
+      subtitle: 'Enter your email address to receive a reset link',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      cta: 'Send link',
+      ctaLoading: 'Sending...',
+      successTitle: 'Email sent!',
+      successMessage: 'A reset link has been sent to {email}',
+      backToLogin: 'Back to login',
+      newPasswordTitle: 'Set a new password',
+      newPasswordSubtitle: 'Enter your new password below',
+      newPassword: 'New password',
+      newPasswordPlaceholder: '••••••••',
+      confirmPassword: 'Confirm password',
+      confirmPasswordPlaceholder: '••••••••',
+      passwordHint: 'At least 6 characters',
+      passwordMismatch: 'Passwords do not match',
+      passwordTooShort: 'Password must be at least 6 characters',
+      passwordTooWeak: 'Password is too weak. Use letters and numbers',
+      updateButton: 'Validate',
+      updateSuccess: 'Password reset successfully!',
+      updateError: 'Error resetting password',
+      tokenError: 'Error verifying the link. Please request a new reset link',
+      noSession: 'Session expired. Please request a new reset link'
     },
-    "confirm": {
-      "title": "Email confirmed",
-      "message": "Your account has been successfully confirmed. You can now sign in.",
-      "cta": "Go to login"
+    confirm: {
+      title: 'Email confirmed',
+      message: 'Your account has been successfully confirmed. You can now sign in.',
+      cta: 'Go to login'
     },
-    "oauth": {
-      "separator": "OR",
-      "label": "Quick login with",
-      "google": "Google",
-      "apple": "Apple"
+    oauth: {
+      separator: 'OR',
+      label: 'Quick login with',
+      google: 'Google',
+      apple: 'Apple'
     }
   },
-  "login": {
-    "title": "Login",
-    "subtitle": "Sign in to your account",
-    "tagline": "Smart property management",
-    "email": "Email",
-    "emailPlaceholder": "your@email.com",
-    "password": "Password",
-    "passwordPlaceholder": "••••••••",
-    "login": "Sign in",
-    "logging": "Signing in...",
-    "signup": "Create an account",
-    "signupSubtitle": "Join Doogoo today",
-    "creating": "Creating...",
-    "forgotPassword": "Forgot password?",
-    "noAccount": "Don't have an account?",
-    "hasAccount": "Already have an account?",
-    "fullName": "Full name",
-    "phone": "Phone",
-    "or": "OR",
-    "loginWithGoogle": "Sign in with Google",
-    "loginWithApple": "Sign in with Apple",
-    "oauthLoading": "Connecting...",
-    "oauthSuccess": "Login successful",
-    "oauthError": "{provider} login failed"
+  login: {
+    title: 'Login',
+    subtitle: 'Sign in to your account',
+    tagline: 'Smart property management',
+    email: 'Email',
+    emailPlaceholder: 'your@email.com',
+    password: 'Password',
+    passwordPlaceholder: '••••••••',
+    login: 'Sign in',
+    logging: 'Signing in...',
+    signup: 'Create an account',
+    signupSubtitle: 'Join Doogoo today',
+    creating: 'Creating...',
+    forgotPassword: 'Forgot password?',
+    noAccount: "Don't have an account?",
+    hasAccount: 'Already have an account?',
+    fullName: 'Full name',
+    phone: 'Phone',
+    or: 'OR',
+    loginWithGoogle: 'Sign in with Google',
+    loginWithApple: 'Sign in with Apple',
+    oauthLoading: 'Connecting...',
+    oauthSuccess: 'Login successful',
+    oauthError: '{provider} login failed'
   },
-  "currency": {
-    "EUR": "Euro (€)",
-    "USD": "US Dollar ($)",
-    "GBP": "British Pound (£)",
-    "XOF": "CFA Franc (CFA)"
+  currency: {
+    EUR: 'Euro (€)',
+    USD: 'US Dollar ($)',
+    GBP: 'British Pound (£)',
+    XOF: 'CFA Franc (CFA)'
   },
-  "language": {
-    "fr": "Français",
-    "en": "English"
+  language: {
+    fr: 'Français',
+    en: 'English'
   },
-  "toasts": {
-    "invoiceDownloaded": "Invoice PDF downloaded successfully",
-    "errorGeneratingInvoice": "Error generating invoice",
-    "propertyAdded": "Property added successfully",
-    "propertyUpdated": "Property updated successfully",
-    "propertyDeleted": "Property deleted successfully",
-    "paymentAdded": "Payment added successfully",
-    "paymentUpdated": "Payment updated successfully",
-    "tenantAdded": "Tenant added successfully",
-    "profileUpdated": "Profile updated successfully"
+  toasts: {
+    invoiceDownloaded: 'Invoice PDF downloaded successfully',
+    errorGeneratingInvoice: 'Error generating invoice',
+    propertyAdded: 'Property added successfully',
+    propertyUpdated: 'Property updated successfully',
+    propertyDeleted: 'Property deleted successfully',
+    paymentAdded: 'Payment added successfully',
+    paymentUpdated: 'Payment updated successfully',
+    tenantAdded: 'Tenant added successfully',
+    profileUpdated: 'Profile updated successfully'
   },
-  "status": {
-    "paid": "Paid",
-    "pending": "Pending",
-    "late": "Late",
-    "onTime": "On time"
+  status: {
+    paid: 'Paid',
+    pending: 'Pending',
+    late: 'Late',
+    onTime: 'On time'
   },
-  "security": {
-    "title": "Security & Login",
-    "subtitle": "Manage your password, two-factor authentication and active sessions.",
-    "password": {
-      "title": "Password",
-      "description": "Change your password regularly to secure your account.",
-      "changeButton": "Change password",
-      "modalTitle": "Change password",
-      "currentPassword": "Current password",
-      "currentPasswordPlaceholder": "Enter your current password",
-      "newPassword": "New password",
-      "newPasswordPlaceholder": "Enter your new password",
-      "confirmPassword": "Confirm password",
-      "confirmPasswordPlaceholder": "Confirm your new password",
-      "passwordHint": "Minimum 6 characters",
-      "passwordMismatch": "Passwords do not match",
-      "passwordTooShort": "Password must be at least 6 characters",
-      "currentPasswordIncorrect": "Current password is incorrect",
-      "updateButton": "Update",
-      "updating": "Updating...",
-      "changedSuccess": "✅ Password changed successfully! Your account remains logged in. A confirmation email has been sent to you.",
-      "changeError": "Error changing password",
-      "samePassword": "The new password must be different from the current one",
-      "passwordTooWeak": "Password is too weak. Use at least 8 characters with letters, numbers and special characters"
+  security: {
+    title: 'Security & Login',
+    subtitle: 'Manage your password, two-factor authentication and active sessions.',
+    password: {
+      title: 'Password',
+      description: 'Change your password regularly to secure your account.',
+      changeButton: 'Change password',
+      modalTitle: 'Change password',
+      currentPassword: 'Current password',
+      currentPasswordPlaceholder: 'Enter your current password',
+      newPassword: 'New password',
+      newPasswordPlaceholder: 'Enter your new password',
+      confirmPassword: 'Confirm password',
+      confirmPasswordPlaceholder: 'Confirm your new password',
+      passwordHint: 'Minimum 6 characters',
+      passwordMismatch: 'Passwords do not match',
+      passwordTooShort: 'Password must be at least 6 characters',
+      currentPasswordIncorrect: 'Current password is incorrect',
+      updateButton: 'Update',
+      updating: 'Updating...',
+      changedSuccess:
+        '✅ Password changed successfully! Your account remains logged in. A confirmation email has been sent to you.',
+      changeError: 'Error changing password',
+      samePassword: 'The new password must be different from the current one',
+      passwordTooWeak:
+        'Password is too weak. Use at least 8 characters with letters, numbers and special characters'
     },
-    "twoFactor": {
-      "title": "Two-factor authentication",
-      "description": "Add an extra layer of security with two-factor authentication.",
-      "enabled": "Enabled",
-      "disabled": "Disabled",
-      "enable": "Enable",
-      "disable": "Disable",
-      "enabledMessage": "Two-factor authentication enabled",
-      "disabledMessage": "Two-factor authentication disabled"
+    twoFactor: {
+      title: 'Two-factor authentication',
+      description: 'Add an extra layer of security with two-factor authentication.',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      enable: 'Enable',
+      disable: 'Disable',
+      enabledMessage: 'Two-factor authentication enabled',
+      disabledMessage: 'Two-factor authentication disabled'
     },
-    "sessions": {
-      "title": "Active sessions",
-      "description": "Manage devices connected to your account.",
-      "signOutAll": "Sign out all devices",
-      "signingOut": "Signing out...",
-      "confirmSignOut": "Are you sure you want to sign out all devices? You will need to log in again.",
-      "signedOutSuccess": "Successfully signed out all devices",
-      "signOutError": "Error signing out"
+    sessions: {
+      title: 'Active sessions',
+      description: 'Manage devices connected to your account.',
+      signOutAll: 'Sign out all devices',
+      signingOut: 'Signing out...',
+      confirmSignOut:
+        'Are you sure you want to sign out all devices? You will need to log in again.',
+      signedOutSuccess: 'Successfully signed out all devices',
+      signOutError: 'Error signing out'
     }
   },
-  "connection": {
-    "online": "Connected — Data synchronized",
-    "offline": "Offline — Read only"
+  connection: {
+    online: 'Connected — Data synchronized',
+    offline: 'Offline — Read only'
   },
-  "degradedMode": {
-    "message": "Degraded mode — some data may be incomplete"
+  degradedMode: {
+    message: 'Degraded mode — some data may be incomplete'
   },
-  "landing": {
-    "features": "Features",
-    "testimonials": "Testimonials",
-    "getStarted": "Get started",
-    "tryIt": "Try it",
-    "tryFree": "Try for free",
-    "heroTitle": "Supervise your real estate properties from a single platform",
-    "heroDescription": "Real-time monitoring, smart alerts, payment management. Everything you need to manage your properties remotely.",
-    "featuresTitle": "Everything you need",
-    "featuresDescription": "A complete solution for managing and monitoring your real estate properties",
-    "featureMonitoring": "Real-time monitoring",
-    "featureMonitoringDesc": "Track temperature, humidity and air quality in real time from your dashboard",
-    "featureAlerts": "Smart alerts",
-    "featureAlertsDesc": "Receive instant notifications in case of anomalies or incidents",
-    "featurePayments": "Payment management",
-    "featurePaymentsDesc": "Track your rents and rental payments in real time",
-    "testimonialsTitle": "What our clients say",
-    "ctaTitle": "Ready to optimize your property management?",
-    "ctaDescription": "Join hundreds of property owners who trust Doogoo"
+  landing: {
+    features: 'Features',
+    testimonials: 'Testimonials',
+    getStarted: 'Get started',
+    tryIt: 'Try it',
+    tryFree: 'Try for free',
+    heroTitle: 'Supervise your real estate properties from a single platform',
+    heroDescription:
+      'Real-time monitoring, smart alerts, payment management. Everything you need to manage your properties remotely.',
+    featuresTitle: 'Everything you need',
+    featuresDescription:
+      'A complete solution for managing and monitoring your real estate properties',
+    featureMonitoring: 'Real-time monitoring',
+    featureMonitoringDesc:
+      'Track temperature, humidity and air quality in real time from your dashboard',
+    featureAlerts: 'Smart alerts',
+    featureAlertsDesc: 'Receive instant notifications in case of anomalies or incidents',
+    featurePayments: 'Payment management',
+    featurePaymentsDesc: 'Track your rents and rental payments in real time',
+    testimonialsTitle: 'What our clients say',
+    ctaTitle: 'Ready to optimize your property management?',
+    ctaDescription: 'Join hundreds of property owners who trust Doogoo'
   }
 }
