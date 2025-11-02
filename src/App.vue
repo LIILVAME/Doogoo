@@ -6,9 +6,14 @@
   <DegradedModeBanner />
 
   <!-- Loader global pendant l'initialisation de la session -->
-  <div v-if="authStore.loadingSession" class="flex justify-center items-center min-h-screen bg-gray-50">
+  <div
+    v-if="authStore.loadingSession"
+    class="flex justify-center items-center min-h-screen bg-gray-50"
+  >
     <div class="text-center">
-      <div class="animate-spin w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+      <div
+        class="animate-spin w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-4"
+      ></div>
       <p class="text-gray-600">Chargement de l'application...</p>
       <p class="text-xs text-gray-400 mt-2">Initialisation de la session...</p>
     </div>
@@ -92,7 +97,7 @@ const handleAuthHash = async () => {
       })
 
       if (error) {
-        console.error('Erreur lors de l\'échange des tokens:', error)
+        console.error("Erreur lors de l'échange des tokens:", error)
         router.push('/login?error=token_exchange_failed')
         return true
       }
@@ -139,7 +144,7 @@ onMounted(async () => {
   try {
     // Initialise le SEO pour les métadonnées dynamiques
     initSEO()
-    
+
     // Initialise le watcher de connexion en premier
     connectionStore.initConnectionWatcher()
 
@@ -161,10 +166,7 @@ onMounted(async () => {
 
     // Étape 2 — Si session active, charger les données des stores
     if (authStore.user) {
-      await Promise.all([
-        propertiesStore.fetchProperties(),
-        paymentsStore.fetchPayments()
-      ])
+      await Promise.all([propertiesStore.fetchProperties(), paymentsStore.fetchPayments()])
 
       // Initialise le realtime après avoir chargé les données
       propertiesStore.initRealtime()
@@ -187,10 +189,7 @@ onMounted(async () => {
           }
 
           // Charge les données des stores
-          await Promise.all([
-            propertiesStore.fetchProperties(),
-            paymentsStore.fetchPayments()
-          ])
+          await Promise.all([propertiesStore.fetchProperties(), paymentsStore.fetchPayments()])
 
           // Réactive le realtime
           propertiesStore.initRealtime()
@@ -203,19 +202,29 @@ onMounted(async () => {
         if (session?.user) {
           authStore.user = session.user
           authStore.session = session
-          
+
           // Log pour debugging (peut être retiré en production)
-          console.log('✅ USER_UPDATED: Session utilisateur mise à jour', {
-            userId: session.user.id,
-            email: session.user.email,
-            timestamp: new Date().toISOString()
-          })
-          
+          // Log sécurisé (données masquées)
+          import('@/utils/sanitizeLogs')
+            .then(({ sanitizeUser }) => {
+              console.log('✅ USER_UPDATED: Session utilisateur mise à jour', {
+                user: sanitizeUser(session.user),
+                timestamp: new Date().toISOString()
+              })
+            })
+            .catch(() => {
+              // Fallback si sanitizeLogs non disponible
+              console.log('✅ USER_UPDATED: Session utilisateur mise à jour')
+            })
+
           // Rafraîchit le profil si nécessaire
           try {
             await authStore.fetchProfile()
           } catch (err) {
-            console.warn('Impossible de rafraîchir le profil après mise à jour (non bloquant):', err)
+            console.warn(
+              'Impossible de rafraîchir le profil après mise à jour (non bloquant):',
+              err
+            )
           }
         }
       } else if (event === 'SIGNED_OUT') {
@@ -231,12 +240,12 @@ onMounted(async () => {
             const { useAlertsStore } = await import('@/stores/alertsStore')
             const { useAnalyticsStore } = await import('@/stores/analyticsStore')
             const { useReportsStore } = await import('@/stores/reportsStore')
-            
+
             const tenantsStore = useTenantsStore()
             const alertsStore = useAlertsStore()
             const analyticsStore = useAnalyticsStore()
             const reportsStore = useReportsStore()
-            
+
             propertiesStore.$reset()
             paymentsStore.$reset()
             tenantsStore.$reset()
@@ -245,7 +254,10 @@ onMounted(async () => {
             reportsStore.$reset()
           } catch (resetError) {
             // Si certains stores n'existent pas, continue quand même
-            console.warn('Erreur lors de la réinitialisation des stores (non bloquant):', resetError)
+            console.warn(
+              'Erreur lors de la réinitialisation des stores (non bloquant):',
+              resetError
+            )
           }
 
           // Réinitialise le profil
@@ -265,7 +277,7 @@ onMounted(async () => {
     // Initialise aussi l'écouteur legacy pour compatibilité
     authStore.initAuthListener()
   } catch (error) {
-    console.error('Erreur lors de l\'initialisation de l\'application:', error)
+    console.error("Erreur lors de l'initialisation de l'application:", error)
     // Ne pas bloquer le rendu même en cas d'erreur
     authStore.loadingSession = false
   }
@@ -284,4 +296,3 @@ onMounted(async () => {
   opacity: 0;
 }
 </style>
-
