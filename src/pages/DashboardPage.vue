@@ -20,11 +20,12 @@
         <!-- Header avec statistiques -->
         <DashboardHeader :stats="globalStats" />
 
-        <!-- État de chargement initial avec skeletons -->
+        <!-- État de chargement initial avec skeletons (uniquement si aucune donnée) -->
         <div
           v-if="
             (propertiesStore.loading || paymentsStore.loading) &&
-            propertiesStore.properties.length === 0
+            propertiesStore.properties.length === 0 &&
+            paymentsStore.payments.length === 0
           "
           class="space-y-4 sm:space-y-6"
         >
@@ -33,14 +34,13 @@
           </div>
         </div>
 
-        <!-- Loader inline si données déjà chargées -->
-        <div v-else-if="propertiesStore.loading || paymentsStore.loading" class="text-center py-8">
-          <InlineLoader />
-        </div>
-
-        <!-- Erreur -->
+        <!-- Erreur (uniquement si aucune donnée en cache) -->
         <div
-          v-else-if="propertiesStore.error || paymentsStore.error"
+          v-else-if="
+            (propertiesStore.error || paymentsStore.error) &&
+            propertiesStore.properties.length === 0 &&
+            paymentsStore.payments.length === 0
+          "
           class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
         >
           <div class="flex items-center">
@@ -63,14 +63,34 @@
           </div>
         </div>
 
-        <!-- Contenu principal -->
-        <template v-else>
+        <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
+        <div>
+          <!-- Loader inline si refresh en cours ET données déjà présentes -->
+          <div
+            v-if="
+              (propertiesStore.loading || paymentsStore.loading) &&
+              (propertiesStore.properties.length > 0 || paymentsStore.payments.length > 0)
+            "
+            class="text-center py-4 mb-4"
+          >
+            <InlineLoader />
+          </div>
+
           <!-- Liste des appartements -->
-          <PropertiesList :properties="properties" @add-click="isModalOpen = true" />
+          <PropertiesList
+            :properties="properties"
+            @add-click="isModalOpen = true"
+            @edit-property="handleEditProperty"
+            @delete-property="handleDeleteProperty"
+          />
 
           <!-- Section Paiements -->
-          <PaymentsSection :payments="payments" />
-        </template>
+          <PaymentsSection
+            :payments="payments"
+            @edit-payment="handleEditPayment"
+            @delete-payment="handleDeletePayment"
+          />
+        </div>
       </div>
     </main>
 
@@ -83,17 +103,35 @@
 
     <!-- Floating Action Button (mobile only) -->
     <FloatingActionButton :aria-label="$t('common.addProperty')" @click="isModalOpen = true" />
+
+    <!-- Modal de confirmation de suppression -->
+    <ConfirmModal
+      :isOpen="showDeleteConfirm"
+      title="Supprimer ce bien ?"
+      :message="
+        $t('properties.confirmDelete') ||
+        'Êtes-vous sûr de vouloir supprimer ce bien ? Cette action est irréversible.'
+      "
+      confirm-label="Supprimer"
+      cancel-label="Annuler"
+      variant="danger"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+      @update:isOpen="showDeleteConfirm = $event"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import Sidebar from '../components/Sidebar.vue'
 import DashboardHeader from '../components/dashboard/DashboardHeader.vue'
 import PropertiesList from '../components/dashboard/PropertiesList.vue'
 import PaymentsSection from '../components/dashboard/PaymentsSection.vue'
 import AddPropertyModal from '../components/dashboard/AddPropertyModal.vue'
+import ConfirmModal from '../components/common/ConfirmModal.vue'
 import SkeletonCard from '../components/common/SkeletonCard.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import FloatingActionButton from '../components/common/FloatingActionButton.vue'
@@ -103,6 +141,7 @@ import { usePaymentsStore } from '@/stores/paymentsStore'
 
 const propertiesStore = usePropertiesStore()
 const paymentsStore = usePaymentsStore()
+const router = useRouter()
 
 // Pull-to-refresh
 const mainElement = ref(null)
@@ -134,13 +173,14 @@ const globalStats = computed(() => ({
 
 /**
  * Charge les données depuis Supabase au montage du composant
- * Initialise le temps réel pour les mises à jour automatiques
+ * Note: App.vue charge déjà les données au démarrage, on ne recharge jamais ici
+ * pour éviter les conflits et les états loading bloqués
  */
-onMounted(async () => {
-  await Promise.all([propertiesStore.fetchProperties(), paymentsStore.fetchPayments()])
-
-  // Note: Realtime est déjà initialisé globalement dans App.vue
-  // Pas besoin de réinitialiser ici
+onMounted(() => {
+  // App.vue gère déjà le chargement initial et le realtime
+  // On fait confiance au store pour les données déjà chargées
+  // Si les données ne sont pas présentes, c'est que App.vue est encore en train de charger
+  // ou qu'il y a un problème de session, on attend simplement
 })
 
 /**
@@ -152,6 +192,8 @@ onUnmounted(() => {
 })
 
 const isModalOpen = ref(false)
+const confirmDeleteId = ref(null)
+const showDeleteConfirm = ref(false)
 
 /**
  * Gère l'ajout d'un nouveau bien via le store Pinia (Supabase)
@@ -164,6 +206,64 @@ const handleAddProperty = async newProperty => {
   } catch (error) {
     // Le toast d'erreur est géré dans le store
     console.error("Erreur lors de l'ajout du bien:", error)
+  }
+}
+
+/**
+ * Gère l'édition d'un bien - redirige vers BiensPage
+ */
+const handleEditProperty = property => {
+  // Redirige vers la page Biens qui gère les modals d'édition
+  router.push({ path: '/biens', query: { mode: 'edit', id: property.id } })
+}
+
+/**
+ * Gère la suppression d'un bien
+ */
+const handleDeleteProperty = propertyId => {
+  confirmDeleteId.value = propertyId
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (!confirmDeleteId.value) return
+
+  try {
+    await propertiesStore.removeProperty(confirmDeleteId.value)
+    confirmDeleteId.value = null
+    showDeleteConfirm.value = false
+    // Le toast est géré dans le store
+  } catch (error) {
+    // Le toast d'erreur est géré dans le store
+    console.error('Erreur lors de la suppression du bien:', error)
+    confirmDeleteId.value = null
+    showDeleteConfirm.value = false
+  }
+}
+
+const cancelDelete = () => {
+  confirmDeleteId.value = null
+  showDeleteConfirm.value = false
+}
+
+/**
+ * Gère l'édition d'un paiement - redirige vers PaiementsPage
+ */
+const handleEditPayment = payment => {
+  // Redirige vers la page Paiements qui gère les modals d'édition
+  router.push({ path: '/paiements', query: { mode: 'edit', id: payment.id } })
+}
+
+/**
+ * Gère la suppression d'un paiement
+ */
+const handleDeletePayment = async paymentId => {
+  try {
+    await paymentsStore.removePayment(paymentId)
+    // Le toast est géré dans le store
+  } catch (error) {
+    // Le toast d'erreur est géré dans le store
+    console.error('Erreur lors de la suppression du paiement:', error)
   }
 }
 

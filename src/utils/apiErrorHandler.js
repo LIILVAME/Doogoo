@@ -75,7 +75,7 @@ export function handleApiError(error, context = '') {
         extra: { message, userMessage: message }
       })
     }
-  } catch (sentryError) {
+  } catch {
     // Sentry non disponible, on continue
   }
 
@@ -118,8 +118,9 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
     }
   }
 
-  // Timeout par défaut : 10 secondes pour éviter les blocages
-  const timeout = options.timeout || 10000
+  // Timeout par défaut : 8 secondes pour éviter les blocages
+  // Réduit de 10s à 8s pour échouer plus rapidement et éviter les retries inutiles
+  const timeout = options.timeout || 8000
 
   // Fonction wrapper pour le retry avec timeout
   const wrappedApiCall = async () => {
@@ -185,14 +186,15 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
     }
   }
 
-  // Exécute avec retry pour les erreurs réseau
-  // Réduit les délais pour éviter les ralentissements (3 tentatives max : 300ms, 600ms, 1200ms = max 2.1s)
+  // Exécute avec retry pour les erreurs réseau uniquement
+  // Pas de retry pour les timeouts (ils indiquent un problème plus profond)
   const retryResult = await retry(wrappedApiCall, {
-    maxRetries: 2, // Réduit à 2 tentatives (total 3 avec la première)
+    maxRetries: 1, // Réduit à 1 tentative (total 2 avec la première)
     initialDelay: 300, // Réduit à 300ms
-    maxDelay: 1200, // Réduit à 1.2s max
+    maxDelay: 600, // Réduit à 600ms max
     shouldRetry: error => {
-      // Réessaye seulement pour les erreurs réseau
+      // Réessaye SEULEMENT pour les vraies erreurs réseau (pas les timeouts)
+      // Les timeouts sont exclus par isRetryableError maintenant
       if (isRetryableError(error)) {
         showRetryToast()
         return true

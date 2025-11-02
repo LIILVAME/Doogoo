@@ -75,7 +75,10 @@ export default {
     type: 'Type',
     rent: 'Rent',
     monthlyRent: 'Monthly rent (€)',
-    status: 'Status',
+    status: {
+      occupied: 'Occupied',
+      vacant: 'Vacant'
+    },
     occupied: 'Occupied',
     vacant: 'Vacant',
     free: 'Free',
@@ -132,6 +135,7 @@ export default {
     totalRent: 'Total rents',
     editTenant: 'Edit tenant',
     deleteTenant: 'Delete tenant',
+    confirmDelete: 'Are you sure you want to delete this tenant? The property will be released.',
     noTenants: 'No tenants registered',
     name: 'Name',
     tenantName: 'Tenant name',
@@ -234,6 +238,8 @@ export default {
         city: 'City',
         rent: 'Rent',
         status: 'Status',
+        paymentStatus: 'Payment status',
+        paymentDate: 'Payment date',
         totalPaid: 'Total Paid',
         delayed: 'Delay',
         occupancy: 'Occupancy Rate'
@@ -249,7 +255,9 @@ export default {
       exportSuccess: 'Export successful'
     },
     export: {
-      success: 'Report exported successfully'
+      success: 'Report exported successfully',
+      loading: 'Exporting...',
+      loadingDescription: 'Generating PDF file'
     },
     noData: {
       title: 'No report available',
@@ -316,7 +324,10 @@ export default {
     themeDarkDescription: 'Dark interface for visual comfort',
     themeAutoDescription: 'Follows system preferences',
     integrationsComingSoon: 'Integrations coming soon',
-    integrationsDescription: 'Connect Doogoo to your favorite tools'
+    integrationsDescription: 'Connect Doogoo to your favorite tools',
+    switchToDark: 'Switch to dark mode',
+    switchToLight: 'Switch to light mode',
+    clickToToggle: 'Click to toggle'
   },
   auth: {
     tagline: 'Smart property management',

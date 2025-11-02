@@ -6,6 +6,7 @@ import { useToastStore } from './toastStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
 import { propertiesApi } from '@/api'
 import { tenantsApi } from '@/api'
+import { useStoreLoader } from '@/composables/useStoreLoader'
 
 /**
  * Store Pinia pour gérer les biens immobiliers
@@ -16,8 +17,11 @@ export const usePropertiesStore = defineStore(
   () => {
     // State
     const properties = ref([])
-    const loading = ref(false)
+    const loading = ref(false) // Toujours initialisé à false
     const error = ref(null)
+
+    // Surveillance automatique du loading pour éviter les blocages
+    const { cleanup: _cleanupLoader } = useStoreLoader(loading, 'PropertiesStore')
     let realtimeChannel = null
     let isRealtimeInitialized = false
     let isRealtimeActive = false // Flag pour désactiver les callbacks lors du cleanup
@@ -39,11 +43,14 @@ export const usePropertiesStore = defineStore(
 
       // Évite les requêtes multiples si déjà en cours (sauf si force = true)
       if (loading.value && !force) {
+        console.debug('fetchProperties: requête déjà en cours, skip')
         return
       }
 
-      // Si force = true mais loading est true, on reset loading pour éviter blocage
-      if (loading.value && force) {
+      // Si loading est à true (bloqué), on le reset avant de commencer
+      // Le composable useStoreLoader devrait l'avoir déjà fait, mais sécurité supplémentaire
+      if (loading.value) {
+        console.warn('⚠️ fetchProperties: loading déjà à true au début, reset avant fetch')
         loading.value = false
       }
 
@@ -55,6 +62,8 @@ export const usePropertiesStore = defineStore(
         return
       }
 
+      // Note: Le composable useStoreLoader gère déjà le timeout de sécurité
+      // On fait confiance au finally pour remettre loading à false
       loading.value = true
       error.value = null
 
@@ -126,6 +135,7 @@ export const usePropertiesStore = defineStore(
         }
       } finally {
         // Garantit que loading est toujours remis à false, même en cas d'erreur
+        // Le composable useStoreLoader surveille aussi, mais c'est notre responsabilité principale
         loading.value = false
       }
     }

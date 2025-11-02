@@ -24,7 +24,7 @@
           @filter="handleFilter"
         />
 
-        <!-- État de chargement avec skeletons -->
+        <!-- État de chargement avec skeletons (uniquement si aucune donnée) -->
         <div
           v-if="propertiesStore.loading && propertiesStore.properties.length === 0"
           class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6"
@@ -32,14 +32,9 @@
           <SkeletonCard v-for="n in 6" :key="n" />
         </div>
 
-        <!-- Loader inline si données déjà chargées (refresh) -->
-        <div v-else-if="propertiesStore.loading" class="text-center py-8">
-          <InlineLoader />
-        </div>
-
-        <!-- Erreur -->
+        <!-- Erreur (uniquement si aucune donnée en cache) -->
         <div
-          v-else-if="propertiesStore.error"
+          v-else-if="propertiesStore.error && propertiesStore.properties.length === 0"
           class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
         >
           <div class="flex items-center">
@@ -62,15 +57,25 @@
           </div>
         </div>
 
-        <!-- Liste des biens -->
-        <PropertiesList
-          v-else
-          :properties="filteredProperties"
-          :has-filters="hasActiveFilters"
-          @edit-property="handleEditProperty"
-          @delete-property="handleDeleteProperty"
-          @clear-filters="clearFilters"
-        />
+        <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
+        <div>
+          <!-- Loader inline si refresh en cours ET données déjà présentes -->
+          <div
+            v-if="propertiesStore.loading && propertiesStore.properties.length > 0"
+            class="text-center py-4 mb-4"
+          >
+            <InlineLoader />
+          </div>
+
+          <!-- Liste des biens -->
+          <PropertiesList
+            :properties="filteredProperties"
+            :has-filters="hasActiveFilters"
+            @edit-property="handleEditProperty"
+            @delete-property="handleDeleteProperty"
+            @clear-filters="clearFilters"
+          />
+        </div>
       </div>
     </main>
 
@@ -91,12 +96,28 @@
 
     <!-- Floating Action Button (mobile only) -->
     <FloatingActionButton :aria-label="$t('common.addProperty')" @click="isAddModalOpen = true" />
+
+    <!-- Modal de confirmation de suppression -->
+    <ConfirmModal
+      :isOpen="showDeleteConfirm"
+      title="Supprimer ce bien ?"
+      :message="
+        $t('properties.confirmDelete') ||
+        'Cette action est irréversible. Toutes les données associées seront également supprimées.'
+      "
+      confirm-label="Supprimer"
+      cancel-label="Annuler"
+      variant="danger"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+      @update:isOpen="showDeleteConfirm = $event"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useI18n } from '@/composables/useLingui'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import Sidebar from '../components/Sidebar.vue'
 import PropertiesHeader from '../components/properties/PropertiesHeader.vue'
@@ -104,6 +125,7 @@ import PropertiesFilters from '../components/properties/PropertiesFilters.vue'
 import PropertiesList from '../components/properties/PropertiesList.vue'
 import AddPropertyModal from '../components/dashboard/AddPropertyModal.vue'
 import EditPropertyModal from '../components/properties/EditPropertyModal.vue'
+import ConfirmModal from '../components/common/ConfirmModal.vue'
 import SkeletonCard from '../components/common/SkeletonCard.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import FloatingActionButton from '../components/common/FloatingActionButton.vue'
@@ -112,7 +134,8 @@ import { usePropertiesStore } from '@/stores/propertiesStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
 
 const propertiesStore = usePropertiesStore()
-const { t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
 // Pull-to-refresh
 const mainElement = ref(null)
@@ -126,13 +149,46 @@ const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
 
 /**
  * Charge les propriétés depuis Supabase au montage
- * Initialise le temps réel pour les mises à jour automatiques
+ * Note: App.vue charge déjà les données au démarrage, on ne recharge jamais ici
+ * pour éviter les conflits et les états loading bloqués
  */
-onMounted(async () => {
-  await propertiesStore.fetchProperties()
-  // Note: Realtime est déjà initialisé globalement dans App.vue
-  // Pas besoin de réinitialiser ici
+onMounted(() => {
+  // App.vue gère déjà le chargement initial et le realtime
+  // On fait confiance au store pour les données déjà chargées
+
+  // Gère les query params pour ouvrir automatiquement le modal d'édition
+  if (route.query.mode === 'edit' && route.query.id) {
+    const property = propertiesStore.properties.find(p => p.id === route.query.id)
+    if (property) {
+      selectedProperty.value = property
+      isEditModalOpen.value = true
+      // Nettoie l'URL
+      router.replace({ path: '/biens' })
+    }
+  } else if (route.query.mode === 'add') {
+    isAddModalOpen.value = true
+    // Nettoie l'URL
+    router.replace({ path: '/biens' })
+  }
 })
+
+// Surveille les changements de route pour gérer les modals
+watch(
+  () => route.query,
+  query => {
+    if (query.mode === 'edit' && query.id) {
+      const property = propertiesStore.properties.find(p => p.id === query.id)
+      if (property) {
+        selectedProperty.value = property
+        isEditModalOpen.value = true
+        router.replace({ path: '/biens' })
+      }
+    } else if (query.mode === 'add') {
+      isAddModalOpen.value = true
+      router.replace({ path: '/biens' })
+    }
+  }
+)
 
 /**
  * Arrête le temps réel au démontage (optionnel, peut rester actif globalement)
@@ -284,17 +340,33 @@ const handleUpdateProperty = async updatedData => {
 
 /**
  * Gère la suppression d'un bien via Supabase
- * TODO v0.2.0 : Utiliser un composant de confirmation (modal) au lieu de confirm()
  */
-const handleDeleteProperty = async propertyId => {
-  if (window.confirm(t('properties.confirmDelete'))) {
-    try {
-      await propertiesStore.removeProperty(propertyId)
-      // Le toast est géré dans le store
-    } catch (error) {
-      // Le toast d'erreur est géré dans le store
-      console.error('Erreur lors de la suppression du bien:', error)
-    }
+const confirmDeleteId = ref(null)
+const showDeleteConfirm = ref(false)
+
+const handleDeleteProperty = propertyId => {
+  confirmDeleteId.value = propertyId
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (!confirmDeleteId.value) return
+
+  try {
+    await propertiesStore.removeProperty(confirmDeleteId.value)
+    confirmDeleteId.value = null
+    showDeleteConfirm.value = false
+    // Le toast est géré dans le store
+  } catch (error) {
+    // Le toast d'erreur est géré dans le store
+    console.error('Erreur lors de la suppression du bien:', error)
+    confirmDeleteId.value = null
+    showDeleteConfirm.value = false
   }
+}
+
+const cancelDelete = () => {
+  confirmDeleteId.value = null
+  showDeleteConfirm.value = false
 }
 </script>

@@ -14,7 +14,6 @@ const BiensPage = () => import('../pages/BiensPage.vue')
 const PaiementsPage = () => import('../pages/PaiementsPage.vue')
 const LocatairesPage = () => import('../pages/LocatairesPage.vue')
 const ParametresPage = () => import('../pages/ParametresPage.vue')
-const StatsPage = () => import('../pages/StatsPage.vue')
 const ReportsPage = () => import('../pages/ReportsPage.vue')
 const AlertsPage = () => import('../pages/AlertsPage.vue')
 
@@ -158,17 +157,9 @@ const routes = [
   {
     path: '/stats',
     name: 'Stats',
-    component: StatsPage,
+    redirect: '/rapports',
     meta: {
-      requiresAuth: true,
-      seo: {
-        title: 'Statistiques — Visualisez la rentabilité de votre portefeuille | Doogoo',
-        description:
-          "Analysez les performances de votre portefeuille immobilier avec des graphiques et statistiques détaillés. Revenus, taux d'occupation, revenus par bien.",
-        ogTitle: 'Statistiques — Doogoo',
-        ogDescription:
-          'Visualisez la rentabilité de votre portefeuille immobilier avec des graphiques détaillés.'
-      }
+      requiresAuth: true
     }
   },
   {

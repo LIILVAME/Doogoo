@@ -2,7 +2,9 @@
   <div class="card border-2" :class="borderColorClass">
     <div class="flex items-start justify-between mb-4">
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-1">🧪 Test du changement de mot de passe</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-1">
+          🧪 Test du changement de mot de passe
+        </h3>
         <p class="text-sm text-gray-600">Vérification de toutes les étapes du processus</p>
       </div>
       <button
@@ -10,13 +12,39 @@
         :disabled="isRunning"
         class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
       >
-        <svg v-if="isRunning" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <svg
+          v-if="isRunning"
+          class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         {{ isRunning ? 'Tests en cours...' : 'Lancer tous les tests' }}
       </button>
@@ -33,10 +61,22 @@
             </span>
             <span class="font-medium">1. Authentification utilisateur</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.auth === 'pending' ? 'En attente' : testResults.auth === 'pass' ? '✅ OK' : testResults.auth === 'fail' ? '❌ Échec' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.auth === 'pending'
+              ? 'En attente'
+              : testResults.auth === 'pass'
+                ? '✅ OK'
+                : testResults.auth === 'fail'
+                  ? '❌ Échec'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <p v-if="testResults.auth === 'fail'" class="text-xs text-red-600 mt-1 ml-6">{{ testResults.authError }}</p>
-        <p v-if="testResults.auth === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">{{ testResults.authEmail }}</p>
+        <p v-if="testResults.auth === 'fail'" class="text-xs text-red-600 mt-1 ml-6">
+          {{ testResults.authError }}
+        </p>
+        <p v-if="testResults.auth === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">
+          {{ testResults.authEmail }}
+        </p>
       </div>
 
       <!-- Test 2: Validation client-side -->
@@ -48,12 +88,49 @@
             </span>
             <span class="font-medium">2. Validations client-side</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.clientValidation === 'pending' ? 'En attente' : testResults.clientValidation === 'pass' ? '✅ OK' : testResults.clientValidation === 'fail' ? '❌ Échec' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.clientValidation === 'pending'
+              ? 'En attente'
+              : testResults.clientValidation === 'pass'
+                ? '✅ OK'
+                : testResults.clientValidation === 'fail'
+                  ? '❌ Échec'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <div v-if="testResults.clientValidation === 'pass' || testResults.clientValidation === 'fail'" class="text-xs text-gray-600 mt-1 ml-6 space-y-1">
-          <div>• Correspondance des mots de passe: <span :class="testResults.clientValidationDetails?.passwordMatch ? 'text-green-600' : 'text-red-600'">{{ testResults.clientValidationDetails?.passwordMatch ? '✅' : '❌' }}</span></div>
-          <div>• Longueur minimale (6+): <span :class="testResults.clientValidationDetails?.minLength ? 'text-green-600' : 'text-red-600'">{{ testResults.clientValidationDetails?.minLength ? '✅' : '❌' }}</span></div>
-          <div>• Différence avec l'ancien: <span :class="testResults.clientValidationDetails?.different ? 'text-green-600' : 'text-red-600'">{{ testResults.clientValidationDetails?.different ? '✅' : '❌' }}</span></div>
+        <div
+          v-if="testResults.clientValidation === 'pass' || testResults.clientValidation === 'fail'"
+          class="text-xs text-gray-600 mt-1 ml-6 space-y-1"
+        >
+          <div>
+            • Correspondance des mots de passe:
+            <span
+              :class="
+                testResults.clientValidationDetails?.passwordMatch
+                  ? 'text-green-600'
+                  : 'text-red-600'
+              "
+              >{{ testResults.clientValidationDetails?.passwordMatch ? '✅' : '❌' }}</span
+            >
+          </div>
+          <div>
+            • Longueur minimale (6+):
+            <span
+              :class="
+                testResults.clientValidationDetails?.minLength ? 'text-green-600' : 'text-red-600'
+              "
+              >{{ testResults.clientValidationDetails?.minLength ? '✅' : '❌' }}</span
+            >
+          </div>
+          <div>
+            • Différence avec l'ancien:
+            <span
+              :class="
+                testResults.clientValidationDetails?.different ? 'text-green-600' : 'text-red-600'
+              "
+              >{{ testResults.clientValidationDetails?.different ? '✅' : '❌' }}</span
+            >
+          </div>
         </div>
       </div>
 
@@ -66,9 +143,22 @@
             </span>
             <span class="font-medium">3. Vérification ancien mot de passe</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.currentPasswordCheck === 'pending' ? 'En attente' : testResults.currentPasswordCheck === 'pass' ? '✅ OK' : testResults.currentPasswordCheck === 'fail' ? '❌ Échec' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.currentPasswordCheck === 'pending'
+              ? 'En attente'
+              : testResults.currentPasswordCheck === 'pass'
+                ? '✅ OK'
+                : testResults.currentPasswordCheck === 'fail'
+                  ? '❌ Échec'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <p v-if="testResults.currentPasswordCheck === 'fail'" class="text-xs text-red-600 mt-1 ml-6">{{ testResults.currentPasswordCheckError }}</p>
+        <p
+          v-if="testResults.currentPasswordCheck === 'fail'"
+          class="text-xs text-red-600 mt-1 ml-6"
+        >
+          {{ testResults.currentPasswordCheckError }}
+        </p>
       </div>
 
       <!-- Test 4: Mise à jour Supabase -->
@@ -80,10 +170,22 @@
             </span>
             <span class="font-medium">4. Mise à jour via Supabase</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.supabaseUpdate === 'pending' ? 'En attente' : testResults.supabaseUpdate === 'pass' ? '✅ OK' : testResults.supabaseUpdate === 'fail' ? '❌ Échec' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.supabaseUpdate === 'pending'
+              ? 'En attente'
+              : testResults.supabaseUpdate === 'pass'
+                ? '✅ OK'
+                : testResults.supabaseUpdate === 'fail'
+                  ? '❌ Échec'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <p v-if="testResults.supabaseUpdate === 'fail'" class="text-xs text-red-600 mt-1 ml-6">{{ testResults.supabaseUpdateError }}</p>
-        <p v-if="testResults.supabaseUpdate === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">Mot de passe mis à jour avec succès</p>
+        <p v-if="testResults.supabaseUpdate === 'fail'" class="text-xs text-red-600 mt-1 ml-6">
+          {{ testResults.supabaseUpdateError }}
+        </p>
+        <p v-if="testResults.supabaseUpdate === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">
+          Mot de passe mis à jour avec succès
+        </p>
       </div>
 
       <!-- Test 5: Événement USER_UPDATED -->
@@ -95,10 +197,22 @@
             </span>
             <span class="font-medium">5. Événement USER_UPDATED</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.userUpdatedEvent === 'pending' ? 'En attente...' : testResults.userUpdatedEvent === 'pass' ? '✅ OK' : testResults.userUpdatedEvent === 'fail' ? '❌ Échec' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.userUpdatedEvent === 'pending'
+              ? 'En attente...'
+              : testResults.userUpdatedEvent === 'pass'
+                ? '✅ OK'
+                : testResults.userUpdatedEvent === 'fail'
+                  ? '❌ Échec'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <p v-if="testResults.userUpdatedEvent === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">Événement détecté et session rafraîchie</p>
-        <p v-if="testResults.userUpdatedEvent === 'fail'" class="text-xs text-orange-600 mt-1 ml-6">⚠️ Événement non détecté (peut être normal si délai trop court)</p>
+        <p v-if="testResults.userUpdatedEvent === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">
+          Événement détecté et session rafraîchie
+        </p>
+        <p v-if="testResults.userUpdatedEvent === 'fail'" class="text-xs text-orange-600 mt-1 ml-6">
+          ⚠️ Événement non détecté (peut être normal si délai trop court)
+        </p>
       </div>
 
       <!-- Test 6: Persistance de session -->
@@ -110,10 +224,22 @@
             </span>
             <span class="font-medium">6. Persistance de session</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.sessionPersistence === 'pending' ? 'En attente' : testResults.sessionPersistence === 'pass' ? '✅ OK' : testResults.sessionPersistence === 'fail' ? '❌ Échec' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.sessionPersistence === 'pending'
+              ? 'En attente'
+              : testResults.sessionPersistence === 'pass'
+                ? '✅ OK'
+                : testResults.sessionPersistence === 'fail'
+                  ? '❌ Échec'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <p v-if="testResults.sessionPersistence === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">Utilisateur toujours connecté après changement</p>
-        <p v-if="testResults.sessionPersistence === 'fail'" class="text-xs text-red-600 mt-1 ml-6">⚠️ Session perdue après changement</p>
+        <p v-if="testResults.sessionPersistence === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">
+          Utilisateur toujours connecté après changement
+        </p>
+        <p v-if="testResults.sessionPersistence === 'fail'" class="text-xs text-red-600 mt-1 ml-6">
+          ⚠️ Session perdue après changement
+        </p>
       </div>
 
       <!-- Test 7: Configuration email Supabase -->
@@ -125,9 +251,20 @@
             </span>
             <span class="font-medium">7. Configuration email Supabase</span>
           </div>
-          <span class="text-xs text-gray-500">{{ testResults.emailConfig === 'pending' ? 'Vérification...' : testResults.emailConfig === 'pass' ? '✅ OK' : testResults.emailConfig === 'fail' ? '⚠️ À vérifier' : '⏸️ Non testé' }}</span>
+          <span class="text-xs text-gray-500">{{
+            testResults.emailConfig === 'pending'
+              ? 'Vérification...'
+              : testResults.emailConfig === 'pass'
+                ? '✅ OK'
+                : testResults.emailConfig === 'fail'
+                  ? '⚠️ À vérifier'
+                  : '⏸️ Non testé'
+          }}</span>
         </div>
-        <div v-if="testResults.emailConfig === 'fail'" class="text-xs text-orange-600 mt-1 ml-6 space-y-1">
+        <div
+          v-if="testResults.emailConfig === 'fail'"
+          class="text-xs text-orange-600 mt-1 ml-6 space-y-1"
+        >
           <p>⚠️ L'email de confirmation n'est peut-être pas configuré dans Supabase</p>
           <p class="mt-2 font-medium">📋 Actions à vérifier dans Supabase Dashboard:</p>
           <ul class="list-disc list-inside ml-2 space-y-1 mt-1">
@@ -137,7 +274,9 @@
             <li>Vérifier les paramètres SMTP (si custom SMTP)</li>
           </ul>
         </div>
-        <p v-if="testResults.emailConfig === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">Configuration email détectée (vérification basique)</p>
+        <p v-if="testResults.emailConfig === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">
+          Configuration email détectée (vérification basique)
+        </p>
       </div>
     </div>
 
@@ -146,14 +285,14 @@
       <div class="flex items-center justify-between">
         <div>
           <p class="font-medium text-gray-900">Résultat global</p>
-          <p class="text-sm text-gray-600 mt-1">
-            {{ passedTests }}/{{ totalTests }} tests réussis
-          </p>
+          <p class="text-sm text-gray-600 mt-1">{{ passedTests }}/{{ totalTests }} tests réussis</p>
         </div>
-        <div :class="[
-          'px-3 py-1 rounded-full text-sm font-medium',
-          allTestsPassed ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-        ]">
+        <div
+          :class="[
+            'px-3 py-1 rounded-full text-sm font-medium',
+            allTestsPassed ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+          ]"
+        >
           {{ allTestsPassed ? '✅ Tous les tests passent' : '⚠️ Certains tests ont échoué' }}
         </div>
       </div>
@@ -163,16 +302,17 @@
     <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
       <p class="text-sm text-blue-900 font-medium mb-2">ℹ️ Instructions</p>
       <p class="text-xs text-blue-800">
-        Ce test vérifie toutes les étapes du changement de mot de passe. 
-        <strong>Ne lancez pas ce test avec votre vrai mot de passe</strong> — créez un compte de test ou utilisez un mot de passe temporaire.
-        Le test va réellement changer votre mot de passe, puis le remettre à l'ancien.
+        Ce test vérifie toutes les étapes du changement de mot de passe.
+        <strong>Ne lancez pas ce test avec votre vrai mot de passe</strong> — créez un compte de
+        test ou utilisez un mot de passe temporaire. Le test va réellement changer votre mot de
+        passe, puis le remettre à l'ancien.
       </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, h } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -224,50 +364,108 @@ onUnmounted(() => {
   cleanupEventListener()
 })
 
-const getTestClass = (status) => {
+const getTestClass = status => {
   switch (status) {
-    case 'pass': return 'bg-green-100 text-green-600'
-    case 'fail': return 'bg-red-100 text-red-600'
-    case 'pending': return 'bg-yellow-100 text-yellow-600'
-    default: return 'bg-gray-100 text-gray-400'
+    case 'pass':
+      return 'bg-green-100 text-green-600'
+    case 'fail':
+      return 'bg-red-100 text-red-600'
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-600'
+    default:
+      return 'bg-gray-100 text-gray-400'
   }
 }
 
-// Composants SVG pour les icônes de test
+// Composants SVG pour les icônes de test (définis comme fonctions render pour éviter la compilation runtime)
 const CheckIcon = {
-  template: `
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-    </svg>
-  `
+  render: () =>
+    h(
+      'svg',
+      {
+        fill: 'none',
+        stroke: 'currentColor',
+        viewBox: '0 0 24 24'
+      },
+      [
+        h('path', {
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          'stroke-width': '2',
+          d: 'M5 13l4 4L19 7'
+        })
+      ]
+    )
 }
 
 const XIcon = {
-  template: `
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  `
+  render: () =>
+    h(
+      'svg',
+      {
+        fill: 'none',
+        stroke: 'currentColor',
+        viewBox: '0 0 24 24'
+      },
+      [
+        h('path', {
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          'stroke-width': '2',
+          d: 'M6 18L18 6M6 6l12 12'
+        })
+      ]
+    )
 }
 
 const LoadingIcon = {
-  template: `
-    <svg class="animate-spin" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-  `
+  render: () =>
+    h(
+      'svg',
+      {
+        class: 'animate-spin',
+        fill: 'none',
+        viewBox: '0 0 24 24'
+      },
+      [
+        h('circle', {
+          class: 'opacity-25',
+          cx: '12',
+          cy: '12',
+          r: '10',
+          stroke: 'currentColor',
+          'stroke-width': '4'
+        }),
+        h('path', {
+          class: 'opacity-75',
+          fill: 'currentColor',
+          d: 'M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+        })
+      ]
+    )
 }
 
 const CircleIcon = {
-  template: `
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  `
+  render: () =>
+    h(
+      'svg',
+      {
+        fill: 'none',
+        stroke: 'currentColor',
+        viewBox: '0 0 24 24'
+      },
+      [
+        h('path', {
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round',
+          'stroke-width': '2',
+          d: 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+        })
+      ]
+    )
 }
 
-const getTestIcon = (status) => {
+const getTestIcon = status => {
   if (status === 'pass') {
     return CheckIcon
   } else if (status === 'fail') {
@@ -279,8 +477,8 @@ const getTestIcon = (status) => {
 }
 
 const allTestsCompleted = computed(() => {
-  return Object.values(testResults.value).some(v => 
-    typeof v === 'string' && (v === 'pass' || v === 'fail')
+  return Object.values(testResults.value).some(
+    v => typeof v === 'string' && (v === 'pass' || v === 'fail')
   )
 })
 
@@ -316,11 +514,13 @@ const borderColorClass = computed(() => {
 
 const runAllTests = async () => {
   if (!authStore.user) {
-    alert('Veuillez vous connecter d\'abord')
+    alert("Veuillez vous connecter d'abord")
     return
   }
 
-  if (!confirm('⚠️ Ce test va réellement changer votre mot de passe puis le remettre. Continuer ?')) {
+  if (
+    !confirm('⚠️ Ce test va réellement changer votre mot de passe puis le remettre. Continuer ?')
+  ) {
     return
   }
 
@@ -411,7 +611,7 @@ const runAllTests = async () => {
     // Test 4: Mise à jour Supabase
     testResults.value.supabaseUpdate = 'pending'
     testResults.value.userUpdatedEvent = 'pending'
-    
+
     // Réinitialise le détecteur d'événement
     userUpdatedDetected = false
     setTimeout(() => {
@@ -430,7 +630,7 @@ const runAllTests = async () => {
         testResults.value.supabaseUpdateError = updateError.message
       } else {
         testResults.value.supabaseUpdate = 'pass'
-        
+
         // Attend un peu pour l'événement USER_UPDATED
         await new Promise(resolve => setTimeout(resolve, 1000))
       }
@@ -471,9 +671,11 @@ const runAllTests = async () => {
       console.log('✅ Mot de passe original restauré')
     } catch (error) {
       console.error('⚠️ Erreur lors de la restauration du mot de passe:', error)
-      alert('⚠️ ATTENTION: Le mot de passe a été changé mais n\'a pas pu être restauré. Votre nouveau mot de passe est: ' + testPassword)
+      alert(
+        "⚠️ ATTENTION: Le mot de passe a été changé mais n'a pas pu être restauré. Votre nouveau mot de passe est: " +
+          testPassword
+      )
     }
-
   } catch (error) {
     console.error('Erreur lors des tests:', error)
   } finally {
@@ -493,4 +695,3 @@ const runAllTests = async () => {
   @apply w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0;
 }
 </style>
-

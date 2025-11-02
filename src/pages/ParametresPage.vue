@@ -2,7 +2,7 @@
   <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar principale -->
     <Sidebar />
-    
+
     <!-- Main Content -->
     <main ref="mainElement" class="flex-1 overflow-y-auto">
       <PullToRefresh
@@ -14,10 +14,7 @@
       <div class="flex flex-col md:flex-row min-h-full">
         <!-- Sous-sidebar de navigation (desktop) -->
         <aside class="hidden md:block w-64 shrink-0">
-          <SettingsSidebar 
-            :active-section="activeSection" 
-            @change-section="handleSectionChange"
-          />
+          <SettingsSidebar :active-section="activeSection" @change-section="handleSectionChange" />
         </aside>
 
         <!-- Menu déroulant (mobile) -->
@@ -31,9 +28,9 @@
               <option value="general">{{ $t('settings.sections.general') }}</option>
               <option value="notifications">{{ $t('settings.sections.notifications') }}</option>
               <option value="security">{{ $t('settings.sections.security') }}</option>
-              <option value="language-currency">{{ $t('settings.sections.languageCurrency') }}</option>
-              <option value="theme">{{ $t('settings.sections.theme') }}</option>
-              <option value="integrations">{{ $t('settings.sections.integrations') }}</option>
+              <option value="language-currency">
+                {{ $t('settings.sections.languageCurrency') }}
+              </option>
             </select>
           </div>
         </div>
@@ -49,15 +46,8 @@
 
             <!-- Contenu dynamique selon la section active -->
             <div class="min-h-[400px]">
-              <Transition
-                name="fade"
-                mode="out-in"
-              >
-                <component
-                  :is="activeComponent"
-                  :key="activeSection"
-                  class="transition-all duration-200"
-                />
+              <Transition name="fade" mode="out-in">
+                <component :is="activeComponent" :key="activeSection" />
               </Transition>
             </div>
           </div>
@@ -77,8 +67,6 @@ import SettingsGeneral from '../components/settings/SettingsGeneral.vue'
 import SettingsNotifications from '../components/settings/SettingsNotifications.vue'
 import SettingsSecurity from '../components/settings/SettingsSecurity.vue'
 import SettingsLanguageCurrency from '../components/settings/SettingsLanguageCurrency.vue'
-import SettingsTheme from '../components/settings/SettingsTheme.vue'
-import SettingsIntegrations from '../components/settings/SettingsIntegrations.vue'
 import { useAuthStore } from '@/stores/authStore'
 
 // Capture les erreurs pour éviter que la page ne crash complètement
@@ -109,25 +97,23 @@ const isTransitioning = ref(false)
 
 const activeComponent = computed(() => {
   const components = {
-    'general': SettingsGeneral,
-    'notifications': SettingsNotifications,
-    'security': SettingsSecurity,
-    'language-currency': SettingsLanguageCurrency,
-    'theme': SettingsTheme,
-    'integrations': SettingsIntegrations
+    general: SettingsGeneral,
+    notifications: SettingsNotifications,
+    security: SettingsSecurity,
+    'language-currency': SettingsLanguageCurrency
   }
   return components[activeSection.value] || SettingsGeneral
 })
 
 // Gère le changement de section avec protection contre les transitions multiples
-const handleSectionChange = (newSection) => {
+const handleSectionChange = newSection => {
   if (isTransitioning.value || newSection === activeSection.value) {
     return
   }
-  
+
   isTransitioning.value = true
   activeSection.value = newSection
-  
+
   // Réinitialise le flag après la transition
   setTimeout(() => {
     isTransitioning.value = false
@@ -137,15 +123,24 @@ const handleSectionChange = (newSection) => {
 // Persiste la section active dans sessionStorage
 onMounted(() => {
   const savedSection = sessionStorage.getItem('settings-active-section')
-  if (savedSection && ['general', 'notifications', 'security', 'language-currency', 'theme', 'integrations'].includes(savedSection)) {
+  const validSections = ['general', 'notifications', 'security', 'language-currency']
+
+  // Réinitialise à 'general' si la section sauvegardée n'existe plus
+  if (savedSection && validSections.includes(savedSection)) {
     activeSection.value = savedSection
+  } else {
+    // Si theme ou integrations était sauvegardé, réinitialise à general
+    activeSection.value = 'general'
   }
-  
+
   // Sauvegarde la section quand elle change
-  const stopWatcher = watch(() => activeSection.value, (newSection) => {
-    sessionStorage.setItem('settings-active-section', newSection)
-  })
-  
+  const stopWatcher = watch(
+    () => activeSection.value,
+    newSection => {
+      sessionStorage.setItem('settings-active-section', newSection)
+    }
+  )
+
   // Cleanup au démontage
   return () => {
     stopWatcher()
@@ -156,7 +151,9 @@ onMounted(() => {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .fade-enter-from {

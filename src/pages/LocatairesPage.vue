@@ -94,6 +94,22 @@
 
     <!-- Modal d'ajout de locataire -->
     <AddTenantModal :isOpen="isModalOpen" @close="isModalOpen = false" @submit="handleAddTenant" />
+
+    <!-- Modal de confirmation de suppression -->
+    <ConfirmModal
+      :isOpen="showDeleteConfirm"
+      title="Supprimer ce locataire ?"
+      :message="
+        $t('tenants.confirmDelete') ||
+        'Êtes-vous sûr de vouloir supprimer ce locataire ? Le bien sera libéré.'
+      "
+      confirm-label="Supprimer"
+      cancel-label="Annuler"
+      variant="danger"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+      @update:isOpen="showDeleteConfirm = $event"
+    />
   </div>
 </template>
 
@@ -107,6 +123,7 @@ import TenantsHeader from '../components/tenants/TenantsHeader.vue'
 import TenantsList from '../components/tenants/TenantsList.vue'
 import AddTenantModal from '../components/tenants/AddTenantModal.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
+import ConfirmModal from '../components/common/ConfirmModal.vue'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { PAYMENT_STATUS } from '@/utils/constants'
@@ -245,17 +262,29 @@ const handleEditTenant = () => {
 
 /**
  * Gère la suppression d'un locataire (libère le bien) via Supabase
- * TODO v0.2.0 : Utiliser un composant de confirmation (modal) au lieu de confirm()
  */
-const handleDeleteTenant = async tenantId => {
-  if (window.confirm('Êtes-vous sûr de vouloir supprimer ce locataire ? Le bien sera libéré.')) {
-    try {
-      await tenantsStore.removeTenant(tenantId)
-      // Le toast est géré dans le store
-    } catch (error) {
-      // Le toast d'erreur est géré dans le store
-      console.error('Erreur lors de la suppression du locataire:', error)
-    }
+const confirmDeleteId = ref(null)
+const showDeleteConfirm = ref(false)
+
+const handleDeleteTenant = tenantId => {
+  confirmDeleteId.value = tenantId
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (!confirmDeleteId.value) return
+
+  try {
+    await tenantsStore.removeTenant(confirmDeleteId.value)
+    confirmDeleteId.value = null
+    showDeleteConfirm.value = false
+  } catch (error) {
+    console.error('Erreur lors de la suppression du locataire:', error)
   }
+}
+
+const cancelDelete = () => {
+  confirmDeleteId.value = null
+  showDeleteConfirm.value = false
 }
 </script>

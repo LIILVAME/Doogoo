@@ -7,6 +7,7 @@ import { useToastStore } from './toastStore'
 import { TRANSACTION_STATUS } from '@/utils/constants'
 import { formatCurrency } from '@/utils/formatters'
 import { paymentsApi } from '@/api'
+import { useStoreLoader } from '@/composables/useStoreLoader'
 
 /**
  * Store Pinia pour gérer les paiements
@@ -17,8 +18,11 @@ export const usePaymentsStore = defineStore(
   () => {
     // State
     const payments = ref([])
-    const loading = ref(false)
+    const loading = ref(false) // Toujours initialisé à false
     const error = ref(null)
+
+    // Surveillance automatique du loading pour éviter les blocages
+    const { cleanup: _cleanupLoader } = useStoreLoader(loading, 'PaymentsStore')
     let realtimeChannel = null
     let isRealtimeInitialized = false
     let isRealtimeActive = false // Flag pour désactiver les callbacks lors du cleanup
@@ -33,56 +37,96 @@ export const usePaymentsStore = defineStore(
       const authStore = useAuthStore()
       if (!authStore.user) {
         console.warn('fetchPayments: User not authenticated, skipping fetch')
+        // S'assure que loading est false si pas d'utilisateur
+        loading.value = false
         return
       }
 
-      // Évite les requêtes multiples si déjà en cours
+      // Évite les requêtes multiples si déjà en cours (sauf si force = true)
       if (loading.value && !force) {
+        console.debug('fetchPayments: requête déjà en cours, skip')
         return
+      }
+
+      // Si loading est à true (bloqué), on le reset avant de commencer
+      // Le composable useStoreLoader devrait l'avoir déjà fait, mais sécurité supplémentaire
+      if (loading.value) {
+        console.warn('⚠️ fetchPayments: loading déjà à true au début, reset avant fetch')
+        loading.value = false
       }
 
       // Cache de 5 secondes pour éviter les requêtes trop fréquentes
       const now = Date.now()
       if (!force && now - lastFetchTime < FETCH_CACHE_MS && payments.value.length > 0) {
+        // S'assure que loading est false si on utilise le cache
+        loading.value = false
         return
       }
 
+      // Note: Le composable useStoreLoader gère déjà le timeout de sécurité
+      // On fait confiance au finally pour remettre loading à false
       loading.value = true
       error.value = null
 
-      const result = await paymentsApi.getPayments(authStore.user.id)
+      try {
+        // Timeout explicite de 10 secondes pour éviter blocage
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error('Timeout: La requête a pris plus de 10 secondes')),
+            10000
+          )
+        })
 
-      if (result.success && result.data) {
-        lastFetchTime = Date.now()
+        const apiPromise = paymentsApi.getPayments(authStore.user.id)
+        const result = await Promise.race([apiPromise, timeoutPromise])
 
-        // Transforme les données Supabase pour correspondre au format attendu
-        payments.value = (result.data || []).map(payment => ({
-          id: payment.id,
-          propertyId: payment.property_id,
-          property: payment.properties?.name || 'N/A',
-          tenant: payment.tenants?.name || payment.properties?.name || 'N/A',
-          amount: Number(payment.amount),
-          dueDate: payment.due_date,
-          status: payment.status
-        }))
-      } else {
-        error.value = result.message || 'Erreur lors de la récupération des paiements'
+        if (result.success && result.data) {
+          lastFetchTime = Date.now()
 
-        // Si erreur réseau et qu'on a des données en cache, les utiliser
-        const { useConnectionStore } = await import('@/stores/connectionStore')
-        const { useToastStore } = await import('@/stores/toastStore')
-        const connectionStore = useConnectionStore()
-        const toastStore = useToastStore()
+          // Transforme les données Supabase pour correspondre au format attendu
+          payments.value = (result.data || []).map(payment => ({
+            id: payment.id,
+            propertyId: payment.property_id,
+            property: payment.properties?.name || 'N/A',
+            tenant: payment.tenants?.name || payment.properties?.name || 'N/A',
+            amount: Number(payment.amount),
+            dueDate: payment.due_date,
+            status: payment.status
+          }))
+        } else {
+          error.value = result.message || 'Erreur lors de la récupération des paiements'
 
-        if (!connectionStore.isOnline && payments.value.length > 0) {
-          // Affiche un toast informatif mais continue avec les données du cache
-          if (toastStore) {
-            toastStore.info('⚠️ Données locales affichées (connexion perdue)')
+          // Si erreur réseau et qu'on a des données en cache, les utiliser
+          const { useConnectionStore } = await import('@/stores/connectionStore')
+          const { useToastStore } = await import('@/stores/toastStore')
+          const connectionStore = useConnectionStore()
+          const toastStore = useToastStore()
+
+          if (!connectionStore.isOnline && payments.value.length > 0) {
+            // Affiche un toast informatif mais continue avec les données du cache
+            if (toastStore) {
+              toastStore.info('⚠️ Données locales affichées (connexion perdue)')
+            }
           }
         }
-      }
+      } catch (err) {
+        // Gestion d'erreur pour éviter que loading reste bloqué
+        console.error('Erreur lors du chargement des paiements:', err)
+        error.value = err.message || 'Erreur lors de la récupération des paiements'
 
-      loading.value = false
+        // Si erreur et qu'on a des données en cache, on continue avec le cache
+        if (payments.value.length > 0) {
+          const { useToastStore } = await import('@/stores/toastStore')
+          const toastStore = useToastStore()
+          if (toastStore) {
+            toastStore.warning('⚠️ Erreur de chargement, données en cache affichées')
+          }
+        }
+      } finally {
+        // Garantit que loading est toujours remis à false, même en cas d'erreur
+        // Le composable useStoreLoader surveille aussi, mais c'est notre responsabilité principale
+        loading.value = false
+      }
     }
 
     /**

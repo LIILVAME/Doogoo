@@ -26,24 +26,65 @@ export async function getAlerts(userId) {
     return { success: false, message: 'User ID requis' }
   }
 
+  // getAlerts fait plusieurs requêtes - on les exécute en parallèle pour réduire le temps total
+  // Timeout de 15s (au lieu de 8s) car plusieurs requêtes mais en parallèle
   return withErrorHandling(
     async () => {
       const allAlerts = []
 
-      // 1️⃣ Alertes de paiements en retard
-      const { data: latePayments, error: paymentsError } = await supabase
-        .from('payments_view')
-        .select(
+      // Exécute les requêtes en parallèle pour réduire le temps total
+      const [latePaymentsResult, unpaidPaymentsResult, propertiesResult, allPropertiesResult] =
+        await Promise.all([
+          // 1️⃣ Alertes de paiements en retard (limite pour éviter les requêtes trop lourdes)
+          supabase
+            .from('payments_view')
+            .select(
+              `
+            *,
+            properties (id, name, city),
+            tenants (id, name)
           `
-        *,
-        properties (id, name, city),
-        tenants (id, name)
-      `
-        )
-        .eq('user_id', userId)
-        .eq('status', 'late')
-        .order('due_date', { ascending: true })
+            )
+            .eq('user_id', userId)
+            .eq('status', 'late')
+            .order('due_date', { ascending: true })
+            .limit(50), // Limite pour éviter les requêtes trop longues
 
+          // 2️⃣ Alertes de paiements impayés après X jours
+          supabase
+            .from('payments_view')
+            .select(
+              `
+            *,
+            properties (id, name, city),
+            tenants (id, name)
+          `
+            )
+            .eq('user_id', userId)
+            .eq('status', 'pending')
+            .lt('due_date', new Date().toISOString().split('T')[0])
+            .order('due_date', { ascending: true })
+            .limit(50), // Limite pour éviter les requêtes trop longues
+
+          // 3️⃣ Propriétés occupées (pour les alertes de fin de bail)
+          supabase
+            .from('properties')
+            .select(
+              `
+            *,
+            tenants (*)
+          `
+            )
+            .eq('user_id', userId)
+            .eq('status', 'occupied')
+            .limit(100), // Limite pour éviter les requêtes trop longues
+
+          // 4️⃣ Toutes les propriétés (pour le taux d'occupation)
+          supabase.from('properties').select('status').eq('user_id', userId)
+        ])
+
+      // 1️⃣ Traite les paiements en retard
+      const { data: latePayments, error: paymentsError } = latePaymentsResult
       if (!paymentsError && latePayments) {
         latePayments.forEach(payment => {
           const daysLate = Math.floor(
@@ -65,21 +106,8 @@ export async function getAlerts(userId) {
         })
       }
 
-      // 2️⃣ Alertes de paiements impayés après X jours (mais pas encore marqués "late")
-      const { data: unpaidPayments, error: unpaidError } = await supabase
-        .from('payments_view')
-        .select(
-          `
-        *,
-        properties (id, name, city),
-        tenants (id, name)
-      `
-        )
-        .eq('user_id', userId)
-        .eq('status', 'pending')
-        .lt('due_date', new Date().toISOString().split('T')[0])
-        .order('due_date', { ascending: true })
-
+      // 2️⃣ Traite les paiements impayés
+      const { data: unpaidPayments, error: unpaidError } = unpaidPaymentsResult
       if (!unpaidError && unpaidPayments) {
         unpaidPayments.forEach(payment => {
           const daysOverdue = Math.floor(
@@ -103,18 +131,8 @@ export async function getAlerts(userId) {
         })
       }
 
-      // 3️⃣ Alertes de fin de bail approchante (si exit_date est renseignée)
-      const { data: properties, error: propertiesError } = await supabase
-        .from('properties')
-        .select(
-          `
-        *,
-        tenants (*)
-      `
-        )
-        .eq('user_id', userId)
-        .eq('status', 'occupied')
-
+      // 3️⃣ Traite les alertes de fin de bail approchante
+      const { data: properties, error: propertiesError } = propertiesResult
       if (!propertiesError && properties) {
         properties.forEach(property => {
           if (property.tenants && property.tenants.length > 0) {
@@ -144,10 +162,7 @@ export async function getAlerts(userId) {
       }
 
       // 4️⃣ Alerte de faible taux d'occupation
-      const { data: allProperties, error: allPropsError } = await supabase
-        .from('properties')
-        .select('status')
-        .eq('user_id', userId)
+      const { data: allProperties, error: allPropsError } = allPropertiesResult
 
       if (!allPropsError && allProperties && allProperties.length > 0) {
         const occupiedCount = allProperties.filter(p => p.status === 'occupied').length
@@ -175,8 +190,8 @@ export async function getAlerts(userId) {
       return { data: sortedAlerts, error: null }
     },
     'getAlerts',
-    { timeout: 20000 }
-  ) // 20s pour les requêtes complexes avec plusieurs sous-requêtes
+    { timeout: 15000 } // 15s car requêtes en parallèle maintenant (au lieu de 20s)
+  )
 }
 
 // Export de l'objet API (compatibilité avec les autres APIs)

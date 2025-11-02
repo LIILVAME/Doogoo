@@ -111,7 +111,7 @@
           </div>
         </div>
 
-        <!-- État de chargement -->
+        <!-- État de chargement (uniquement si aucune donnée) -->
         <div
           v-if="paymentsStore.loading && paymentsStore.payments.length === 0"
           class="text-center py-16"
@@ -124,14 +124,9 @@
           </p>
         </div>
 
-        <!-- Loader inline si données déjà chargées -->
-        <div v-else-if="paymentsStore.loading" class="text-center py-8">
-          <InlineLoader />
-        </div>
-
-        <!-- Erreur -->
+        <!-- Erreur (uniquement si aucune donnée en cache) -->
         <div
-          v-else-if="paymentsStore.error"
+          v-else-if="paymentsStore.error && paymentsStore.payments.length === 0"
           class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
         >
           <div class="flex items-center">
@@ -154,14 +149,24 @@
           </div>
         </div>
 
-        <!-- Liste complète des paiements -->
-        <PaymentsSection
-          v-else
-          :payments="payments"
-          :show-view-all="false"
-          @edit-payment="handleEditPayment"
-          @delete-payment="handleDeletePayment"
-        />
+        <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
+        <div>
+          <!-- Loader inline si refresh en cours ET données déjà présentes -->
+          <div
+            v-if="paymentsStore.loading && paymentsStore.payments.length > 0"
+            class="text-center py-4 mb-4"
+          >
+            <InlineLoader />
+          </div>
+
+          <!-- Liste complète des paiements -->
+          <PaymentsSection
+            :payments="payments"
+            :show-view-all="false"
+            @edit-payment="handleEditPayment"
+            @delete-payment="handleDeletePayment"
+          />
+        </div>
       </div>
     </main>
 
@@ -207,12 +212,12 @@ const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
 
 /**
  * Charge les paiements depuis Supabase au montage
- * Initialise le temps réel pour les mises à jour automatiques
+ * Note: App.vue charge déjà les données au démarrage, on ne recharge jamais ici
+ * pour éviter les conflits et les états loading bloqués
  */
-onMounted(async () => {
-  await paymentsStore.fetchPayments()
-  // Note: Realtime est déjà initialisé globalement dans App.vue
-  // Pas besoin de réinitialiser ici
+onMounted(() => {
+  // App.vue gère déjà le chargement initial et le realtime
+  // On fait confiance au store pour les données déjà chargées
 })
 
 /**

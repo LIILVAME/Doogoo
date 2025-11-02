@@ -75,7 +75,10 @@ export default {
     type: 'Type',
     rent: 'Loyer',
     monthlyRent: 'Loyer mensuel (€)',
-    status: 'Statut',
+    status: {
+      occupied: 'Occupé',
+      vacant: 'Vacant'
+    },
     occupied: 'Occupé',
     vacant: 'Vacant',
     free: 'Libre',
@@ -132,6 +135,7 @@ export default {
     totalRent: 'Loyers totaux',
     editTenant: 'Modifier le locataire',
     deleteTenant: 'Supprimer le locataire',
+    confirmDelete: 'Êtes-vous sûr de vouloir supprimer ce locataire ? Le bien sera libéré.',
     noTenants: 'Aucun locataire enregistré',
     name: 'Nom',
     tenantName: 'Nom du locataire',
@@ -234,6 +238,8 @@ export default {
         city: 'Ville',
         rent: 'Loyer',
         status: 'Statut',
+        paymentStatus: 'Statut de paiement',
+        paymentDate: 'Date de paiement',
         totalPaid: 'Total payé',
         delayed: 'Retard',
         occupancy: "Taux d'occupation"
@@ -249,7 +255,9 @@ export default {
       exportSuccess: 'Export réussi'
     },
     export: {
-      success: 'Rapport exporté avec succès'
+      success: 'Rapport exporté avec succès',
+      loading: 'Export en cours...',
+      loadingDescription: 'Génération du fichier PDF'
     },
     noData: {
       title: 'Aucun rapport disponible',

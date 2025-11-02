@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuthStore } from './authStore'
-import { formatDate, formatRelativeDate, formatCurrency } from '@/utils/formatters'
+import { formatDate, formatCurrency } from '@/utils/formatters'
 import { alertsApi } from '@/api/alerts'
 
 /**
@@ -19,18 +19,27 @@ export const useAlertsStore = defineStore('alerts', () => {
 
   /**
    * Récupère toutes les alertes pour l'utilisateur via l'API layer
+   * Note: Cette fonction peut être lente car elle fait plusieurs requêtes Supabase
    */
   const fetchAlerts = async () => {
+    // Évite les requêtes multiples si déjà en cours
+    if (loading.value) {
+      console.debug('fetchAlerts: requête déjà en cours, skip')
+      return
+    }
+
     loading.value = true
     error.value = null
 
     try {
       const authStore = useAuthStore()
       if (!authStore.user) {
+        loading.value = false
         throw new Error('User not authenticated')
       }
 
       // Utilise l'API layer pour bénéficier de retry, timeout et gestion d'erreur centralisée
+      // Timeout de 20s car getAlerts fait plusieurs requêtes séquentielles
       const result = await alertsApi.getAlerts(authStore.user.id)
 
       if (!result.success) {
