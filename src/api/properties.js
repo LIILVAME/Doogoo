@@ -18,14 +18,32 @@ export async function getProperties(userId) {
   }
 
   return withErrorHandling(async () => {
+    console.log('🔍 getProperties API: Début requête Supabase', { userId })
+
     const { data, error } = await supabase
       .from('properties')
-      .select(`
+      .select(
+        `
         *,
         tenants (*)
-      `)
+      `
+      )
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
+
+    console.log('🔍 getProperties API: Réponse Supabase', {
+      dataCount: data?.length || 0,
+      error: error?.message || null,
+      hasData: !!data,
+      data: data
+        ? data.map(p => ({
+            id: p.id,
+            name: p.name,
+            user_id: p.user_id,
+            tenantsCount: p.tenants?.length || 0
+          }))
+        : null
+    })
 
     return { data, error }
   }, 'getProperties')
@@ -45,10 +63,12 @@ export async function getPropertyById(propertyId, userId) {
   return withErrorHandling(async () => {
     const { data, error } = await supabase
       .from('properties')
-      .select(`
+      .select(
+        `
         *,
         tenants (*)
-      `)
+      `
+      )
       .eq('id', propertyId)
       .eq('user_id', userId)
       .single()
@@ -105,7 +125,7 @@ export async function updateProperty(propertyId, updates, userId) {
     const updateData = {
       ...updates
     }
-    
+
     // Convertit le loyer en nombre si présent
     if (updateData.rent !== undefined) {
       updateData.rent = Number(updateData.rent)
@@ -149,4 +169,3 @@ export async function deleteProperty(propertyId, userId) {
     return { data: null, error }
   }, 'deleteProperty')
 }
-
