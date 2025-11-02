@@ -8,21 +8,34 @@
       <InlineLoader />
     </div>
     <div v-else ref="chartElement" class="chart-container">
-      <apexchart
-        :key="chartKey"
-        :type="chartType"
-        :height="height"
-        :options="chartOptions"
-        :series="normalizedSeries"
-      />
+      <Suspense>
+        <component
+          :is="VueApexCharts"
+          :key="chartKey"
+          :type="chartType"
+          :height="height"
+          :options="chartOptions"
+          :series="normalizedSeries"
+        />
+        <template #fallback>
+          <div class="flex items-center justify-center h-full">
+            <InlineLoader />
+          </div>
+        </template>
+      </Suspense>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, defineAsyncComponent } from 'vue'
 import InlineLoader from '@/components/common/InlineLoader.vue'
-import VueApexCharts from 'vue3-apexcharts'
+
+// Lazy load ApexCharts pour améliorer les performances initiales
+// Chargé uniquement quand le composant BaseChart est monté
+const VueApexCharts = defineAsyncComponent(() =>
+  import('vue3-apexcharts').then(module => module.default)
+)
 
 const props = defineProps({
   title: {
@@ -79,7 +92,11 @@ const normalizedSeries = computed(() => {
   // Si c'est un graphique en donut/pie, les séries doivent être un tableau de nombres
   if (props.type === 'pie' || props.type === 'donut' || props.type === 'radialBar') {
     // Vérifie si c'est déjà un tableau de nombres
-    if (Array.isArray(props.series) && props.series.length > 0 && typeof props.series[0] === 'number') {
+    if (
+      Array.isArray(props.series) &&
+      props.series.length > 0 &&
+      typeof props.series[0] === 'number'
+    ) {
       // S'assure que tous les nombres sont valides
       return props.series.map(val => {
         const num = Number(val)
@@ -87,7 +104,11 @@ const normalizedSeries = computed(() => {
       })
     }
     // Sinon, extrait les valeurs d'un tableau d'objets
-    if (Array.isArray(props.series) && props.series.length > 0 && typeof props.series[0] === 'object') {
+    if (
+      Array.isArray(props.series) &&
+      props.series.length > 0 &&
+      typeof props.series[0] === 'object'
+    ) {
       return props.series.map(s => {
         if (typeof s === 'object' && s !== null) {
           const val = s.value !== undefined ? s.value : s.data !== undefined ? s.data : 0
@@ -111,7 +132,7 @@ const normalizedSeries = computed(() => {
     // Si c'est déjà un objet avec data
     if (typeof serie === 'object' && serie !== null && serie.data) {
       // Vérifie que les données sont bien formatées (tableau de nombres)
-      const normalizedData = Array.isArray(serie.data) 
+      const normalizedData = Array.isArray(serie.data)
         ? serie.data.map(item => {
             if (typeof item === 'number') {
               return isNaN(item) ? 0 : item
@@ -125,13 +146,13 @@ const normalizedSeries = computed(() => {
             return isNaN(num) ? 0 : num
           })
         : []
-      
+
       return {
         name: serie.name || 'Série',
         data: normalizedData
       }
     }
-    
+
     // Si c'est juste un tableau de nombres, le convertir en format série
     if (Array.isArray(serie)) {
       return {
@@ -142,7 +163,7 @@ const normalizedSeries = computed(() => {
         })
       }
     }
-    
+
     // Fallback
     return serie
   })
@@ -151,11 +172,15 @@ const normalizedSeries = computed(() => {
 const chartType = computed(() => props.type)
 
 // Force la re-rendu si les séries changent
-watch(() => props.series, () => {
-  if (isMounted.value) {
-    chartKey.value++
-  }
-}, { deep: true })
+watch(
+  () => props.series,
+  () => {
+    if (isMounted.value) {
+      chartKey.value++
+    }
+  },
+  { deep: true }
+)
 
 const chartOptions = computed(() => {
   const defaultOptions = {
@@ -184,7 +209,7 @@ const chartOptions = computed(() => {
     tooltip: {
       theme: 'light',
       y: {
-        formatter: (val) => {
+        formatter: val => {
           if (props.type === 'pie' || props.type === 'donut' || props.type === 'radialBar') {
             return `${val}%`
           }
@@ -207,7 +232,7 @@ const chartOptions = computed(() => {
         style: {
           colors: '#6B7280'
         },
-        formatter: (val) => {
+        formatter: val => {
           if (props.type === 'radialBar') {
             return `${val}%`
           }
@@ -229,12 +254,3 @@ const chartOptions = computed(() => {
   }
 })
 </script>
-
-<script>
-export default {
-  components: {
-    apexchart: VueApexCharts
-  }
-}
-</script>
-
