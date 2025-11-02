@@ -16,19 +16,51 @@ export const useTenantsStore = defineStore('tenants', () => {
    * Chaque locataire inclut les informations du bien associé
    */
   const tenants = computed(() => {
-    return propertiesStore.properties
-      .filter(p => p.tenant !== null && p.status === PROPERTY_STATUS.OCCUPIED)
-      .map(property => ({
-        id: property.tenant.id || property.id, // Utilise l'ID du locataire (UUID) si disponible, sinon l'ID du bien
-        propertyId: property.id,
-        name: property.tenant.name,
-        property: property.name,
-        propertyCity: property.city,
-        entryDate: property.tenant.entryDate,
-        exitDate: property.tenant.exitDate || null,
-        rent: property.rent,
-        status: property.tenant.status || PAYMENT_STATUS.ON_TIME
-      }))
+    try {
+      const filtered = propertiesStore.properties.filter(
+        p => p && p.tenant !== null && p.tenant !== undefined && p.status === PROPERTY_STATUS.OCCUPIED
+      )
+      
+      const mapped = filtered.map(property => {
+        // Vérifie que property.tenant existe avant d'accéder à ses propriétés
+        if (!property.tenant) {
+          console.warn('⚠️ Property has tenant null but passed filter:', property)
+          return null
+        }
+        
+        return {
+          id: property.tenant.id || property.id, // Utilise l'ID du locataire (UUID) si disponible, sinon l'ID du bien
+          propertyId: property.id,
+          name: property.tenant.name,
+          property: property.name,
+          propertyCity: property.city,
+          entryDate: property.tenant.entryDate,
+          exitDate: property.tenant.exitDate || null,
+          rent: property.rent,
+          status: property.tenant.status || PAYMENT_STATUS.ON_TIME
+        }
+      }).filter(t => t !== null) // Supprime les valeurs null
+      
+      // Debug en développement
+      if (import.meta.env.DEV && mapped.length === 0 && propertiesStore.properties.length > 0) {
+        console.warn('⚠️ Aucun locataire trouvé dans les propriétés:', {
+          totalProperties: propertiesStore.properties.length,
+          propertiesWithTenants: propertiesStore.properties.filter(p => p.tenant !== null).length,
+          occupiedProperties: propertiesStore.properties.filter(p => p.status === PROPERTY_STATUS.OCCUPIED).length,
+          properties: propertiesStore.properties.map(p => ({
+            id: p.id,
+            name: p.name,
+            status: p.status,
+            hasTenant: p.tenant !== null && p.tenant !== undefined
+          }))
+        })
+      }
+      
+      return mapped
+    } catch (error) {
+      console.error('❌ Erreur dans computed tenants:', error)
+      return []
+    }
   })
 
   /**

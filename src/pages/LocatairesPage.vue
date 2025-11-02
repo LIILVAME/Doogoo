@@ -134,6 +134,18 @@ onMounted(async () => {
     if (propertiesStore.properties.length === 0 && !propertiesStore.loading) {
       await propertiesStore.fetchProperties()
     }
+    
+    // Debug : Log pour diagnostic
+    if (import.meta.env.DEV) {
+      console.log('🔍 LocatairesPage - État après fetch:', {
+        loading: propertiesStore.loading,
+        propertiesCount: propertiesStore.properties.length,
+        tenantsCount: tenants.value.length,
+        error: propertiesStore.error,
+        hasTenants: propertiesStore.properties.some(p => p.tenant !== null)
+      })
+    }
+    
     // Note: Realtime est déjà initialisé globalement dans App.vue
     // Pas besoin de réinitialiser ici
   } catch (error) {
