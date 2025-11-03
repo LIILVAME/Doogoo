@@ -658,20 +658,32 @@ export const usePropertiesStore = defineStore(
     /**
      * Arrête l'abonnement temps réel
      */
-    const stopRealtime = () => {
+    const stopRealtime = async () => {
       // Désactive les callbacks en premier pour éviter les erreurs
       isRealtimeActive = false
+      reconnectScheduled = false
+
+      // Annule les reconnexions programmées
+      const { cancelScheduledReconnect, resetReconnectAttempts } = await import(
+        '@/composables/useRealtimeReconnect'
+      )
+      cancelScheduledReconnect()
+      resetReconnectAttempts()
 
       if (realtimeChannel) {
         try {
           supabase.removeChannel(realtimeChannel)
         } catch (e) {
           // Ignore les erreurs lors du nettoyage
-          console.warn('Error removing Realtime channel (non blocking):', e)
+          if (import.meta.env.DEV) {
+            console.warn('Error removing Realtime channel (non blocking):', e)
+          }
         }
         realtimeChannel = null
         isRealtimeInitialized = false
-        console.log('🔌 Realtime unsubscribed from properties')
+        if (import.meta.env.DEV) {
+          console.log('🔌 Realtime unsubscribed from properties')
+        }
       }
     }
 
