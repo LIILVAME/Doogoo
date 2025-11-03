@@ -3,7 +3,9 @@
     <div>
       <!-- ÉTAPE 1 : Demande de réinitialisation (formulaire email) -->
       <div v-if="!hasResetToken && !emailSent">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">{{ $t('auth.reset.title') }}</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+          {{ $t('auth.reset.title') }}
+        </h2>
         <p class="text-center text-gray-500 text-sm mb-6">{{ $t('auth.reset.subtitle') }}</p>
 
         <form @submit.prevent="handleResetPassword" class="space-y-4">
@@ -18,10 +20,21 @@
 
           <!-- Message d'erreur -->
           <transition name="slide-fade">
-            <div v-if="authStore.error" class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+            <div
+              v-if="authStore.error"
+              class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm"
+            >
               <div class="flex items-start">
-                <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                <svg
+                  class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"
+                  ></path>
                 </svg>
                 <p class="text-sm text-red-700 flex-1">{{ authStore.error }}</p>
               </div>
@@ -50,38 +63,62 @@
       <!-- ÉTAPE 2 : Message de succès (email envoyé) -->
       <transition name="slide-fade">
         <div v-if="emailSent && !hasResetToken" class="text-center">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $t('auth.reset.successTitle') }}</h3>
-          <p class="text-gray-600 mb-6">{{ $t('auth.reset.successMessage', { email: form.email }) }}</p>
-          
-          <AuthButton
-            :label="$t('auth.reset.backToLogin')"
-            @click="$router.push('/login')"
-          />
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            {{ $t('auth.reset.successTitle') }}
+          </h3>
+          <p class="text-gray-600 mb-6">
+            {{ $t('auth.reset.successMessage', { email: form.email }) }}
+          </p>
+
+          <AuthButton :label="$t('auth.reset.backToLogin')" @click="$router.push('/login')" />
         </div>
       </transition>
 
       <!-- ÉTAPE 3 : Formulaire de nouveau mot de passe (après clic sur le lien email) -->
       <div v-if="hasResetToken">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">{{ $t('auth.reset.newPasswordTitle') }}</h2>
-        <p class="text-center text-gray-500 text-sm mb-6">{{ $t('auth.reset.newPasswordSubtitle') }}</p>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+          {{ $t('auth.reset.newPasswordTitle') }}
+        </h2>
+        <p class="text-center text-gray-500 text-sm mb-6">
+          {{ $t('auth.reset.newPasswordSubtitle') }}
+        </p>
 
         <form @submit.prevent="handleUpdatePassword" class="space-y-4">
           <!-- Nouveau mot de passe -->
-          <AuthInput
-            :label="$t('auth.reset.newPassword')"
-            type="password"
-            v-model="form.newPassword"
-            :placeholder="$t('auth.reset.newPasswordPlaceholder')"
-            :error="newPasswordError"
-            required
-            minlength="6"
-          />
-          <p class="text-xs text-gray-500 -mt-2">{{ $t('auth.reset.passwordHint') }}</p>
+          <div>
+            <AuthInput
+              :label="$t('auth.reset.newPassword')"
+              type="password"
+              v-model="form.newPassword"
+              :placeholder="$t('auth.reset.newPasswordPlaceholder')"
+              :error="newPasswordError"
+              required
+              minlength="6"
+            />
+            <!-- Indicateur de force -->
+            <PasswordStrengthMeter
+              v-if="form.newPassword"
+              :password="form.newPassword"
+              :show-tips="true"
+            />
+          </div>
 
           <!-- Confirmation -->
           <AuthInput
@@ -92,10 +129,17 @@
             :error="confirmPasswordError"
             required
             minlength="6"
-            :class="{ 'border-red-300': form.newPassword && form.confirmPassword && form.newPassword !== form.confirmPassword }"
+            :class="{
+              'border-red-300':
+                form.newPassword &&
+                form.confirmPassword &&
+                form.newPassword !== form.confirmPassword
+            }"
           />
           <p
-            v-if="form.newPassword && form.confirmPassword && form.newPassword !== form.confirmPassword"
+            v-if="
+              form.newPassword && form.confirmPassword && form.newPassword !== form.confirmPassword
+            "
             class="text-xs text-red-600 -mt-2"
           >
             {{ $t('auth.reset.passwordMismatch') }}
@@ -103,10 +147,21 @@
 
           <!-- Message d'erreur -->
           <transition name="slide-fade">
-            <div v-if="errorMessage" class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+            <div
+              v-if="errorMessage"
+              class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm"
+            >
               <div class="flex items-start">
-                <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                <svg
+                  class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"
+                  ></path>
                 </svg>
                 <p class="text-sm text-red-700 flex-1">{{ errorMessage }}</p>
               </div>
@@ -117,7 +172,12 @@
             :label="$t('auth.reset.updateButton')"
             :loading="isUpdating"
             type="submit"
-            :disabled="!form.newPassword || !form.confirmPassword || form.newPassword !== form.confirmPassword || isUpdating"
+            :disabled="
+              !form.newPassword ||
+              !form.confirmPassword ||
+              form.newPassword !== form.confirmPassword ||
+              isUpdating
+            "
           />
 
           <!-- Lien retour connexion -->
@@ -145,6 +205,7 @@ import { supabase } from '@/lib/supabaseClient'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
+import PasswordStrengthMeter from '@/components/auth/PasswordStrengthMeter.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -191,7 +252,7 @@ const checkResetToken = async () => {
       })
 
       if (error) {
-        console.error('Erreur lors de l\'échange des tokens de réinitialisation:', error)
+        console.error("Erreur lors de l'échange des tokens de réinitialisation:", error)
         errorMessage.value = t('auth.reset.tokenError')
         return false
       }
@@ -219,7 +280,12 @@ const emailError = computed(() => {
 })
 
 const newPasswordError = computed(() => {
-  if (form.value.newPassword && form.value.newPassword.length < 6) {
+  if (!form.value.newPassword) {
+    return errorMessage.value && errorMessage.value.toLowerCase().includes('password')
+      ? errorMessage.value
+      : ''
+  }
+  if (form.value.newPassword.length < 6) {
     return t('auth.reset.passwordTooShort')
   }
   return ''
@@ -283,13 +349,13 @@ const handleUpdatePassword = async () => {
 
     if (updateError) {
       let errorMsg = t('auth.reset.updateError')
-      
+
       if (updateError.message.includes('weak') || updateError.message.includes('strength')) {
         errorMsg = t('auth.reset.passwordTooWeak')
       } else {
         errorMsg = updateError.message || errorMsg
       }
-      
+
       errorMessage.value = errorMsg
       toastStore.error(errorMsg)
       isUpdating.value = false
@@ -298,13 +364,12 @@ const handleUpdatePassword = async () => {
 
     // Succès : affiche un toast et redirige vers login
     toastStore.success(t('auth.reset.updateSuccess'))
-    
+
     // Attend un court instant pour laisser voir le toast
     await new Promise(resolve => setTimeout(resolve, 1000))
-    
+
     // Redirige vers login
     router.push('/login?passwordReset=true')
-    
   } catch (error) {
     console.error('Erreur lors de la mise à jour du mot de passe:', error)
     errorMessage.value = error.message || t('auth.reset.updateError')
@@ -339,4 +404,3 @@ onMounted(async () => {
   opacity: 0;
 }
 </style>
-

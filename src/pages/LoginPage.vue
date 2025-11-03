@@ -90,7 +90,14 @@
           :label="$t('auth.login.cta')"
           :loading="authStore.loading"
           type="submit"
-          :disabled="!form.email || !form.password || oauthLoading"
+          :disabled="
+            !form.email ||
+            !form.password ||
+            oauthLoading ||
+            authStore.loading ||
+            emailError ||
+            passwordError
+          "
         />
 
         <!-- Boutons OAuth -->
@@ -154,12 +161,35 @@ const oauthLoading = ref(false)
 const oauthProvider = ref(null)
 
 const emailError = computed(() => {
-  if (!form.value.email && authStore.error) return null
+  if (!form.value.email) {
+    // Affiche l'erreur seulement si elle concerne l'email
+    if (
+      authStore.error &&
+      (authStore.error.toLowerCase().includes('email') ||
+        authStore.error.toLowerCase().includes('utilisateur') ||
+        authStore.error.toLowerCase().includes('user'))
+    ) {
+      return authStore.error
+    }
+  }
+  // Validation basique du format email
+  if (form.value.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
+    return 'Veuillez entrer une adresse email valide'
+  }
   return ''
 })
 
 const passwordError = computed(() => {
-  if (!form.value.password && authStore.error) return null
+  if (!form.value.password) {
+    // Affiche l'erreur seulement si elle concerne le mot de passe
+    if (
+      authStore.error &&
+      (authStore.error.toLowerCase().includes('password') ||
+        authStore.error.toLowerCase().includes('mot de passe'))
+    ) {
+      return authStore.error
+    }
+  }
   return ''
 })
 

@@ -14,8 +14,11 @@
       :class="[
         'w-full border-2 rounded-xl px-4 py-3 text-sm sm:text-base',
         'focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none',
-        'transition-all duration-200',
-        error ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300',
+        'transition-all duration-200 ease-in-out',
+        'hover:border-gray-300 focus:shadow-sm',
+        error
+          ? 'border-red-300 bg-red-50 focus:ring-red-500 focus:border-red-500'
+          : 'border-gray-200',
         disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white'
       ]"
       @input="$emit('update:modelValue', $event.target.value)"

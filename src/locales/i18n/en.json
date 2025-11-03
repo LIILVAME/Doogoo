@@ -272,6 +272,10 @@
     "profile": "Profile",
     "appPreferences": "Application preferences",
     "security": "Security",
+    "onboarding": {
+      "title": "Getting Started Guide",
+      "description": "Review the interactive guide to discover all Doogoo features."
+    },
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",

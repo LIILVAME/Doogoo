@@ -1,7 +1,9 @@
 <template>
   <AuthLayout>
     <div>
-      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">{{ $t('auth.signup.title') }}</h2>
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+        {{ $t('auth.signup.title') }}
+      </h2>
       <p class="text-center text-gray-500 text-sm mb-6">{{ $t('auth.signup.subtitle') }}</p>
 
       <form @submit.prevent="handleSignUp" class="space-y-4">
@@ -35,15 +37,19 @@
         />
 
         <!-- Mot de passe -->
-        <AuthInput
-          :label="$t('auth.signup.password')"
-          type="password"
-          v-model="form.password"
-          :placeholder="$t('auth.signup.passwordPlaceholder')"
-          :error="passwordError"
-          :hint="$t('auth.signup.passwordHint')"
-          required
-        />
+        <div>
+          <AuthInput
+            :label="$t('auth.signup.password')"
+            type="password"
+            v-model="form.password"
+            :placeholder="$t('auth.signup.passwordPlaceholder')"
+            :error="passwordError"
+            :hint="$t('auth.signup.passwordHint')"
+            required
+          />
+          <!-- Indicateur de force -->
+          <PasswordStrengthMeter v-if="form.password" :password="form.password" :show-tips="true" />
+        </div>
 
         <!-- Confirmation mot de passe -->
         <AuthInput
@@ -57,10 +63,27 @@
 
         <!-- Message d'erreur global -->
         <transition name="slide-fade">
-          <div v-if="authStore.error && !fullNameError && !emailError && !passwordError && !passwordConfirmError" class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+          <div
+            v-if="
+              authStore.error &&
+              !fullNameError &&
+              !emailError &&
+              !passwordError &&
+              !passwordConfirmError
+            "
+            class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm"
+          >
             <div class="flex items-start">
-              <svg class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+              <svg
+                class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd"
+                ></path>
               </svg>
               <p class="text-sm text-red-700 flex-1">{{ authStore.error }}</p>
             </div>
@@ -72,7 +95,14 @@
           :label="$t('auth.signup.cta')"
           :loading="authStore.loading"
           type="submit"
-          :disabled="!form.fullName || !form.email || !form.password || form.password !== form.passwordConfirm"
+          :disabled="
+            !form.fullName ||
+            !form.email ||
+            !form.password ||
+            form.password.length < 6 ||
+            form.password !== form.passwordConfirm ||
+            authStore.loading
+          "
         />
 
         <!-- Boutons OAuth -->
@@ -110,6 +140,7 @@ import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
 import AuthOAuth from '@/components/auth/AuthOAuth.vue'
+import PasswordStrengthMeter from '@/components/auth/PasswordStrengthMeter.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -139,16 +170,22 @@ const emailError = computed(() => {
 })
 
 const passwordError = computed(() => {
-  if (!form.value.password && authStore.error) return null
-  if (form.value.password && form.value.password.length < 6) {
-    return t('auth.signup.passwordHint')
+  if (!form.value.password) {
+    return authStore.error && authStore.error.toLowerCase().includes('password')
+      ? authStore.error
+      : ''
+  }
+  if (form.value.password.length < 6) {
+    return 'Le mot de passe doit contenir au moins 6 caractères'
   }
   return ''
 })
 
 const passwordConfirmError = computed(() => {
-  if (!form.value.passwordConfirm && authStore.error) return null
-  if (form.value.passwordConfirm && form.value.password !== form.value.passwordConfirm) {
+  if (!form.value.passwordConfirm) {
+    return ''
+  }
+  if (form.value.password && form.value.password !== form.value.passwordConfirm) {
     return 'Les mots de passe ne correspondent pas'
   }
   return ''
@@ -165,14 +202,10 @@ const handleSignUp = async () => {
     return
   }
 
-  const result = await authStore.signUp(
-    form.value.email,
-    form.value.password,
-    {
-      fullName: form.value.fullName,
-      phone: form.value.phone || null
-    }
-  )
+  const result = await authStore.signUp(form.value.email, form.value.password, {
+    fullName: form.value.fullName,
+    phone: form.value.phone || null
+  })
 
   if (result.success) {
     if (result.requiresConfirmation) {
@@ -196,7 +229,7 @@ const handleSignUp = async () => {
 /**
  * Gère la connexion OAuth
  */
-const handleOAuth = async (provider) => {
+const handleOAuth = async provider => {
   oauthLoading.value = true
   oauthProvider.value = provider
 
@@ -234,4 +267,3 @@ const handleOAuth = async (provider) => {
   opacity: 0;
 }
 </style>
-
