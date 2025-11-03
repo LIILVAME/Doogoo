@@ -1,127 +1,133 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar />
+  <OnboardingProvider :steps="onboardingSteps" :auto-start="false">
+    <div class="flex min-h-screen bg-gray-50">
+      <!-- Sidebar -->
+      <Sidebar />
 
-    <!-- Main Content -->
-    <main
-      ref="mainElement"
-      class="flex-1 overflow-y-auto"
-      role="main"
-      aria-label="Tableau de bord principal"
-    >
-      <PullToRefresh
-        :is-pulling="isPulling"
-        :pull-distance="pullDistance"
-        :is-refreshing="isRefreshing"
-        :threshold="80"
-      />
-      <div class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-6 xl:px-8 pt-16 pb-20 sm:pt-10 sm:pb-10">
-        <!-- Header avec statistiques -->
-        <DashboardHeader :stats="globalStats" />
+      <!-- Main Content -->
+      <main
+        ref="mainElement"
+        class="flex-1 overflow-y-auto"
+        role="main"
+        aria-label="Tableau de bord principal"
+      >
+        <PullToRefresh
+          :is-pulling="isPulling"
+          :pull-distance="pullDistance"
+          :is-refreshing="isRefreshing"
+          :threshold="80"
+        />
+        <div class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-6 xl:px-8 pt-16 pb-20 sm:pt-10 sm:pb-10">
+          <!-- Header avec statistiques -->
+          <DashboardHeader :stats="globalStats" />
 
-        <!-- État de chargement initial avec skeletons (uniquement si aucune donnée) -->
-        <div
-          v-if="
-            (propertiesStore.loading || paymentsStore.loading) &&
-            propertiesStore.properties.length === 0 &&
-            paymentsStore.payments.length === 0
-          "
-          class="space-y-4 sm:space-y-6"
-        >
-          <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-            <SkeletonCard v-for="n in 3" :key="n" />
-          </div>
-        </div>
-
-        <!-- Erreur (uniquement si aucune donnée en cache) -->
-        <div
-          v-else-if="
-            (propertiesStore.error || paymentsStore.error) &&
-            propertiesStore.properties.length === 0 &&
-            paymentsStore.payments.length === 0
-          "
-          class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
-        >
-          <div class="flex items-center">
-            <svg
-              class="w-5 h-5 text-red-600 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p class="text-red-700 font-medium">
-              {{ $t('common.errorWithColon') }} {{ propertiesStore.error || paymentsStore.error }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
-        <div>
-          <!-- Loader inline si refresh en cours ET données déjà présentes -->
+          <!-- État de chargement initial avec skeletons (uniquement si aucune donnée) -->
           <div
             v-if="
               (propertiesStore.loading || paymentsStore.loading) &&
-              (propertiesStore.properties.length > 0 || paymentsStore.payments.length > 0)
+              propertiesStore.properties.length === 0 &&
+              paymentsStore.payments.length === 0
             "
-            class="text-center py-4 mb-4"
+            class="space-y-4 sm:space-y-6"
           >
-            <InlineLoader />
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+              <SkeletonCard v-for="n in 3" :key="n" />
+            </div>
           </div>
 
-          <!-- Liste des appartements -->
-          <PropertiesList
-            :properties="properties"
-            @add-click="isModalOpen = true"
-            @edit-property="handleEditProperty"
-            @delete-property="handleDeleteProperty"
-          />
+          <!-- Erreur (uniquement si aucune donnée en cache) -->
+          <div
+            v-else-if="
+              (propertiesStore.error || paymentsStore.error) &&
+              propertiesStore.properties.length === 0 &&
+              paymentsStore.payments.length === 0
+            "
+            class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
+          >
+            <div class="flex items-center">
+              <svg
+                class="w-5 h-5 text-red-600 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p class="text-red-700 font-medium">
+                {{ $t('common.errorWithColon') }} {{ propertiesStore.error || paymentsStore.error }}
+              </p>
+            </div>
+          </div>
 
-          <!-- Section Paiements -->
-          <PaymentsSection
-            :payments="payments"
-            @edit-payment="handleEditPayment"
-            @delete-payment="handleDeletePayment"
-          />
+          <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
+          <div>
+            <!-- Loader inline si refresh en cours ET données déjà présentes -->
+            <div
+              v-if="
+                (propertiesStore.loading || paymentsStore.loading) &&
+                (propertiesStore.properties.length > 0 || paymentsStore.payments.length > 0)
+              "
+              class="text-center py-4 mb-4"
+            >
+              <InlineLoader />
+            </div>
+
+            <!-- Liste des appartements -->
+            <PropertiesList
+              :properties="properties"
+              @add-click="isModalOpen = true"
+              @edit-property="handleEditProperty"
+              @delete-property="handleDeleteProperty"
+            />
+
+            <!-- Section Paiements -->
+            <PaymentsSection
+              :payments="payments"
+              @edit-payment="handleEditPayment"
+              @delete-payment="handleDeletePayment"
+            />
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <!-- Modal d'ajout de bien -->
-    <AddPropertyModal
-      :isOpen="isModalOpen"
-      :isLoading="propertiesStore.loading"
-      @close="isModalOpen = false"
-      @submit="handleAddProperty"
-    />
+      <!-- Modal d'ajout de bien -->
+      <AddPropertyModal
+        :isOpen="isModalOpen"
+        :isLoading="propertiesStore.loading"
+        @close="isModalOpen = false"
+        @submit="handleAddProperty"
+      />
 
-    <!-- Floating Action Button (mobile only) -->
-    <FloatingActionButton :aria-label="$t('common.addProperty')" @click="isModalOpen = true" />
+      <!-- Floating Action Button (mobile only) -->
+      <FloatingActionButton
+        :aria-label="$t('common.addProperty')"
+        :data-onboarding="'add-property'"
+        @click="isModalOpen = true"
+      />
 
-    <!-- Modal de confirmation de suppression -->
-    <ConfirmModal
-      :isOpen="showDeleteConfirm"
-      title="Supprimer ce bien ?"
-      :message="
-        $t('properties.confirmDelete') ||
-        'Êtes-vous sûr de vouloir supprimer ce bien ? Cette action est irréversible.'
-      "
-      confirm-label="Supprimer"
-      cancel-label="Annuler"
-      variant="danger"
-      :isLoading="isDeletingProperty"
-      @confirm="confirmDelete"
-      @cancel="cancelDelete"
-      @update:isOpen="showDeleteConfirm = $event"
-    />
-  </div>
+      <!-- Modal de confirmation de suppression -->
+      <ConfirmModal
+        :isOpen="showDeleteConfirm"
+        title="Supprimer ce bien ?"
+        :message="
+          $t('properties.confirmDelete') ||
+          'Êtes-vous sûr de vouloir supprimer ce bien ? Cette action est irréversible.'
+        "
+        confirm-label="Supprimer"
+        cancel-label="Annuler"
+        variant="danger"
+        :isLoading="isDeletingProperty"
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+        @update:isOpen="showDeleteConfirm = $event"
+      />
+    </div>
+  </OnboardingProvider>
 </template>
 
 <script setup>
@@ -138,12 +144,75 @@ import SkeletonCard from '../components/common/SkeletonCard.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import FloatingActionButton from '../components/common/FloatingActionButton.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
+import OnboardingProvider from '../components/onboarding/OnboardingProvider.vue'
+import { useI18n } from '@/composables/useLingui'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { usePaymentsStore } from '@/stores/paymentsStore'
 
 const propertiesStore = usePropertiesStore()
 const paymentsStore = usePaymentsStore()
 const router = useRouter()
+const { t } = useI18n()
+
+/**
+ * Étapes d'onboarding pour le dashboard
+ */
+const onboardingSteps = computed(() => {
+  const steps = []
+
+  // Étape 1: Bienvenue
+  steps.push({
+    id: 'welcome',
+    target: 'main',
+    title: t('onboarding.welcome'),
+    content: t('onboarding.welcomeDescription'),
+    placement: 'bottom'
+  })
+
+  // Étape 2: Dashboard overview (si il y a des données)
+  if (propertiesStore.properties.length > 0 || paymentsStore.payments.length > 0) {
+    steps.push({
+      id: 'dashboard',
+      target: '[role="main"]',
+      title: t('onboarding.dashboardTitle'),
+      content: t('onboarding.dashboardDescription'),
+      placement: 'bottom'
+    })
+  }
+
+  // Étape 3: Bouton d'ajout de bien
+  steps.push({
+    id: 'add-property',
+    target: '[aria-label*="' + t('common.addProperty') + '"]',
+    title: t('onboarding.addPropertyTitle'),
+    content: t('onboarding.addPropertyDescription'),
+    placement: 'left'
+  })
+
+  // Étape 4: Carte de propriété (si il y en a une)
+  if (propertiesStore.properties.length > 0) {
+    steps.push({
+      id: 'property-card',
+      target: '.card',
+      title: t('onboarding.propertyCardTitle'),
+      content: t('onboarding.propertyCardDescription'),
+      placement: 'top'
+    })
+  }
+
+  // Étape 5: Section paiements
+  if (paymentsStore.payments.length > 0) {
+    steps.push({
+      id: 'payments',
+      target: '#payments-section, [data-section="payments"]',
+      title: t('onboarding.paymentsTitle'),
+      content: t('onboarding.paymentsDescription'),
+      placement: 'top'
+    })
+  }
+
+  return steps
+})
 
 // Pull-to-refresh
 const mainElement = ref(null)

@@ -246,6 +246,26 @@
     "markAsResolved": "Mark as resolved",
     "view": "View"
   },
+  "onboarding": {
+    "skip": "Skip",
+    "previous": "Previous",
+    "next": "Next",
+    "finish": "Finish",
+    "dismiss": "Dismiss guide",
+    "restart": "Restart guide",
+    "welcome": "Welcome to Doogoo!",
+    "welcomeDescription": "Follow this short guide to discover the main features.",
+    "dashboardTitle": "Your dashboard",
+    "dashboardDescription": "View your statistics, properties and payments at a glance.",
+    "addPropertyTitle": "Add your first property",
+    "addPropertyDescription": "Click this button to register your first property.",
+    "propertyCardTitle": "Manage your properties",
+    "propertyCardDescription": "Click Edit to update information or Delete to remove a property.",
+    "addTenantTitle": "Add a tenant",
+    "addTenantDescription": "Register your tenants' information for complete tracking.",
+    "paymentsTitle": "Track payments",
+    "paymentsDescription": "View and manage all your rent payments from this section."
+  },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your preferences and personal information",

@@ -157,7 +157,30 @@
                   alt="Tableau de bord Doogoo - Interface moderne de gestion immobilière avec graphiques et statistiques"
                   class="rounded-lg w-full"
                   loading="lazy"
+                  @error="handleImageError"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                 />
+                <!-- Fallback gradient si l'image ne charge pas -->
+                <div
+                  class="hidden w-full h-full min-h-[400px] rounded-lg bg-gradient-to-br from-primary-100 via-green-100 to-blue-100 flex items-center justify-center"
+                >
+                  <div class="text-center p-8">
+                    <svg
+                      class="w-24 h-24 mx-auto text-primary-600 opacity-50 mb-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                    <p class="text-gray-600 font-medium">Dashboard Doogoo</p>
+                  </div>
+                </div>
                 <!-- Badge flottant -->
                 <div
                   class="absolute top-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
@@ -234,7 +257,11 @@
                   alt="Propriétés immobilières"
                   class="w-full h-full object-cover"
                   loading="lazy"
+                  @error="handleImageError"
+                  onerror="this.style.display='none';"
                 />
+                <!-- Fallback gradient si l'image ne charge pas -->
+                <div class="hidden w-full h-full bg-gradient-to-br from-gray-100 to-gray-200"></div>
               </div>
               <!-- Overlay avec interface de gestion -->
               <div class="relative p-8">
@@ -595,6 +622,16 @@ const goToDashboard = () => {
     router.push('/dashboard')
   } else {
     router.push('/login')
+  }
+}
+
+/**
+ * Gère les erreurs de chargement d'images
+ */
+const handleImageError = event => {
+  // L'image est déjà cachée via onerror, on peut logger en dev
+  if (import.meta.env.DEV) {
+    console.debug('⚠️ Image failed to load:', event.target.src)
   }
 }
 </script>

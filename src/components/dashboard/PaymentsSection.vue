@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div id="payments-section" data-section="payments" class="card">
     <div class="flex items-center justify-between mb-6">
       <h3 class="text-xl font-bold text-gray-900">{{ $t('dashboard.payments') }}</h3>
       <router-link
