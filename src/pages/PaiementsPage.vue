@@ -173,6 +173,7 @@
     <!-- Modal d'ajout de paiement -->
     <AddPaymentModal
       :isOpen="isModalOpen"
+      :isLoading="paymentsStore.loading"
       @close="isModalOpen = false"
       @submit="handleAddPayment"
     />
@@ -181,6 +182,7 @@
     <EditPaymentModal
       :isOpen="isEditModalOpen"
       :payment="selectedPayment"
+      :isLoading="paymentsStore.loading"
       @close="isEditModalOpen = false"
       @submit="handleUpdatePayment"
     />

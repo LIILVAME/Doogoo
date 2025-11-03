@@ -93,7 +93,12 @@
     </main>
 
     <!-- Modal d'ajout de locataire -->
-    <AddTenantModal :isOpen="isModalOpen" @close="isModalOpen = false" @submit="handleAddTenant" />
+    <AddTenantModal
+      :isOpen="isModalOpen"
+      :isLoading="propertiesStore.loading"
+      @close="isModalOpen = false"
+      @submit="handleAddTenant"
+    />
 
     <!-- Modal de confirmation de suppression -->
     <ConfirmModal

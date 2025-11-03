@@ -1,6 +1,6 @@
 <template>
   <div
-    class="card cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 flex flex-col justify-between min-h-[280px]"
+    class="card cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col justify-between min-h-[280px]"
   >
     <!-- Contenu principal -->
     <div class="flex-1">
@@ -45,7 +45,7 @@
     <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
       <button
         @click.stop="$emit('edit', tenant)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors"
+        class="flex-1 px-3 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-150"
       >
         <svg class="w-4 h-4 inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -59,7 +59,7 @@
       </button>
       <button
         @click.stop="$emit('delete', tenant.id)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+        class="flex-1 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-150"
       >
         <svg class="w-4 h-4 inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

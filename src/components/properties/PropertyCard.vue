@@ -1,6 +1,6 @@
 <template>
   <div
-    class="card cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 flex flex-col justify-between min-h-[280px] sm:min-h-[320px] lg:min-h-[350px]"
+    class="card cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 flex flex-col justify-between min-h-[280px] sm:min-h-[320px] lg:min-h-[350px]"
   >
     <!-- Contenu principal (flex-1 pour occuper l'espace disponible) -->
     <div class="flex-1 flex flex-col">
@@ -73,7 +73,7 @@
     <div class="mt-auto pt-2 sm:pt-4 border-t border-gray-100 flex items-center gap-1.5 sm:gap-2">
       <button
         @click.stop="$emit('edit', property)"
-        class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors flex items-center justify-center"
+        class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-150 flex items-center justify-center"
       >
         <svg
           class="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1.5"
@@ -92,7 +92,7 @@
       </button>
       <button
         @click.stop="$emit('delete', property.id)"
-        class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center"
+        class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-150 flex items-center justify-center"
       >
         <svg
           class="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1.5"

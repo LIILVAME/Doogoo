@@ -243,14 +243,14 @@ src/stores/tablePreferencesStore.js (ou extension de settingsStore)
 - [x] Audit complet des suppressions (vérifier toutes utilisent ConfirmModal) ✅
 - [x] Créer composable `useSafeDelete` pour standardiser ✅
 - [x] Ajouter loading states sur toutes les actions destructives ✅
-- [ ] Ajouter loading states sur les formulaires (sauvegarde) ⏳
+- [x] Ajouter loading states sur les formulaires (sauvegarde) ✅
 
 ### Phase 2 : Feedback et Fluidité (Priorité MOYENNE)
 
-- [ ] Ajouter transitions sur cartes et boutons
-- [ ] Enrichir micro-interactions (hover, active, focus)
-- [ ] Créer système d'onboarding progressif
-- [ ] Ajouter tooltips contextuels
+- [x] Ajouter transitions sur cartes et boutons ✅
+- [x] Enrichir micro-interactions (hover, active, focus) ✅
+- [ ] Créer système d'onboarding progressif ⏳
+- [ ] Ajouter tooltips contextuels ⏳
 
 ### Phase 3 : Confort et Accessibilité (Priorité BASSE)
 

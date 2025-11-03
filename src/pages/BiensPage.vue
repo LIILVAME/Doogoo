@@ -82,6 +82,7 @@
     <!-- Modal d'ajout de bien -->
     <AddPropertyModal
       :isOpen="isAddModalOpen"
+      :isLoading="propertiesStore.loading"
       @close="isAddModalOpen = false"
       @submit="handleAddProperty"
     />
@@ -90,6 +91,7 @@
     <EditPropertyModal
       :isOpen="isEditModalOpen"
       :property="selectedProperty"
+      :isLoading="propertiesStore.loading"
       @close="isEditModalOpen = false"
       @submit="handleUpdateProperty"
     />

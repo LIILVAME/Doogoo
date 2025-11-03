@@ -97,6 +97,7 @@
     <!-- Modal d'ajout de bien -->
     <AddPropertyModal
       :isOpen="isModalOpen"
+      :isLoading="propertiesStore.loading"
       @close="isModalOpen = false"
       @submit="handleAddProperty"
     />
