@@ -28,6 +28,7 @@ export const usePaymentsStore = defineStore(
     let isRealtimeActive = false // Flag pour désactiver les callbacks lors du cleanup
     let lastFetchTime = 0
     const FETCH_CACHE_MS = 5000 // Cache de 5 secondes pour éviter les requêtes multiples
+    let reconnectScheduled = false // Évite les reconnexions multiples simultanées
 
     /**
      * Récupère tous les paiements de l'utilisateur depuis Supabase
@@ -507,21 +508,52 @@ export const usePaymentsStore = defineStore(
             }
           }
         )
-        .subscribe(status => {
+        .subscribe(async status => {
           if (status === 'SUBSCRIBED') {
-            console.log('✅ Realtime subscribed to payments')
+            if (import.meta.env.DEV) {
+              console.log('✅ Realtime subscribed to payments')
+            }
+            // Réinitialise les tentatives de reconnexion en cas de succès
+            const { resetReconnectAttempts } = await import('@/composables/useRealtimeReconnect')
+            resetReconnectAttempts()
+            reconnectScheduled = false
           } else if (status === 'CHANNEL_ERROR') {
-            console.error('❌ Realtime error for payments')
-            isRealtimeInitialized = false // Réinitialise pour permettre une nouvelle tentative
-            isRealtimeActive = false
-            realtimeChannel = null
-            // Ne pas afficher d'erreur toast pour éviter le spam
-            // Le Realtime est optionnel, l'application fonctionne sans
-          } else if (status === 'CLOSED') {
-            console.log('🔌 Realtime channel closed for payments')
+            if (import.meta.env.DEV) {
+              console.error('❌ Realtime error for payments')
+            }
             isRealtimeInitialized = false
             isRealtimeActive = false
             realtimeChannel = null
+
+            // Programme une reconnexion avec backoff exponentiel
+            if (!reconnectScheduled) {
+              reconnectScheduled = true
+              const { scheduleReconnect, resetReconnectAttempts } = await import(
+                '@/composables/useRealtimeReconnect'
+              )
+              const authStore = useAuthStore()
+
+              // Ne reconnecte que si l'utilisateur est toujours authentifié
+              if (authStore.user) {
+                scheduleReconnect(() => {
+                  reconnectScheduled = false
+                  initRealtime()
+                }, 'payments')
+              } else {
+                resetReconnectAttempts()
+                reconnectScheduled = false
+              }
+            }
+          } else if (status === 'CLOSED') {
+            if (import.meta.env.DEV) {
+              console.log('🔌 Realtime channel closed for payments')
+            }
+            isRealtimeInitialized = false
+            isRealtimeActive = false
+            realtimeChannel = null
+
+            // Ne reconnecte pas automatiquement sur CLOSED
+            // (peut être une déconnexion volontaire ou normale)
           }
         })
     }
@@ -529,20 +561,32 @@ export const usePaymentsStore = defineStore(
     /**
      * Arrête l'abonnement temps réel
      */
-    const stopRealtime = () => {
+    const stopRealtime = async () => {
       // Désactive les callbacks en premier pour éviter les erreurs
       isRealtimeActive = false
+      reconnectScheduled = false
+
+      // Annule les reconnexions programmées
+      const { cancelScheduledReconnect, resetReconnectAttempts } = await import(
+        '@/composables/useRealtimeReconnect'
+      )
+      cancelScheduledReconnect()
+      resetReconnectAttempts()
 
       if (realtimeChannel) {
         try {
           supabase.removeChannel(realtimeChannel)
         } catch (e) {
           // Ignore les erreurs lors du nettoyage
-          console.warn('Error removing Realtime channel (non blocking):', e)
+          if (import.meta.env.DEV) {
+            console.warn('Error removing Realtime channel (non blocking):', e)
+          }
         }
         realtimeChannel = null
         isRealtimeInitialized = false
-        console.log('🔌 Realtime unsubscribed from payments')
+        if (import.meta.env.DEV) {
+          console.log('🔌 Realtime unsubscribed from payments')
+        }
       }
     }
 
