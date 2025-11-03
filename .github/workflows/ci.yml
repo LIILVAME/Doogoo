@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npm run lint:check || (echo "⚠️ ESLint completed with warnings (non-blocking)" && exit 0)
+        run: npm run lint:check
 
       - name: Type check
         run: npx vue-tsc --noEmit || echo "⚠️ Type checking skipped (vue-tsc may not be available)"
