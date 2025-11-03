@@ -5,22 +5,26 @@
         <p class="text-xs text-gray-500 mb-1">{{ $t('payments.tenant') }}</p>
         <p class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ tenant.name }}</p>
       </div>
-      <span 
+      <span
         class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0"
         :class="statusClass"
       >
         {{ statusText }}
       </span>
     </div>
-    
+
     <div class="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
       <div>
         <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.entryDate') }}</p>
-        <p class="font-medium text-gray-900">{{ formatDate(tenant.entryDate, { shortMonth: true }) }}</p>
+        <p class="font-medium text-gray-900">
+          {{ formatDate(tenant.entryDate, { shortMonth: true }) }}
+        </p>
       </div>
       <div v-if="tenant.exitDate">
         <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
-        <p class="font-medium text-gray-900">{{ formatDate(tenant.exitDate, { shortMonth: true }) }}</p>
+        <p class="font-medium text-gray-900">
+          {{ formatDate(tenant.exitDate, { shortMonth: true }) }}
+        </p>
       </div>
       <div v-else>
         <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
@@ -28,7 +32,7 @@
       </div>
     </div>
   </div>
-  
+
   <div v-else class="tenant-info">
     <p class="text-sm text-gray-500 italic">{{ $t('tenants.noTenants') }}</p>
   </div>
@@ -38,7 +42,7 @@
 import { computed } from 'vue'
 import { useI18n } from '@/composables/useLingui'
 import { formatDate } from '@/utils/formatters'
-import { PAYMENT_STATUS, STATUS_LABELS, STATUS_CLASSES } from '@/utils/constants'
+import { PAYMENT_STATUS, STATUS_CLASSES } from '@/utils/constants'
 
 const { t } = useI18n()
 
@@ -62,7 +66,7 @@ const statusClass = computed(() => {
  */
 const statusText = computed(() => {
   if (!props.tenant) return t('status.pending')
-  
+
   const status = props.tenant.status
   const statusMap = {
     [PAYMENT_STATUS.ON_TIME]: 'status.onTime',
@@ -70,7 +74,7 @@ const statusText = computed(() => {
     [PAYMENT_STATUS.PENDING]: 'status.pending',
     [PAYMENT_STATUS.PAID]: 'status.paid'
   }
-  
+
   return t(statusMap[status] || 'status.pending')
 })
 </script>
@@ -80,4 +84,3 @@ const statusText = computed(() => {
   @apply mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-gray-100;
 }
 </style>
-

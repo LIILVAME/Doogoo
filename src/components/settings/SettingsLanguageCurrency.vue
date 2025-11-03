@@ -1,8 +1,10 @@
 <template>
   <div class="space-y-6">
     <div class="card">
-      <h3 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('settings.sections.languageCurrency') }}</h3>
-      
+      <h3 class="text-lg font-semibold text-gray-900 mb-6">
+        {{ $t('settings.sections.languageCurrency') }}
+      </h3>
+
       <div class="space-y-6">
         <!-- Langue -->
         <div>
@@ -42,7 +44,8 @@
         <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
           <p class="text-sm font-medium text-green-900 mb-2">{{ $t('settings.preview') }}</p>
           <p class="text-sm text-green-700">
-            {{ $t('settings.previewExample') }}: <span class="font-semibold">{{ formatCurrency(1200) }}</span>
+            {{ $t('settings.previewExample') }}:
+            <span class="font-semibold">{{ formatCurrency(1200) }}</span>
           </p>
         </div>
       </div>
@@ -52,11 +55,10 @@
 
 <script setup>
 import { ref, watch, onMounted, nextTick } from 'vue'
-import { useI18n } from '@/composables/useLingui'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
 
-const { t } = useI18n()
+// Utilise $t dans le template, pas besoin de t dans le script
 const settingsStore = useSettingsStore()
 
 // Utilise directement la valeur du store avec une ref locale pour le v-model
@@ -68,16 +70,20 @@ onMounted(() => {
 })
 
 // Watch pour synchroniser si le store change (mais ne devrait pas changer de l'extérieur)
-watch(() => settingsStore.currency, (newVal) => {
-  if (newVal && newVal !== localCurrency.value) {
-    localCurrency.value = newVal
-  }
-}, { immediate: true })
+watch(
+  () => settingsStore.currency,
+  newVal => {
+    if (newVal && newVal !== localCurrency.value) {
+      localCurrency.value = newVal
+    }
+  },
+  { immediate: true }
+)
 
-const handleLanguageChange = async (event) => {
+const handleLanguageChange = async event => {
   const newLanguage = event.target.value
   if (newLanguage === settingsStore.language) return
-  
+
   try {
     settingsStore.setLanguage(newLanguage)
     // setLanguage peut déclencher un reload, donc on attend un peu
@@ -93,4 +99,3 @@ const handleCurrencyChange = () => {
   }
 }
 </script>
-

@@ -30,20 +30,25 @@ onMounted(async () => {
     console.log('KEY:', supabaseKey ? supabaseKey.slice(0, 20) + '...' : 'MANQUANTE')
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Variables d\'environnement Supabase manquantes')
+      throw new Error("Variables d'environnement Supabase manquantes")
     }
 
     addResult('Configuration', true, { url: supabaseUrl, keyPresent: !!supabaseKey })
 
     // 2️⃣ Test de connexion basique
     console.log('\n🔌 Test de connexion...')
-    const { data: healthCheck, error: healthError } = await supabase
+    const { error: healthError } = await supabase
       .from('properties')
       .select('count', { count: 'exact', head: true })
 
     if (healthError) {
       console.warn('⚠️ Erreur de connexion (peut être normal si RLS activé):', healthError)
-      addResult('Connexion réseau', true, { message: 'Connexion établie, RLS peut bloquer les requêtes' }, healthError.message)
+      addResult(
+        'Connexion réseau',
+        true,
+        { message: 'Connexion établie, RLS peut bloquer les requêtes' },
+        healthError.message
+      )
     } else {
       console.log('✅ Connexion réussie')
       addResult('Connexion réseau', true, { message: 'Connexion établie avec succès' })
@@ -88,7 +93,9 @@ onMounted(async () => {
       console.warn('⚠️ Erreur INSERT (attendu si RLS activé et non authentifié):', insertError)
       addResult(
         'INSERT properties',
-        insertError.code === 'PGRST301' || insertError.message?.includes('RLS') || insertError.message?.includes('permission'),
+        insertError.code === 'PGRST301' ||
+          insertError.message?.includes('RLS') ||
+          insertError.message?.includes('permission'),
         { message: 'Erreur RLS attendue si non authentifié' },
         insertError.message
       )
@@ -141,7 +148,6 @@ onMounted(async () => {
     status.value = `✅ Tests terminés : ${allSuccess}/${allTests} réussis`
     console.log(`\n✅ Tests terminés : ${allSuccess}/${allTests} réussis`)
     console.groupEnd()
-
   } catch (e) {
     console.error('❌ Erreur fatale:', e)
     status.value = '❌ Erreur de connexion Supabase'
@@ -173,11 +179,13 @@ onMounted(async () => {
                   {{ result.success ? '✅' : '❌' }} {{ result.step }}
                 </h3>
                 <p class="text-sm text-gray-600">{{ result.timestamp }}</p>
-                
+
                 <div v-if="result.data" class="mt-2">
-                  <pre class="text-xs bg-white border p-2 rounded overflow-x-auto">{{ JSON.stringify(result.data, null, 2) }}</pre>
+                  <pre class="text-xs bg-white border p-2 rounded overflow-x-auto">{{
+                    JSON.stringify(result.data, null, 2)
+                  }}</pre>
                 </div>
-                
+
                 <div v-if="result.error" class="mt-2">
                   <p class="text-sm text-red-600 font-medium">Erreur:</p>
                   <p class="text-sm text-red-700">{{ result.error }}</p>
@@ -196,8 +204,9 @@ onMounted(async () => {
         <!-- Instructions -->
         <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p class="text-sm text-blue-800">
-            <strong>Note:</strong> Les erreurs RLS (Row Level Security) sont normales si vous n'êtes pas authentifié.
-            Ces tests vérifient que la connexion réseau fonctionne et que Supabase répond correctement.
+            <strong>Note:</strong> Les erreurs RLS (Row Level Security) sont normales si vous n'êtes
+            pas authentifié. Ces tests vérifient que la connexion réseau fonctionne et que Supabase
+            répond correctement.
           </p>
         </div>
       </div>
@@ -214,4 +223,3 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
