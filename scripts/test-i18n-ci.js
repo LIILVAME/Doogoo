@@ -80,7 +80,7 @@ function traverseJSON(obj, filePath, keyPath = '') {
 
     if (typeof value === 'string') {
       // Détecte les caractères interdits
-      const forbidden = detectForbiddenChars(value, filePath, currentPath)
+      const forbidden = detectForbiddenChars(value)
       if (forbidden.length > 0) {
         forbidden.forEach(({ char }) => {
           errors.push({
