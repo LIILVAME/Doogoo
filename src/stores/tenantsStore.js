@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { usePropertiesStore } from './propertiesStore'
 import { useToastStore } from './toastStore'
 import { PROPERTY_STATUS, PAYMENT_STATUS } from '@/utils/constants'

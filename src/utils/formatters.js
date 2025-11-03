@@ -26,7 +26,7 @@ function getSettingsStore() {
       settingsStoreCache = window.__doogoo_settingsStore
       return settingsStoreCache
     }
-  } catch (_error) {
+  } catch {
     // Ignore les erreurs
   }
 
