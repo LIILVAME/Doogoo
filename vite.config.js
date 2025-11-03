@@ -14,7 +14,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt'],
+      includeAssets: ['robots.txt'],
       manifest: {
         name: 'Doogoo - Smart Property Monitoring & Analytics',
         short_name: 'Doogoo',
@@ -154,13 +154,13 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'apexcharts': ['vue3-apexcharts', 'apexcharts'],
-          'supabase': ['@supabase/supabase-js']
+          apexcharts: ['vue3-apexcharts', 'apexcharts'],
+          supabase: ['@supabase/supabase-js']
         },
         // Optimise les noms de fichiers pour le cache
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: (assetInfo) => {
+        assetFileNames: assetInfo => {
           if (assetInfo.name?.endsWith('.css')) {
             return 'assets/css/[name]-[hash][extname]'
           }
@@ -177,4 +177,3 @@ export default defineConfig({
     exclude: ['vue3-apexcharts'] // Chargé dynamiquement
   }
 })
-
