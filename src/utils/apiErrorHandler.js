@@ -215,8 +215,9 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
   const duration = performance.now() - startTime
   diagnosticStore.trackLatency(endpoint, duration)
 
-  // Avertit si la latence est élevée (plus de 3 secondes)
-  if (duration > 3000) {
+  // Avertit si la latence est élevée (plus de 5 secondes pour les créations, 3s pour les autres)
+  const latencyThreshold = context.includes('create') ? 5000 : 3000
+  if (duration > latencyThreshold) {
     console.warn(`[API] Latence élevée pour ${endpoint}: ${Math.round(duration)}ms`)
     diagnosticStore.logEvent('warning', `Latence élevée: ${endpoint} (${Math.round(duration)}ms)`, {
       endpoint,

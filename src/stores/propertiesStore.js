@@ -168,6 +168,7 @@ export const usePropertiesStore = defineStore(
         properties.value.unshift(optimisticProperty)
 
         // Crée le bien via l'API
+        // Note: timeout de 12s pour createProperty (augmenté pour éviter les timeouts)
         const result = await propertiesApi.createProperty(propertyData, authStore.user.id)
 
         if (!result.success) {
@@ -222,6 +223,7 @@ export const usePropertiesStore = defineStore(
         }
 
         // Si le bien est occupé et qu'un locataire est fourni, créer le locataire
+        // Note: Cette opération séquentielle peut prendre du temps (timeout 12s pour createTenant aussi)
         if (propertyData.status === PROPERTY_STATUS.OCCUPIED && propertyData.tenant) {
           const tenantResult = await tenantsApi.createTenant(
             {

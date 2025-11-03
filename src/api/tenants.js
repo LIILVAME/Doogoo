@@ -19,7 +19,8 @@ export async function getTenants(userId) {
   return withErrorHandling(async () => {
     const { data, error } = await supabase
       .from('tenants')
-      .select(`
+      .select(
+        `
         *,
         properties (
           id,
@@ -27,7 +28,8 @@ export async function getTenants(userId) {
           city,
           address
         )
-      `)
+      `
+      )
       .eq('properties.user_id', userId)
       .order('entry_date', { ascending: false })
 
@@ -49,7 +51,8 @@ export async function getTenantById(tenantId, userId) {
   return withErrorHandling(async () => {
     const { data, error } = await supabase
       .from('tenants')
-      .select(`
+      .select(
+        `
         *,
         properties (
           id,
@@ -57,7 +60,8 @@ export async function getTenantById(tenantId, userId) {
           city,
           address
         )
-      `)
+      `
+      )
       .eq('id', tenantId)
       .eq('properties.user_id', userId)
       .single()
@@ -77,24 +81,31 @@ export async function createTenant(tenantData, userId) {
     return { success: false, message: 'User ID requis' }
   }
 
-  return withErrorHandling(async () => {
-    const { data, error } = await supabase
-      .from('tenants')
-      .insert([
-        {
-          property_id: tenantData.propertyId,
-          name: tenantData.name,
-          entry_date: tenantData.entryDate,
-          exit_date: tenantData.exitDate || null,
-          rent: Number(tenantData.rent) || 0,
-          status: tenantData.status || 'on_time'
-        }
-      ])
-      .select()
-      .single()
+  // Timeout augmenté à 12s pour les créations (peuvent être plus lentes)
+  const timeout = 12000
 
-    return { data, error }
-  }, 'createTenant')
+  return withErrorHandling(
+    async () => {
+      const { data, error } = await supabase
+        .from('tenants')
+        .insert([
+          {
+            property_id: tenantData.propertyId,
+            name: tenantData.name,
+            entry_date: tenantData.entryDate,
+            exit_date: tenantData.exitDate || null,
+            rent: Number(tenantData.rent) || 0,
+            status: tenantData.status || 'on_time'
+          }
+        ])
+        .select()
+        .single()
+
+      return { data, error }
+    },
+    'createTenant',
+    { timeout }
+  )
 }
 
 /**
@@ -172,12 +183,8 @@ export async function deleteTenant(tenantId, userId) {
       return { data: null, error: { message: 'Action non autorisée' } }
     }
 
-    const { error } = await supabase
-      .from('tenants')
-      .delete()
-      .eq('id', tenantId)
+    const { error } = await supabase.from('tenants').delete().eq('id', tenantId)
 
     return { data: null, error }
   }, 'deleteTenant')
 }
-
