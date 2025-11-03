@@ -34,11 +34,7 @@ export function handleApiError(error, context = '') {
       "Action non autorisée. Vous n'avez pas les droits nécessaires.",
     'duplicate key value violates unique constraint': 'Cette valeur existe déjà.',
     'foreign key constraint fails': 'Impossible de supprimer : des données sont liées.',
-    'null value in column': 'Des champs obligatoires sont manquants.',
-    'violates foreign key constraint': 'Erreur de session. Veuillez vous reconnecter.',
-    properties_user_id_fkey: 'Erreur de session. Veuillez vous reconnecter.',
-    payments_user_id_fkey: 'Erreur de session. Veuillez vous reconnecter.',
-    alerts_user_id_fkey: 'Erreur de session. Veuillez vous reconnecter.'
+    'null value in column': 'Des champs obligatoires sont manquants.'
   }
 
   // Remplace par un message plus convivial si disponible
@@ -219,9 +215,8 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
   const duration = performance.now() - startTime
   diagnosticStore.trackLatency(endpoint, duration)
 
-  // Avertit si la latence est élevée (plus de 5 secondes pour les créations, 3s pour les autres)
-  const latencyThreshold = context.includes('create') ? 5000 : 3000
-  if (duration > latencyThreshold) {
+  // Avertit si la latence est élevée (plus de 3 secondes)
+  if (duration > 3000) {
     console.warn(`[API] Latence élevée pour ${endpoint}: ${Math.round(duration)}ms`)
     diagnosticStore.logEvent('warning', `Latence élevée: ${endpoint} (${Math.round(duration)}ms)`, {
       endpoint,

@@ -7,19 +7,35 @@
     @apply bg-gray-50 text-gray-900;
   }
 
-  /* Safe areas iOS - Gestion des notches et home indicator */
+  /* Safe areas iOS - Support des notches et home indicator */
   html {
-    /* Support pour safe-area-inset (iOS 11+) */
+    /* Support des safe areas pour iOS */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
 
-  body {
-    /* Ajustement pour le body (le padding html sera géré par les composants) */
-    padding-top: 0;
-    padding-bottom: 0;
+  /* Classes utilitaires pour safe areas */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Pour les éléments fixes en bas (mobile) */
+  .safe-fixed-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
 }
 
@@ -38,52 +54,5 @@
 
   .stat-card {
     @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200;
-  }
-
-  /* Safe areas utilities pour iOS */
-  .safe-top {
-    padding-top: env(safe-area-inset-top, 0);
-  }
-
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-
-  .safe-left {
-    padding-left: env(safe-area-inset-left, 0);
-  }
-
-  .safe-right {
-    padding-right: env(safe-area-inset-right, 0);
-  }
-
-  .safe-x {
-    padding-left: env(safe-area-inset-left, 0);
-    padding-right: env(safe-area-inset-right, 0);
-  }
-
-  .safe-y {
-    padding-top: env(safe-area-inset-top, 0);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-
-  .safe-all {
-    padding-top: env(safe-area-inset-top, 0);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    padding-left: env(safe-area-inset-left, 0);
-    padding-right: env(safe-area-inset-right, 0);
-  }
-
-  /* Screen reader only (sr-only) */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
   }
 }

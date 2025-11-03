@@ -9,12 +9,16 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
+            ref="modalRef"
             class="relative w-full max-w-md transform overflow-hidden rounded-xl bg-white shadow-xl transition-all"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="'modal-title-add-property'"
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-900">
+              <h2 id="modal-title-add-property" class="text-xl font-semibold text-gray-900">
                 {{ $t('properties.addProperty') }}
               </h2>
               <button
@@ -243,7 +247,8 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, toRef } from 'vue'
+import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 import { useToastStore } from '@/stores/toastStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
 import { propertySchema, validate } from '@/utils/validators'
@@ -264,6 +269,9 @@ const props = defineProps({
 const emit = defineEmits(['close', 'submit'])
 
 const toastStore = useToastStore()
+
+// Focus trap pour accessibilité
+const { modalRef } = useModalFocusTrap(toRef(() => props.isOpen))
 
 const form = ref({
   name: '',

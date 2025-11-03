@@ -47,6 +47,9 @@ import Toast from '@/components/common/Toast.vue'
 import ConnectionBanner from '@/components/common/ConnectionBanner.vue'
 import DegradedModeBanner from '@/components/common/DegradedModeBanner.vue'
 
+// Initialise le keyboard avoidance pour mobile
+useKeyboardAvoidance()
+
 const router = useRouter()
 const authStore = useAuthStore()
 const propertiesStore = usePropertiesStore()
@@ -57,9 +60,6 @@ const diagnosticStore = useDiagnosticStore()
 
 // Initialise le SEO
 const { initSEO } = useSEO()
-
-// Initialise keyboard avoidance pour mobile (scroll auto vers inputs)
-useKeyboardAvoidance()
 
 // Initialise le cache du store settings pour formatCurrency
 // Crée un proxy pour exposer currency et language comme propriétés

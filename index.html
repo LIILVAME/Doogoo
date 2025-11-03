@@ -2,21 +2,11 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
-    <!-- PWA Meta Tags -->
-    <!-- Standard moderne (recommandé) -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <!-- iOS (pour compatibilité, mais déprécié) -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Doogoo">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Favicon et icônes PWA -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <link rel="manifest" href="/manifest.webmanifest">
     
     <!-- Theme -->
@@ -101,10 +91,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- Skip link pour l'accessibilité -->
+    <!-- Skip link pour accessibilité -->
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+      aria-label="Aller au contenu principal"
     >
       Aller au contenu principal
     </a>

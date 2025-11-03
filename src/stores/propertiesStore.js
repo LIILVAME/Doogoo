@@ -27,7 +27,6 @@ export const usePropertiesStore = defineStore(
     let isRealtimeActive = false // Flag pour désactiver les callbacks lors du cleanup
     let lastFetchTime = 0
     const FETCH_CACHE_MS = 5000 // Cache de 5 secondes pour éviter les requêtes multiples
-    let reconnectScheduled = false // Évite les reconnexions multiples simultanées
 
     /**
      * Récupère toutes les propriétés de l'utilisateur depuis Supabase
@@ -157,17 +156,6 @@ export const usePropertiesStore = defineStore(
           throw new Error('User not authenticated')
         }
 
-        // Vérifie que l'ID utilisateur est valide (UUID)
-        if (!authStore.user.id || typeof authStore.user.id !== 'string') {
-          const errorMsg = 'ID utilisateur invalide. Veuillez vous reconnecter.'
-          error.value = errorMsg
-          loading.value = false
-          if (toastStore) {
-            toastStore.error(errorMsg)
-          }
-          throw new Error(errorMsg)
-        }
-
         // Optimistic UI : Ajoute temporairement le bien à la liste
         const optimisticProperty = {
           id: `temp-${Date.now()}`, // ID temporaire
@@ -179,7 +167,6 @@ export const usePropertiesStore = defineStore(
         properties.value.unshift(optimisticProperty)
 
         // Crée le bien via l'API
-        // Note: timeout de 12s pour createProperty (augmenté pour éviter les timeouts)
         const result = await propertiesApi.createProperty(propertyData, authStore.user.id)
 
         if (!result.success) {
@@ -234,7 +221,6 @@ export const usePropertiesStore = defineStore(
         }
 
         // Si le bien est occupé et qu'un locataire est fourni, créer le locataire
-        // Note: Cette opération séquentielle peut prendre du temps (timeout 12s pour createTenant aussi)
         if (propertyData.status === PROPERTY_STATUS.OCCUPIED && propertyData.tenant) {
           const tenantResult = await tenantsApi.createTenant(
             {
@@ -618,52 +604,21 @@ export const usePropertiesStore = defineStore(
             }
           }
         )
-        .subscribe(async status => {
+        .subscribe(status => {
           if (status === 'SUBSCRIBED') {
-            if (import.meta.env.DEV) {
-              console.log('✅ Realtime subscribed to properties')
-            }
-            // Réinitialise les tentatives de reconnexion en cas de succès
-            const { resetReconnectAttempts } = await import('@/composables/useRealtimeReconnect')
-            resetReconnectAttempts()
-            reconnectScheduled = false
+            console.log('✅ Realtime subscribed to properties')
           } else if (status === 'CHANNEL_ERROR') {
-            if (import.meta.env.DEV) {
-              console.error('❌ Realtime error for properties')
-            }
-            isRealtimeInitialized = false
+            console.error('❌ Realtime error for properties')
+            isRealtimeInitialized = false // Réinitialise pour permettre une nouvelle tentative
             isRealtimeActive = false
             realtimeChannel = null
-
-            // Programme une reconnexion avec backoff exponentiel
-            if (!reconnectScheduled) {
-              reconnectScheduled = true
-              const { scheduleReconnect, resetReconnectAttempts } = await import(
-                '@/composables/useRealtimeReconnect'
-              )
-              const authStore = useAuthStore()
-
-              // Ne reconnecte que si l'utilisateur est toujours authentifié
-              if (authStore.user) {
-                scheduleReconnect(() => {
-                  reconnectScheduled = false
-                  initRealtime()
-                }, 'properties')
-              } else {
-                resetReconnectAttempts()
-                reconnectScheduled = false
-              }
-            }
+            // Ne pas afficher d'erreur toast pour éviter le spam
+            // Le Realtime est optionnel, l'application fonctionne sans
           } else if (status === 'CLOSED') {
-            if (import.meta.env.DEV) {
-              console.log('🔌 Realtime channel closed for properties')
-            }
+            console.log('🔌 Realtime channel closed for properties')
             isRealtimeInitialized = false
             isRealtimeActive = false
             realtimeChannel = null
-
-            // Ne reconnecte pas automatiquement sur CLOSED
-            // (peut être une déconnexion volontaire ou normale)
           }
         })
     }
@@ -671,32 +626,20 @@ export const usePropertiesStore = defineStore(
     /**
      * Arrête l'abonnement temps réel
      */
-    const stopRealtime = async () => {
+    const stopRealtime = () => {
       // Désactive les callbacks en premier pour éviter les erreurs
       isRealtimeActive = false
-      reconnectScheduled = false
-
-      // Annule les reconnexions programmées
-      const { cancelScheduledReconnect, resetReconnectAttempts } = await import(
-        '@/composables/useRealtimeReconnect'
-      )
-      cancelScheduledReconnect()
-      resetReconnectAttempts()
 
       if (realtimeChannel) {
         try {
           supabase.removeChannel(realtimeChannel)
         } catch (e) {
           // Ignore les erreurs lors du nettoyage
-          if (import.meta.env.DEV) {
-            console.warn('Error removing Realtime channel (non blocking):', e)
-          }
+          console.warn('Error removing Realtime channel (non blocking):', e)
         }
         realtimeChannel = null
         isRealtimeInitialized = false
-        if (import.meta.env.DEV) {
-          console.log('🔌 Realtime unsubscribed from properties')
-        }
+        console.log('🔌 Realtime unsubscribed from properties')
       }
     }
 

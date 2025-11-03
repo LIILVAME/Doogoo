@@ -1,12 +1,12 @@
 <template>
   <Teleport to="body">
-    <!-- ARIA live region pour screen readers -->
+    <!-- ARIA live region pour annonces accessibles -->
     <div
       role="status"
       aria-live="polite"
-      aria-atomic="false"
+      aria-atomic="true"
       class="sr-only"
-      :aria-label="`${items.length} notification${items.length > 1 ? 's' : ''}`"
+      aria-label="Notifications"
     >
       <span v-for="toast in items" :key="toast.id" class="sr-only">
         {{
@@ -27,8 +27,6 @@
             'border-red-200': toast.type === 'error',
             'border-blue-200': toast.type === 'info'
           }"
-          role="alert"
-          aria-live="polite"
         >
           <!-- Icône -->
           <div

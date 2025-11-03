@@ -81,31 +81,24 @@ export async function createTenant(tenantData, userId) {
     return { success: false, message: 'User ID requis' }
   }
 
-  // Timeout augmenté à 12s pour les créations (peuvent être plus lentes)
-  const timeout = 12000
+  return withErrorHandling(async () => {
+    const { data, error } = await supabase
+      .from('tenants')
+      .insert([
+        {
+          property_id: tenantData.propertyId,
+          name: tenantData.name,
+          entry_date: tenantData.entryDate,
+          exit_date: tenantData.exitDate || null,
+          rent: Number(tenantData.rent) || 0,
+          status: tenantData.status || 'on_time'
+        }
+      ])
+      .select()
+      .single()
 
-  return withErrorHandling(
-    async () => {
-      const { data, error } = await supabase
-        .from('tenants')
-        .insert([
-          {
-            property_id: tenantData.propertyId,
-            name: tenantData.name,
-            entry_date: tenantData.entryDate,
-            exit_date: tenantData.exitDate || null,
-            rent: Number(tenantData.rent) || 0,
-            status: tenantData.status || 'on_time'
-          }
-        ])
-        .select()
-        .single()
-
-      return { data, error }
-    },
-    'createTenant',
-    { timeout }
-  )
+    return { data, error }
+  }, 'createTenant')
 }
 
 /**
