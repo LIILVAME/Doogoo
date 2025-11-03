@@ -75,14 +75,15 @@ export default {
     type: 'Type',
     rent: 'Loyer',
     monthlyRent: 'Loyer mensuel (€)',
-    status: {
-      occupied: 'Occupé',
-      vacant: 'Vacant'
-    },
+    status: 'Statut',
     occupied: 'Occupé',
     vacant: 'Vacant',
     free: 'Libre',
     underMaintenance: 'En maintenance',
+    statusLabels: {
+      occupied: 'Occupé',
+      vacant: 'Vacant'
+    },
     selectStatus: 'Sélectionner un statut',
     selectProperty: 'Sélectionner un bien',
     tenantInfo: 'Informations du locataire',
@@ -468,7 +469,7 @@ export default {
       updateButton: 'Mettre à jour',
       updating: 'Mise à jour...',
       changedSuccess:
-        '✅ Mot de passe modifié avec succès ! Votre compte reste connecté. Un email de confirmation vous a été envoyé.',
+        'Mot de passe modifié avec succès ! Votre compte reste connecté. Un email de confirmation vous a été envoyé.',
       changeError: 'Erreur lors du changement de mot de passe',
       samePassword: "Le nouveau mot de passe doit être différent de l'ancien",
       passwordTooWeak:

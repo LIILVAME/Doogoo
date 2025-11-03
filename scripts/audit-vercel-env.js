@@ -14,16 +14,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const rootDir = join(__dirname, '..')
 
-const REQUIRED_ENV_VARS = [
-  'VITE_SUPABASE_URL',
-  'VITE_SUPABASE_ANON_KEY'
-]
+const REQUIRED_ENV_VARS = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']
 
-const OPTIONAL_ENV_VARS = [
-  'VITE_APP_NAME',
-  'VITE_ADMIN_EMAIL',
-  'VITE_SENTRY_DSN'
-]
+const OPTIONAL_ENV_VARS = ['VITE_APP_NAME', 'VITE_ADMIN_EMAIL', 'VITE_SENTRY_DSN']
 
 /**
  * Vérifie si un fichier .env existe localement
@@ -31,7 +24,7 @@ const OPTIONAL_ENV_VARS = [
 function checkLocalEnv() {
   const envFiles = ['.env', '.env.local', '.env.production']
   const found = envFiles.filter(file => existsSync(join(rootDir, file)))
-  
+
   return {
     hasEnvFiles: found.length > 0,
     envFiles: found
@@ -43,20 +36,23 @@ function checkLocalEnv() {
  */
 function parseEnvFile(filePath) {
   if (!existsSync(filePath)) return {}
-  
+
   const content = readFileSync(filePath, 'utf-8')
   const vars = {}
-  
+
   content.split('\n').forEach(line => {
     const trimmed = line.trim()
     if (trimmed && !trimmed.startsWith('#')) {
       const [key, ...valueParts] = trimmed.split('=')
       if (key && valueParts.length > 0) {
-        vars[key.trim()] = valueParts.join('=').trim().replace(/^["']|["']$/g, '')
+        vars[key.trim()] = valueParts
+          .join('=')
+          .trim()
+          .replace(/^["']|["']$/g, '')
       }
     }
   })
-  
+
   return vars
 }
 
@@ -66,7 +62,7 @@ function parseEnvFile(filePath) {
 function checkLocalEnvVars() {
   const envFiles = ['.env', '.env.local', '.env.production']
   let allVars = {}
-  
+
   envFiles.forEach(file => {
     const filePath = join(rootDir, file)
     if (existsSync(filePath)) {
@@ -74,11 +70,11 @@ function checkLocalEnvVars() {
       allVars = { ...allVars, ...vars }
     }
   })
-  
+
   const required = {}
   const missing = []
   const optional = {}
-  
+
   REQUIRED_ENV_VARS.forEach(key => {
     if (allVars[key]) {
       required[key] = allVars[key] ? '✓ Définie' : '✗ Manquante'
@@ -87,11 +83,11 @@ function checkLocalEnvVars() {
       required[key] = '✗ Manquante'
     }
   })
-  
+
   OPTIONAL_ENV_VARS.forEach(key => {
     optional[key] = allVars[key] ? '✓ Définie' : '○ Optionnelle (non définie)'
   })
-  
+
   return { required, missing, optional, allVars }
 }
 
@@ -102,8 +98,9 @@ function checkGitStatus() {
   try {
     const lastCommit = execSync('git log -1 --oneline', { cwd: rootDir, encoding: 'utf-8' }).trim()
     const branch = execSync('git branch --show-current', { cwd: rootDir, encoding: 'utf-8' }).trim()
-    const hasUncommitted = execSync('git status --porcelain', { cwd: rootDir, encoding: 'utf-8' }).trim().length > 0
-    
+    const hasUncommitted =
+      execSync('git status --porcelain', { cwd: rootDir, encoding: 'utf-8' }).trim().length > 0
+
     return {
       lastCommit,
       branch,
@@ -124,21 +121,21 @@ function checkLocalBuild() {
   try {
     // Vérifie si dist/ existe
     const distExists = existsSync(join(rootDir, 'dist'))
-    
+
     if (!distExists) {
       return {
         hasBuild: false,
         message: 'Aucun build trouvé. Exécutez "npm run build"'
       }
     }
-    
+
     // Vérifie si index.html existe dans dist/
     const indexExists = existsSync(join(rootDir, 'dist', 'index.html'))
-    
+
     // Vérifie si les assets existent
     const assetsDir = join(rootDir, 'dist', 'assets')
     const hasAssets = existsSync(assetsDir)
-    
+
     return {
       hasBuild: true,
       hasIndex: indexExists,
@@ -160,7 +157,7 @@ function generateReport() {
   const envVars = checkLocalEnvVars()
   const gitStatus = checkGitStatus()
   const buildStatus = checkLocalBuild()
-  
+
   const report = {
     timestamp: new Date().toISOString(),
     summary: {
@@ -179,16 +176,17 @@ function generateReport() {
     build: buildStatus,
     recommendations: []
   }
-  
+
   // Génère les recommandations
   if (envVars.missing.length > 0) {
     report.recommendations.push({
       severity: 'CRITICAL',
       message: `Variables manquantes : ${envVars.missing.join(', ')}`,
-      action: 'Ajouter ces variables dans Vercel Dashboard → Settings → Environment Variables et cocher "Included in Build"'
+      action:
+        'Ajouter ces variables dans Vercel Dashboard → Settings → Environment Variables et cocher "Included in Build"'
     })
   }
-  
+
   if (!localEnv.hasEnvFiles) {
     report.recommendations.push({
       severity: 'WARNING',
@@ -196,7 +194,7 @@ function generateReport() {
       action: 'Créer un fichier .env.local avec les variables requises pour le développement local'
     })
   }
-  
+
   if (!buildStatus.hasBuild) {
     report.recommendations.push({
       severity: 'INFO',
@@ -204,7 +202,7 @@ function generateReport() {
       action: 'Exécutez "npm run build" pour générer un build local'
     })
   }
-  
+
   if (gitStatus.hasUncommitted) {
     report.recommendations.push({
       severity: 'WARNING',
@@ -212,39 +210,41 @@ function generateReport() {
       action: 'Commit et push vos changements avant de déployer'
     })
   }
-  
+
   return report
 }
 
 // Exécution
 try {
   const report = generateReport()
-  
-  console.log('\n🔍 AUDIT DES VARIABLES D\'ENVIRONNEMENT VERCEL\n')
+
+  console.log("\n🔍 AUDIT DES VARIABLES D'ENVIRONNEMENT VERCEL\n")
   console.log('═'.repeat(60))
   console.log(`📅 Date: ${report.timestamp}\n`)
-  
+
   console.log('📊 RÉSUMÉ:')
   console.log(`   Statut: ${report.summary.status}`)
-  console.log(`   Variables requises présentes: ${report.summary.requiredVarsPresent}/${report.summary.requiredVarsTotal}\n`)
-  
+  console.log(
+    `   Variables requises présentes: ${report.summary.requiredVarsPresent}/${report.summary.requiredVarsTotal}\n`
+  )
+
   console.log('📁 VARIABLES REQUISES:')
   Object.entries(report.localEnvironment.requiredVars).forEach(([key, value]) => {
     console.log(`   ${value} ${key}`)
   })
-  
+
   console.log('\n📁 VARIABLES OPTIONNELLES:')
   Object.entries(report.localEnvironment.optionalVars).forEach(([key, value]) => {
     console.log(`   ${value} ${key}`)
   })
-  
+
   if (report.localEnvironment.missingVars.length > 0) {
     console.log('\n❌ VARIABLES MANQUANTES:')
     report.localEnvironment.missingVars.forEach(key => {
       console.log(`   ✗ ${key}`)
     })
   }
-  
+
   console.log('\n📝 GIT:')
   if (report.git.error) {
     console.log(`   ⚠️  Erreur: ${report.git.error}`)
@@ -255,7 +255,7 @@ try {
       console.log(`   ⚠️  Modifications non commitées`)
     }
   }
-  
+
   console.log('\n🏗️  BUILD:')
   if (report.build.error) {
     console.log(`   ⚠️  Erreur: ${report.build.error}`)
@@ -269,55 +269,57 @@ try {
       }
     }
   }
-  
+
   if (report.recommendations.length > 0) {
     console.log('\n💡 RECOMMANDATIONS:')
-    report.recommendations.forEach((rec, index) => {
+    report.recommendations.forEach(rec => {
       const icon = rec.severity === 'CRITICAL' ? '🔴' : rec.severity === 'WARNING' ? '🟡' : '🔵'
       console.log(`\n   ${icon} ${rec.severity}: ${rec.message}`)
       console.log(`      Action: ${rec.action}`)
     })
   }
-  
+
   console.log('\n' + '═'.repeat(60))
   console.log('\n⚠️  IMPORTANT: Ce script vérifie uniquement la configuration locale.')
-  console.log('   Pour vérifier Vercel, allez dans le Dashboard → Settings → Environment Variables\n')
-  
+  console.log(
+    '   Pour vérifier Vercel, allez dans le Dashboard → Settings → Environment Variables\n'
+  )
+
   // Assure que le dossier docs existe
   const docsDir = join(rootDir, 'docs')
   if (!existsSync(docsDir)) {
     mkdirSync(docsDir, { recursive: true })
   }
-  
+
   // Sauvegarde le rapport JSON
   const reportPath = join(docsDir, 'VERCEL_ENV_AUDIT_REPORT.md')
-  
+
   // Génère le rapport Markdown
   let markdown = `# 🔍 Rapport d'Audit - Variables d'Environnement Vercel\n\n`
   markdown += `**Date** : ${report.timestamp}\n\n`
-  
+
   markdown += `## 📊 Résumé\n\n`
   markdown += `- **Statut** : ${report.summary.status}\n`
   markdown += `- **Variables requises présentes** : ${report.summary.requiredVarsPresent}/${report.summary.requiredVarsTotal}\n\n`
-  
+
   markdown += `## 📁 Variables d'Environnement\n\n`
   markdown += `### Requises\n\n`
   Object.entries(report.localEnvironment.requiredVars).forEach(([key, value]) => {
     markdown += `- ${value} \`${key}\`\n`
   })
-  
+
   markdown += `\n### Optionnelles\n\n`
   Object.entries(report.localEnvironment.optionalVars).forEach(([key, value]) => {
     markdown += `- ${value} \`${key}\`\n`
   })
-  
+
   if (report.localEnvironment.missingVars.length > 0) {
     markdown += `\n### ❌ Manquantes\n\n`
     report.localEnvironment.missingVars.forEach(key => {
       markdown += `- \`${key}\`\n`
     })
   }
-  
+
   markdown += `\n## 📝 Git\n\n`
   if (report.git.error) {
     markdown += `⚠️ Erreur: ${report.git.error}\n\n`
@@ -328,7 +330,7 @@ try {
       markdown += `- ⚠️ **Modifications non commitées**\n`
     }
   }
-  
+
   markdown += `\n## 🏗️ Build Local\n\n`
   if (report.build.error) {
     markdown += `⚠️ Erreur: ${report.build.error}\n\n`
@@ -342,7 +344,7 @@ try {
       }
     }
   }
-  
+
   if (report.recommendations.length > 0) {
     markdown += `\n## 💡 Recommandations\n\n`
     report.recommendations.forEach(rec => {
@@ -352,7 +354,7 @@ try {
       markdown += `**Action** : ${rec.action}\n\n`
     })
   }
-  
+
   markdown += `\n## ⚠️ Actions Requises dans Vercel\n\n`
   markdown += `1. Aller dans [Vercel Dashboard](https://vercel.com/dashboard)\n`
   markdown += `2. Sélectionner le projet **Doogoo**\n`
@@ -360,7 +362,7 @@ try {
   markdown += `4. Vérifier que chaque variable requise existe\n`
   markdown += `5. **IMPORTANT** : Cocher **"Included in Build"** pour chaque variable\n`
   markdown += `6. Sauvegarder et **Redeploy** le dernier déploiement\n\n`
-  
+
   markdown += `## 📋 Checklist Vercel\n\n`
   REQUIRED_ENV_VARS.forEach(key => {
     markdown += `- [ ] \`${key}\` présente et "Included in Build" ✅\n`
@@ -368,18 +370,17 @@ try {
   OPTIONAL_ENV_VARS.forEach(key => {
     markdown += `- [ ] \`${key}\` (optionnel)\n`
   })
-  
+
   writeFileSync(reportPath, markdown, 'utf-8')
   console.log(`\n✅ Rapport sauvegardé: ${reportPath}\n`)
-  
+
   // Sauvegarde aussi le JSON pour traitement ultérieur
   const jsonPath = join(rootDir, 'docs', 'VERCEL_ENV_AUDIT_REPORT.json')
   writeFileSync(jsonPath, JSON.stringify(report, null, 2), 'utf-8')
-  
+
   process.exit(report.localEnvironment.missingVars.length > 0 ? 1 : 0)
 } catch (error) {
-  console.error('\n❌ Erreur lors de l\'audit:', error.message)
+  console.error("\n❌ Erreur lors de l'audit:", error.message)
   console.error(error.stack)
   process.exit(1)
 }
-

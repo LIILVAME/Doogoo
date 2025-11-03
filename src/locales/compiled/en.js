@@ -75,14 +75,15 @@ export default {
     type: 'Type',
     rent: 'Rent',
     monthlyRent: 'Monthly rent (€)',
-    status: {
-      occupied: 'Occupied',
-      vacant: 'Vacant'
-    },
+    status: 'Status',
     occupied: 'Occupied',
     vacant: 'Vacant',
     free: 'Free',
     underMaintenance: 'Under maintenance',
+    statusLabels: {
+      occupied: 'Occupied',
+      vacant: 'Vacant'
+    },
     selectStatus: 'Select a status',
     selectProperty: 'Select a property',
     tenantInfo: 'Tenant information',
@@ -470,7 +471,7 @@ export default {
       updateButton: 'Update',
       updating: 'Updating...',
       changedSuccess:
-        '✅ Password changed successfully! Your account remains logged in. A confirmation email has been sent to you.',
+        'Password changed successfully! Your account remains logged in. A confirmation email has been sent to you.',
       changeError: 'Error changing password',
       samePassword: 'The new password must be different from the current one',
       passwordTooWeak:

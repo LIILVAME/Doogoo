@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   ariaLabel: {
     type: String,
     default: 'Action rapide'
@@ -32,7 +32,8 @@ const handleClick = () => {
 <style scoped>
 /* Animation de pulsation subtile */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -44,4 +45,3 @@ button:hover {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 </style>
-

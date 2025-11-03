@@ -13,7 +13,12 @@
     >
       <div class="flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
         </svg>
         <span>{{ $t('connection.offline') }}</span>
       </div>
@@ -34,7 +39,12 @@
     >
       <div class="flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
         </svg>
         <span>{{ $t('connection.online') }}</span>
       </div>
@@ -45,39 +55,40 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useConnectionStore } from '@/stores/connectionStore'
-import { useI18n } from '@/composables/useLingui'
 
-const { t } = useI18n()
+// Utilise $t dans le template, pas besoin de t dans le script
 const connectionStore = useConnectionStore()
 
 // Affiche la bannière "en ligne" pendant 3 secondes après reconnexion
 const showOnlineBanner = ref(false)
 let onlineBannerTimeout = null
 
-watch(() => connectionStore.isOnline, (isOnline) => {
-  if (isOnline) {
-    // Affiche la bannière "en ligne" pendant 3 secondes
-    showOnlineBanner.value = true
-    
-    if (onlineBannerTimeout) {
-      clearTimeout(onlineBannerTimeout)
-    }
-    
-    onlineBannerTimeout = setTimeout(() => {
+watch(
+  () => connectionStore.isOnline,
+  isOnline => {
+    if (isOnline) {
+      // Affiche la bannière "en ligne" pendant 3 secondes
+      showOnlineBanner.value = true
+
+      if (onlineBannerTimeout) {
+        clearTimeout(onlineBannerTimeout)
+      }
+
+      onlineBannerTimeout = setTimeout(() => {
+        showOnlineBanner.value = false
+      }, 3000)
+    } else {
+      // Cache la bannière "en ligne" si on passe en offline
       showOnlineBanner.value = false
-    }, 3000)
-  } else {
-    // Cache la bannière "en ligne" si on passe en offline
-    showOnlineBanner.value = false
-    if (onlineBannerTimeout) {
-      clearTimeout(onlineBannerTimeout)
+      if (onlineBannerTimeout) {
+        clearTimeout(onlineBannerTimeout)
+      }
     }
   }
-})
+)
 
 onMounted(() => {
   // Initialise le watcher de connexion
   connectionStore.initConnectionWatcher()
 })
 </script>
-
