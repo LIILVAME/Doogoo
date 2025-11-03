@@ -14,10 +14,12 @@
 
         <!-- Modal -->
         <div
-          class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all"
+          ref="modalRef"
+          class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all safe-all"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="'confirm-title-' + modalId"
+          tabindex="-1"
         >
           <!-- Icône d'avertissement -->
           <div
@@ -81,6 +83,7 @@
           <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
             <!-- Annuler -->
             <button
+              ref="cancelButtonRef"
               @click="handleCancel"
               :disabled="isLoading"
               :class="[
@@ -98,6 +101,7 @@
 
             <!-- Confirmer -->
             <button
+              ref="confirmButtonRef"
               @click="handleConfirm"
               :disabled="isLoading"
               :class="[
@@ -136,9 +140,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch, onUnmounted, nextTick } from 'vue'
 
-defineProps({
+const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false
@@ -173,6 +177,91 @@ defineProps({
 const emit = defineEmits(['confirm', 'cancel', 'update:isOpen'])
 
 const modalId = computed(() => `modal-${Date.now()}`)
+const modalRef = ref(null)
+const confirmButtonRef = ref(null)
+const cancelButtonRef = ref(null)
+
+// Focus trap manuel pour l'accessibilité
+let previousActiveElement = null
+
+watch(
+  () => props.isOpen,
+  async isOpen => {
+    if (isOpen) {
+      // Sauvegarde l'élément focusé avant l'ouverture
+      previousActiveElement = document.activeElement
+
+      // Focus sur le premier bouton après le rendu
+      await nextTick()
+      if (confirmButtonRef.value) {
+        confirmButtonRef.value.focus()
+      } else if (cancelButtonRef.value) {
+        cancelButtonRef.value.focus()
+      } else if (modalRef.value) {
+        // Fallback: focus sur la modal
+        const firstFocusable = modalRef.value.querySelector(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (firstFocusable) {
+          firstFocusable.focus()
+        }
+      }
+    } else {
+      // Restaure le focus précédent
+      if (previousActiveElement && previousActiveElement.focus) {
+        try {
+          previousActiveElement.focus()
+        } catch {
+          // Ignore si l'élément n'existe plus
+        }
+      }
+    }
+  },
+  { immediate: true }
+)
+
+// Gestion du focus avec Tab dans la modal
+const handleKeydown = event => {
+  if (!props.isOpen || !modalRef.value) return
+
+  // Si Tab est pressé
+  if (event.key === 'Tab') {
+    const focusableElements = modalRef.value.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+
+    if (focusableElements.length === 0) return
+
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements[focusableElements.length - 1]
+
+    // Si Shift+Tab depuis le premier élément, aller au dernier
+    if (event.shiftKey && document.activeElement === firstElement) {
+      event.preventDefault()
+      lastElement.focus()
+    }
+    // Si Tab depuis le dernier élément, aller au premier
+    else if (!event.shiftKey && document.activeElement === lastElement) {
+      event.preventDefault()
+      firstElement.focus()
+    }
+  }
+  // Si Escape est pressé, fermer la modal
+  else if (event.key === 'Escape') {
+    handleCancel()
+  }
+}
+
+watch(
+  () => props.isOpen,
+  isOpen => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeydown)
+    } else {
+      document.removeEventListener('keydown', handleKeydown)
+    }
+  }
+)
 
 const handleConfirm = () => {
   emit('confirm')
@@ -183,6 +272,10 @@ const handleCancel = () => {
   emit('cancel')
   emit('update:isOpen', false)
 }
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <style scoped>

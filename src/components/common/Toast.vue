@@ -1,6 +1,22 @@
 <template>
   <Teleport to="body">
-    <div class="fixed top-4 right-4 z-[60] space-y-2 max-w-sm w-full">
+    <!-- ARIA live region pour screen readers -->
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="false"
+      class="sr-only"
+      :aria-label="`${items.length} notification${items.length > 1 ? 's' : ''}`"
+    >
+      <span v-for="toast in items" :key="toast.id" class="sr-only">
+        {{
+          toast.type === 'success' ? 'Succès' : toast.type === 'error' ? 'Erreur' : 'Information'
+        }}:
+        {{ toast.message }}
+      </span>
+    </div>
+
+    <div class="fixed top-4 right-4 z-[60] space-y-2 max-w-sm w-full safe-top safe-right">
       <TransitionGroup name="toast">
         <div
           v-for="toast in items"
@@ -11,6 +27,8 @@
             'border-red-200': toast.type === 'error',
             'border-blue-200': toast.type === 'info'
           }"
+          role="alert"
+          aria-live="polite"
         >
           <!-- Icône -->
           <div
@@ -21,14 +39,41 @@
               'bg-blue-100 text-blue-600': toast.type === 'info'
             }"
           >
-            <svg v-if="toast.type === 'success'" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            <svg
+              v-if="toast.type === 'success'"
+              class="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
-            <svg v-else-if="toast.type === 'error'" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              v-else-if="toast.type === 'error'"
+              class="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
             <svg v-else class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
 
@@ -44,7 +89,7 @@
             >
               {{ toast.message }}
             </p>
-            
+
             <!-- Action (optionnelle) -->
             <button
               v-if="toast.action"
@@ -67,7 +112,12 @@
             aria-label="Fermer"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -87,7 +137,7 @@ const { remove } = toastStore
 /**
  * Gère le clic sur une action dans le toast
  */
-const handleAction = (toast) => {
+const handleAction = toast => {
   if (toast.action?.onClick) {
     toast.action.onClick()
   }
@@ -130,4 +180,3 @@ const handleAction = (toast) => {
   animation: slide-in-right 0.3s ease-out;
 }
 </style>
-

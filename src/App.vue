@@ -42,6 +42,7 @@ import { useConnectionStore } from '@/stores/connectionStore'
 import { useDiagnosticStore } from '@/stores/diagnosticStore'
 import { setSettingsStoreCache } from '@/utils/formatters'
 import { useSEO } from '@/composables/useSEO'
+import { useKeyboardAvoidance } from '@/composables/useKeyboardAvoidance'
 import Toast from '@/components/common/Toast.vue'
 import ConnectionBanner from '@/components/common/ConnectionBanner.vue'
 import DegradedModeBanner from '@/components/common/DegradedModeBanner.vue'
@@ -56,6 +57,9 @@ const diagnosticStore = useDiagnosticStore()
 
 // Initialise le SEO
 const { initSEO } = useSEO()
+
+// Initialise keyboard avoidance pour mobile (scroll auto vers inputs)
+useKeyboardAvoidance()
 
 // Initialise le cache du store settings pour formatCurrency
 // Crée un proxy pour exposer currency et language comme propriétés
