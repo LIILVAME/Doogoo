@@ -29,9 +29,21 @@ export function useKeyboardAvoidance() {
   const handleFocus = event => {
     const target = event.target
 
-    // Vérifie que c'est un input, textarea ou select
+    // Ignore les éléments qui ne sont pas des champs de formulaire
     if (
-      target.tagName === 'INPUT' ||
+      target.disabled ||
+      target.readOnly ||
+      target.tagName === 'BUTTON' ||
+      (target.tagName === 'INPUT' &&
+        (target.type === 'submit' || target.type === 'button' || target.type === 'reset'))
+    ) {
+      return
+    }
+
+    // Vérifie que c'est un input, textarea ou select valide
+    if (
+      (target.tagName === 'INPUT' &&
+        !['submit', 'button', 'reset', 'checkbox', 'radio', 'file'].includes(target.type)) ||
       target.tagName === 'TEXTAREA' ||
       target.tagName === 'SELECT'
     ) {
