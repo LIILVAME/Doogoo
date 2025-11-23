@@ -1,192 +1,228 @@
 <template>
-  <div class="min-h-screen bg-white">
-    <!-- Navigation moderne avec backdrop blur -->
-    <header>
-      <nav
-        class="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50 transition-all"
-        role="navigation"
-        aria-label="Navigation principale"
-      >
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex justify-between items-center h-16">
-            <div class="flex items-center">
-              <div class="flex-shrink-0">
-                <router-link to="/" aria-label="Doogoo - Accueil" class="group">
-                  <h1
-                    class="text-2xl font-bold text-primary-600 group-hover:text-primary-700 transition-colors"
-                  >
-                    Doogoo
-                  </h1>
-                </router-link>
+  <div class="bg-zinc-950 text-zinc-50 min-h-screen antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md">
+      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <router-link to="/" class="text-lg font-semibold tracking-tighter text-white">doogoo</router-link>
+        </div>
+
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+          <button type="button" class="hover:text-white transition-colors" @click="scrollToSection('features')">
+            Fonctionnalités
+          </button>
+          <button type="button" class="hover:text-white transition-colors" @click="scrollToSection('pricing')">
+            Tarifs
+          </button>
+          <button type="button" class="hover:text-white transition-colors" @click="scrollToSection('resources')">
+            Ressources
+          </button>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <button
+            type="button"
+            class="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block"
+            @click="goToLogin"
+          >
+            Se connecter
+          </button>
+          <button
+            type="button"
+            class="text-sm font-medium bg-zinc-50 text-zinc-950 px-4 py-2 rounded-full hover:bg-zinc-200 transition-colors"
+            @click="goToApp"
+          >
+            Essayer gratuitement
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <main class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] glow-bg pointer-events-none z-0"></div>
+
+      <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-zinc-300 mb-8"
+        >
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
+          </span>
+          Nouvelle fonctionnalité : Export comptable simplifié
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-semibold tracking-tight mb-6 gradient-text leading-[1.1]">
+          L'immobilier géré<br />
+          simplement par vous.
+        </h1>
+
+        <p class="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+          Doogoo offre aux propriétaires indépendants le pouvoir de piloter leurs biens, locataires et finances depuis une
+          interface unique et élégante.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+          <button
+            type="button"
+            class="h-12 px-8 rounded-full bg-white text-black font-medium hover:bg-zinc-200 transition-all flex items-center gap-2 w-full sm:w-auto justify-center"
+            @click="goToApp"
+          >
+            Commencer maintenant
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="h-12 px-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-all w-full sm:w-auto"
+            @click="openDemo"
+          >
+            Voir la démo
+          </button>
+        </div>
+
+        <div id="demo" class="relative mx-auto max-w-5xl w-full perspective-1000">
+          <div class="glass-panel rounded-xl border border-white/10 p-2 shadow-2xl shadow-violet-900/20">
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-zinc-900/50 rounded-t-lg">
+              <div class="flex gap-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-zinc-700"></div>
+              </div>
+              <div class="mx-auto text-xs text-zinc-500 font-mono">doogoo.app/dashboard</div>
+            </div>
+            <div class="flex h-[400px] md:h-[500px] bg-zinc-950 text-left overflow-hidden rounded-b-lg">
+              <div class="w-16 md:w-64 border-r border-white/5 bg-zinc-900/30 p-4 flex flex-col gap-6 hidden md:flex">
+                <div class="space-y-1">
+                  <div class="h-8 flex items-center gap-3 px-2 text-zinc-100 bg-white/5 rounded-md text-sm font-medium">
+                    <span class="w-4 h-4 inline-flex items-center justify-center text-violet-400">
+                      <component :is="icons.grid" class="w-4 h-4" aria-hidden="true" />
+                    </span>
+                    Vue d'ensemble
+                  </div>
+                  <div class="h-8 flex items-center gap-3 px-2 text-zinc-500 hover:text-zinc-300 rounded-md text-sm font-medium cursor-pointer transition-colors">
+                    <span class="w-4 h-4 inline-flex items-center justify-center">
+                      <component :is="icons.building" class="w-4 h-4" aria-hidden="true" />
+                    </span>
+                    Mes Biens
+                  </div>
+                  <div class="h-8 flex items-center gap-3 px-2 text-zinc-500 hover:text-zinc-300 rounded-md text-sm font-medium cursor-pointer transition-colors">
+                    <span class="w-4 h-4 inline-flex items-center justify-center">
+                      <component :is="icons.users" class="w-4 h-4" aria-hidden="true" />
+                    </span>
+                    Locataires
+                  </div>
+                  <div class="h-8 flex items-center gap-3 px-2 text-zinc-500 hover:text-zinc-300 rounded-md text-sm font-medium cursor-pointer transition-colors">
+                    <span class="w-4 h-4 inline-flex items-center justify-center">
+                      <component :is="icons.card" class="w-4 h-4" aria-hidden="true" />
+                    </span>
+                    Paiements
+                  </div>
+                </div>
+                <div class="mt-auto space-y-4">
+                  <div class="p-3 rounded-lg border border-white/5 bg-zinc-900/50">
+                    <p class="text-xs text-zinc-500 mb-1">Taux d'occupation</p>
+                    <p class="text-sm font-medium text-white">92%</p>
+                    <div class="w-full h-1 bg-zinc-800 rounded-full mt-2 overflow-hidden">
+                      <div class="bg-violet-500 h-full w-[92%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-1 p-6 md:p-8 overflow-hidden relative">
+                <div class="flex justify-between items-end mb-8">
+                  <div>
+                    <p class="text-zinc-500 text-xs mb-1 uppercase tracking-wider font-medium">Revenus (Octobre)</p>
+                    <h2 class="text-3xl font-semibold text-white tracking-tight">12 450,00 FCFA</h2>
+                  </div>
+                  <button class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded flex items-center gap-2 transition-colors">
+                    <component :is="icons.download" class="w-4 h-4" aria-hidden="true" />
+                    Exporter
+                  </button>
+                </div>
+                <div class="grid grid-cols-12 gap-2 h-32 items-end mb-8 opacity-90">
+                  <div v-for="(height, index) in chartHeights" :key="index" :class="['col-span-1 rounded-sm transition-colors',
+                    index === 8 ? 'bg-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.5)]' : 'bg-zinc-800 hover:bg-violet-500/50',
+                    index >= 9 ? 'opacity-50' : ''
+                  ]" :style="{ height }"></div>
+                </div>
+                <div class="space-y-3">
+                  <p class="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-4">Derniers mouvements</p>
+                  <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-zinc-900/20 hover:bg-zinc-900/40 transition-colors group">
+                    <div class="flex items-center gap-4">
+                      <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+                        <component :is="icons.incoming" class="w-4 h-4" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <p class="text-sm text-zinc-200 font-medium">Loyer - Apt 4B</p>
+                        <p class="text-xs text-zinc-500">Thomas Dupont</p>
+                      </div>
+                    </div>
+                    <span class="text-sm text-zinc-200 font-medium">+ 850,00 FCFA</span>
+                  </div>
+                  <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-zinc-900/20 hover:bg-zinc-900/40 transition-colors group">
+                    <div class="flex items-center gap-4">
+                      <div class="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20">
+                        <component :is="icons.clock" class="w-4 h-4" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <p class="text-sm text-zinc-200 font-medium">Retard - Studio 12</p>
+                        <p class="text-xs text-zinc-500">Sarah Martin • 3 jours</p>
+                      </div>
+                    </div>
+                    <span class="text-sm text-zinc-400 group-hover:text-rose-400 transition-colors font-medium">En attente</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="hidden md:flex items-center space-x-8">
-              <a
-                href="#features"
-                class="text-gray-600 hover:text-primary-600 transition-colors font-medium"
-              >
-                {{ $t('landing.features') }}
-              </a>
-              <a
-                href="#testimonials"
-                class="text-gray-600 hover:text-primary-600 transition-colors font-medium"
-              >
-                {{ $t('landing.testimonials') }}
-              </a>
-              <button
-                @click="goToDashboard"
-                class="btn-primary shadow-md hover:shadow-lg transition-all"
-              >
-                {{ $t('landing.getStarted') }}
-              </button>
-            </div>
-            <button
-              @click="goToDashboard"
-              class="md:hidden btn-primary text-sm px-4 py-2 shadow-md"
-            >
-              {{ $t('landing.tryIt') }}
-            </button>
           </div>
         </div>
-      </nav>
-    </header>
-
-    <!-- Hero Section moderne avec gradient -->
-    <section
-      class="relative overflow-hidden bg-gradient-to-br from-white via-primary-50/30 to-primary-100/20"
-    >
-      <!-- Effet de background décoratif -->
-      <div class="absolute inset-0 overflow-hidden">
-        <div
-          class="absolute -top-40 -right-40 w-80 h-80 bg-primary-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"
-        ></div>
-        <div
-          class="absolute -bottom-40 -left-40 w-80 h-80 bg-green-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"
-        ></div>
-        <div
-          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"
-        ></div>
       </div>
+    </main>
 
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-          <div class="space-y-8">
-            <!-- Badge -->
-            <div
-              class="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold"
-            >
-              <span class="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
-              Plateforme de gestion immobilière
-            </div>
+    <!-- Features -->
+    <section id="features" class="py-24 border-t border-white/5 bg-zinc-950">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white">Tout vos biens, au même endroit.</h2>
+          <p class="text-zinc-400 font-light">
+            Une suite d'outils conçue pour remplacer les feuilles de calcul complexes et les logiciels obsolètes.
+          </p>
+        </div>
 
-            <h2
-              class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight"
-            >
-              {{ $t('landing.heroTitle') }}
-            </h2>
-            <p class="text-xl text-gray-600 leading-relaxed max-w-xl">
-              {{ $t('landing.heroDescription') }}
-            </p>
-
-            <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4">
-              <button
-                @click="goToDashboard"
-                class="btn-primary text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            v-for="feature in primaryFeatures"
+            :key="feature.title"
+            :class="['glass-panel rounded-2xl p-8 relative overflow-hidden group', feature.span2 ? 'md:col-span-2' : '']"
+          >
+            <div class="relative z-10 space-y-3">
+              <div
+                class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/10 mb-2"
+                :class="feature.iconColor"
               >
-                {{ $t('landing.getStarted') }}
-                <svg
-                  class="inline-block w-5 h-5 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <component :is="feature.icon" class="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h3 class="text-xl font-medium text-white">{{ feature.title }}</h3>
+              <p class="text-zinc-400 text-sm leading-relaxed" v-html="feature.description"></p>
+              <div v-if="feature.tags?.length" class="flex gap-3 mt-4">
+                <span
+                  v-for="tag in feature.tags"
+                  :key="tag"
+                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-              </button>
-              <button
-                class="btn-secondary text-lg px-8 py-4 border-2 hover:border-primary-600 hover:text-primary-600 transition-all"
-              >
-                {{ $t('landing.tryFree') }}
-              </button>
-            </div>
-
-            <!-- Stats rapides -->
-            <div class="flex flex-wrap gap-6 pt-4">
-              <div class="flex items-center space-x-2">
-                <div class="flex -space-x-2">
-                  <div
-                    v-for="i in 3"
-                    :key="i"
-                    class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 border-2 border-white"
-                  ></div>
-                </div>
-                <span class="text-sm font-medium text-gray-700">
-                  <span class="font-bold text-primary-600">500+</span> propriétaires
+                  {{ tag }}
                 </span>
               </div>
-              <div class="flex items-center space-x-2">
-                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <span class="text-sm font-medium text-gray-700">Sans engagement</span>
-              </div>
             </div>
-          </div>
-
-          <!-- Image Hero avec effet 3D -->
-          <div class="relative">
-            <div class="relative transform hover:scale-105 transition-transform duration-500">
-              <!-- Glow effect -->
-              <div
-                class="absolute -inset-4 bg-gradient-to-r from-primary-400 to-green-400 rounded-2xl blur-2xl opacity-30"
-              ></div>
-              <!-- Card avec shadow -->
-              <div class="relative card p-2 shadow-2xl border border-gray-100">
-                <img
-                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
-                  alt="Tableau de bord Doogoo - Interface moderne de gestion immobilière avec graphiques et statistiques"
-                  class="rounded-lg w-full"
-                  loading="lazy"
-                  @error="handleImageError"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                />
-                <!-- Fallback gradient si l'image ne charge pas -->
-                <div
-                  class="hidden w-full h-full min-h-[400px] rounded-lg bg-gradient-to-br from-primary-100 via-green-100 to-blue-100 flex items-center justify-center"
-                >
-                  <div class="text-center p-8">
-                    <svg
-                      class="w-24 h-24 mx-auto text-primary-600 opacity-50 mb-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.5"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      />
-                    </svg>
-                    <p class="text-gray-600 font-medium">Dashboard Doogoo</p>
-                  </div>
-                </div>
-                <!-- Badge flottant -->
-                <div
-                  class="absolute top-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
-                >
-                  <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span class="text-sm font-semibold text-gray-900">Temps réel</span>
+            <div v-if="feature.visual" class="absolute right-0 bottom-0 w-1/2 h-3/4 opacity-30 group-hover:opacity-50 transition-opacity">
+              <div class="w-full h-full border-t border-l border-white/10 bg-zinc-900/50 rounded-tl-xl p-4">
+                <div class="space-y-2">
+                  <div class="h-2 w-1/2 bg-zinc-700 rounded-full"></div>
+                  <div class="h-2 w-3/4 bg-zinc-800 rounded-full"></div>
+                  <div class="h-20 w-full bg-zinc-800/50 rounded mt-4 border border-white/5"></div>
                 </div>
               </div>
             </div>
@@ -195,394 +231,174 @@
       </div>
     </section>
 
-    <!-- Features Section modernisée -->
-    <section id="features" class="bg-gray-50 py-20 lg:py-28">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <div
-            class="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-4"
-          >
-            Fonctionnalités
-          </div>
-          <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            {{ $t('landing.featuresTitle') }}
-          </h3>
-          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-            {{ $t('landing.featuresDescription') }}
+    <!-- Pricing / CTA anchor -->
+    <section id="pricing" class="py-16 border-t border-white/5 bg-zinc-900/30">
+      <div class="max-w-5xl mx-auto px-6 grid gap-6 md:grid-cols-3 items-center">
+        <div class="md:col-span-2 space-y-4">
+          <h3 class="text-3xl font-semibold text-white">Tarifs simples et transparents</h3>
+          <p class="text-zinc-400">
+            Commencez gratuitement et payez uniquement lorsque vous gérez vos loyers au quotidien. Export comptable inclus.
           </p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div
-            v-for="(feature, index) in features"
-            :key="index"
-            class="group card text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-          >
-            <div
-              class="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300"
-            >
-              <div class="w-10 h-10 text-primary-600" aria-hidden="true">
-                <svg
-                  v-if="feature.icon"
-                  class="w-10 h-10"
-                  fill="none"
-                  stroke="currentColor"
-                  :viewBox="feature.icon.viewBox"
-                >
-                  <path
-                    v-for="(path, iconIndex) in feature.icon.paths"
-                    :key="`${index}-${iconIndex}`"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    :d="path"
-                  />
-                </svg>
-              </div>
-            </div>
-            <h4 class="text-xl font-bold mb-3 text-gray-900">{{ feature.title }}</h4>
-            <p class="text-gray-600 leading-relaxed">{{ feature.description }}</p>
+          <div class="flex flex-wrap gap-3 text-sm text-zinc-300">
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Essai gratuit 14 jours</span>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Sans engagement</span>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10">Support prioritaire</span>
           </div>
+        </div>
+        <div class="glass-panel rounded-2xl p-6 border border-white/10">
+          <p class="text-sm text-zinc-400 mb-2">Plan Pro</p>
+          <p class="text-3xl font-semibold text-white mb-4">19 000 FCFA <span class="text-base text-zinc-400">/mois</span></p>
+          <ul class="space-y-2 text-sm text-zinc-300 mb-6">
+            <li class="flex items-center gap-2">✔ Gestion multi-biens</li>
+            <li class="flex items-center gap-2">✔ Alertes retards & rappels</li>
+            <li class="flex items-center gap-2">✔ Exports CSV / PDF / XLS</li>
+          </ul>
+          <button
+            type="button"
+            class="w-full h-11 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition-colors"
+            @click="goToApp"
+          >
+            Commencer maintenant
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Dashboard Preview Section avec gradient -->
-    <section class="py-20 lg:py-28 bg-gradient-to-b from-gray-50 to-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Gérez vos propriétés et revenus locatifs
-          </h3>
-          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-            Suivez vos biens immobiliers, vos locataires et vos revenus depuis une seule plateforme
-          </p>
-        </div>
-        <div class="relative transform hover:scale-[1.02] transition-transform duration-500">
-          <div
-            class="absolute -inset-4 bg-gradient-to-r from-primary-400 via-green-400 to-blue-400 rounded-2xl blur-2xl opacity-20"
-          ></div>
-          <div class="relative card p-4 shadow-2xl border border-gray-100">
-            <!-- Composition avec propriétés et données -->
-            <div
-              class="relative bg-gradient-to-br from-white to-gray-50 rounded-lg overflow-hidden"
-            >
-              <!-- Image de propriétés immobilières en arrière-plan -->
-              <div class="absolute inset-0 opacity-10">
-                <img
-                  src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80&fit=crop"
-                  alt="Propriétés immobilières"
-                  class="w-full h-full object-cover"
-                  loading="lazy"
-                  @error="handleImageError"
-                  onerror="this.style.display='none';"
-                />
-                <!-- Fallback gradient si l'image ne charge pas -->
-                <div class="hidden w-full h-full bg-gradient-to-br from-gray-100 to-gray-200"></div>
-              </div>
-              <!-- Overlay avec interface de gestion -->
-              <div class="relative p-8">
-                <div class="grid md:grid-cols-3 gap-6 mb-6">
-                  <!-- Carte Propriété -->
-                  <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                    <div class="flex items-center justify-between mb-4">
-                      <h4 class="font-bold text-gray-900">Appartement T2</h4>
-                      <span
-                        class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold"
-                        >Occupé</span
-                      >
-                    </div>
-                    <div class="space-y-3">
-                      <div class="flex justify-between">
-                        <span class="text-gray-600 text-sm">Loyer</span>
-                        <span class="font-bold text-gray-900">950 €</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-600 text-sm">Locataire</span>
-                        <span class="font-medium text-gray-900">Marie D.</span>
-                      </div>
-                      <div class="pt-2 border-t border-gray-100">
-                        <span class="text-xs text-gray-500">Statut paiement</span>
-                        <div class="flex items-center mt-1">
-                          <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                          <span class="text-sm font-medium text-gray-700">À jour</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Statistiques -->
-                  <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                    <h4 class="font-bold text-gray-900 mb-4">Revenus mensuels</h4>
-                    <div class="text-3xl font-bold text-primary-600 mb-2">3 650 €</div>
-                    <div class="flex items-center text-sm text-gray-600">
-                      <svg
-                        class="w-4 h-4 text-green-500 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                      +12% vs mois dernier
-                    </div>
-                    <div class="mt-4 pt-4 border-t border-gray-100">
-                      <div class="flex justify-between text-sm">
-                        <span class="text-gray-600">4 propriétés</span>
-                        <span class="text-gray-600">3 occupées</span>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Graphique simple -->
-                  <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                    <h4 class="font-bold text-gray-900 mb-4">Évolution</h4>
-                    <div class="flex items-end space-x-2 h-24 mb-4">
-                      <div class="flex-1 bg-primary-200 rounded-t" style="height: 60%"></div>
-                      <div class="flex-1 bg-primary-300 rounded-t" style="height: 75%"></div>
-                      <div class="flex-1 bg-primary-400 rounded-t" style="height: 85%"></div>
-                      <div class="flex-1 bg-primary-500 rounded-t" style="height: 100%"></div>
-                    </div>
-                    <div class="text-xs text-gray-600 flex justify-between">
-                      <span>Sept</span>
-                      <span>Oct</span>
-                      <span>Nov</span>
-                      <span>Déc</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Liste des paiements -->
-                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-                  <h4 class="font-bold text-gray-900 mb-4">Paiements récents</h4>
-                  <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <div class="font-medium text-gray-900">Appartement T2 - Paris</div>
-                        <div class="text-sm text-gray-600">Marie Dubois • 05 déc</div>
-                      </div>
-                      <div class="text-right">
-                        <div class="font-bold text-gray-900">950 €</div>
-                        <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full"
-                          >Payé</span
-                        >
-                      </div>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <div class="font-medium text-gray-900">T3 - Marseille</div>
-                        <div class="text-sm text-gray-600">Jean Martin • 05 nov</div>
-                      </div>
-                      <div class="text-right">
-                        <div class="font-bold text-gray-900">1 200 €</div>
-                        <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full"
-                          >En retard</span
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials Section modernisée -->
-    <section id="testimonials" class="bg-gray-50 py-20 lg:py-28">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <div
-            class="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-4"
-          >
-            Témoignages
-          </div>
-          <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            {{ $t('landing.testimonialsTitle') }}
-          </h3>
-        </div>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div
-            v-for="(testimonial, index) in testimonials"
-            :key="index"
-            class="group card hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-          >
-            <div class="flex items-start mb-6">
-              <div class="relative">
-                <img
-                  :src="testimonial.avatar"
-                  :alt="testimonial.name"
-                  class="w-14 h-14 rounded-full border-4 border-white shadow-md object-cover"
-                />
-                <div
-                  class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"
-                ></div>
-              </div>
-              <div class="ml-4 flex-1">
-                <h4 class="font-bold text-gray-900 mb-1">{{ testimonial.name }}</h4>
-                <p class="text-sm text-gray-500">{{ testimonial.role }}</p>
-                <div class="flex mt-2">
-                  <svg
-                    v-for="i in 5"
-                    :key="i"
-                    class="w-4 h-4 text-yellow-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-700 leading-relaxed relative pl-4">
-              <span class="absolute left-0 top-0 text-4xl text-primary-200 font-serif leading-none">
-                "
-              </span>
-              <span class="relative">{{ testimonial.text }}</span>
+    <!-- Resources / Social proof -->
+    <section id="resources" class="py-20 border-t border-white/5 bg-zinc-950">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid gap-8 md:grid-cols-2">
+          <div class="space-y-4">
+            <p class="text-sm uppercase tracking-widest text-violet-300">Ressources</p>
+            <h3 class="text-3xl font-semibold text-white">Guides, mises à jour et centre d'aide.</h3>
+            <p class="text-zinc-400">
+              Retrouvez toutes nos ressources pour gérer vos biens sereinement : guides bailleurs, mises à jour produits et support
+              dédié.
             </p>
+            <div class="flex gap-3 flex-wrap">
+              <a
+                class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-sm hover:bg-white/10 transition-colors"
+                href="#pricing"
+                @click.prevent="scrollToSection('pricing')"
+              >
+                Voir les tarifs
+              </a>
+              <button
+                type="button"
+                class="px-4 py-2 rounded-full border border-white/10 bg-white/5 text-sm hover:bg-white/10 transition-colors"
+                @click="contactSupport"
+              >
+                Contacter le support
+              </button>
+            </div>
+          </div>
+          <div class="grid gap-4">
+            <div v-for="resource in resources" :key="resource.title" class="glass-panel border border-white/10 rounded-xl p-5">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-violet-300 text-lg">
+                  <component :is="resource.icon" class="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <p class="text-white font-medium">{{ resource.title }}</p>
+                  <p class="text-sm text-zinc-400">{{ resource.description }}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CTA Section avec gradient moderne -->
-    <section
-      class="relative bg-gradient-to-r from-primary-600 via-primary-700 to-green-600 py-20 lg:py-28 overflow-hidden"
-    >
-      <!-- Effet de background -->
-      <div class="absolute inset-0">
-        <div
-          class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay opacity-10 filter blur-3xl"
-        ></div>
-        <div
-          class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay opacity-10 filter blur-3xl"
-        ></div>
-      </div>
-
-      <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-          {{ $t('landing.ctaTitle') }}
-        </h3>
-        <p class="text-xl text-primary-50 mb-10 max-w-2xl mx-auto">
-          {{ $t('landing.ctaDescription') }}
+    <!-- CTA -->
+    <section id="cta" class="py-32 relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(124,58,237,0.15),transparent_50%)]"></div>
+      <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+        <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6">
+          Prêt à optimiser vos rendements ?
+        </h2>
+        <p class="text-zinc-400 text-lg mb-10 font-light">
+          Rejoignez les propriétaires qui ont choisi la simplicité avec Doogoo.
         </p>
-        <button
-          @click="goToDashboard"
-          class="bg-white text-primary-600 px-10 py-5 rounded-xl font-bold text-lg shadow-2xl hover:bg-gray-50 hover:scale-105 transform transition-all duration-200"
-        >
-          {{ $t('landing.tryFree') }}
-          <svg
-            class="inline-block w-5 h-5 ml-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+          <button
+            type="button"
+            class="h-12 px-8 rounded-full bg-white text-zinc-950 font-medium hover:bg-zinc-200 transition-colors w-full sm:w-auto"
+            @click="goToApp"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 7l5 5m0 0l-5 5m5-5H6"
-            />
-          </svg>
-        </button>
+            Créer un compte gratuit
+          </button>
+          <button
+            type="button"
+            class="h-12 px-8 text-zinc-400 hover:text-white font-medium transition-colors w-full sm:w-auto"
+            @click="contactSupport"
+          >
+            Contacter le support
+          </button>
+        </div>
       </div>
     </section>
 
-    <!-- Footer modernisé -->
-    <footer class="bg-gray-900 text-gray-400 py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-12 mb-12">
-          <div>
-            <h4 class="text-white text-2xl font-bold mb-4">Doogoo</h4>
-            <p class="text-sm leading-relaxed mb-4">
-              La solution complète pour le monitoring de vos biens immobiliers.
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-zinc-950 pt-16 pb-8">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          <div class="col-span-2 md:col-span-1">
+            <span class="text-lg font-semibold tracking-tighter text-white">doogoo</span>
+            <p class="text-zinc-500 text-sm mt-4 font-light">
+              L'outil de gestion locative nouvelle génération pour les propriétaires exigeants.
             </p>
-            <div class="flex space-x-4">
-              <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
-                  />
-                </svg>
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-                  />
-                </svg>
-              </a>
-            </div>
           </div>
           <div>
-            <h5 class="text-white font-bold mb-4">Produit</h5>
-            <ul class="space-y-3 text-sm">
-              <li>
-                <a href="#features" class="hover:text-white transition-colors inline-block">
-                  {{ $t('landing.features') }}
-                </a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors inline-block">Tarifs</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors inline-block">
-                  Documentation
-                </a>
-              </li>
+            <h4 class="text-white text-sm font-medium mb-4">Produit</h4>
+            <ul class="space-y-2 text-sm text-zinc-500">
+              <li><button type="button" class="hover:text-white transition-colors" @click="scrollToSection('features')">Fonctionnalités</button></li>
+              <li><button type="button" class="hover:text-white transition-colors" @click="scrollToSection('pricing')">Tarifs</button></li>
+              <li><button type="button" class="hover:text-white transition-colors" @click="scrollToSection('resources')">Mises à jour</button></li>
             </ul>
           </div>
           <div>
-            <h5 class="text-white font-bold mb-4">Entreprise</h5>
-            <ul class="space-y-3 text-sm">
-              <li>
-                <a href="#" class="hover:text-white transition-colors inline-block">À propos</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors inline-block">Blog</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition-colors inline-block">Carrières</a>
-              </li>
+            <h4 class="text-white text-sm font-medium mb-4">Ressources</h4>
+            <ul class="space-y-2 text-sm text-zinc-500">
+              <li><button type="button" class="hover:text-white transition-colors" @click="scrollToSection('resources')">Blog</button></li>
+              <li><button type="button" class="hover:text-white transition-colors" @click="scrollToSection('resources')">Guide du bailleur</button></li>
+              <li><button type="button" class="hover:text-white transition-colors" @click="scrollToSection('resources')">Centre d'aide</button></li>
             </ul>
           </div>
           <div>
-            <h5 class="text-white font-bold mb-4">Contact</h5>
-            <ul class="space-y-3 text-sm">
-              <li>
-                <a
-                  href="mailto:contact@doogoo.app"
-                  class="hover:text-white transition-colors inline-block"
-                >
-                  contact@doogoo.app
-                </a>
-              </li>
-              <li>
-                <a href="tel:+33123456789" class="hover:text-white transition-colors inline-block">
-                  +33 1 23 45 67 89
-                </a>
-              </li>
+            <h4 class="text-white text-sm font-medium mb-4">Légal</h4>
+            <ul class="space-y-2 text-sm text-zinc-500">
+              <li><router-link to="/cgu" class="hover:text-white transition-colors">CGU</router-link></li>
+              <li><router-link to="/privacy" class="hover:text-white transition-colors">Confidentialité</router-link></li>
             </ul>
           </div>
         </div>
-        <div
-          class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm"
-        >
-          <p>&copy; 2024 Doogoo. Tous droits réservés.</p>
-          <div class="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" class="hover:text-white transition-colors">Mentions légales</a>
-            <a href="#" class="hover:text-white transition-colors">Politique de confidentialité</a>
-            <a href="#" class="hover:text-white transition-colors">CGU</a>
+        <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-xs text-zinc-600">© 2024 Doogoo Inc. Tous droits réservés.</p>
+          <div class="flex gap-4 text-zinc-600">
+            <a
+              class="hover:text-white transition-colors"
+              href="https://twitter.com/doogooapp"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="sr-only">Twitter</span>𝕏
+            </a>
+            <a
+              class="hover:text-white transition-colors"
+              href="https://www.linkedin.com/company/doogoo"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="sr-only">LinkedIn</span>in
+            </a>
+            <a
+              class="hover:text-white transition-colors"
+              href="https://github.com/doogoo-app"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="sr-only">GitHub</span>GH
+            </a>
           </div>
         </div>
       </div>
@@ -591,105 +407,256 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, h } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
-import { mockTestimonials } from '../data/mockData'
 
-const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
-const testimonials = ref(mockTestimonials)
+const isAuthenticated = computed(() => Boolean(authStore.user))
 
-const features = computed(() => [
+const iconBase = (props = {}) => ({
+  fill: 'none',
+  viewBox: '0 0 24 24',
+  stroke: 'currentColor',
+  'stroke-width': 1.6,
+  'stroke-linecap': 'round',
+  'stroke-linejoin': 'round',
+  ...props,
+  class: ['w-5 h-5', props.class]
+})
+
+const GridIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 4, y: 4, width: 7, height: 7, rx: 1.5 }),
+    h('rect', { x: 13, y: 4, width: 7, height: 7, rx: 1.5 }),
+    h('rect', { x: 4, y: 13, width: 7, height: 7, rx: 1.5 }),
+    h('rect', { x: 13, y: 13, width: 7, height: 7, rx: 1.5 })
+  ])
+
+const BuildingIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 5, y: 4, width: 14, height: 16, rx: 1.5 }),
+    h('path', { d: 'M9 8h1M14 8h1M9 12h1M14 12h1M9 16h6', 'stroke-linecap': 'round' })
+  ])
+
+const UsersIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('circle', { cx: 9, cy: 9, r: 2.5 }),
+    h('circle', { cx: 15, cy: 9, r: 2.5 }),
+    h('path', { d: 'M4.5 19a4.5 4.5 0 019 0', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M13.5 15.5h1c2.21 0 4 1.79 4 4', 'stroke-linecap': 'round' })
+  ])
+
+const CardIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 3.5, y: 6, width: 17, height: 12, rx: 2 }),
+    h('path', { d: 'M3.5 11h17' }),
+    h('path', { d: 'M8.5 15h4', 'stroke-linecap': 'round' })
+  ])
+
+const DownloadIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M12 4v10', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M8.5 10.5 12 14l3.5-3.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M5 18h14', 'stroke-linecap': 'round' })
+  ])
+
+const IncomingIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('circle', { cx: 12, cy: 12, r: 9 }),
+    h('path', { d: 'M15 9.5 11.5 13 9 10.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M11.5 13V8.5', 'stroke-linecap': 'round' })
+  ])
+
+const ClockIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('circle', { cx: 12, cy: 12, r: 9 }),
+    h('path', { d: 'M12 7v5l3 2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' })
+  ])
+
+const HomeIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M4.5 10.5 12 4l7.5 6.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M6.5 10.75V19h11v-8.25', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M10 18.5v-3.25A1.25 1.25 0 0 1 11.25 14h1.5A1.25 1.25 0 0 1 14 15.25V18.5', 'stroke-linecap': 'round' })
+  ])
+
+const AlertIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M12 6.5 4.5 19h15L12 6.5z', fill: 'none' }),
+    h('path', { d: 'M12 10v4.25', 'stroke-linecap': 'round' }),
+    h('circle', { cx: 12, cy: 17, r: 0.75, fill: 'currentColor', stroke: 'none' })
+  ])
+
+const ChartIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M5 19h14', 'stroke-linecap': 'round' }),
+    h('rect', { x: 6.5, y: 11, width: 3, height: 6, rx: 0.8 }),
+    h('rect', { x: 11.5, y: 8, width: 3, height: 9, rx: 0.8 }),
+    h('rect', { x: 16.5, y: 6, width: 3, height: 11, rx: 0.8 })
+  ])
+
+const NewsIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 4, y: 5, width: 15, height: 14, rx: 1.5 }),
+    h('path', { d: 'M7.5 8.5h6.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M7.5 12h8', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M7.5 15.5h5', 'stroke-linecap': 'round' })
+  ])
+
+const BookIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M6 5.5A2.5 2.5 0 0 0 3.5 8v9.5A1.5 1.5 0 0 0 5 19h6.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M18 5.5A2.5 2.5 0 0 1 20.5 8v9.5A1.5 1.5 0 0 1 19 19h-6.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M12.5 6v12.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M11.5 6H7.5a1.5 1.5 0 0 0-1.5 1.5v9', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M12.5 6H16a1.5 1.5 0 0 1 1.5 1.5v9', 'stroke-linecap': 'round' })
+  ])
+
+const HandshakeIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M7.5 13.5 11 10l3 3 4-4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M3.5 12.5 7 9h4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M20.5 12.5 17 9h-2.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M9.5 14.5 8 16c-.6.6-.6 1.6 0 2.2.6.6 1.6.6 2.2 0l1-1', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M14.5 13.5 16 15c.6.6.6 1.6 0 2.2-.6.6-1.6.6-2.2 0L13 16.5', 'stroke-linecap': 'round' })
+  ])
+
+const icons = {
+  grid: GridIcon,
+  building: BuildingIcon,
+  users: UsersIcon,
+  card: CardIcon,
+  download: DownloadIcon,
+  incoming: IncomingIcon,
+  clock: ClockIcon,
+  home: HomeIcon,
+  alert: AlertIcon,
+  chart: ChartIcon,
+  news: NewsIcon,
+  book: BookIcon,
+  handshake: HandshakeIcon
+}
+
+const chartHeights = [
+  '40%',
+  '60%',
+  '45%',
+  '70%',
+  '55%',
+  '80%',
+  '65%',
+  '90%',
+  '100%',
+  '20%',
+  '20%',
+  '20%'
+]
+
+const primaryFeatures = [
   {
-    title: t('landing.featureMonitoring'),
-    description: t('landing.featureMonitoringDesc'),
-    icon: {
-      viewBox: '0 0 24 24',
-      paths: [
-        'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
-      ]
-    }
+    title: 'Gestion Multi-biens',
+    description:
+      "Appartements, maisons, parkings ou locaux commerciaux. Ajoutez et configurez vos propriétés en quelques clics avec des profils détaillés.",
+    icon: icons.home,
+    iconColor: 'text-violet-400',
+    span2: true,
+    visual: true
   },
   {
-    title: t('landing.featureAlerts'),
-    description: t('landing.featureAlertsDesc'),
-    icon: {
-      viewBox: '0 0 24 24',
-      paths: [
-        'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
-      ]
-    }
+    title: 'Suivi Locataires',
+    description: 'Centralisez les baux, les contacts et l\'historique de chaque locataire.',
+    icon: icons.users,
+    iconColor: 'text-emerald-400'
   },
   {
-    title: t('landing.featurePayments'),
-    description: t('landing.featurePaymentsDesc'),
-    icon: {
-      viewBox: '0 0 24 24',
-      paths: [
-        'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9.001 9.001 0 11-18 0 9.001 9.001 0 0118 0z'
-      ]
-    }
+    title: 'Alertes Retards',
+    description: 'Soyez notifié immédiatement en cas de retard de paiement. Relancez en un clic.',
+    icon: icons.alert,
+    iconColor: 'text-rose-400'
   },
   {
-    title: 'Sécurité renforcée',
-    description: 'Protection avancée de vos données et de vos biens immobiliers',
-    icon: {
-      viewBox: '0 0 24 24',
-      paths: [
-        'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'
-      ]
-    }
+    title: 'Vue Métrique & Export',
+    description:
+      'Analysez votre rentabilité en temps réel. Besoin de transmettre à votre comptable ? Exportez toutes les données en CSV, PDF ou XLS instantanément.',
+    icon: icons.chart,
+    iconColor: 'text-blue-400',
+    span2: true,
+    tags: ['.CSV', '.PDF', '.XLS']
   }
-])
+]
 
-const goToDashboard = () => {
-  // Redirige vers login si non connecté, dashboard si connecté
-  if (authStore.user) {
+const resources = [
+  {
+    title: 'Blog & mises à jour',
+    description: 'Découvrez nos nouveautés produit et bonnes pratiques de gestion locative.',
+    icon: icons.news
+  },
+  {
+    title: 'Guide du bailleur',
+    description: 'Toutes les étapes clés pour piloter vos biens en autonomie.',
+    icon: icons.book
+  },
+  {
+    title: "Centre d'aide & support",
+    description: 'Une équipe disponible pour vous accompagner rapidement.',
+    icon: icons.handshake
+  }
+]
+
+const goToLogin = () => {
+  router.push('/login')
+}
+
+const goToSignup = () => {
+  router.push('/signup')
+}
+
+const goToApp = () => {
+  if (isAuthenticated.value) {
     router.push('/dashboard')
   } else {
-    router.push('/login')
+    goToSignup()
   }
 }
 
-/**
- * Gère les erreurs de chargement d'images
- */
-const handleImageError = event => {
-  // L'image est déjà cachée via onerror, on peut logger en dev
-  if (import.meta.env.DEV) {
-    console.debug('⚠️ Image failed to load:', event.target.src)
+const openDemo = () => {
+  scrollToSection('demo')
+}
+
+const contactSupport = () => {
+  if (typeof window !== 'undefined') {
+    window.location.href = 'mailto:support@doogoo.app?subject=Demande%20de%20d%C3%A9mo&body=Bonjour%20Doogoo%2C%20je%20souhaite%20planifier%20une%20d%C3%A9mo.'
+  }
+}
+
+const scrollToSection = id => {
+  if (typeof window === 'undefined') return
+
+  const target = document.getElementById(id)
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } else {
+    router.push({ hash: `#${id}` })
   }
 }
 </script>
 
 <style scoped>
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.animate-blob {
-  animation: blob 7s infinite;
+.gradient-text {
+  background: linear-gradient(to right, #ffffff, #a1a1aa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
+.glow-bg {
+  background: radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
 }
 </style>
