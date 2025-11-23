@@ -21,31 +21,55 @@
               </div>
             </div>
             <div class="hidden md:flex items-center space-x-8">
-              <a
-                href="#features"
+              <button
+                type="button"
+                @click="scrollToSection('features')"
                 class="text-gray-600 hover:text-primary-600 transition-colors font-medium"
               >
                 {{ $t('landing.features') }}
-              </a>
-              <a
-                href="#testimonials"
+              </button>
+              <button
+                type="button"
+                @click="scrollToSection('cta')"
                 class="text-gray-600 hover:text-primary-600 transition-colors font-medium"
               >
-                {{ $t('landing.testimonials') }}
-              </a>
+                Tarifs
+              </button>
               <button
-                @click="goToDashboard"
+                type="button"
+                @click="scrollToSection('resources')"
+                class="text-gray-600 hover:text-primary-600 transition-colors font-medium"
+              >
+                Ressources
+              </button>
+              <button
+                type="button"
+                @click="goToLogin"
+                class="text-gray-600 hover:text-primary-600 transition-colors font-medium"
+              >
+                Se connecter
+              </button>
+              <button
+                @click="goToApp"
                 class="btn-primary shadow-md hover:shadow-lg transition-all"
               >
                 {{ $t('landing.getStarted') }}
               </button>
             </div>
-            <button
-              @click="goToDashboard"
-              class="md:hidden btn-primary text-sm px-4 py-2 shadow-md"
-            >
-              {{ $t('landing.tryIt') }}
-            </button>
+            <div class="flex items-center space-x-2 md:hidden">
+              <button
+                @click="goToLogin"
+                class="text-gray-600 hover:text-primary-600 transition-colors font-medium text-sm"
+              >
+                Se connecter
+              </button>
+              <button
+                @click="goToApp"
+                class="btn-primary text-sm px-4 py-2 shadow-md"
+              >
+                {{ $t('landing.tryIt') }}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -91,7 +115,7 @@
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row gap-4">
               <button
-                @click="goToDashboard"
+                @click="goToApp"
                 class="btn-primary text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 {{ $t('landing.getStarted') }}
@@ -111,9 +135,9 @@
               </button>
               <button
                 class="btn-secondary text-lg px-8 py-4 border-2 hover:border-primary-600 hover:text-primary-600 transition-all"
-                @click="goToSignup"
+                @click="openDemo"
               >
-                {{ $t('landing.tryFree') }}
+                Voir la démo
               </button>
             </div>
 
@@ -145,7 +169,7 @@
           </div>
 
           <!-- Image Hero avec effet 3D -->
-          <div class="relative">
+          <div class="relative" id="demo">
             <div class="relative transform hover:scale-105 transition-transform duration-500">
               <!-- Glow effect -->
               <div
@@ -391,15 +415,19 @@
     </section>
 
     <!-- Testimonials Section modernisée -->
-    <section id="testimonials" class="bg-gray-50 py-20 lg:py-28">
+    <section id="resources" class="bg-gray-50 py-20 lg:py-28" aria-labelledby="resources-title">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
+          <span id="testimonials" class="sr-only" aria-hidden="true"></span>
           <div
             class="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold mb-4"
           >
             Témoignages
           </div>
-          <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h3
+            id="resources-title"
+            class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4"
+          >
             {{ $t('landing.testimonialsTitle') }}
           </h3>
         </div>
@@ -471,25 +499,33 @@
         <p class="text-xl text-primary-50 mb-10 max-w-2xl mx-auto">
           {{ $t('landing.ctaDescription') }}
         </p>
-        <button
-          @click="goToSignup"
-          class="bg-white text-primary-600 px-10 py-5 rounded-xl font-bold text-lg shadow-2xl hover:bg-gray-50 hover:scale-105 transform transition-all duration-200"
-        >
-          {{ $t('landing.tryFree') }}
-          <svg
-            class="inline-block w-5 h-5 ml-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            @click="goToSignup"
+            class="bg-white text-primary-600 px-10 py-5 rounded-xl font-bold text-lg shadow-2xl hover:bg-gray-50 hover:scale-105 transform transition-all duration-200"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 7l5 5m0 0l-5 5m5-5H6"
-            />
-          </svg>
-        </button>
+            {{ $t('landing.tryFree') }}
+            <svg
+              class="inline-block w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </button>
+          <button
+            @click="contactSupport"
+            class="bg-primary-700/40 border border-white/30 text-white px-10 py-5 rounded-xl font-semibold text-lg backdrop-blur hover:bg-primary-600/50 transition-colors"
+          >
+            Contacter le support
+          </button>
+        </div>
       </div>
     </section>
 
@@ -504,38 +540,43 @@
             </p>
             <div class="flex space-x-4">
               <a
-                href="https://www.facebook.com"
+                href="https://twitter.com/doogooapp"
                 target="_blank"
                 rel="noreferrer"
                 class="text-gray-400 hover:text-white transition-colors"
+                aria-label="Suivre Doogoo sur Twitter"
               >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path
-                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                    d="M22.46 6c-.77.35-1.6.58-2.46.69a4.22 4.22 0 001.85-2.33 8.48 8.48 0 01-2.69 1.03A4.18 4.18 0 0015.5 4a4.18 4.18 0 00-4.17 4.17c0 .33.04.66.11.97a11.9 11.9 0 01-8.64-4.38 4.17 4.17 0 001.29 5.57 4.15 4.15 0 01-1.89-.52v.05a4.18 4.18 0 003.35 4.1c-.32.09-.65.14-.99.14-.24 0-.48-.02-.71-.07a4.18 4.18 0 003.9 2.9A8.37 8.37 0 012 19.55a11.82 11.82 0 006.29 1.85c7.55 0 11.68-6.26 11.68-11.68l-.01-.53A8.18 8.18 0 0022.46 6z"
                   />
                 </svg>
               </a>
               <a
-                href="https://www.twitter.com"
+                href="https://www.linkedin.com/company/doogoo"
                 target="_blank"
                 rel="noreferrer"
                 class="text-gray-400 hover:text-white transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
-                  />
-                </svg>
-              </a>
-              <a
-                href="https://www.linkedin.com"
-                target="_blank"
-                rel="noreferrer"
-                class="text-gray-400 hover:text-white transition-colors"
+                aria-label="Suivre Doogoo sur LinkedIn"
               >
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path
                     d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://github.com/doogoo-app"
+                target="_blank"
+                rel="noreferrer"
+                class="text-gray-400 hover:text-white transition-colors"
+                aria-label="Voir le code source Doogoo sur GitHub"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2a10 10 0 00-3.16 19.5c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.12-1.47-1.12-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.04 1.53 1.04.9 1.52 2.36 1.08 2.94.82.1-.66.35-1.1.63-1.36-2.22-.25-4.56-1.11-4.56-4.95 0-1.1.39-2 1.03-2.7-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.54 9.54 0 0112 6.8c.85 0 1.7.12 2.5.34 1.9-1.3 2.74-1.02 2.74-1.02.56 1.37.21 2.4.1 2.64.64.7 1.03 1.6 1.03 2.7 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.86v2.75c0 .26.18.58.69.48A10 10 0 0012 2z"
+                    clip-rule="evenodd"
                   />
                 </svg>
               </a>
@@ -569,7 +610,7 @@
                 <a href="#features" class="hover:text-white transition-colors inline-block">À propos</a>
               </li>
               <li>
-                <a href="#testimonials" class="hover:text-white transition-colors inline-block">Blog</a>
+                <a href="#resources" class="hover:text-white transition-colors inline-block">Blog</a>
               </li>
               <li>
                 <a
@@ -672,17 +713,42 @@ const features = computed(() => [
   }
 ])
 
-const goToDashboard = () => {
-  // Redirige vers login si non connecté, dashboard si connecté
+const goToApp = () => {
   if (authStore.user) {
     router.push('/dashboard')
   } else {
-    router.push('/login')
+    router.push('/signup')
   }
+}
+
+const goToLogin = () => {
+  router.push('/login')
 }
 
 const goToSignup = () => {
   router.push('/signup')
+}
+
+const openDemo = () => {
+  scrollToSection('demo')
+}
+
+const contactSupport = () => {
+  if (typeof window !== 'undefined') {
+    window.location.href =
+      'mailto:support@doogoo.app?subject=Demande%20de%20d%C3%A9mo&body=Bonjour%20Doogoo%2C%20je%20souhaite%20planifier%20une%20d%C3%A9mo.'
+  }
+}
+
+const scrollToSection = id => {
+  if (typeof window === 'undefined') return
+
+  const target = document.getElementById(id)
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  } else {
+    router.push({ hash: `#${id}` })
+  }
 }
 
 /**
