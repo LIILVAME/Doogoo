@@ -97,19 +97,27 @@
               <div class="w-16 md:w-64 border-r border-white/5 bg-zinc-900/30 p-4 flex flex-col gap-6 hidden md:flex">
                 <div class="space-y-1">
                   <div class="h-8 flex items-center gap-3 px-2 text-zinc-100 bg-white/5 rounded-md text-sm font-medium">
-                    <span class="w-4 h-4 inline-flex items-center justify-center text-violet-400">▤</span>
+                    <span class="w-4 h-4 inline-flex items-center justify-center text-violet-400">
+                      <component :is="icons.grid" class="w-4 h-4" aria-hidden="true" />
+                    </span>
                     Vue d'ensemble
                   </div>
                   <div class="h-8 flex items-center gap-3 px-2 text-zinc-500 hover:text-zinc-300 rounded-md text-sm font-medium cursor-pointer transition-colors">
-                    <span class="w-4 h-4 inline-flex items-center justify-center">🏢</span>
+                    <span class="w-4 h-4 inline-flex items-center justify-center">
+                      <component :is="icons.building" class="w-4 h-4" aria-hidden="true" />
+                    </span>
                     Mes Biens
                   </div>
                   <div class="h-8 flex items-center gap-3 px-2 text-zinc-500 hover:text-zinc-300 rounded-md text-sm font-medium cursor-pointer transition-colors">
-                    <span class="w-4 h-4 inline-flex items-center justify-center">👥</span>
+                    <span class="w-4 h-4 inline-flex items-center justify-center">
+                      <component :is="icons.users" class="w-4 h-4" aria-hidden="true" />
+                    </span>
                     Locataires
                   </div>
                   <div class="h-8 flex items-center gap-3 px-2 text-zinc-500 hover:text-zinc-300 rounded-md text-sm font-medium cursor-pointer transition-colors">
-                    <span class="w-4 h-4 inline-flex items-center justify-center">💳</span>
+                    <span class="w-4 h-4 inline-flex items-center justify-center">
+                      <component :is="icons.card" class="w-4 h-4" aria-hidden="true" />
+                    </span>
                     Paiements
                   </div>
                 </div>
@@ -127,10 +135,11 @@
                 <div class="flex justify-between items-end mb-8">
                   <div>
                     <p class="text-zinc-500 text-xs mb-1 uppercase tracking-wider font-medium">Revenus (Octobre)</p>
-                    <h2 class="text-3xl font-semibold text-white tracking-tight">12 450,00 €</h2>
+                    <h2 class="text-3xl font-semibold text-white tracking-tight">12 450,00 FCFA</h2>
                   </div>
                   <button class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded flex items-center gap-2 transition-colors">
-                    ⬇️ Exporter
+                    <component :is="icons.download" class="w-4 h-4" aria-hidden="true" />
+                    Exporter
                   </button>
                 </div>
                 <div class="grid grid-cols-12 gap-2 h-32 items-end mb-8 opacity-90">
@@ -144,19 +153,19 @@
                   <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-zinc-900/20 hover:bg-zinc-900/40 transition-colors group">
                     <div class="flex items-center gap-4">
                       <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
-                        ↙
+                        <component :is="icons.incoming" class="w-4 h-4" aria-hidden="true" />
                       </div>
                       <div>
                         <p class="text-sm text-zinc-200 font-medium">Loyer - Apt 4B</p>
                         <p class="text-xs text-zinc-500">Thomas Dupont</p>
                       </div>
                     </div>
-                    <span class="text-sm text-zinc-200 font-medium">+ 850,00 €</span>
+                    <span class="text-sm text-zinc-200 font-medium">+ 850,00 FCFA</span>
                   </div>
                   <div class="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-zinc-900/20 hover:bg-zinc-900/40 transition-colors group">
                     <div class="flex items-center gap-4">
                       <div class="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20">
-                        ⏱
+                        <component :is="icons.clock" class="w-4 h-4" aria-hidden="true" />
                       </div>
                       <div>
                         <p class="text-sm text-zinc-200 font-medium">Retard - Studio 12</p>
@@ -194,7 +203,7 @@
                 class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/10 mb-2"
                 :class="feature.iconColor"
               >
-                <span class="text-xl">{{ feature.icon }}</span>
+                <component :is="feature.icon" class="w-6 h-6" aria-hidden="true" />
               </div>
               <h3 class="text-xl font-medium text-white">{{ feature.title }}</h3>
               <p class="text-zinc-400 text-sm leading-relaxed" v-html="feature.description"></p>
@@ -238,7 +247,7 @@
         </div>
         <div class="glass-panel rounded-2xl p-6 border border-white/10">
           <p class="text-sm text-zinc-400 mb-2">Plan Pro</p>
-          <p class="text-3xl font-semibold text-white mb-4">19 € <span class="text-base text-zinc-400">/mois</span></p>
+          <p class="text-3xl font-semibold text-white mb-4">19 000 FCFA <span class="text-base text-zinc-400">/mois</span></p>
           <ul class="space-y-2 text-sm text-zinc-300 mb-6">
             <li class="flex items-center gap-2">✔ Gestion multi-biens</li>
             <li class="flex items-center gap-2">✔ Alertes retards & rappels</li>
@@ -287,7 +296,7 @@
             <div v-for="resource in resources" :key="resource.title" class="glass-panel border border-white/10 rounded-xl p-5">
               <div class="flex items-start gap-3">
                 <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-violet-300 text-lg">
-                  {{ resource.icon }}
+                  <component :is="resource.icon" class="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
                   <p class="text-white font-medium">{{ resource.title }}</p>
@@ -398,13 +407,137 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, h } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => Boolean(authStore.user))
+
+const iconBase = (props = {}) => ({
+  fill: 'none',
+  viewBox: '0 0 24 24',
+  stroke: 'currentColor',
+  'stroke-width': 1.6,
+  'stroke-linecap': 'round',
+  'stroke-linejoin': 'round',
+  ...props,
+  class: ['w-5 h-5', props.class]
+})
+
+const GridIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 4, y: 4, width: 7, height: 7, rx: 1.5 }),
+    h('rect', { x: 13, y: 4, width: 7, height: 7, rx: 1.5 }),
+    h('rect', { x: 4, y: 13, width: 7, height: 7, rx: 1.5 }),
+    h('rect', { x: 13, y: 13, width: 7, height: 7, rx: 1.5 })
+  ])
+
+const BuildingIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 5, y: 4, width: 14, height: 16, rx: 1.5 }),
+    h('path', { d: 'M9 8h1M14 8h1M9 12h1M14 12h1M9 16h6', 'stroke-linecap': 'round' })
+  ])
+
+const UsersIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('circle', { cx: 9, cy: 9, r: 2.5 }),
+    h('circle', { cx: 15, cy: 9, r: 2.5 }),
+    h('path', { d: 'M4.5 19a4.5 4.5 0 019 0', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M13.5 15.5h1c2.21 0 4 1.79 4 4', 'stroke-linecap': 'round' })
+  ])
+
+const CardIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 3.5, y: 6, width: 17, height: 12, rx: 2 }),
+    h('path', { d: 'M3.5 11h17' }),
+    h('path', { d: 'M8.5 15h4', 'stroke-linecap': 'round' })
+  ])
+
+const DownloadIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M12 4v10', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M8.5 10.5 12 14l3.5-3.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M5 18h14', 'stroke-linecap': 'round' })
+  ])
+
+const IncomingIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('circle', { cx: 12, cy: 12, r: 9 }),
+    h('path', { d: 'M15 9.5 11.5 13 9 10.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M11.5 13V8.5', 'stroke-linecap': 'round' })
+  ])
+
+const ClockIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('circle', { cx: 12, cy: 12, r: 9 }),
+    h('path', { d: 'M12 7v5l3 2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' })
+  ])
+
+const HomeIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M4.5 10.5 12 4l7.5 6.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M6.5 10.75V19h11v-8.25', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M10 18.5v-3.25A1.25 1.25 0 0 1 11.25 14h1.5A1.25 1.25 0 0 1 14 15.25V18.5', 'stroke-linecap': 'round' })
+  ])
+
+const AlertIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M12 6.5 4.5 19h15L12 6.5z', fill: 'none' }),
+    h('path', { d: 'M12 10v4.25', 'stroke-linecap': 'round' }),
+    h('circle', { cx: 12, cy: 17, r: 0.75, fill: 'currentColor', stroke: 'none' })
+  ])
+
+const ChartIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M5 19h14', 'stroke-linecap': 'round' }),
+    h('rect', { x: 6.5, y: 11, width: 3, height: 6, rx: 0.8 }),
+    h('rect', { x: 11.5, y: 8, width: 3, height: 9, rx: 0.8 }),
+    h('rect', { x: 16.5, y: 6, width: 3, height: 11, rx: 0.8 })
+  ])
+
+const NewsIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('rect', { x: 4, y: 5, width: 15, height: 14, rx: 1.5 }),
+    h('path', { d: 'M7.5 8.5h6.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M7.5 12h8', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M7.5 15.5h5', 'stroke-linecap': 'round' })
+  ])
+
+const BookIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M6 5.5A2.5 2.5 0 0 0 3.5 8v9.5A1.5 1.5 0 0 0 5 19h6.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M18 5.5A2.5 2.5 0 0 1 20.5 8v9.5A1.5 1.5 0 0 1 19 19h-6.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M12.5 6v12.5', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M11.5 6H7.5a1.5 1.5 0 0 0-1.5 1.5v9', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M12.5 6H16a1.5 1.5 0 0 1 1.5 1.5v9', 'stroke-linecap': 'round' })
+  ])
+
+const HandshakeIcon = (props = {}) =>
+  h('svg', iconBase(props), [
+    h('path', { d: 'M7.5 13.5 11 10l3 3 4-4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M3.5 12.5 7 9h4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M20.5 12.5 17 9h-2.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }),
+    h('path', { d: 'M9.5 14.5 8 16c-.6.6-.6 1.6 0 2.2.6.6 1.6.6 2.2 0l1-1', 'stroke-linecap': 'round' }),
+    h('path', { d: 'M14.5 13.5 16 15c.6.6.6 1.6 0 2.2-.6.6-1.6.6-2.2 0L13 16.5', 'stroke-linecap': 'round' })
+  ])
+
+const icons = {
+  grid: GridIcon,
+  building: BuildingIcon,
+  users: UsersIcon,
+  card: CardIcon,
+  download: DownloadIcon,
+  incoming: IncomingIcon,
+  clock: ClockIcon,
+  home: HomeIcon,
+  alert: AlertIcon,
+  chart: ChartIcon,
+  news: NewsIcon,
+  book: BookIcon,
+  handshake: HandshakeIcon
+}
 
 const chartHeights = [
   '40%',
@@ -426,7 +559,7 @@ const primaryFeatures = [
     title: 'Gestion Multi-biens',
     description:
       "Appartements, maisons, parkings ou locaux commerciaux. Ajoutez et configurez vos propriétés en quelques clics avec des profils détaillés.",
-    icon: '🏠',
+    icon: icons.home,
     iconColor: 'text-violet-400',
     span2: true,
     visual: true
@@ -434,20 +567,20 @@ const primaryFeatures = [
   {
     title: 'Suivi Locataires',
     description: 'Centralisez les baux, les contacts et l\'historique de chaque locataire.',
-    icon: '👥',
+    icon: icons.users,
     iconColor: 'text-emerald-400'
   },
   {
     title: 'Alertes Retards',
     description: 'Soyez notifié immédiatement en cas de retard de paiement. Relancez en un clic.',
-    icon: '⚠️',
+    icon: icons.alert,
     iconColor: 'text-rose-400'
   },
   {
     title: 'Vue Métrique & Export',
     description:
       'Analysez votre rentabilité en temps réel. Besoin de transmettre à votre comptable ? Exportez toutes les données en CSV, PDF ou XLS instantanément.',
-    icon: '📊',
+    icon: icons.chart,
     iconColor: 'text-blue-400',
     span2: true,
     tags: ['.CSV', '.PDF', '.XLS']
@@ -458,17 +591,17 @@ const resources = [
   {
     title: 'Blog & mises à jour',
     description: 'Découvrez nos nouveautés produit et bonnes pratiques de gestion locative.',
-    icon: '📰'
+    icon: icons.news
   },
   {
     title: 'Guide du bailleur',
     description: 'Toutes les étapes clés pour piloter vos biens en autonomie.',
-    icon: '📘'
+    icon: icons.book
   },
   {
     title: "Centre d'aide & support",
     description: 'Une équipe disponible pour vous accompagner rapidement.',
-    icon: '🤝'
+    icon: icons.handshake
   }
 ]
 
