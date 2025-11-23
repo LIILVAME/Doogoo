@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 
 /**
  * Store Pinia pour gérer l'état de connexion réseau
@@ -14,7 +14,7 @@ export const useConnectionStore = defineStore('connection', () => {
    * Met à jour l'état de connexion
    * @param {boolean} online - État de la connexion
    */
-  const setOnline = (online) => {
+  const setOnline = online => {
     isOnline.value = online
     if (online) {
       updateLastSync()
@@ -70,7 +70,7 @@ export const useConnectionStore = defineStore('connection', () => {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 3000)
 
-      const response = await fetch('https://www.google.com/favicon.ico', {
+      await fetch('https://www.google.com/favicon.ico', {
         method: 'HEAD',
         mode: 'no-cors',
         signal: controller.signal,
@@ -80,7 +80,7 @@ export const useConnectionStore = defineStore('connection', () => {
       clearTimeout(timeoutId)
       setOnline(true)
       return true
-    } catch (error) {
+    } catch {
       setOnline(false)
       return false
     }
@@ -95,4 +95,3 @@ export const useConnectionStore = defineStore('connection', () => {
     checkConnection
   }
 })
-

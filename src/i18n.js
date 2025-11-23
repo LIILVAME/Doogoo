@@ -22,11 +22,11 @@ let currentLocale = 'fr'
  */
 function getTranslation(key, locale = currentLocale, values = {}) {
   const localeMessages = messages[locale] || messages.en
-  
+
   // Résout la clé imbriquée (ex: "auth.login.title")
   const keys = key.split('.')
   let translation = localeMessages
-  
+
   for (const k of keys) {
     if (translation && typeof translation === 'object' && k in translation) {
       translation = translation[k]
@@ -39,12 +39,12 @@ function getTranslation(key, locale = currentLocale, values = {}) {
       return key
     }
   }
-  
+
   // Si c'est une string, on fait l'interpolation
   if (typeof translation === 'string') {
     return interpolate(translation, values)
   }
-  
+
   return key
 }
 
@@ -56,7 +56,7 @@ function interpolate(text, values) {
   if (!values || Object.keys(values).length === 0) {
     return text
   }
-  
+
   return text.replace(/\{\{?(\w+)\}\}?/g, (match, key) => {
     return values[key] !== undefined ? String(values[key]) : match
   })
@@ -78,18 +78,11 @@ function setLocale(locale) {
   }
 }
 
-/**
- * Obtient la locale active
- */
-function getLocale() {
-  return currentLocale
-}
-
 // API compatible avec vue-i18n
 const i18n = {
   // Fonction de traduction principale
   t: (key, values = {}) => getTranslation(key, currentLocale, values),
-  
+
   // Gestion de la locale
   locale: {
     get value() {
@@ -99,13 +92,13 @@ const i18n = {
       setLocale(locale)
     }
   },
-  
+
   // Méthodes utilitaires
   te: (key, locale = currentLocale) => {
     const localeMessages = messages[locale] || messages.en
     const keys = key.split('.')
     let translation = localeMessages
-    
+
     for (const k of keys) {
       if (translation && typeof translation === 'object' && k in translation) {
         translation = translation[k]
@@ -113,15 +106,15 @@ const i18n = {
         return false
       }
     }
-    
+
     return typeof translation === 'string'
   },
-  
+
   // Messages pour compatibilité
   get messages() {
     return messages
   },
-  
+
   // Compatibilité avec l'API globale
   global: {
     locale: {

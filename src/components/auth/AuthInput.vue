@@ -11,6 +11,7 @@
       :placeholder="placeholder"
       :required="required"
       :disabled="disabled"
+      :autocomplete="autocomplete || undefined"
       :class="[
         'w-full border-2 rounded-xl px-4 py-3 text-sm sm:text-base',
         'focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none',
@@ -76,6 +77,10 @@ defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  autocomplete: {
+    type: String,
+    default: ''
   }
 })
 

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from './authStore'
-import { formatCurrency, formatDate } from '@/utils/formatters'
 import { reportsApi } from '@/api/reports'
 
 /**

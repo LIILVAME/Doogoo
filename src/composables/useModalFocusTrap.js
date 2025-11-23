@@ -1,5 +1,5 @@
 import { ref, watch, nextTick, onUnmounted } from 'vue'
-import { useFocusTrap } from '@vueuse/core'
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 
 /**
  * Composable réutilisable pour ajouter le focus trap aux modales

@@ -266,7 +266,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close', 'submit'])
+const emit = defineEmits(['close', 'submit', 'field-completed'])
 
 const toastStore = useToastStore()
 
@@ -384,6 +384,73 @@ watch(
         status: 'on_time'
       }
     }
+
+    const completedSteps = ref(new Set())
+
+    const markStepComplete = (id, isComplete) => {
+      const hasStep = completedSteps.value.has(id)
+      if (isComplete && !hasStep) {
+        completedSteps.value.add(id)
+        emit('field-completed', id)
+      }
+      if (!isComplete && hasStep) {
+        completedSteps.value.delete(id)
+      }
+    }
+
+    watch(
+      () => form.value.name,
+      value => markStepComplete('first-property-name', Boolean(value?.trim())),
+      { immediate: true }
+    )
+
+    watch(
+      () => form.value.address,
+      value => markStepComplete('first-property-address', Boolean(value?.trim())),
+      { immediate: true }
+    )
+
+    watch(
+      () => form.value.city,
+      value => markStepComplete('first-property-city', Boolean(value?.trim())),
+      { immediate: true }
+    )
+
+    watch(
+      () => form.value.rent,
+      value => markStepComplete('first-property-rent', Number(value) > 0),
+      { immediate: true }
+    )
+
+    watch(
+      () => form.value.status,
+      value => {
+        const hasStatus = Boolean(value)
+        markStepComplete('first-property-status', hasStatus)
+        if (value !== PROPERTY_STATUS.OCCUPIED) {
+          markStepComplete('first-property-tenant', true)
+        }
+      },
+      { immediate: true }
+    )
+
+    watch(
+      () => ({
+        name: form.value.tenant.name,
+        entryDate: form.value.tenant.entryDate,
+        status: form.value.tenant.status,
+        propertyStatus: form.value.status
+      }),
+      tenant => {
+        if (tenant.propertyStatus !== PROPERTY_STATUS.OCCUPIED) {
+          return
+        }
+        const tenantComplete =
+          Boolean(tenant.name?.trim()) && Boolean(tenant.entryDate) && Boolean(tenant.status)
+        markStepComplete('first-property-tenant', tenantComplete)
+      },
+      { deep: true, immediate: true }
+    )
   }
 )
 

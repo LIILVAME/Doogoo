@@ -233,7 +233,7 @@ export const useSettingsStore = defineStore('settings', () => {
     // Crée un nouveau listener
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-    systemThemeListener = e => {
+    systemThemeListener = _event => {
       if (theme.value === 'auto' || theme.value === 'system') {
         applyTheme(theme.value)
       }

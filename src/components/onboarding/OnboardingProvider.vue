@@ -74,6 +74,7 @@ defineExpose({
   next,
   previous,
   complete,
-  dismiss
+  dismiss,
+  getCurrentStepId: () => currentStep.value
 })
 </script>

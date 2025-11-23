@@ -60,9 +60,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       return { success: true, user: data.user }
     } catch (err) {
-      error.value = err.message
+      const networkMessage =
+        'Impossible de contacter le service d’authentification. Vérifiez votre connexion Internet et les variables VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.'
+      const isNetworkError =
+        err?.message?.includes('Failed to fetch') || err?.message?.includes('Name not resolved')
+      error.value = isNetworkError ? networkMessage : err.message
       loading.value = false
-      return { success: false, error: err.message }
+      return { success: false, error: error.value }
     }
   }
 
@@ -364,7 +368,7 @@ export const useAuthStore = defineStore('auth', () => {
       const baseUrl = window.location.origin
       const redirectUrl = redirectTo || `${baseUrl}/dashboard`
 
-      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
@@ -407,7 +411,7 @@ export const useAuthStore = defineStore('auth', () => {
       const baseUrl = window.location.origin
       const redirectUrl = redirectTo || `${baseUrl}/dashboard`
 
-      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
           redirectTo: redirectUrl
@@ -652,7 +656,7 @@ export const useAuthStore = defineStore('auth', () => {
 
             propertiesStore.stopRealtime()
             paymentsStore.stopRealtime()
-          } catch (cleanupError) {
+          } catch {
             // Ignore les erreurs de nettoyage (stores peuvent être déjà nettoyés)
           }
         } catch (err) {

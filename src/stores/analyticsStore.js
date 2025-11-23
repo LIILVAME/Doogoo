@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useAuthStore } from './authStore'
-import { formatCurrency } from '@/utils/formatters'
 import { analyticsApi } from '@/api/analytics'
 
 /**

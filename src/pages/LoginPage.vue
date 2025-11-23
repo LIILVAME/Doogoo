@@ -15,6 +15,7 @@
           :placeholder="$t('auth.login.emailPlaceholder')"
           :error="emailError"
           required
+          autocomplete="email"
         />
 
         <!-- Mot de passe -->
@@ -25,6 +26,7 @@
           :placeholder="$t('auth.login.passwordPlaceholder')"
           :error="passwordError"
           required
+          autocomplete="current-password"
         />
 
         <!-- Lien mot de passe oublié -->
@@ -90,14 +92,7 @@
           :label="$t('auth.login.cta')"
           :loading="authStore.loading"
           type="submit"
-          :disabled="
-            !form.email ||
-            !form.password ||
-            oauthLoading ||
-            authStore.loading ||
-            emailError ||
-            passwordError
-          "
+          :disabled="isSubmitDisabled"
         />
 
         <!-- Boutons OAuth -->
@@ -157,9 +152,6 @@ const form = ref({
   password: ''
 })
 
-const oauthLoading = ref(false)
-const oauthProvider = ref(null)
-
 const emailError = computed(() => {
   if (!form.value.email) {
     // Affiche l'erreur seulement si elle concerne l'email
@@ -191,6 +183,22 @@ const passwordError = computed(() => {
     }
   }
   return ''
+})
+
+const oauthLoading = ref(false)
+const oauthProvider = ref(null)
+
+const isSubmitDisabled = computed(() => {
+  const hasEmailError = Boolean(emailError.value)
+  const hasPasswordError = Boolean(passwordError.value)
+  return (
+    !form.value.email ||
+    !form.value.password ||
+    oauthLoading.value ||
+    authStore.loading ||
+    hasEmailError ||
+    hasPasswordError
+  )
 })
 
 // Nettoie le query param passwordReset après affichage

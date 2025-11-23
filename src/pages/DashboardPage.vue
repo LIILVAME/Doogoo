@@ -101,6 +101,7 @@
         :isLoading="propertiesStore.loading"
         @close="isModalOpen = false"
         @submit="handleAddProperty"
+        @field-completed="handleOnboardingFieldCompleted"
       />
 
       <!-- Floating Action Button (mobile only) -->
@@ -131,7 +132,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import Sidebar from '../components/Sidebar.vue'
@@ -156,6 +157,21 @@ const authStore = useAuthStore()
 const router = useRouter()
 const { t } = useI18n()
 const onboardingProviderRef = ref(null)
+const shouldShowFirstPropertyGuide = ref(false)
+const hasTriggeredFirstPropertyFlow = ref(false)
+const isModalOpen = ref(false)
+const confirmDeleteId = ref(null)
+const showDeleteConfirm = ref(false)
+const completedOnboardingSteps = ref(new Set())
+
+const firstPropertyStepOrder = [
+  'first-property-name',
+  'first-property-address',
+  'first-property-city',
+  'first-property-rent',
+  'first-property-status',
+  'first-property-tenant'
+]
 
 /**
  * Étapes d'onboarding pour le dashboard
@@ -191,6 +207,52 @@ const onboardingSteps = computed(() => {
     content: t('onboarding.addPropertyDescription'),
     placement: 'left'
   })
+
+  // Étapes guidées dans la modale lors du tout premier ajout
+  if (shouldShowFirstPropertyGuide.value) {
+    steps.push({
+      id: 'first-property-name',
+      target: '#property-name',
+      title: 'Nom du bien',
+      content: 'Donnez un nom clair pour retrouver ce bien facilement.',
+      placement: 'bottom'
+    })
+    steps.push({
+      id: 'first-property-address',
+      target: '#property-address',
+      title: 'Adresse',
+      content: 'Renseignez l’adresse complète pour vos suivis.',
+      placement: 'left'
+    })
+    steps.push({
+      id: 'first-property-city',
+      target: '#property-city',
+      title: 'Ville',
+      content: 'Ajoutez la ville pour compléter vos informations.',
+      placement: 'left'
+    })
+    steps.push({
+      id: 'first-property-rent',
+      target: '#property-rent',
+      title: 'Loyer mensuel',
+      content: 'Montant mensuel pour suivre vos revenus automatiquement.',
+      placement: 'left'
+    })
+    steps.push({
+      id: 'first-property-status',
+      target: '#property-status',
+      title: 'Statut du bien',
+      content: 'Libre ou occupé ? On affiche les infos locataire si nécessaire.',
+      placement: 'left'
+    })
+    steps.push({
+      id: 'first-property-tenant',
+      target: '#tenant-name',
+      title: 'Infos locataire',
+      content: 'Complétez ces champs si le bien est occupé.',
+      placement: 'left'
+    })
+  }
 
   // Étape 4: Carte de propriété (si il y en a une)
   if (propertiesStore.properties.length > 0) {
@@ -258,6 +320,7 @@ onMounted(async () => {
 
   // Vérifie si c'est le premier login et déclenche l'onboarding
   await checkAndStartOnboarding()
+  await maybeTriggerFirstPropertyFlow()
 })
 
 /**
@@ -296,6 +359,81 @@ const checkAndStartOnboarding = async () => {
   }
 }
 
+const handleOnboardingFieldCompleted = fieldId => {
+  if (!shouldShowFirstPropertyGuide.value || !onboardingProviderRef.value) return
+
+  const currentId = onboardingProviderRef.value.getCurrentStepId
+    ? onboardingProviderRef.value.getCurrentStepId()
+    : null
+
+  // Marque le champ comme complété
+  completedOnboardingSteps.value.add(fieldId)
+
+  // Avance uniquement si on est sur la bonne étape
+  const currentIndex = firstPropertyStepOrder.indexOf(currentId)
+  const fieldIndex = firstPropertyStepOrder.indexOf(fieldId)
+
+  if (currentIndex !== -1 && fieldIndex !== -1 && fieldIndex >= currentIndex) {
+    // Assure-toi que tous les steps précédents sont complétés
+    const allPreviousDone = firstPropertyStepOrder
+      .slice(0, fieldIndex + 1)
+      .every(step => completedOnboardingSteps.value.has(step))
+
+    if (allPreviousDone && onboardingProviderRef.value.next) {
+      onboardingProviderRef.value.next()
+    }
+  }
+}
+
+/**
+ * Déclenche automatiquement la création du premier bien pour un nouvel utilisateur
+ * en ouvrant la modale et en affichant les bulles d'aide.
+ */
+const maybeTriggerFirstPropertyFlow = async () => {
+  if (hasTriggeredFirstPropertyFlow.value) return
+
+  // Attend que la session soit prête et que les données soient chargées
+  let attempts = 0
+  while ((authStore.loadingSession || propertiesStore.loading) && attempts < 30) {
+    await new Promise(resolve => setTimeout(resolve, 200))
+    attempts++
+  }
+
+  const user = authStore.user
+  if (!user) return
+
+  const firstPropertyKey = `first_property_modal_done_${user.id}`
+  const alreadyDone = localStorage.getItem(firstPropertyKey) === 'true'
+
+  // Ne s'applique qu'aux nouveaux comptes (créés il y a moins de 7 jours)
+  const createdAt = user?.created_at ? new Date(user.created_at).getTime() : null
+  const isOlderThan7Days = createdAt ? Date.now() - createdAt > 7 * 24 * 60 * 60 * 1000 : false
+  if (isOlderThan7Days) {
+    localStorage.setItem(firstPropertyKey, 'true')
+    return
+  }
+
+  if (alreadyDone || propertiesStore.properties.length > 0) {
+    return
+  }
+
+  hasTriggeredFirstPropertyFlow.value = true
+  shouldShowFirstPropertyGuide.value = true
+  isModalOpen.value = true
+  localStorage.setItem(firstPropertyKey, 'true')
+}
+
+watch(
+  () => isModalOpen.value,
+  async isOpen => {
+    if (isOpen && shouldShowFirstPropertyGuide.value && onboardingProviderRef.value?.start) {
+      // Laisse le temps à la modale de se rendre
+      await new Promise(resolve => setTimeout(resolve, 300))
+      onboardingProviderRef.value.start()
+    }
+  }
+)
+
 /**
  * Arrête le temps réel au démontage (optionnel)
  */
@@ -303,10 +441,6 @@ onUnmounted(() => {
   // propertiesStore.stopRealtime()
   // paymentsStore.stopRealtime()
 })
-
-const isModalOpen = ref(false)
-const confirmDeleteId = ref(null)
-const showDeleteConfirm = ref(false)
 
 /**
  * Gère l'ajout d'un nouveau bien via le store Pinia (Supabase)
