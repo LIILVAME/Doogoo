@@ -8,13 +8,13 @@
 
         <div class="hidden items-center gap-8 text-sm font-medium text-zinc-400 md:flex">
           <button class="transition-colors hover:text-white" @click="scrollTo('features')">
-            Fonctionnalités
+            {{ t('landing.features') }}
           </button>
           <button class="transition-colors hover:text-white" @click="scrollTo('pricing')">
-            Tarifs
+            {{ t('landing.pricing', { defaultMessage: 'Tarifs' }) }}
           </button>
           <button class="transition-colors hover:text-white" @click="scrollTo('resources')">
-            Ressources
+            {{ t('landing.resources', { defaultMessage: 'Ressources' }) }}
           </button>
         </div>
 
@@ -23,13 +23,13 @@
             class="hidden text-sm font-medium text-zinc-400 transition-colors hover:text-white sm:block"
             @click="navigateToLogin"
           >
-            Se connecter
+            {{ t('auth.login.cta') }}
           </button>
           <button
             class="rounded-full bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-200"
             @click="navigateToSignup"
           >
-            Essayer gratuitement
+            {{ t('landing.tryFree') }}
           </button>
         </div>
       </div>
@@ -46,16 +46,15 @@
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75"></span>
             <span class="relative inline-flex h-2 w-2 rounded-full bg-violet-500"></span>
           </span>
-          Nouvelle fonctionnalité : Export comptable simplifié
+          {{ t('landing.newFeatureBadge', { defaultMessage: 'Nouvelle fonctionnalité : Export comptable simplifié' }) }}
         </div>
 
         <h1 class="gradient-text mb-6 text-5xl font-semibold leading-[1.1] tracking-tight md:text-7xl">
-          L'immobilier géré<br />simplement par vous.
+          {{ t('landing.heroTitle') }}
         </h1>
 
         <p class="mb-10 max-w-2xl mx-auto text-lg font-light leading-relaxed text-zinc-400 md:text-xl">
-          Doogoo offre aux propriétaires indépendants le pouvoir de piloter leurs biens, locataires et finances depuis une
-          interface unique et élégante.
+          {{ t('landing.heroDescription') }}
         </p>
 
         <div class="mb-20 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -63,14 +62,14 @@
             class="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-white px-8 font-medium text-black transition-all hover:bg-zinc-200 sm:w-auto"
             @click="navigateToSignup"
           >
-            Commencer maintenant
+            {{ t('landing.getStarted') }}
             <i class="h-4 w-4" data-lucide="arrow-right"></i>
           </button>
           <button
             class="h-12 w-full rounded-full border border-white/10 bg-white/5 px-8 font-medium text-white transition-all hover:bg-white/10 sm:w-auto"
             @click="scrollTo('demo')"
           >
-            Voir la démo
+            {{ t('landing.viewDemo', { defaultMessage: 'Voir la démo' }) }}
           </button>
         </div>
 
@@ -393,10 +392,12 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted } from 'vue'
+import { nextTick, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from '@/composables/useLingui'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const navigateToSignup = () => router.push('/signup')
 const navigateToLogin = () => router.push('/login')
@@ -404,11 +405,12 @@ const navigateToSupport = () => {
   window.location.href = 'mailto:support@doogoo.app'
 }
 
-const navigateToBlog = () => scrollTo('resources')
-const navigateToGuide = () => scrollTo('resources')
-const navigateToHelp = () => scrollTo('resources')
-const navigateToPrivacy = () => scrollTo('resources')
-const navigateToTerms = () => scrollTo('resources')
+const navigateToExternal = url => window.open(url, '_blank', 'noopener,noreferrer')
+const navigateToBlog = () => navigateToExternal('https://doogoo.app/blog')
+const navigateToGuide = () => navigateToExternal('https://doogoo.app/guide')
+const navigateToHelp = () => navigateToExternal('https://doogoo.app/help')
+const navigateToPrivacy = () => navigateToExternal('https://doogoo.app/privacy')
+const navigateToTerms = () => navigateToExternal('https://doogoo.app/terms')
 
 const scrollTo = id => {
   const element = document.getElementById(id)
@@ -417,23 +419,51 @@ const scrollTo = id => {
   }
 }
 
+let lucideScript
+let lucideLoadPromise
+
 const loadLucide = () => {
   if (window.lucide) {
-    window.lucide.createIcons()
-    return
+    return Promise.resolve(window.lucide)
   }
 
-  const script = document.createElement('script')
-  script.src = 'https://unpkg.com/lucide@latest'
-  script.async = true
-  script.onload = () => window.lucide?.createIcons()
-  document.body.appendChild(script)
+  if (lucideLoadPromise) return lucideLoadPromise
+
+  lucideLoadPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector('script[data-lucide-cdn]')
+
+    if (existingScript) {
+      lucideScript = existingScript
+      existingScript.addEventListener('load', () => resolve(window.lucide))
+      existingScript.addEventListener('error', reject)
+      return
+    }
+
+    lucideScript = document.createElement('script')
+    lucideScript.src = 'https://unpkg.com/lucide@latest'
+    lucideScript.async = true
+    lucideScript.dataset.lucideCdn = 'true'
+    lucideScript.onload = () => resolve(window.lucide)
+    lucideScript.onerror = reject
+    document.body.appendChild(lucideScript)
+  })
+
+  return lucideLoadPromise
 }
 
 onMounted(async () => {
-  loadLucide()
+  await loadLucide()
   await nextTick()
   window.lucide?.createIcons()
+})
+
+onUnmounted(() => {
+  if (!window.lucide && lucideScript?.parentNode) {
+    lucideScript.parentNode.removeChild(lucideScript)
+  }
+
+  lucideLoadPromise = undefined
+  lucideScript = undefined
 })
 </script>
 

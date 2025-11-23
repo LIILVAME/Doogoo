@@ -1079,6 +1079,12 @@ msgstr "Degraded mode — some data may be incomplete"
 msgid "landing.features"
 msgstr "Features"
 
+msgid "landing.pricing"
+msgstr "Pricing"
+
+msgid "landing.resources"
+msgstr "Resources"
+
 msgid "landing.testimonials"
 msgstr "Testimonials"
 
@@ -1096,6 +1102,12 @@ msgstr "Supervise your real estate properties from a single platform"
 
 msgid "landing.heroDescription"
 msgstr "Real-time monitoring, smart alerts, payment management. Everything you need to manage your properties remotely."
+
+msgid "landing.newFeatureBadge"
+msgstr "New: Simplified accounting export"
+
+msgid "landing.viewDemo"
+msgstr "View the demo"
 
 msgid "landing.featuresTitle"
 msgstr "Everything you need"

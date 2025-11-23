@@ -1079,6 +1079,12 @@ msgstr "Mode dégradé — certaines données peuvent être incomplètes"
 msgid "landing.features"
 msgstr "Fonctionnalités"
 
+msgid "landing.pricing"
+msgstr "Tarifs"
+
+msgid "landing.resources"
+msgstr "Ressources"
+
 msgid "landing.testimonials"
 msgstr "Témoignages"
 
@@ -1096,6 +1102,12 @@ msgstr "Supervisez vos biens immobiliers depuis une seule plateforme"
 
 msgid "landing.heroDescription"
 msgstr "Monitoring en temps réel, alertes intelligentes, gestion des paiements. Tout ce dont vous avez besoin pour gérer vos biens à distance."
+
+msgid "landing.newFeatureBadge"
+msgstr "Nouvelle fonctionnalité : Export comptable simplifié"
+
+msgid "landing.viewDemo"
+msgstr "Voir la démo"
 
 msgid "landing.featuresTitle"
 msgstr "Tout ce dont vous avez besoin"
