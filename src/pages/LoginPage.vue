@@ -218,12 +218,26 @@ watch(
  * Gère la connexion
  */
 const handleLogin = async () => {
-  authStore.error = null
-  const result = await authStore.login(form.value.email, form.value.password)
+  if (isSubmitDisabled.value) return
 
-  if (result.success) {
-    const redirectTo = route.query.redirect || '/dashboard'
-    router.push(redirectTo)
+  authStore.error = null
+
+  try {
+    const result = await authStore.login(form.value.email, form.value.password)
+
+    if (result.success) {
+      const redirectTo = route.query.redirect || '/dashboard'
+      router.push(redirectTo)
+      return
+    }
+
+    if (result.error) {
+      toastStore.error(result.error)
+    }
+  } catch (error) {
+    const fallbackError = "Impossible de se connecter pour le moment. Merci de réessayer."
+    authStore.error = error?.message || fallbackError
+    toastStore.error(authStore.error)
   }
 }
 
