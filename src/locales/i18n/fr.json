@@ -64,9 +64,12 @@
   "properties": {
     "title": "Gestion des biens",
     "subtitle": "Gérez tous vos biens immobiliers",
+    "add": "Ajouter un bien",
     "addProperty": "Ajouter un bien",
     "editProperty": "Modifier un bien",
     "noProperties": "Aucun bien enregistré",
+    "startAdding": "Commencez par ajouter votre premier bien immobilier.",
+    "addFirst": "Ajouter mon premier bien",
     "noPropertiesDescription": "Commencez par ajouter votre premier bien immobilier",
     "noPropertiesFound": "Aucun bien trouvé",
     "noPropertiesFoundWithFilters": "Essayez de modifier vos filtres ou votre recherche",

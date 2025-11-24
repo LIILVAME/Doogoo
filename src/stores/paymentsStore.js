@@ -196,7 +196,7 @@ export const usePaymentsStore = defineStore(
                 status: data.status || 'pending'
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         // Transforme pour le format attendu
@@ -307,7 +307,7 @@ export const usePaymentsStore = defineStore(
                 status: data.status || updates.status
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         if (toastStore) {
@@ -363,7 +363,7 @@ export const usePaymentsStore = defineStore(
                 payment_id: id
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         if (toastStore) {
@@ -546,6 +546,17 @@ export const usePaymentsStore = defineStore(
       }
     }
 
+    /**
+     * Réinitialise le store
+     */
+    const reset = () => {
+      payments.value = []
+      loading.value = false
+      error.value = null
+      lastFetchTime = 0
+      stopRealtime()
+    }
+
     return {
       // State
       payments,
@@ -558,6 +569,7 @@ export const usePaymentsStore = defineStore(
       removePayment,
       initRealtime,
       stopRealtime,
+      reset,
       // Getters
       pendingPayments,
       latePayments,

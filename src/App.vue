@@ -250,12 +250,14 @@ onMounted(async () => {
             const analyticsStore = useAnalyticsStore()
             const reportsStore = useReportsStore()
 
-            propertiesStore.$reset()
-            paymentsStore.$reset()
-            tenantsStore.$reset()
-            alertsStore.$reset()
-            analyticsStore.$reset()
-            reportsStore.$reset()
+            const stores = [propertiesStore, paymentsStore, tenantsStore, alertsStore, analyticsStore, reportsStore]
+            stores.forEach(store => {
+              if (store.reset) {
+                store.reset()
+              } else if (store.$reset) {
+                store.$reset()
+              }
+            })
           } catch (resetError) {
             // Si certains stores n'existent pas, continue quand même
             console.warn(

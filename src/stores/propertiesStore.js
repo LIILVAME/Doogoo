@@ -94,13 +94,13 @@ export const usePropertiesStore = defineStore(
             tenant:
               prop.tenants && prop.tenants.length > 0
                 ? {
-                    id: prop.tenants[0].id,
-                    name: prop.tenants[0].name,
-                    entryDate: prop.tenants[0].entry_date,
-                    exitDate: prop.tenants[0].exit_date || null,
-                    rent: Number(prop.tenants[0].rent),
-                    status: prop.tenants[0].status || 'on_time'
-                  }
+                  id: prop.tenants[0].id,
+                  name: prop.tenants[0].name,
+                  entryDate: prop.tenants[0].entry_date,
+                  exitDate: prop.tenants[0].exit_date || null,
+                  rent: Number(prop.tenants[0].rent),
+                  status: prop.tenants[0].status || 'on_time'
+                }
                 : null,
             image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400' // Image par défaut
           }))
@@ -192,13 +192,13 @@ export const usePropertiesStore = defineStore(
             tenant:
               data.tenants && data.tenants.length > 0
                 ? {
-                    id: data.tenants[0].id,
-                    name: data.tenants[0].name,
-                    entryDate: data.tenants[0].entry_date,
-                    exitDate: data.tenants[0].exit_date || null,
-                    rent: Number(data.tenants[0].rent),
-                    status: data.tenants[0].status || 'on_time'
-                  }
+                  id: data.tenants[0].id,
+                  name: data.tenants[0].name,
+                  entryDate: data.tenants[0].entry_date,
+                  exitDate: data.tenants[0].exit_date || null,
+                  rent: Number(data.tenants[0].rent),
+                  status: data.tenants[0].status || 'on_time'
+                }
                 : null,
             image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400'
           }
@@ -213,7 +213,7 @@ export const usePropertiesStore = defineStore(
                 rent_amount: data.rent || 0
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         if (toastStore) {
@@ -318,8 +318,8 @@ export const usePropertiesStore = defineStore(
           const propertyResult = await propertiesApi.getPropertyById(id, authStore.user.id)
           const existingTenant =
             propertyResult.success &&
-            propertyResult.data?.tenants &&
-            propertyResult.data.tenants.length > 0
+              propertyResult.data?.tenants &&
+              propertyResult.data.tenants.length > 0
               ? propertyResult.data.tenants[0]
               : null
 
@@ -375,7 +375,7 @@ export const usePropertiesStore = defineStore(
                 property_id: id
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         const toast = useToastStore()
@@ -430,7 +430,7 @@ export const usePropertiesStore = defineStore(
                 property_id: id
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         if (toastStore) {
@@ -539,13 +539,13 @@ export const usePropertiesStore = defineStore(
                   tenant:
                     data.tenants && data.tenants.length > 0
                       ? {
-                          id: data.tenants[0].id,
-                          name: data.tenants[0].name,
-                          entryDate: data.tenants[0].entry_date,
-                          exitDate: data.tenants[0].exit_date || null,
-                          rent: Number(data.tenants[0].rent),
-                          status: data.tenants[0].status || 'on_time'
-                        }
+                        id: data.tenants[0].id,
+                        name: data.tenants[0].name,
+                        entryDate: data.tenants[0].entry_date,
+                        exitDate: data.tenants[0].exit_date || null,
+                        rent: Number(data.tenants[0].rent),
+                        status: data.tenants[0].status || 'on_time'
+                      }
                       : null,
                   image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400'
                 }
@@ -577,13 +577,13 @@ export const usePropertiesStore = defineStore(
                   tenant:
                     data.tenants && data.tenants.length > 0
                       ? {
-                          id: data.tenants[0].id,
-                          name: data.tenants[0].name,
-                          entryDate: data.tenants[0].entry_date,
-                          exitDate: data.tenants[0].exit_date || null,
-                          rent: Number(data.tenants[0].rent),
-                          status: data.tenants[0].status || 'on_time'
-                        }
+                        id: data.tenants[0].id,
+                        name: data.tenants[0].name,
+                        entryDate: data.tenants[0].entry_date,
+                        exitDate: data.tenants[0].exit_date || null,
+                        rent: Number(data.tenants[0].rent),
+                        status: data.tenants[0].status || 'on_time'
+                      }
                       : null,
                   image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400'
                 }
@@ -643,6 +643,17 @@ export const usePropertiesStore = defineStore(
       }
     }
 
+    /**
+     * Réinitialise le store
+     */
+    const reset = () => {
+      properties.value = []
+      loading.value = false
+      error.value = null
+      lastFetchTime = 0
+      stopRealtime()
+    }
+
     return {
       // State
       properties,
@@ -655,6 +666,7 @@ export const usePropertiesStore = defineStore(
       removeProperty,
       initRealtime,
       stopRealtime,
+      reset,
       // Getters
       totalProperties,
       occupiedProperties,

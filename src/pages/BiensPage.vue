@@ -1,133 +1,119 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar />
-
-    <!-- Main Content -->
-    <main ref="mainElement" class="flex-1 overflow-y-auto">
+  <DashboardLayout>
+    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      <div class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-6 xl:px-8 pt-16 pb-20 sm:pt-10 sm:pb-10">
-        <!-- Header avec statistiques -->
-        <PropertiesHeader :stats="stats" @add-property="isAddModalOpen = true" />
+      
+      <!-- Header avec statistiques -->
+      <PropertiesHeader :stats="stats" @add-property="isAddModalOpen = true" />
 
-        <!-- Filtres et recherche -->
-        <PropertiesFilters
-          :search-term="searchTerm"
-          :active-filter="activeFilter"
-          :filter-counts="filterCounts"
-          @search="handleSearch"
-          @filter="handleFilter"
-        />
+      <!-- Filtres et recherche -->
+      <PropertiesFilters
+        :search-term="searchTerm"
+        :active-filter="activeFilter"
+        :filter-counts="filterCounts"
+        @search="handleSearch"
+        @filter="handleFilter"
+      />
 
-        <!-- État de chargement avec skeletons (uniquement si aucune donnée) -->
-        <div
-          v-if="propertiesStore.loading && propertiesStore.properties.length === 0"
-          class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6"
-        >
-          <SkeletonCard v-for="n in 6" :key="n" />
-        </div>
+      <!-- État de chargement avec skeletons (uniquement si aucune donnée) -->
+      <div
+        v-if="propertiesStore.loading && propertiesStore.properties.length === 0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <SkeletonCard v-for="n in 6" :key="n" />
+      </div>
 
-        <!-- Erreur (uniquement si aucune donnée en cache) -->
-        <div
-          v-else-if="propertiesStore.error && propertiesStore.properties.length === 0"
-          class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
-        >
-          <div class="flex items-center">
-            <svg
-              class="w-5 h-5 text-red-600 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p class="text-red-700 font-medium">
-              {{ $t('common.errorWithColon') }} {{ propertiesStore.error }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
-        <div>
-          <!-- Loader inline si refresh en cours ET données déjà présentes -->
-          <div
-            v-if="propertiesStore.loading && propertiesStore.properties.length > 0"
-            class="text-center py-4 mb-4"
+      <!-- Erreur (uniquement si aucune donnée en cache) -->
+      <div
+        v-else-if="propertiesStore.error && propertiesStore.properties.length === 0"
+        class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-6"
+      >
+        <div class="flex items-center">
+          <svg
+            class="w-5 h-5 text-rose-400 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <InlineLoader />
-          </div>
-
-          <!-- Liste des biens -->
-          <PropertiesList
-            :properties="filteredProperties"
-            :has-filters="hasActiveFilters"
-            @edit-property="handleEditProperty"
-            @delete-property="handleDeleteProperty"
-            @clear-filters="clearFilters"
-          />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-rose-400 font-medium">
+            {{ $t('common.errorWithColon') }} {{ propertiesStore.error }}
+          </p>
         </div>
       </div>
-    </main>
 
-    <!-- Modal d'ajout de bien -->
-    <AddPropertyModal
-      :isOpen="isAddModalOpen"
-      :isLoading="propertiesStore.loading"
-      @close="isAddModalOpen = false"
-      @submit="handleAddProperty"
-    />
+      <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
+      <div v-else>
+        <!-- Loader inline si refresh en cours ET données déjà présentes -->
+        <div
+          v-if="propertiesStore.loading && propertiesStore.properties.length > 0"
+          class="text-center py-4 mb-4"
+        >
+          <InlineLoader />
+        </div>
 
-    <!-- Modal d'édition de bien -->
-    <EditPropertyModal
-      :isOpen="isEditModalOpen"
-      :property="selectedProperty"
-      :isLoading="propertiesStore.loading"
-      @close="isEditModalOpen = false"
-      @submit="handleUpdateProperty"
-    />
+        <!-- Liste des biens -->
+        <PropertiesList
+          :properties="filteredProperties"
+          :has-filters="hasActiveFilters"
+          @edit-property="handleEditProperty"
+          @delete-property="handleDeleteProperty"
+          @clear-filters="clearFilters"
+          @add-property="isAddModalOpen = true"
+        />
+      </div>
 
-    <!-- Floating Action Button (mobile only) -->
-    <FloatingActionButton :aria-label="$t('common.addProperty')" @click="isAddModalOpen = true" />
+      <!-- Modal Ajout/Édition Bien -->
+      <PropertyModal
+        :is-open="isAddModalOpen || isEditModalOpen"
+        :property="selectedProperty"
+        @close="isAddModalOpen = false; isEditModalOpen = false"
+        @saved="handlePropertySaved"
+      />
 
-    <!-- Modal de confirmation de suppression -->
-    <ConfirmModal
-      :isOpen="showDeleteConfirm"
-      title="Supprimer ce bien ?"
-      :message="
-        $t('properties.confirmDelete') ||
-        'Cette action est irréversible. Toutes les données associées seront également supprimées.'
-      "
-      confirm-label="Supprimer"
-      cancel-label="Annuler"
-      variant="danger"
-      :isLoading="isDeletingProperty"
-      @confirm="confirmDelete"
-      @cancel="cancelDelete"
-      @update:isOpen="showDeleteConfirm = $event"
-    />
-  </div>
+      <!-- Floating Action Button (mobile only) -->
+      <FloatingActionButton :aria-label="$t('common.addProperty')" @click="isAddModalOpen = true" />
+
+      <!-- Modal de confirmation de suppression -->
+      <ConfirmModal
+        :isOpen="showDeleteConfirm"
+        title="Supprimer ce bien ?"
+        :message="
+          $t('properties.confirmDelete') ||
+          'Cette action est irréversible. Toutes les données associées seront également supprimées.'
+        "
+        confirm-label="Supprimer"
+        cancel-label="Annuler"
+        variant="danger"
+        :isLoading="isDeletingProperty"
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+        @update:isOpen="showDeleteConfirm = $event"
+      />
+    </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
-import Sidebar from '../components/Sidebar.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PropertiesHeader from '../components/properties/PropertiesHeader.vue'
 import PropertiesFilters from '../components/properties/PropertiesFilters.vue'
 import PropertiesList from '../components/properties/PropertiesList.vue'
-import AddPropertyModal from '../components/dashboard/AddPropertyModal.vue'
-import EditPropertyModal from '../components/properties/EditPropertyModal.vue'
+import PropertyModal from '../components/properties/PropertyModal.vue'
 import ConfirmModal from '../components/common/ConfirmModal.vue'
 import SkeletonCard from '../components/common/SkeletonCard.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
@@ -376,5 +362,27 @@ const confirmDelete = async () => {
 const cancelDelete = () => {
   confirmDeleteId.value = null
   showDeleteConfirm.value = false
+}
+
+/**
+ * Gère la sauvegarde d'un bien (ajout ou édition)
+ * Ferme les modals après la sauvegarde
+ */
+const handlePropertySaved = async (propertyData) => {
+  try {
+    if (selectedProperty.value) {
+      // Mode édition
+      await handleUpdateProperty(propertyData)
+    } else {
+      // Mode ajout
+      await handleAddProperty(propertyData)
+    }
+    // Ferme les modals et réinitialise la sélection
+    isAddModalOpen.value = false
+    isEditModalOpen.value = false
+    selectedProperty.value = null
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde du bien:', error)
+  }
 }
 </script>

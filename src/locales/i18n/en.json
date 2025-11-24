@@ -65,9 +65,12 @@
   "properties": {
     "title": "Properties management",
     "subtitle": "Manage all your real estate properties",
+    "add": "Add Property",
     "addProperty": "Add property",
     "editProperty": "Edit property",
     "noProperties": "No properties registered",
+    "startAdding": "Start by adding your first property.",
+    "addFirst": "Add my first property",
     "noPropertiesDescription": "Start by adding your first real estate property",
     "noPropertiesFound": "No property found",
     "noPropertiesFoundWithFilters": "Try modifying your filters or search",

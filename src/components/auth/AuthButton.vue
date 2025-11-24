@@ -7,8 +7,8 @@
       'flex items-center justify-center transition-all duration-200',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       variant === 'primary'
-        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl hover:from-green-600 hover:to-green-700 hover:-translate-y-0.5 disabled:hover:translate-y-0 disabled:hover:shadow-lg'
-        : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 shadow-sm hover:shadow-md hover:bg-gray-300 hover:-translate-y-0.5 disabled:hover:translate-y-0'
+        ? 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-lg shadow-white/5 hover:-translate-y-0.5 disabled:hover:translate-y-0'
+        : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:-translate-y-0.5 disabled:hover:translate-y-0'
     ]"
     @click="handleClick"
   >

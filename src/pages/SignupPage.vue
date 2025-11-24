@@ -1,10 +1,10 @@
 <template>
   <AuthLayout>
     <div>
-      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-white">
         {{ $t('auth.signup.title') }}
       </h2>
-      <p class="text-center text-gray-500 text-sm mb-6">{{ $t('auth.signup.subtitle') }}</p>
+      <p class="text-center text-zinc-400 text-sm mb-6">{{ $t('auth.signup.subtitle') }}</p>
 
       <form @submit.prevent="handleSignUp" class="space-y-4">
         <!-- Nom complet -->
@@ -71,11 +71,11 @@
               !passwordError &&
               !passwordConfirmError
             "
-            class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm"
+            class="p-4 bg-rose-500/10 border-l-4 border-rose-500/50 rounded-lg shadow-sm"
           >
             <div class="flex items-start">
               <svg
-                class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0"
+                class="w-5 h-5 text-rose-400 mr-3 mt-0.5 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -85,7 +85,7 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              <p class="text-sm text-red-700 flex-1">{{ authStore.error }}</p>
+              <p class="text-sm text-rose-400 flex-1">{{ authStore.error }}</p>
             </div>
           </div>
         </transition>
@@ -114,12 +114,12 @@
         />
 
         <!-- Lien retour connexion -->
-        <div class="mt-6 pt-6 border-t border-gray-200 text-center">
-          <p class="text-sm text-gray-600">
+        <div class="mt-6 pt-6 border-t border-white/10 text-center">
+          <p class="text-sm text-zinc-500">
             {{ $t('auth.signup.hasAccount') }}
             <router-link
               to="/login"
-              class="text-green-600 hover:text-green-700 font-semibold transition-colors ml-1"
+              class="text-violet-400 hover:text-violet-300 font-semibold transition-colors ml-1"
             >
               {{ $t('auth.login.title') }}
             </router-link>
@@ -136,6 +136,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
+import { supabase } from '@/lib/supabaseClient'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
@@ -220,8 +221,26 @@ const handleSignUp = async () => {
       // Optionnel : rediriger vers une page de confirmation
       // router.push('/confirm-email')
     } else {
-      const redirectTo = route.query.redirect || '/dashboard'
-      router.push(redirectTo)
+      // Vérifier si utilisateur a des biens pour décider onboarding vs dashboard
+      try {
+        const { count, error } = await supabase
+          .from('properties')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', authStore.user.id)
+        
+        if (error) {
+          console.warn('Erreur vérification biens (non bloquant):', error)
+          router.push('/dashboard')
+          return
+        }
+        
+        // Si 0 bien → Onboarding, sinon → Dashboard
+        const redirectTo = count === 0 ? '/onboarding' : '/dashboard'
+        router.push(redirectTo)
+      } catch (err) {
+        console.error('Erreur check onboarding:', err)
+        router.push('/dashboard') // Fallback
+      }
     }
   }
 }

@@ -1,122 +1,115 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar />
-
-    <!-- Main Content -->
-    <main ref="mainElement" class="flex-1 overflow-y-auto">
+  <DashboardLayout>
+    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      <div
-        class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-6 xl:px-8 pt-16 pb-8 md:px-10 md:pt-10 md:pb-10"
-      >
-        <!-- Header avec statistiques -->
-        <TenantsHeader :stats="stats" @add-tenant="isModalOpen = true" />
+      
+      <!-- Header avec statistiques -->
+      <TenantsHeader :stats="stats" @add-tenant="isModalOpen = true" />
 
-        <!-- Filtres -->
-        <div class="mb-6 flex flex-wrap items-center gap-4">
-          <button
-            v-for="filter in filters"
-            :key="filter.value"
-            @click="activeFilter = filter.value"
-            :class="[
-              'px-4 py-2 rounded-lg font-medium transition-colors text-sm',
-              activeFilter === filter.value
-                ? 'bg-primary-600 text-white shadow-sm'
-                : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300'
-            ]"
-          >
-            {{ filter.label }}
-          </button>
-        </div>
-
-        <!-- État de chargement initial (première fois, pas de données) -->
-        <div
-          v-if="
-            propertiesStore.loading &&
-            propertiesStore.properties.length === 0 &&
-            !propertiesStore.error
-          "
-          class="text-center py-16"
+      <!-- Filtres -->
+      <div class="mb-6 flex flex-wrap items-center gap-4">
+        <button
+          v-for="filter in filters"
+          :key="filter.value"
+          @click="activeFilter = filter.value"
+          :class="[
+            'px-4 py-2 rounded-xl font-medium transition-all duration-200 text-sm border',
+            activeFilter === filter.value
+              ? 'bg-violet-600 text-white border-violet-500 shadow-lg shadow-violet-500/20'
+              : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-white'
+          ]"
         >
-          <div
-            class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"
-          ></div>
-          <p class="text-gray-500">{{ $t('tenants.loading') }}</p>
-        </div>
-
-        <!-- Erreur (uniquement si pas de données en cache) -->
-        <div
-          v-else-if="propertiesStore.error && propertiesStore.properties.length === 0"
-          class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
-        >
-          <div class="flex items-center">
-            <svg
-              class="w-5 h-5 text-red-600 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p class="text-red-700 font-medium">
-              {{ $t('common.errorWithColon') }} {{ propertiesStore.error }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Loader inline si données déjà chargées (refresh) -->
-        <div v-else-if="propertiesStore.loading" class="text-center py-8">
-          <InlineLoader />
-        </div>
-
-        <!-- Liste des locataires (s'affiche même si vide, le composant gère l'état vide) -->
-        <!-- S'affiche dès que le chargement initial est terminé -->
-        <TenantsList
-          v-if="!propertiesStore.loading && !propertiesStore.error"
-          :tenants="filteredTenants"
-          :has-filters="hasActiveFilters"
-          @edit-tenant="handleEditTenant"
-          @delete-tenant="handleDeleteTenant"
-          @clear-filters="clearFilters"
-        />
+          {{ filter.label }}
+        </button>
       </div>
-    </main>
 
-    <!-- Modal d'ajout de locataire -->
-    <AddTenantModal
-      :isOpen="isModalOpen"
-      :isLoading="propertiesStore.loading"
-      @close="isModalOpen = false"
-      @submit="handleAddTenant"
-    />
+      <!-- État de chargement initial (première fois, pas de données) -->
+      <div
+        v-if="
+          propertiesStore.loading &&
+          propertiesStore.properties.length === 0 &&
+          !propertiesStore.error
+        "
+        class="text-center py-16"
+      >
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"
+        ></div>
+        <p class="text-zinc-400">{{ $t('tenants.loading') }}</p>
+      </div>
 
-    <!-- Modal de confirmation de suppression -->
-    <ConfirmModal
-      :isOpen="showDeleteConfirm"
-      title="Supprimer ce locataire ?"
-      :message="
-        $t('tenants.confirmDelete') ||
-        'Êtes-vous sûr de vouloir supprimer ce locataire ? Le bien sera libéré.'
-      "
-      confirm-label="Supprimer"
-      cancel-label="Annuler"
-      variant="danger"
-      :isLoading="isDeletingTenant"
-      @confirm="confirmDelete"
-      @cancel="cancelDelete"
-      @update:isOpen="showDeleteConfirm = $event"
-    />
-  </div>
+      <!-- Erreur (uniquement si pas de données en cache) -->
+      <div
+        v-else-if="propertiesStore.error && propertiesStore.properties.length === 0"
+        class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-6"
+      >
+        <div class="flex items-center">
+          <svg
+            class="w-5 h-5 text-rose-500 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-rose-400 font-medium">
+            {{ $t('common.errorWithColon') }} {{ propertiesStore.error }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Loader inline si données déjà chargées (refresh) -->
+      <div v-else-if="propertiesStore.loading" class="text-center py-8">
+        <InlineLoader />
+      </div>
+
+      <!-- Liste des locataires (s'affiche même si vide, le composant gère l'état vide) -->
+      <!-- S'affiche dès que le chargement initial est terminé -->
+      <TenantsList
+        v-if="!propertiesStore.loading && !propertiesStore.error"
+        :tenants="filteredTenants"
+        :has-filters="hasActiveFilters"
+        @edit-tenant="handleEditTenant"
+        @delete-tenant="handleDeleteTenant"
+        @clear-filters="clearFilters"
+      />
+
+      <!-- Modal d'ajout de locataire -->
+      <AddTenantModal
+        :isOpen="isModalOpen"
+        :isLoading="propertiesStore.loading"
+        @close="isModalOpen = false"
+        @submit="handleAddTenant"
+      />
+
+      <!-- Modal de confirmation de suppression -->
+      <ConfirmModal
+        :isOpen="showDeleteConfirm"
+        title="Supprimer ce locataire ?"
+        :message="
+          $t('tenants.confirmDelete') ||
+          'Êtes-vous sûr de vouloir supprimer ce locataire ? Le bien sera libéré.'
+        "
+        confirm-label="Supprimer"
+        cancel-label="Annuler"
+        variant="danger"
+        :isLoading="isDeletingTenant"
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+        @update:isOpen="showDeleteConfirm = $event"
+      />
+    </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
@@ -124,7 +117,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
-import Sidebar from '../components/Sidebar.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
 import TenantsHeader from '../components/tenants/TenantsHeader.vue'
 import TenantsList from '../components/tenants/TenantsList.vue'

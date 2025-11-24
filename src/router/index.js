@@ -6,9 +6,10 @@ import LandingPage from '../pages/LandingPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import SignupPage from '../pages/SignupPage.vue'
 import ResetPasswordPage from '../pages/ResetPasswordPage.vue'
-import ConfirmEmailPage from '../pages/ConfirmEmailPage.vue'
 
 // Pages authentifiées (lazy loaded pour améliorer les performances)
+const ConfirmEmailPage = () => import('../pages/ConfirmEmailPage.vue')
+const OnboardingPage = () => import('../pages/OnboardingPage.vue')
 const DashboardPage = () => import('../pages/DashboardPage.vue')
 const BiensPage = () => import('../pages/BiensPage.vue')
 const PaiementsPage = () => import('../pages/PaiementsPage.vue')
@@ -91,6 +92,20 @@ const routes = [
         description: 'Confirmez votre adresse email pour activer votre compte Doogoo.',
         ogTitle: 'Confirmation email — Doogoo',
         ogDescription: 'Confirmez votre adresse email pour activer votre compte.'
+      }
+    }
+  },
+  {
+    path: '/onboarding',
+    name: 'Onboarding',
+    component: OnboardingPage,
+    meta: {
+      requiresAuth: true,
+      seo: {
+        title: 'Configuration — Doogoo',
+        description: 'Configurez votre premier bien en quelques clics',
+        ogTitle: 'Configuration — Doogoo',
+        ogDescription: 'Bienvenue sur Doogoo ! Configurons votre premier bien ensemble.'
       }
     }
   },

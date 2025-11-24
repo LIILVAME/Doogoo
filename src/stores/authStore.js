@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
           .then(({ trackDoogooEvent, DoogooEvents }) => {
             trackDoogooEvent(DoogooEvents.USER_LOGGED_IN)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
 
       return { success: true, user: data.user }
@@ -144,7 +144,7 @@ export const useAuthStore = defineStore('auth', () => {
                 email: email
               })
             })
-            .catch(() => {})
+            .catch(() => { })
         }
 
         if (data.session) {
@@ -198,12 +198,14 @@ export const useAuthStore = defineStore('auth', () => {
         paymentsStore.stopRealtime()
 
         // Réinitialise tous les stores
-        propertiesStore.$reset()
-        paymentsStore.$reset()
-        tenantsStore.$reset()
-        alertsStore.$reset()
-        analyticsStore.$reset()
-        reportsStore.$reset()
+        const stores = [propertiesStore, paymentsStore, tenantsStore, alertsStore, analyticsStore, reportsStore]
+        stores.forEach(store => {
+          if (store.reset) {
+            store.reset()
+          } else if (store.$reset) {
+            store.$reset()
+          }
+        })
       } catch (cleanupError) {
         console.warn('Erreur lors du nettoyage des stores (non bloquant):', cleanupError)
       }
@@ -230,7 +232,7 @@ export const useAuthStore = defineStore('auth', () => {
           .then(({ trackDoogooEvent, DoogooEvents }) => {
             trackDoogooEvent(DoogooEvents.USER_LOGGED_OUT)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
 
       profile.value = null
@@ -643,9 +645,9 @@ export const useAuthStore = defineStore('auth', () => {
         // Nettoie proprement lors de la déconnexion
         try {
           // Réinitialise l'état de manière sécurisée
-          if (user.value !== null) user.value = null
-          if (session.value !== null) session.value = null
-          if (profile.value !== null) profile.value = null
+          if (user && user.value !== null) user.value = null
+          if (session && session.value !== null) session.value = null
+          if (profile && profile.value !== null) profile.value = null
 
           // Arrête les abonnements Realtime si les stores sont disponibles
           try {
@@ -654,8 +656,8 @@ export const useAuthStore = defineStore('auth', () => {
             const propertiesStore = usePropertiesStore()
             const paymentsStore = usePaymentsStore()
 
-            propertiesStore.stopRealtime()
-            paymentsStore.stopRealtime()
+            if (propertiesStore.stopRealtime) propertiesStore.stopRealtime()
+            if (paymentsStore.stopRealtime) paymentsStore.stopRealtime()
           } catch {
             // Ignore les erreurs de nettoyage (stores peuvent être déjà nettoyés)
           }

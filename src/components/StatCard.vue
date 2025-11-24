@@ -1,25 +1,33 @@
 <template>
-  <div class="stat-card">
-    <div class="flex items-center justify-between mb-2 sm:mb-3 lg:mb-4">
-      <div class="p-2 sm:p-2.5 lg:p-3 rounded-lg" :class="iconBgClass">
-        <component :is="icon" class="w-5 h-5 sm:w-5 sm:h-5 lg:w-6 lg:h-6" :class="iconColorClass" />
+  <div class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden">
+    <!-- Glow effect on hover -->
+    <div class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"></div>
+
+    <div class="flex items-center justify-between relative z-10">
+      <div>
+        <p class="text-sm font-medium text-zinc-400 mb-1">{{ label }}</p>
+        <p class="text-2xl font-bold text-white tracking-tight">{{ value }}</p>
       </div>
-      <span v-if="trend" class="text-xs sm:text-sm font-medium" :class="trendColorClass">
-        {{ trend }}
-      </span>
+      <div
+        :class="[
+          'p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg',
+          iconBgClass ? iconBgClass.replace('bg-', 'bg-opacity-10 bg-') : 'bg-white/5',
+          iconColorClass || 'text-white'
+        ]"
+      >
+        <component :is="icon" class="w-6 h-6" />
+      </div>
     </div>
-    <h3 class="text-xl sm:text-2xl lg:text-2xl font-bold text-gray-900 mb-1">{{ value }}</h3>
-    <p class="text-xs sm:text-sm text-gray-600 line-clamp-2">{{ label }}</p>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  value: {
+  label: {
     type: String,
     required: true
   },
-  label: {
+  value: {
     type: String,
     required: true
   },
@@ -29,17 +37,10 @@ defineProps({
   },
   iconBgClass: {
     type: String,
-    default: 'bg-primary-100'
+    default: ''
   },
   iconColorClass: {
     type: String,
-    default: 'text-primary-600'
-  },
-  trend: {
-    type: String,
-    default: null
-  },
-  trendColorClass: {
     type: String,
     default: 'text-green-600'
   }

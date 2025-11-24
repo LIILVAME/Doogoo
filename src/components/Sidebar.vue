@@ -1,17 +1,13 @@
 <template>
-  <!-- Menu hamburger mobile -->
+  <!-- Menu hamburger mobile (toujours visible) -->
   <button
     @click="toggleSidebar"
-    :class="[
-      'lg:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-transform duration-300 ease-in-out',
-      // Cache le bouton hamburger au scroll down sur mobile
-      isScrollVisible || isDesktop ? 'translate-y-0' : '-translate-y-full'
-    ]"
+    class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-zinc-900/90 backdrop-blur-md rounded-xl shadow-lg border border-white/10 transition-transform duration-300 ease-in-out"
     :aria-label="isOpen ? $t('common.closeMenu') : $t('common.openMenu')"
     :aria-expanded="isOpen"
   >
     <svg
-      class="w-6 h-6 text-gray-700 dark:text-gray-300"
+      class="w-6 h-6 text-zinc-300"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -33,19 +29,17 @@
     </svg>
   </button>
 
-  <!-- Overlay mobile -->
+  <!-- Overlay mobile (opacity augmentée pour meilleur focus) -->
   <div
     v-if="isOpen"
     @click="closeSidebar"
-    class="lg:hidden fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 transition-opacity"
+    class="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-40 transition-opacity"
   ></div>
 
   <!-- Sidebar -->
   <aside
     :class="[
-      'w-64 shrink-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 min-h-screen fixed left-0 top-0 overflow-y-auto z-40 lg:static lg:z-auto transition-transform duration-300 ease-in-out',
-      // Sur desktop : toujours visible (lg:static lg:translate-x-0)
-      // Sur mobile : visible si menu ouvert ET scroll vers le haut (ou desktop)
+      'w-64 shrink-0 bg-zinc-950/50 backdrop-blur-xl border-r border-white/5 min-h-screen fixed left-0 top-0 overflow-y-auto z-40 lg:static lg:z-auto transition-transform duration-300 ease-in-out',
       isDesktop || (isOpen && isScrollVisible)
         ? 'translate-x-0'
         : '-translate-x-full lg:translate-x-0'
@@ -54,139 +48,135 @@
     <div class="p-6">
       <router-link
         to="/dashboard"
-        class="block mb-8"
+        class="block mb-10 flex items-center gap-3"
         aria-label="Doogoo - Retour au tableau de bord"
       >
-        <h1 class="text-2xl font-bold text-primary-600 dark:text-primary-400">Doogoo</h1>
+        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Doogoo</h1>
       </router-link>
-      <nav class="space-y-2">
-        <router-link
-          v-for="item in menuItems"
-          :key="item.name"
-          :to="item.path"
-          @click="closeSidebar"
-          class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-sm relative"
-          :class="{
-            'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400': isActive(
-              item.path
-            )
-          }"
-        >
-          <span class="w-5 h-5 mr-3 flex-shrink-0" aria-hidden="true">
-            <svg
-              v-if="iconConfigs[item.icon]"
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              :viewBox="iconConfigs[item.icon].viewBox"
-            >
-              <path
-                v-for="(path, index) in iconConfigs[item.icon].paths"
-                :key="`${item.icon}-${index}`"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                :d="path"
-              />
-            </svg>
-          </span>
-          <span class="font-medium flex-1">{{ item.name }}</span>
 
-          <!-- Badge pour alertes -->
-          <span
-            v-if="item.path === '/alertes' && activeAlertsCount > 0"
-            class="ml-2 px-2 py-0.5 text-xs font-semibold text-white bg-red-500 rounded-full min-w-[20px] text-center"
-          >
-            {{ activeAlertsCount > 99 ? '99+' : activeAlertsCount }}
-          </span>
-        </router-link>
+      <nav class="space-y-6">
+        <!-- Section: GESTION -->
+        <div>
+          <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 tracking-wide">Gestion</h2>
+          <div class="space-y-1">
+            <router-link
+              v-for="item in gestionItems"
+              :key="item.name"
+              :to="item.path"
+              @click="closeSidebar"
+              class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden"
+              :class="[
+                isActive(item.path)
+                  ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+                  : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+              ]"
+            >
+              <div v-if="isActive(item.path)" class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary-500 rounded-r-full"></div>
+              <span class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200" :class="isActive(item.path) ? 'text-primary-400' : 'text-zinc-500 group-hover:text-zinc-300'">
+                <svg v-if="iconConfigs[item.icon]" class="w-5 h-5" fill="none" stroke="currentColor" :viewBox="iconConfigs[item.icon].viewBox">
+                  <path v-for="(path, index) in iconConfigs[item.icon].paths" :key="`${item.icon}-${index}`" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="path" />
+                </svg>
+              </span>
+              <span class="font-medium flex-1">{{ item.name }}</span>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- Section: ANALYSE -->
+        <div class="border-t border-white/5 pt-6">
+          <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 tracking-wide">Analyse</h2>
+          <div class="space-y-1">
+            <router-link
+              v-for="item in analyseItems"
+              :key="item.name"
+              :to="item.path"
+              @click="closeSidebar"
+              class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden"
+              :class="[
+                isActive(item.path)
+                  ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+                  : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+              ]"
+            >
+              <div v-if="isActive(item.path)" class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary-500 rounded-r-full"></div>
+              <span class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200" :class="isActive(item.path) ? 'text-primary-400' : 'text-zinc-500 group-hover:text-zinc-300'">
+                <svg v-if="iconConfigs[item.icon]" class="w-5 h-5" fill="none" stroke="currentColor" :viewBox="iconConfigs[item.icon].viewBox">
+                  <path v-for="(path, index) in iconConfigs[item.icon].paths" :key="`${item.icon}-${index}`" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="path" />
+                </svg>
+              </span>
+              <span class="font-medium flex-1">{{ item.name }}</span>
+              
+              <!-- Badge alertes (visibilité améliorée +40%) -->
+              <span
+                v-if="item.path === '/alertes' && activeAlertsCount > 0"
+                class="ml-2 px-2.5 py-1 text-sm font-bold text-white bg-danger-500 rounded-full min-w-[28px] h-6 flex items-center justify-center shadow-sm shadow-danger-500/20 animate-pulse"
+              >
+                {{ activeAlertsCount > 99 ? '99+' : activeAlertsCount }}
+              </span>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- Section: COMPTE -->
+        <div class="border-t border-white/5 pt-6">
+          <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 tracking-wide">Compte</h2>
+          <div class="space-y-1">
+            <router-link
+              v-for="item in compteItems"
+              :key="item.name"
+              :to="item.path"
+              @click="closeSidebar"
+              class="flex items-center px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden"
+              :class="[
+                isActive(item.path)
+                  ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+                  : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+              ]"
+            >
+              <div v-if="isActive(item.path)" class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary-500 rounded-r-full"></div>
+              <span class="w-5 h-5 mr-3 flex-shrink-0 transition-colors duration-200" :class="isActive(item.path) ? 'text-primary-400' : 'text-zinc-500 group-hover:text-zinc-300'">
+                <svg v-if="iconConfigs[item.icon]" class="w-5 h-5" fill="none" stroke="currentColor" :viewBox="iconConfigs[item.icon].viewBox">
+                  <path v-for="(path, index) in iconConfigs[item.icon].paths" :key="`${item.icon}-${index}`" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="path" />
+                </svg>
+              </span>
+              <span class="font-medium flex-1">{{ item.name }}</span>
+            </router-link>
+          </div>
+        </div>
       </nav>
 
-      <!-- Toggle thème + Sélecteur de langue -->
-      <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-        <!-- Bouton toggle thème -->
-        <button
-          @click="toggleTheme"
-          class="flex items-center justify-between w-full px-4 py-3 mb-4 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-sm group"
-          :aria-label="isDarkMode ? $t('sidebar.switchToLight') : $t('sidebar.switchToDark')"
-        >
-          <div class="flex items-center">
-            <!-- Icône soleil (light mode) -->
-            <svg
-              v-if="!isDarkMode"
-              class="w-5 h-5 mr-3 text-yellow-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
-            <!-- Icône lune (dark mode) -->
-            <svg
-              v-else
-              class="w-5 h-5 mr-3 text-blue-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              />
-            </svg>
-            <span class="font-medium">{{
-              isDarkMode ? $t('sidebar.darkMode') : $t('sidebar.lightMode')
-            }}</span>
-          </div>
-          <!-- Indicateur de transition -->
-          <div class="flex items-center">
-            <span class="text-xs text-gray-500 dark:text-gray-400 mr-2 hidden sm:inline">
-              {{ isDarkMode ? $t('sidebar.dark') : $t('sidebar.light') }}
-            </span>
-            <svg
-              class="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-transform duration-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-              />
-            </svg>
-          </div>
-        </button>
-
+      <!-- Sélecteur de langue + Logout -->
+      <div class="mt-auto pt-8 border-t border-white/5 absolute bottom-6 left-6 right-6">
         <!-- Sélecteur de langue -->
-        <div class="px-4 py-2 mb-4">
-          <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">{{
-            $t('sidebar.language')
-          }}</label>
-          <select
-            :value="settingsStore.language"
-            @change="handleLanguageChange"
-            class="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
-          >
-            <option value="fr">🇫🇷 Français</option>
-            <option value="en">🇺🇸 English</option>
-          </select>
+        <div class="mb-4">
+          <div class="relative">
+            <select
+              :value="settingsStore.language"
+              @change="handleLanguageChange"
+              class="w-full appearance-none bg-white/5 border border-white/10 text-zinc-300 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all hover:bg-white/10 cursor-pointer"
+            >
+              <option value="fr" class="bg-zinc-900">🇫🇷 Français</option>
+              <option value="en" class="bg-zinc-900">🇺🇸 English</option>
+            </select>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         <button
           @click="handleLogout"
           :disabled="authStore.loading"
-          class="flex items-center w-full px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-sm"
+          class="flex items-center w-full px-4 py-3 text-zinc-400 rounded-xl transition-all duration-200 hover:bg-rose-500/10 hover:text-rose-400 disabled:opacity-50 disabled:cursor-not-allowed group"
         >
-          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 mr-3 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -380,7 +370,8 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-const menuItems = computed(() => [
+// Section GESTION
+const gestionItems = computed(() => [
   {
     name: t('sidebar.dashboard'),
     path: '/dashboard',
@@ -400,17 +391,25 @@ const menuItems = computed(() => [
     name: t('sidebar.tenants'),
     path: '/locataires',
     icon: 'users'
-  },
+  }
+])
+
+// Section ANALYSE
+const analyseItems = computed(() => [
   {
     name: t('sidebar.reports'),
     path: '/rapports',
-    icon: 'report'
+    icon: 'chart'
   },
   {
     name: t('sidebar.alerts'),
     path: '/alertes',
     icon: 'alert'
-  },
+  }
+])
+
+// Section COMPTE
+const compteItems = computed(() => [
   {
     name: t('sidebar.settings'),
     path: '/parametres',
@@ -420,63 +419,6 @@ const menuItems = computed(() => [
 
 const handleLanguageChange = event => {
   settingsStore.setLanguage(event.target.value)
-}
-
-/**
- * Détermine si le mode sombre est actif
- */
-const isDarkMode = computed(() => {
-  const currentTheme = settingsStore.theme
-  if (currentTheme === 'dark') return true
-  if (currentTheme === 'light') return false
-  // Si 'auto' ou 'system', détecte la préférence système
-  if (typeof window !== 'undefined') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-  }
-  return false
-})
-
-/**
- * Bascule entre le thème clair et sombre
- */
-const toggleTheme = () => {
-  const currentTheme = settingsStore.theme
-
-  if (import.meta.env.DEV) {
-    console.debug('🔵 toggleTheme - Thème actuel:', currentTheme)
-  }
-
-  // Si mode système/auto, on bascule vers light ou dark selon la préférence actuelle
-  if (currentTheme === 'auto' || currentTheme === 'system') {
-    // Si système est dark, passe en light, sinon en dark
-    const systemIsDark =
-      typeof window !== 'undefined'
-        ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        : false
-    const newTheme = systemIsDark ? 'light' : 'dark'
-    if (import.meta.env.DEV) {
-      console.debug('🔵 toggleTheme - Mode système détecté, bascule vers:', newTheme)
-    }
-    settingsStore.setTheme(newTheme)
-  } else {
-    // Bascule simple entre light et dark
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-    if (import.meta.env.DEV) {
-      console.debug('🔵 toggleTheme - Bascule vers:', newTheme)
-    }
-    settingsStore.setTheme(newTheme)
-  }
-
-  // Force une mise à jour immédiate pour vérifier
-  if (import.meta.env.DEV) {
-    setTimeout(() => {
-      console.debug('🔵 toggleTheme - Thème après changement:', settingsStore.theme)
-      console.debug(
-        '🔵 toggleTheme - Classe dark sur <html>:',
-        document.documentElement.classList.contains('dark')
-      )
-    }, 100)
-  }
 }
 
 const isActive = path => {

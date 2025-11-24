@@ -1,21 +1,25 @@
 <template>
+<template>
   <div
-    class="card cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 flex flex-col justify-between min-h-[280px] sm:min-h-[320px] lg:min-h-[350px]"
+    class="glass-panel rounded-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col justify-between min-h-[280px] sm:min-h-[320px] lg:min-h-[350px] group relative overflow-hidden"
   >
+    <!-- Glow effect on hover -->
+    <div class="absolute -right-20 -top-20 w-40 h-40 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500 opacity-0 group-hover:opacity-100"></div>
+
     <!-- Contenu principal (flex-1 pour occuper l'espace disponible) -->
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col p-6 relative z-10">
       <!-- En-tête avec nom, adresse, statut -->
-      <div class="flex items-start justify-between mb-2 sm:mb-3">
-        <div class="flex-1 min-w-0 pr-2">
-          <h3 class="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-1 truncate">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex-1 min-w-0 pr-4">
+          <h3 class="text-lg font-bold text-white mb-1 truncate group-hover:text-violet-300 transition-colors">
             {{ property.name }}
           </h3>
-          <p class="text-xs text-gray-500 mb-1 truncate">{{ property.city }}</p>
-          <p class="text-xs text-gray-400 mb-2 line-clamp-2 hidden sm:block">
+          <p class="text-sm text-zinc-400 mb-1 truncate">{{ property.city }}</p>
+          <p class="text-xs text-zinc-500 mb-3 line-clamp-2 hidden sm:block">
             {{ property.address }}
           </p>
           <span
-            class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium mt-1"
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
             :class="statusClass"
           >
             {{ statusText }}
@@ -24,10 +28,10 @@
         <!-- Indicateur de retard de paiement -->
         <div v-if="property.tenant && property.tenant.status === 'late'" class="relative shrink-0">
           <div
-            class="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center"
+            class="w-10 h-10 bg-rose-500/10 rounded-full flex items-center justify-center border border-rose-500/20 animate-pulse"
           >
             <svg
-              class="w-4 h-4 sm:w-5 sm:h-5 text-red-600"
+              class="w-5 h-5 text-rose-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -45,9 +49,9 @@
 
       <!-- Informations locatives -->
       <div class="mt-2 sm:mt-4 mb-2 sm:mb-4 flex-1 flex flex-col">
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-xs text-gray-500 truncate pr-2">{{ $t('properties.monthlyRent') }}</p>
-          <p class="text-base sm:text-lg lg:text-xl font-bold text-gray-900 whitespace-nowrap">
+        <div class="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+          <p class="text-xs text-zinc-500 uppercase tracking-wider">{{ $t('properties.monthlyRent') }}</p>
+          <p class="text-xl font-bold text-white whitespace-nowrap">
             {{ formatCurrency(property.rent) }}
           </p>
         </div>
@@ -59,9 +63,9 @@
           <!-- Placeholder pour les biens sans locataire (hauteur fixe pour alignement) -->
           <div
             v-else
-            class="border-t border-gray-100 pt-2 sm:pt-4 mt-2 sm:mt-4 min-h-[60px] sm:min-h-[80px] flex items-center justify-center"
+            class="border border-dashed border-white/10 rounded-xl bg-white/5 pt-2 sm:pt-4 mt-2 sm:mt-4 min-h-[60px] sm:min-h-[80px] flex items-center justify-center"
           >
-            <p class="text-gray-400 text-xs sm:text-sm italic text-center px-2">
+            <p class="text-zinc-500 text-xs sm:text-sm italic text-center px-2">
               {{ $t('tenants.noTenants') }}
             </p>
           </div>
@@ -70,13 +74,13 @@
     </div>
 
     <!-- Actions (toujours en bas grâce à justify-between) -->
-    <div class="mt-auto pt-2 sm:pt-4 border-t border-gray-100 flex items-center gap-1.5 sm:gap-2">
+    <div class="mt-auto px-6 py-4 border-t border-white/5 flex items-center gap-3 bg-black/20">
       <button
         @click.stop="$emit('edit', property)"
-        class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-150 flex items-center justify-center"
+        class="flex-1 px-3 py-2 text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
       >
         <svg
-          class="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1.5"
+          class="w-4 h-4 mr-2"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -92,10 +96,10 @@
       </button>
       <button
         @click.stop="$emit('delete', property.id)"
-        class="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-150 flex items-center justify-center"
+        class="flex-1 px-3 py-2 text-sm font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
       >
         <svg
-          class="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1.5"
+          class="w-4 h-4 mr-2"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -111,6 +115,7 @@
       </button>
     </div>
   </div>
+</template>
 </template>
 
 <script setup>

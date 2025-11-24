@@ -9,6 +9,7 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import persistedState from '@/plugins/piniaPersistedState'
 import { initGoogleAnalytics, initPlausible } from '@/utils/analytics'
 import './style.css'
+import './assets/accessibility.css' // Accessibilité WCAG 2.1 AA
 
 const app = createApp(App)
 const pinia = createPinia()

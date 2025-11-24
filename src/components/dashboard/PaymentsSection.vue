@@ -1,11 +1,11 @@
 <template>
-  <div id="payments-section" data-section="payments" class="card">
+  <div id="payments-section" data-section="payments" class="glass-panel rounded-2xl p-6">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-xl font-bold text-gray-900">{{ $t('dashboard.payments') }}</h3>
+      <h3 class="text-xl font-bold text-white">{{ $t('dashboard.payments') }}</h3>
       <router-link
         v-if="showViewAllLink"
         to="/paiements"
-        class="text-sm text-primary-600 hover:text-primary-700"
+        class="text-sm text-violet-400 hover:text-violet-300 transition-colors"
       >
         {{ $t('common.viewAll') }}
       </router-link>
@@ -16,11 +16,12 @@
       :title="$t('payments.noPayments')"
       :description="''"
       illustration="none"
+      class="bg-transparent"
     >
       <template #illustration>
-        <div class="w-20 h-20 mx-auto flex items-center justify-center">
+        <div class="w-20 h-20 mx-auto flex items-center justify-center bg-white/5 rounded-full mb-4">
           <svg
-            class="w-20 h-20 text-gray-600 dark:text-gray-200"
+            class="w-10 h-10 text-zinc-500"
             fill="none"
             stroke="currentColor"
             stroke-width="1.5"
@@ -40,27 +41,27 @@
       <div
         v-for="payment in payments"
         :key="payment.id"
-        class="relative flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+        class="relative flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors group"
       >
         <div class="flex-1">
-          <p class="font-semibold text-gray-900">{{ payment.tenant }}</p>
-          <p class="text-sm text-gray-600">{{ payment.property }}</p>
-          <p class="text-xs text-gray-500 mt-1">
+          <p class="font-semibold text-white">{{ payment.tenant }}</p>
+          <p class="text-sm text-zinc-400">{{ payment.property }}</p>
+          <p class="text-xs text-zinc-500 mt-1">
             {{ $t('payments.dueDate') }}: {{ formatDate(payment.dueDate, { shortMonth: false }) }}
           </p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
           <div class="text-right">
-            <p class="text-lg font-bold text-gray-900 mb-1">{{ formatCurrency(payment.amount) }}</p>
+            <p class="text-lg font-bold text-white mb-1">{{ formatCurrency(payment.amount) }}</p>
             <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
               :class="getStatusClass(payment.status)"
             >
               {{ getStatusText(payment.status) }}
             </span>
           </div>
           <!-- Bouton d'actions pour modifier, supprimer ou télécharger la facture -->
-          <div class="flex-shrink-0">
+          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
             <PaymentActions
               :payment="payment"
               @edit="$emit('edit-payment', payment)"
@@ -77,7 +78,7 @@
 import { computed } from 'vue'
 import { useI18n } from '@/composables/useLingui'
 import { formatCurrency, formatDate } from '@/utils/formatters'
-import { TRANSACTION_STATUS, STATUS_LABELS, STATUS_CLASSES } from '@/utils/constants'
+import { TRANSACTION_STATUS, STATUS_LABELS } from '@/utils/constants'
 import { useRoute } from 'vue-router'
 import PaymentActions from '@/components/payments/PaymentActions.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
@@ -107,10 +108,16 @@ const showViewAllLink = computed(() => {
 })
 
 /**
- * Classe CSS selon le statut de paiement
+ * Classe CSS selon le statut de paiement (Dark Theme)
  */
 const getStatusClass = status => {
-  return STATUS_CLASSES[status] || STATUS_CLASSES[TRANSACTION_STATUS.PENDING]
+  const classes = {
+    [TRANSACTION_STATUS.PAID]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    [TRANSACTION_STATUS.PENDING]: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    [TRANSACTION_STATUS.LATE]: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    [TRANSACTION_STATUS.PARTIAL]: 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+  }
+  return classes[status] || classes[TRANSACTION_STATUS.PENDING]
 }
 
 /**

@@ -187,6 +187,13 @@ export const useTenantsStore = defineStore('tenants', () => {
    */
   const totalTenantsRent = computed(() => tenants.value.reduce((sum, t) => sum + (t.rent || 0), 0))
 
+  /**
+   * Réinitialise le store (placeholder pour cohérence)
+   */
+  const reset = () => {
+    // Rien à faire car tenants est computed depuis propertiesStore
+  }
+
   return {
     // State (computed)
     tenants,
@@ -194,6 +201,7 @@ export const useTenantsStore = defineStore('tenants', () => {
     addTenant,
     updateTenant,
     removeTenant,
+    reset,
     // Getters
     onTimeTenants,
     lateTenants,

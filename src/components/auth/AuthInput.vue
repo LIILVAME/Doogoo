@@ -1,8 +1,8 @@
 <template>
   <div class="w-full">
-    <label v-if="label" :for="inputId" class="block text-sm font-medium text-gray-700 mb-2">
+    <label v-if="label" :for="inputId" class="block text-sm font-medium text-zinc-300 mb-2">
       {{ label }}
-      <span v-if="required" class="text-red-500">*</span>
+      <span v-if="required" class="text-rose-500">*</span>
     </label>
     <input
       :id="inputId"
@@ -13,21 +13,21 @@
       :disabled="disabled"
       :autocomplete="autocomplete || undefined"
       :class="[
-        'w-full border-2 rounded-xl px-4 py-3 text-sm sm:text-base',
-        'focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none',
+        'w-full border rounded-xl px-4 py-3 text-sm sm:text-base text-white placeholder-zinc-500',
+        'focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none',
         'transition-all duration-200 ease-in-out',
-        'hover:border-gray-300 focus:shadow-sm',
+        'hover:border-white/20 focus:shadow-sm focus:shadow-violet-500/10',
         error
-          ? 'border-red-300 bg-red-50 focus:ring-red-500 focus:border-red-500'
-          : 'border-gray-200',
-        disabled ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'bg-white'
+          ? 'border-rose-500/50 bg-rose-500/10 focus:ring-rose-500/50 focus:border-rose-500'
+          : 'border-white/10 bg-white/5',
+        disabled ? 'bg-zinc-800 cursor-not-allowed opacity-60' : ''
       ]"
       @input="$emit('update:modelValue', $event.target.value)"
       @blur="$emit('blur')"
       @focus="$emit('focus')"
     />
     <transition name="slide-fade">
-      <p v-if="error" class="mt-2 text-sm text-red-600 flex items-start">
+      <p v-if="error" class="mt-2 text-sm text-rose-400 flex items-start">
         <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path
             fill-rule="evenodd"
@@ -38,7 +38,7 @@
         {{ error }}
       </p>
     </transition>
-    <p v-if="hint && !error" class="mt-1 text-xs text-gray-500">{{ hint }}</p>
+    <p v-if="hint && !error" class="mt-1 text-xs text-zinc-500">{{ hint }}</p>
   </div>
 </template>
 

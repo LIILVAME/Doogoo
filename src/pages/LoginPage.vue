@@ -1,10 +1,10 @@
 <template>
   <AuthLayout>
     <div>
-      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-white">
         {{ $t('auth.login.title') }}
       </h2>
-      <p class="text-center text-gray-500 text-sm mb-6">{{ $t('auth.login.subtitle') }}</p>
+      <p class="text-center text-zinc-400 text-sm mb-6">{{ $t('auth.login.subtitle') }}</p>
 
       <form @submit.prevent="handleLogin" class="space-y-4">
         <!-- Email -->
@@ -33,7 +33,7 @@
         <div class="flex items-center justify-end">
           <router-link
             to="/reset-password"
-            class="text-sm text-green-600 hover:text-green-700 font-medium transition-colors"
+            class="text-sm text-violet-400 hover:text-violet-300 font-medium transition-colors"
           >
             {{ $t('auth.login.forgotPassword') }}
           </router-link>
@@ -43,11 +43,11 @@
         <transition name="slide-fade">
           <div
             v-if="route.query.passwordReset === 'true'"
-            class="p-4 bg-green-50 border-l-4 border-green-500 rounded-lg shadow-sm mb-4"
+            class="p-4 bg-emerald-500/10 border-l-4 border-emerald-500/50 rounded-lg shadow-sm mb-4"
           >
             <div class="flex items-start">
               <svg
-                class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0"
+                class="w-5 h-5 text-emerald-400 mr-3 mt-0.5 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -57,7 +57,7 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              <p class="text-sm text-green-700 flex-1">
+              <p class="text-sm text-emerald-400 flex-1">
                 {{ $t('auth.reset.updateSuccess') }} Vous pouvez maintenant vous connecter.
               </p>
             </div>
@@ -68,11 +68,11 @@
         <transition name="slide-fade">
           <div
             v-if="authStore.error && !emailError && !passwordError"
-            class="p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm"
+            class="p-4 bg-rose-500/10 border-l-4 border-rose-500/50 rounded-lg shadow-sm"
           >
             <div class="flex items-start">
               <svg
-                class="w-5 h-5 text-red-500 mr-3 mt-0.5 flex-shrink-0"
+                class="w-5 h-5 text-rose-400 mr-3 mt-0.5 flex-shrink-0"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -82,7 +82,7 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              <p class="text-sm text-red-700 flex-1">{{ authStore.error }}</p>
+              <p class="text-sm text-rose-400 flex-1">{{ authStore.error }}</p>
             </div>
           </div>
         </transition>
@@ -104,12 +104,12 @@
         />
 
         <!-- Lien d'inscription -->
-        <div class="mt-6 pt-6 border-t border-gray-200 text-center">
-          <p class="text-sm text-gray-600">
+        <div class="mt-6 pt-6 border-t border-white/10 text-center">
+          <p class="text-sm text-zinc-500">
             {{ $t('auth.login.noAccount') }}
             <router-link
               to="/signup"
-              class="text-green-600 hover:text-green-700 font-semibold transition-colors ml-1"
+              class="text-violet-400 hover:text-violet-300 font-semibold transition-colors ml-1"
             >
               {{ $t('auth.signup.title') }}
             </router-link>

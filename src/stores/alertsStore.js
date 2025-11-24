@@ -92,6 +92,15 @@ export const useAlertsStore = defineStore('alerts', () => {
   const mediumSeverityAlerts = computed(() => alerts.value.filter(a => a.severity === 'medium'))
   const lowSeverityAlerts = computed(() => alerts.value.filter(a => a.severity === 'low'))
 
+  /**
+   * Réinitialise le store
+   */
+  const reset = () => {
+    alerts.value = []
+    loading.value = false
+    error.value = null
+  }
+
   return {
     loading,
     error,
@@ -99,6 +108,7 @@ export const useAlertsStore = defineStore('alerts', () => {
     ALERT_TYPES,
     fetchAlerts,
     markAsResolved,
+    reset,
     highSeverityAlerts,
     mediumSeverityAlerts,
     lowSeverityAlerts

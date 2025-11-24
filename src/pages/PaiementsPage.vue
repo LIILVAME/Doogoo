@@ -1,198 +1,193 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar />
-
-    <!-- Main Content -->
-    <main ref="mainElement" class="flex-1 overflow-y-auto">
+  <DashboardLayout>
+    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      <div class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-6 xl:px-8 pt-16 pb-20 sm:pt-10 sm:pb-10">
-        <!-- Header -->
-        <div class="mb-8">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('payments.title') }}</h1>
-              <p class="text-gray-600">{{ $t('payments.subtitle') }}</p>
-            </div>
-            <button
-              @click="isModalOpen = true"
-              class="btn-primary flex items-center justify-center shrink-0"
-            >
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              {{ $t('payments.addPayment') }}
-            </button>
+      
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 class="text-3xl font-bold text-white mb-2">{{ $t('payments.title') }}</h1>
+            <p class="text-zinc-400">{{ $t('payments.subtitle') }}</p>
           </div>
-        </div>
-
-        <!-- Résumé des paiements -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">{{ $t('payments.pending') }}</p>
-                <p class="text-2xl font-bold text-gray-900">{{ pendingPayments.length }}</p>
-              </div>
-              <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <svg
-                  class="w-6 h-6 text-yellow-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">{{ $t('payments.late') }}</p>
-                <p class="text-2xl font-bold text-red-600">{{ latePayments.length }}</p>
-              </div>
-              <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <svg
-                  class="w-6 h-6 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">{{ $t('payments.paidThisMonth') }}</p>
-                <p class="text-2xl font-bold text-green-600">{{ paidPayments.length }}</p>
-              </div>
-              <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg
-                  class="w-6 h-6 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- État de chargement (uniquement si aucune donnée) -->
-        <div
-          v-if="paymentsStore.loading && paymentsStore.payments.length === 0"
-          class="text-center py-16"
-        >
-          <div
-            class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"
-          ></div>
-          <p class="text-gray-500">
-            {{ $t('common.loading') }} {{ $t('payments.title').toLowerCase() }}...
-          </p>
-        </div>
-
-        <!-- Erreur (uniquement si aucune donnée en cache) -->
-        <div
-          v-else-if="paymentsStore.error && paymentsStore.payments.length === 0"
-          class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
-        >
-          <div class="flex items-center">
-            <svg
-              class="w-5 h-5 text-red-600 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+          <button
+            @click="isModalOpen = true"
+            class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-colors shadow-lg shadow-white/5"
+          >
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                d="M12 4v16m8-8H4"
               />
             </svg>
-            <p class="text-red-700 font-medium">
-              {{ $t('common.errorWithColon') }} {{ paymentsStore.error }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
-        <div>
-          <!-- Loader inline si refresh en cours ET données déjà présentes -->
-          <div
-            v-if="paymentsStore.loading && paymentsStore.payments.length > 0"
-            class="text-center py-4 mb-4"
-          >
-            <InlineLoader />
-          </div>
-
-          <!-- Liste complète des paiements -->
-          <PaymentsSection
-            :payments="payments"
-            :show-view-all="false"
-            @edit-payment="handleEditPayment"
-            @delete-payment="handleDeletePayment"
-          />
+            {{ $t('payments.addPayment') }}
+          </button>
         </div>
       </div>
-    </main>
 
-    <!-- Modal d'ajout de paiement -->
-    <AddPaymentModal
-      :isOpen="isModalOpen"
-      :isLoading="paymentsStore.loading"
-      @close="isModalOpen = false"
-      @submit="handleAddPayment"
-    />
+      <!-- Résumé des paiements -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass-panel rounded-2xl p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.pending') }}</p>
+              <p class="text-2xl font-bold text-white">{{ pendingPayments.length }}</p>
+            </div>
+            <div class="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20">
+              <svg
+                class="w-6 h-6 text-amber-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
 
-    <!-- Modal d'édition de paiement -->
-    <EditPaymentModal
-      :isOpen="isEditModalOpen"
-      :payment="selectedPayment"
-      :isLoading="paymentsStore.loading"
-      @close="isEditModalOpen = false"
-      @submit="handleUpdatePayment"
-    />
-  </div>
+        <div class="glass-panel rounded-2xl p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.late') }}</p>
+              <p class="text-2xl font-bold text-rose-500">{{ latePayments.length }}</p>
+            </div>
+            <div class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center border border-rose-500/20">
+              <svg
+                class="w-6 h-6 text-rose-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.paidThisMonth') }}</p>
+              <p class="text-2xl font-bold text-emerald-500">{{ paidPayments.length }}</p>
+            </div>
+            <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20">
+              <svg
+                class="w-6 h-6 text-emerald-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- État de chargement (uniquement si aucune donnée) -->
+      <div
+        v-if="paymentsStore.loading && paymentsStore.payments.length === 0"
+        class="text-center py-16"
+      >
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"
+        ></div>
+        <p class="text-zinc-400">
+          {{ $t('common.loading') }} {{ $t('payments.title').toLowerCase() }}...
+        </p>
+      </div>
+
+      <!-- Erreur (uniquement si aucune donnée en cache) -->
+      <div
+        v-else-if="paymentsStore.error && paymentsStore.payments.length === 0"
+        class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-6"
+      >
+        <div class="flex items-center">
+          <svg
+            class="w-5 h-5 text-rose-500 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-rose-400 font-medium">
+            {{ $t('common.errorWithColon') }} {{ paymentsStore.error }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Contenu principal (s'affiche même si loading en arrière-plan) -->
+      <div v-else>
+        <!-- Loader inline si refresh en cours ET données déjà présentes -->
+        <div
+          v-if="paymentsStore.loading && paymentsStore.payments.length > 0"
+          class="text-center py-4 mb-4"
+        >
+          <InlineLoader />
+        </div>
+
+        <!-- Liste complète des paiements -->
+        <PaymentsSection
+          :payments="payments"
+          :show-view-all="false"
+          @edit-payment="handleEditPayment"
+          @delete-payment="handleDeletePayment"
+        />
+      </div>
+
+      <!-- Modal d'ajout de paiement -->
+      <AddPaymentModal
+        :isOpen="isModalOpen"
+        :isLoading="paymentsStore.loading"
+        @close="isModalOpen = false"
+        @submit="handleAddPayment"
+      />
+
+      <!-- Modal d'édition de paiement -->
+      <EditPaymentModal
+        :isOpen="isEditModalOpen"
+        :payment="selectedPayment"
+        :isLoading="paymentsStore.loading"
+        @close="isEditModalOpen = false"
+        @submit="handleUpdatePayment"
+      />
+    </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
-import Sidebar from '../components/Sidebar.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
 import PaymentsSection from '../components/dashboard/PaymentsSection.vue'
 import AddPaymentModal from '../components/payments/AddPaymentModal.vue'
