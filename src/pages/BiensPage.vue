@@ -78,7 +78,7 @@
       <PropertyModal
         :is-open="isAddModalOpen || isEditModalOpen"
         :property="selectedProperty"
-        @close="isAddModalOpen = false; isEditModalOpen = false"
+        @close="isAddModalOpen = false; isEditModalOpen = false; selectedProperty = null"
         @saved="handlePropertySaved"
       />
 

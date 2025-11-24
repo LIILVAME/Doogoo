@@ -25,10 +25,10 @@
       <!-- Modals -->
       <PropertyModal
         v-if="showPropertyModal"
-        :show="showPropertyModal"
+        :is-open="showPropertyModal"
         :property="selectedProperty"
         @close="closePropertyModal"
-        @save="handleSaveProperty"
+        @saved="handleSaveProperty"
       />
 
       <DeleteConfirmationModal
