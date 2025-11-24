@@ -2,7 +2,7 @@
   <!-- Overlay -->
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
+      <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
 
@@ -264,7 +264,7 @@ import { PROPERTY_STATUS } from '@/utils/constants'
 // Utilise $t dans le template, pas besoin de t dans le script
 
 const props = defineProps({
-  show: {
+  isOpen: {
     type: Boolean,
     default: false
   },
@@ -278,7 +278,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(['close', 'saved'])
 
 const form = ref({
   name: '',
@@ -371,7 +371,7 @@ const handleSubmit = () => {
         : null
   }
 
-  emit('save', submitData)
+  emit('saved', submitData)
 
   resetForm()
   emit('close')
@@ -397,11 +397,11 @@ watch(
  * Initialise le formulaire quand le modal s'ouvre ou quand le bien change
  */
 watch(
-  [() => props.show, () => props.property],
-  ([show, property]) => {
-    if (show && property) {
+  [() => props.isOpen, () => props.property],
+  ([isOpen, property]) => {
+    if (isOpen && property) {
       initializeForm()
-    } else if (!show) {
+    } else if (!isOpen) {
       resetForm()
     }
   },

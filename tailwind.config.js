@@ -10,6 +10,8 @@ export default {
           50: '#f0f4ff',
           100: '#e0e8ff',
           200: '#c7d5fe',
+          300: '#a5b4fc', // Ajouté pour compatibilité UI existante
+          400: '#818cf8', // Ajouté pour compatibilité UI existante
           500: '#6366f1', // Couleur principale
           600: '#4f46e5', // Hover
           700: '#4338ca'  // Active/Pressed
