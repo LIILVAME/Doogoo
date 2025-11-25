@@ -130,7 +130,7 @@
 | **Build** | Vite | ^5.2.0 | Build tool rapide & optimisé |
 | **Routing** | Vue Router | ^4.3.0 | Navigation SPA avec guards d'authentification |
 | **Styling** | Tailwind CSS | ^3.4.3 | Framework CSS utility-first |
-| **Exports** | jsPDF + SheetJS xlsx | jsPDF ^3.0.3 / xlsx 0.20.3 | Génération de rapports PDF/Excel |
+| **Exports** | jsPDF + SheetJS xlsx | jsPDF ^3.0.3 / xlsx 0.20.3 (CDN tarball) | Génération de rapports PDF/Excel |
 | **Hébergement** | GitHub Pages / Netlify | - | Config base `/Doogoo/` prête |
 
 ### Architecture

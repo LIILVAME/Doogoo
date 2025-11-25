@@ -2,8 +2,8 @@
 
 ## Summary
 - `npm audit --production` now reports **0 vulnerabilities** after upgrading SheetJS `xlsx` to a patched build.
-- The previous prototype pollution and potential ReDoS advisories are remediated by consuming the vendor tarball release `0.20.3`.
-- The dependency is pinned to the official SheetJS CDN (`https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz`) to receive patched community builds.
+- The previous prototype pollution and potential ReDoS advisories are remediated by the vendor tarball release `0.20.3`.
+- The dependency is pinned to the official SheetJS CDN using the versioned tarball (`https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz`) for reproducible installs.
 
 ## Methodology
 - Ran `npm audit --production` against the current lockfile to evaluate production dependencies.
@@ -17,6 +17,6 @@
 - **Remediation:** Upgrade to the SheetJS CDN tarball `xlsx@0.20.3` (configured in `package.json`), which includes the upstream patches.
 
 ## Recommendations
-- Keep `xlsx` pinned to the SheetJS CDN (`https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz`) to receive patched builds beyond what is published on npm.
+- Keep `xlsx` pinned to the SheetJS CDN using a versioned tarball (`https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz`) to avoid floating updates and retain the patched build.
 - Validate export/import flows and workbook parsing logic after dependency updates.
 - Re-run `npm audit --production` after pulling dependencies to verify the vulnerability remains cleared.
