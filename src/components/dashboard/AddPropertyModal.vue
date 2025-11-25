@@ -102,7 +102,7 @@
                       required
                       min="0"
                       step="10"
-                      class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                      class="w-full border border-gray-300 rounded-lg pl-14 pr-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
                       :placeholder="$t('payments.placeholders.amount')"
                     />
                   </div>

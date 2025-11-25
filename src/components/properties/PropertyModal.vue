@@ -114,7 +114,7 @@
                       required
                       min="0"
                       step="10"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       :placeholder="$t('payments.placeholders.amount')"
                     />
                   </div>
