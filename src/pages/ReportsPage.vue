@@ -178,7 +178,6 @@ const settingsStore = useSettingsStore()
 const isExporting = ref(false)
 
 // Pull-to-refresh
-const mainElement = ref(null)
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {
     // Force le rafraîchissement du rapport

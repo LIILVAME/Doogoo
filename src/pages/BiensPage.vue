@@ -127,7 +127,6 @@ const route = useRoute()
 const router = useRouter()
 
 // Pull-to-refresh
-const mainElement = ref(null)
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {
     // Force le rafraîchissement des données

@@ -11,7 +11,10 @@
         </p>
       </div>
 
-      <DashboardHeader :stats="stats" />
+      <DashboardHeader 
+        :stats="stats" 
+        :loading="propertiesStore.loading || paymentsStore.loading"
+      />
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Liste des biens -->
@@ -27,7 +30,10 @@
 
         <!-- Section Paiements & Activité -->
         <div class="space-y-8">
-          <PaymentsSection :payments="recentPayments" />
+          <PaymentsSection 
+            :payments="recentPayments" 
+            :loading="paymentsStore.loading"
+          />
           <!-- Vous pouvez ajouter d'autres widgets ici (ex: Activité récente) -->
         </div>
       </div>
@@ -109,6 +115,8 @@ const welcomeMessage = computed(() => {
 })
 
 onMounted(async () => {
+  // Initialize realtime subscription for properties
+  propertiesStore.initRealtime();
   await Promise.all([propertiesStore.fetchProperties(), paymentsStore.fetchPayments()])
 })
 

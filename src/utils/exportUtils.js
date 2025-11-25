@@ -24,7 +24,7 @@ const DOOGOO_COLORS = {
  * @param {Object} options - Options de formatage
  * @returns {string} Montant formaté (ex: "2 210 €")
  */
-function formatCurrencyForPDF(amount, options = {}) {
+function formatCurrencyForPDF(amount, _options = {}) {
   if (amount === null || amount === undefined || amount === '') {
     return formatCurrency(0)
   }

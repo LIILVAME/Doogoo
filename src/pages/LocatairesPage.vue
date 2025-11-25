@@ -134,7 +134,6 @@ const tenantsStore = useTenantsStore()
 const propertiesStore = usePropertiesStore()
 
 // Pull-to-refresh
-const mainElement = ref(null)
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {
     // Force le rafraîchissement des propriétés (les locataires sont dérivés)

@@ -71,7 +71,6 @@ onErrorCaptured((err, instance, info) => {
 })
 
 // Pull-to-refresh
-const mainElement = ref(null)
 const authStore = useAuthStore()
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {

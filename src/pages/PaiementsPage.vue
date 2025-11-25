@@ -156,7 +156,6 @@ import { Plus, Clock, AlertCircle, CheckCircle } from 'lucide-vue-next'
 const paymentsStore = usePaymentsStore()
 
 // Pull-to-refresh
-const mainElement = ref(null)
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {
     // Force le rafraîchissement des paiements

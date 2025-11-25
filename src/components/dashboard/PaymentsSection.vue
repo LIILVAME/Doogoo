@@ -11,8 +11,25 @@
       </router-link>
     </div>
 
+    <div v-if="loading" class="space-y-3">
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 animate-pulse"
+      >
+        <div class="flex-1">
+          <div class="h-4 w-32 bg-white/10 rounded mb-2"></div>
+          <div class="h-3 w-24 bg-white/10 rounded"></div>
+        </div>
+        <div class="text-right">
+          <div class="h-6 w-20 bg-white/10 rounded mb-1 ml-auto"></div>
+          <div class="h-4 w-16 bg-white/10 rounded ml-auto"></div>
+        </div>
+      </div>
+    </div>
+
     <EmptyState
-      v-if="payments.length === 0"
+      v-else-if="payments.length === 0"
       :title="$t('payments.noPayments')"
       :description="''"
       illustration="none"
@@ -97,6 +114,10 @@ const props = defineProps({
   showViewAll: {
     type: Boolean,
     default: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 

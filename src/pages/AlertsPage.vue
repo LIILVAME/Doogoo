@@ -173,7 +173,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import EmptyState from '../components/common/EmptyState.vue'
@@ -184,8 +184,6 @@ import { AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-vue-next'
 
 const alertsStore = useAlertsStore()
 
-// Pull-to-refresh
-const mainElement = ref(null)
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {
     // Force le rafraîchissement des alertes

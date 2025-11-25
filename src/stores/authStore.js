@@ -256,6 +256,14 @@ export const useAuthStore = defineStore('auth', () => {
     loadingSession.value = true
     error.value = null
 
+    // Timeout de sécurité : force loadingSession à false après 10 secondes
+    const timeoutId = setTimeout(() => {
+      if (loadingSession.value) {
+        console.warn('⚠️ initSession timeout après 10 secondes - forçage de loadingSession à false')
+        loadingSession.value = false
+      }
+    }, 10000)
+
     try {
       const {
         data: { session: currentSession },
@@ -267,6 +275,7 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
         session.value = null
         loadingSession.value = false
+        clearTimeout(timeoutId)
         return
       }
 
@@ -297,6 +306,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       session.value = null
     } finally {
+      clearTimeout(timeoutId)
       loadingSession.value = false
     }
   }
@@ -645,9 +655,9 @@ export const useAuthStore = defineStore('auth', () => {
         // Nettoie proprement lors de la déconnexion
         try {
           // Réinitialise l'état de manière sécurisée
-          if (user && user.value !== null) user.value = null
+          if (user.value && user.value !== null) user.value = null
           if (session && session.value !== null) session.value = null
-          if (profile && profile.value !== null) profile.value = null
+          if (profile.value && profile.value !== null) profile.value = null
 
           // Arrête les abonnements Realtime si les stores sont disponibles
           try {

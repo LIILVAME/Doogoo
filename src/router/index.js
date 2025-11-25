@@ -6,6 +6,11 @@ import LandingPage from '../pages/LandingPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import SignupPage from '../pages/SignupPage.vue'
 import ResetPasswordPage from '../pages/ResetPasswordPage.vue'
+import FeaturesPage from '../pages/FeaturesPage.vue'
+import PricingPage from '../pages/PricingPage.vue'
+import ResourcesPage from '../pages/ResourcesPage.vue'
+import PrivacyPage from '../pages/PrivacyPage.vue'
+import TermsPage from '../pages/TermsPage.vue'
 
 // Pages authentifiées (lazy loaded pour améliorer les performances)
 const ConfirmEmailPage = () => import('../pages/ConfirmEmailPage.vue')
@@ -78,6 +83,86 @@ const routes = [
         description: 'Réinitialisez votre mot de passe Doogoo pour accéder à votre compte.',
         ogTitle: 'Réinitialiser le mot de passe — Doogoo',
         ogDescription: 'Réinitialisez votre mot de passe Doogoo.'
+      }
+    }
+  },
+  {
+    path: '/features',
+    name: 'Features',
+    component: FeaturesPage,
+    meta: {
+      requiresAuth: false,
+      seo: {
+        title: 'Fonctionnalités — Gestion immobilière complète | Doogoo',
+        description:
+          'Découvrez toutes les fonctionnalités de Doogoo : gestion multi-biens, suivi des locataires, paiements automatisés, rapports détaillés et bien plus.',
+        ogTitle: 'Fonctionnalités — Doogoo',
+        ogDescription:
+          'Gestion multi-biens, suivi des locataires, paiements, rapports et analyses pour optimiser votre gestion immobilière.'
+      }
+    }
+  },
+  {
+    path: '/pricing',
+    name: 'Pricing',
+    component: PricingPage,
+    meta: {
+      requiresAuth: false,
+      seo: {
+        title: 'Tarifs — Plans et abonnements | Doogoo',
+        description:
+          'Découvrez nos plans tarifaires : Gratuit, Pro et Entreprise. Essai gratuit de 14 jours. Changez ou annulez à tout moment.',
+        ogTitle: 'Tarifs — Doogoo',
+        ogDescription:
+          'Plans tarifaires simples et transparents pour tous les propriétaires. Essai gratuit de 14 jours.'
+      }
+    }
+  },
+  {
+    path: '/resources',
+    name: 'Resources',
+    component: ResourcesPage,
+    meta: {
+      requiresAuth: false,
+      seo: {
+        title: 'Ressources — Documentation et guides | Doogoo',
+        description:
+          'Guides de démarrage, documentation complète, FAQ et ressources juridiques pour maîtriser Doogoo et optimiser votre gestion immobilière.',
+        ogTitle: 'Ressources — Doogoo',
+        ogDescription:
+          'Documentation, guides et ressources pour maîtriser la gestion immobilière avec Doogoo.'
+      }
+    }
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: PrivacyPage,
+    meta: {
+      requiresAuth: false,
+      seo: {
+        title: 'Politique de confidentialité — Doogoo',
+        description:
+          'Politique de confidentialité de Doogoo conforme au RGPD. Découvrez comment nous collectons, utilisons et protégeons vos données personnelles.',
+        ogTitle: 'Politique de confidentialité — Doogoo',
+        ogDescription:
+          'Notre engagement pour la protection de vos données personnelles conforme au RGPD.'
+      }
+    }
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: TermsPage,
+    meta: {
+      requiresAuth: false,
+      seo: {
+        title: 'Conditions Générales d\'Utilisation — Doogoo',
+        description:
+          'Conditions générales d\'utilisation de Doogoo. Consultez les termes et conditions régissant l\'utilisation de notre plateforme de gestion immobilière.',
+        ogTitle: 'CGU — Doogoo',
+        ogDescription:
+          'Conditions générales d\'utilisation de la plateforme Doogoo.'
       }
     }
   },

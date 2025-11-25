@@ -11,6 +11,7 @@
         :icon="Building2"
         icon-bg-class="bg-violet-500"
         icon-color-class="text-violet-200"
+        :loading="loading"
       />
       <StatCard
         :value="stats.occupiedProperties.toString()"
@@ -18,6 +19,7 @@
         :icon="Users"
         icon-bg-class="bg-emerald-500"
         icon-color-class="text-emerald-200"
+        :loading="loading"
       />
       <StatCard
         :value="stats.vacantProperties.toString()"
@@ -25,6 +27,7 @@
         :icon="Home"
         icon-bg-class="bg-zinc-500"
         icon-color-class="text-zinc-200"
+        :loading="loading"
       />
       <StatCard
         :value="formatCurrency(stats.totalRent || 0)"
@@ -32,12 +35,13 @@
         :icon="Wallet"
         icon-bg-class="bg-amber-500"
         icon-color-class="text-amber-200"
+        :loading="loading"
       />
     </div>
 
     <!-- Alerte retards -->
     <div
-      v-if="stats.latePayments > 0"
+      v-if="!loading && stats.latePayments > 0"
       class="mt-6 bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-center"
     >
       <AlertCircle class="w-6 h-6 text-rose-400 mr-3" />
@@ -61,6 +65,10 @@ defineProps({
   stats: {
     type: Object,
     required: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 </script>

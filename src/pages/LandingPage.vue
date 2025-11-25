@@ -9,9 +9,9 @@
         </div>
 
         <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-          <a href="#" class="hover:text-white transition-colors">Fonctionnalités</a>
-          <a href="#" class="hover:text-white transition-colors">Tarifs</a>
-          <a href="#" class="hover:text-white transition-colors">Ressources</a>
+          <router-link to="/features" class="hover:text-white transition-colors">Fonctionnalités</router-link>
+          <router-link to="/pricing" class="hover:text-white transition-colors">Tarifs</router-link>
+          <router-link to="/resources" class="hover:text-white transition-colors">Ressources</router-link>
         </div>
 
         <div class="flex items-center gap-4">
@@ -287,8 +287,8 @@
           <div>
             <h4 class="text-white text-sm font-medium mb-4">Produit</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
-              <li><a href="#" class="hover:text-white transition-colors">Fonctionnalités</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Tarifs</a></li>
+              <li><router-link to="/features" class="hover:text-white transition-colors">Fonctionnalités</router-link></li>
+              <li><router-link to="/pricing" class="hover:text-white transition-colors">Tarifs</router-link></li>
               <li><a href="#" class="hover:text-white transition-colors">Mises à jour</a></li>
             </ul>
           </div>
@@ -297,14 +297,14 @@
             <ul class="space-y-2 text-sm text-zinc-500">
               <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Guide du bailleur</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Centre d'aide</a></li>
+              <li><router-link to="/resources" class="hover:text-white transition-colors">Centre d'aide</router-link></li>
             </ul>
           </div>
           <div>
             <h4 class="text-white text-sm font-medium mb-4">Légal</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
-              <li><a href="#" class="hover:text-white transition-colors">Confidentialité</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">CGU</a></li>
+              <li><router-link to="/privacy" class="hover:text-white transition-colors">Confidentialité</router-link></li>
+              <li><router-link to="/terms" class="hover:text-white transition-colors">CGU</router-link></li>
             </ul>
           </div>
         </div>

@@ -279,7 +279,6 @@ import { ref, watch } from 'vue'
 import { PROPERTY_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 
 import { useSettingsStore } from '@/stores/settingsStore'
-import { formatCurrency } from '@/utils/formatters'
 const settingsStore = useSettingsStore()
 // Utilise $t dans le template, pas besoin de t dans le script
 

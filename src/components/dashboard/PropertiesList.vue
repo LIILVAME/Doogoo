@@ -73,5 +73,5 @@ defineProps({
   }
 })
 
-
+defineEmits(['add-property', 'edit-property', 'delete-property'])
 </script>
