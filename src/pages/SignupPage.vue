@@ -105,14 +105,6 @@
           "
         />
 
-        <!-- Boutons OAuth -->
-        <AuthOAuth
-          :loading="oauthLoading ? oauthProvider : false"
-          :disabled="authStore.loading"
-          :vertical="false"
-          @oauth="handleOAuth"
-        />
-
         <!-- Lien retour connexion -->
         <div class="mt-6 pt-6 border-t border-white/10 text-center">
           <p class="text-sm text-zinc-500">
@@ -132,7 +124,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
@@ -140,12 +132,12 @@ import { supabase } from '@/lib/supabaseClient'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
-import AuthOAuth from '@/components/auth/AuthOAuth.vue'
+
 import PasswordStrengthMeter from '@/components/auth/PasswordStrengthMeter.vue'
 
 const { t } = useI18n()
 const router = useRouter()
-const route = useRoute()
+
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 
@@ -156,9 +148,6 @@ const form = ref({
   password: '',
   passwordConfirm: ''
 })
-
-const oauthLoading = ref(false)
-const oauthProvider = ref(null)
 
 const fullNameError = computed(() => {
   if (!form.value.fullName && authStore.error) return null
@@ -227,13 +216,13 @@ const handleSignUp = async () => {
           .from('properties')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', authStore.user.id)
-        
+
         if (error) {
           console.warn('Erreur vérification biens (non bloquant):', error)
           router.push('/dashboard')
           return
         }
-        
+
         // Si 0 bien → Onboarding, sinon → Dashboard
         const redirectTo = count === 0 ? '/onboarding' : '/dashboard'
         router.push(redirectTo)
@@ -242,27 +231,6 @@ const handleSignUp = async () => {
         router.push('/dashboard') // Fallback
       }
     }
-  }
-}
-
-/**
- * Gère la connexion OAuth
- */
-const handleOAuth = async provider => {
-  oauthLoading.value = true
-  oauthProvider.value = provider
-
-  try {
-    const redirectTo = route.query.redirect || '/dashboard'
-    if (provider === 'google') {
-      await authStore.loginWithGoogle(redirectTo)
-    } else if (provider === 'apple') {
-      await authStore.loginWithApple(redirectTo)
-    }
-  } catch (error) {
-    console.error(`Erreur connexion ${provider}:`, error)
-    oauthLoading.value = false
-    oauthProvider.value = null
   }
 }
 </script>
