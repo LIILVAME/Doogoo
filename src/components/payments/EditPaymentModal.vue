@@ -69,7 +69,7 @@
                     {{ $t('payments.amountEuro') }} <span class="text-red-500">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ $t(`currency.${settingsStore.currency}`) }}</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}</span>
                     <input
                       id="edit-payment-amount"
                       v-model.number="form.amount"
@@ -184,7 +184,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useI18n } from '@/composables/useLingui'
-import { TRANSACTION_STATUS } from '@/utils/constants'
+import { TRANSACTION_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { paymentSchema, validate } from '@/utils/validators'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'

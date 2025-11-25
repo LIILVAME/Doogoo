@@ -38,7 +38,7 @@
         
         <div>
           <label for="property-rent" class="block text-sm font-medium text-zinc-300 mb-2">
-            {{ $t('properties.monthlyRent') }} {{ $t(`currency.${settingsStore.currency}`) }} <span class="text-danger-400">*</span>
+            {{ $t('properties.monthlyRent') }} ({{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}) <span class="text-danger-400">*</span>
           </label>
           <input
             id="property-rent"
@@ -185,6 +185,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
+import { PROPERTY_STATUS, PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'

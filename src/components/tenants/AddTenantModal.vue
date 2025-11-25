@@ -116,7 +116,7 @@
                     {{ $t('tenants.monthlyRent') }} <span class="text-red-500">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ $t(`currency.${settingsStore.currency}`) }}</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}</span>
                     <input
                       id="tenant-rent"
                       v-model.number="form.rent"
@@ -214,7 +214,7 @@ import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
-import { PAYMENT_STATUS } from '@/utils/constants'
+import { PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { tenantSchema, validate } from '@/utils/validators'
 
 const props = defineProps({

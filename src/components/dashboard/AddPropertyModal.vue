@@ -94,7 +94,7 @@
                     {{ $t('properties.monthlyRent') }} <span class="text-red-500">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ $t(`currency.${settingsStore.currency}`) }}</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}</span>
                     <input
                       id="property-rent"
                       v-model.number="form.rent"
@@ -254,7 +254,7 @@ import { ref, watch, toRef } from 'vue'
 import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
-import { PROPERTY_STATUS } from '@/utils/constants'
+import { PROPERTY_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { propertySchema, validate } from '@/utils/validators'
 
 // Utilise $t dans le template, pas besoin de t dans le script

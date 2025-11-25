@@ -40,12 +40,12 @@ export const STATUS_LABELS = {
   // Occupation
   [PROPERTY_STATUS.OCCUPIED]: 'Occupé',
   [PROPERTY_STATUS.VACANT]: 'Libre',
-  
+
   // Paiement locataire
   [PAYMENT_STATUS.ON_TIME]: 'À jour',
   [PAYMENT_STATUS.LATE]: 'Défaut de paiement',
   [PAYMENT_STATUS.PENDING]: 'En attente',
-  
+
   // Transaction
   [TRANSACTION_STATUS.PAID]: 'Payé',
   [TRANSACTION_STATUS.LATE]: 'En retard',
@@ -59,16 +59,26 @@ export const STATUS_CLASSES = {
   // Occupation
   [PROPERTY_STATUS.OCCUPIED]: 'bg-green-100 text-green-800',
   [PROPERTY_STATUS.VACANT]: 'bg-gray-100 text-gray-800',
-  
+
   // Paiement locataire
   [PAYMENT_STATUS.ON_TIME]: 'bg-green-100 text-green-800',
   [PAYMENT_STATUS.LATE]: 'bg-red-100 text-red-800',
   [PAYMENT_STATUS.PENDING]: 'bg-yellow-100 text-yellow-800',
-  
+
   // Transaction
   [TRANSACTION_STATUS.PAID]: 'bg-green-100 text-green-800',
   [TRANSACTION_STATUS.LATE]: 'bg-red-100 text-red-800',
   [TRANSACTION_STATUS.PENDING]: 'bg-yellow-100 text-yellow-800'
+}
+
+/**
+ * Symboles de devises
+ */
+export const CURRENCY_SYMBOLS = {
+  EUR: '€',
+  USD: '$',
+  GBP: '£',
+  XOF: 'CFA'
 }
 
 /**

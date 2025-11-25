@@ -106,7 +106,7 @@
                     {{ $t('properties.monthlyRent') }} <span class="text-rose-400">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{ $t(`currency.${settingsStore.currency}`) }}</span>
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}</span>
                     <input
                       id="edit-property-rent"
                       v-model.number="form.rent"
@@ -276,7 +276,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { PROPERTY_STATUS } from '@/utils/constants'
+import { PROPERTY_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
