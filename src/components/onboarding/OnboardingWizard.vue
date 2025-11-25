@@ -263,7 +263,7 @@ const handleStep1Continue = async () => {
   errors.value = {}
   
   try {
-    const property = await propertiesStore.createProperty({
+    const property = await propertiesStore.addProperty({
       name: formData.value.propertyName,
       rent: parseFloat(formData.value.propertyRent),
       user_id: authStore.user.id
@@ -307,7 +307,7 @@ const handleStep2Continue = async () => {
   
   try {
     if (formData.value.hasTenant === true && formData.value.tenantName.trim()) {
-      await tenantsStore.createTenant({
+      await tenantsStore.addTenant({
         name: formData.value.tenantName,
         property_id: formData.value.createdPropertyId,
         start_date: formData.value.tenantStartDate || new Date().toISOString().split('T')[0],
