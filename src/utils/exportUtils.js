@@ -1,7 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
-import { formatCurrency } from '@/utils/formatters'
 import { saveAs } from 'file-saver'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 
