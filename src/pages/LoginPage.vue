@@ -176,15 +176,12 @@ const passwordError = computed(() => {
   return ''
 })
 
-const oauthLoading = ref(false)
-
 const isSubmitDisabled = computed(() => {
   const hasEmailError = Boolean(emailError.value)
   const hasPasswordError = Boolean(passwordError.value)
   return (
     !form.value.email ||
     !form.value.password ||
-    oauthLoading.value ||
     authStore.loading ||
     hasEmailError ||
     hasPasswordError
