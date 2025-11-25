@@ -94,7 +94,7 @@
                     {{ $t('properties.monthlyRent') }} <span class="text-red-500">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ CURRENCY_SYMBOLS[settingsStore?.currency] || '€' }}</span>
                     <input
                       id="property-rent"
                       v-model.number="form.rent"

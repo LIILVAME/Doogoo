@@ -100,7 +100,7 @@
                     {{ $t('payments.amountEuro') }} <span class="text-rose-400">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}</span>
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{ CURRENCY_SYMBOLS[settingsStore?.currency] || '€' }}</span>
                     <input
                       id="payment-amount"
                       v-model.number="form.amount"

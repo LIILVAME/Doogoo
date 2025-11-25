@@ -38,7 +38,7 @@
         
         <div>
           <label for="property-rent" class="block text-sm font-medium text-zinc-300 mb-2">
-            {{ $t('properties.monthlyRent') }} ({{ CURRENCY_SYMBOLS[settingsStore.currency] || '€' }}) <span class="text-danger-400">*</span>
+            {{ $t('properties.monthlyRent') }} ({{ CURRENCY_SYMBOLS[settingsStore?.currency] || '€' }}) <span class="text-danger-400">*</span>
           </label>
           <input
             id="property-rent"
