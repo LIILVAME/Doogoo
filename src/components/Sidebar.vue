@@ -39,13 +39,13 @@
   <!-- Sidebar -->
   <aside
     :class="[
-      'w-64 shrink-0 bg-zinc-950/50 backdrop-blur-xl border-r border-white/5 min-h-screen fixed left-0 top-0 overflow-y-auto z-40 lg:static lg:z-auto transition-transform duration-300 ease-in-out',
+      'w-64 shrink-0 bg-zinc-950/50 backdrop-blur-xl border-r border-white/5 min-h-screen fixed left-0 top-0 z-40 lg:static lg:z-auto transition-transform duration-300 ease-in-out flex flex-col',
       isDesktop || (isOpen && isScrollVisible)
         ? 'translate-x-0'
         : '-translate-x-full lg:translate-x-0'
     ]"
   >
-    <div class="p-6">
+    <div class="p-6 flex-1 flex flex-col overflow-y-auto">
       <router-link
         to="/dashboard"
         class="block mb-10 flex items-center gap-3"
@@ -59,7 +59,7 @@
         <h1 class="text-2xl font-bold text-white tracking-tight">Doogoo</h1>
       </router-link>
 
-      <nav class="space-y-6">
+      <nav class="space-y-6 flex-1">
         <!-- Section: GESTION -->
         <div>
           <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 tracking-wide">Gestion</h2>
@@ -151,7 +151,7 @@
       </nav>
 
       <!-- Sélecteur de langue + Logout -->
-      <div class="mt-auto pt-8 border-t border-white/5 absolute bottom-6 left-6 right-6">
+      <div class="mt-8 pt-6 border-t border-white/5">
         <!-- Sélecteur de langue -->
         <div class="mb-4">
           <div class="relative">

@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+  <div class="glass-panel rounded-2xl p-6">
     <div class="mb-4">
-      <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ title }}</h3>
-      <p class="text-sm text-gray-600">{{ description }}</p>
+      <h3 class="text-lg font-semibold text-white mb-1">{{ title }}</h3>
+      <p class="text-sm text-zinc-400">{{ description }}</p>
     </div>
     
-    <div class="bg-gray-50 rounded-lg p-3">
+    <div class="bg-white/5 rounded-xl p-4">
       <BaseChart
         :type="chartType"
         :series="series"

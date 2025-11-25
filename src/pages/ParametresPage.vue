@@ -1,66 +1,59 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar principale -->
-    <Sidebar />
-
-    <!-- Main Content -->
-    <main ref="mainElement" class="flex-1 overflow-y-auto">
+  <DashboardLayout>
+    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      <div class="flex flex-col md:flex-row min-h-full">
+
+      <div class="flex flex-col md:flex-row gap-6 md:gap-8">
         <!-- Sous-sidebar de navigation (desktop) -->
         <aside class="hidden md:block w-64 shrink-0">
           <SettingsSidebar :active-section="activeSection" @change-section="handleSectionChange" />
         </aside>
 
         <!-- Menu déroulant (mobile) -->
-        <div class="md:hidden w-full bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div class="px-4 sm:px-6 py-3">
-            <select
-              :value="activeSection"
-              @change="handleSectionChange($event.target.value)"
-              class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none bg-white"
-            >
-              <option value="general">{{ $t('settings.sections.general') }}</option>
-              <option value="notifications">{{ $t('settings.sections.notifications') }}</option>
-              <option value="security">{{ $t('settings.sections.security') }}</option>
-              <option value="language-currency">
-                {{ $t('settings.sections.languageCurrency') }}
-              </option>
-            </select>
-          </div>
+        <div class="md:hidden w-full">
+          <select
+            :value="activeSection"
+            @change="handleSectionChange($event.target.value)"
+            class="w-full bg-white/5 border border-white/10 text-zinc-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all hover:bg-white/10 cursor-pointer appearance-none"
+          >
+            <option value="general" class="bg-zinc-900">{{ $t('settings.sections.general') }}</option>
+            <option value="notifications" class="bg-zinc-900">{{ $t('settings.sections.notifications') }}</option>
+            <option value="security" class="bg-zinc-900">{{ $t('settings.sections.security') }}</option>
+            <option value="language-currency" class="bg-zinc-900">
+              {{ $t('settings.sections.languageCurrency') }}
+            </option>
+          </select>
         </div>
 
         <!-- Zone de contenu -->
-        <div class="flex-1 overflow-y-auto">
-          <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-16 pb-8 md:px-10 md:pt-10 md:pb-10">
-            <!-- Header -->
-            <div class="mb-8">
-              <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('settings.title') }}</h1>
-              <p class="text-gray-600">{{ $t('settings.subtitle') }}</p>
-            </div>
+        <div class="flex-1">
+          <!-- Header -->
+          <div class="mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">{{ $t('settings.title') }}</h1>
+            <p class="text-zinc-400">{{ $t('settings.subtitle') }}</p>
+          </div>
 
-            <!-- Contenu dynamique selon la section active -->
-            <div class="min-h-[400px]">
-              <Transition name="fade" mode="out-in">
-                <component :is="activeComponent" :key="activeSection" />
-              </Transition>
-            </div>
+          <!-- Contenu dynamique selon la section active -->
+          <div class="min-h-[400px]">
+            <Transition name="fade" mode="out-in">
+              <component :is="activeComponent" :key="activeSection" />
+            </Transition>
           </div>
         </div>
       </div>
-    </main>
-  </div>
+    </div>
+  </DashboardLayout>
 </template>
 
 <script setup>
 import { ref, computed, onErrorCaptured, onMounted, watch } from 'vue'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
-import Sidebar from '../components/Sidebar.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
 import SettingsSidebar from '../components/settings/SettingsSidebar.vue'
 import SettingsGeneral from '../components/settings/SettingsGeneral.vue'

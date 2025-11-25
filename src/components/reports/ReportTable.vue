@@ -1,64 +1,64 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-      <h3 class="text-lg font-semibold text-gray-900">{{ $t('reports.table.title') }}</h3>
+  <div class="glass-panel rounded-2xl overflow-hidden">
+    <div class="px-6 py-5 border-b border-white/10 bg-white/5">
+      <h3 class="text-lg font-semibold text-white">{{ $t('reports.table.title') }}</h3>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+    <div class="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <table class="min-w-full divide-y divide-white/10">
+        <thead class="bg-white/5">
           <tr>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.property') }}
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.city') }}
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.rent') }}
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.status') }}
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.totalPaid') }}
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.delayed') }}
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider"
             >
               {{ $t('reports.table.columns.occupancy') }}
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-transparent divide-y divide-white/5">
           <tr
             v-for="(row, index) in tableData"
             :key="index"
-            class="hover:bg-gray-50 transition-colors"
-            :class="{ 'bg-gray-50': index % 2 === 0 }"
+            class="hover:bg-white/5 transition-colors"
+            :class="{ 'bg-white/[0.02]': index % 2 === 0 }"
           >
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
               {{ row.property }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-300">
               {{ row.city }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
               {{ formatCurrency(row.rent) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -78,13 +78,13 @@
               </span>
               <span v-else class="text-gray-400">-</span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.occupancy }}%</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-white">{{ row.occupancy }}%</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div v-if="tableData.length === 0" class="text-center py-12 text-gray-500">
+    <div v-if="tableData.length === 0" class="text-center py-12 text-zinc-400">
       <p>{{ $t('reports.table.noData') }}</p>
     </div>
   </div>

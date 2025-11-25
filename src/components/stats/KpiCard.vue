@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white rounded-lg shadow-none sm:shadow-sm border border-gray-100 p-3 sm:p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+    class="glass-panel rounded-2xl p-4 sm:p-6 transition-all duration-200 hover:shadow-lg hover:shadow-white/5 hover:-translate-y-1"
     :title="tooltip"
   >
     <div class="flex items-start justify-between">
@@ -8,14 +8,14 @@
         <div class="flex items-center mb-2">
           <div
             :class="[
-              'p-2 rounded-full mr-3 flex-shrink-0',
-              iconBgColor || 'bg-green-50'
+              'p-2.5 rounded-xl mr-3 flex-shrink-0',
+              iconBgColor || 'bg-emerald-500/10 border border-emerald-500/20'
             ]"
           >
-            <!-- Icône Money -->
+            <!-- Icône Currency/Money -->
             <svg
-              v-if="icon === 'money'"
-              :class="['w-5 h-5', iconColor || 'text-green-500']"
+              v-if="icon === 'currency' || icon === 'money'"
+              :class="['w-5 h-5', iconColor || 'text-emerald-400']"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -26,7 +26,7 @@
             <!-- Icône Home -->
             <svg
               v-else-if="icon === 'home'"
-              :class="['w-5 h-5', iconColor || 'text-blue-500']"
+              :class="['w-5 h-5', iconColor || 'text-violet-400']"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -37,7 +37,7 @@
             <!-- Icône Clock -->
             <svg
               v-else-if="icon === 'clock'"
-              :class="['w-5 h-5', iconColor || 'text-orange-500']"
+              :class="['w-5 h-5', iconColor || 'text-rose-400']"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -56,19 +56,19 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <p class="text-xs sm:text-sm text-gray-500 font-medium">{{ label }}</p>
+          <p class="text-sm text-zinc-300 font-medium">{{ label }}</p>
         </div>
         <p
           :class="[
             'text-xl sm:text-2xl font-bold',
-            valueColor || 'text-gray-900'
+            valueColor || 'text-white'
           ]"
         >
           {{ displayValue }}
         </p>
         <p
           v-if="subtitle"
-          class="text-xs text-gray-400 mt-1"
+          class="text-xs text-zinc-500 mt-1"
         >
           {{ subtitle }}
         </p>
@@ -103,7 +103,7 @@ const props = defineProps({
   },
   valueColor: {
     type: String,
-    default: 'text-gray-900'
+    default: 'text-white'
   },
   formatter: {
     type: Function,

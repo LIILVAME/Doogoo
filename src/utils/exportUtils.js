@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
+import { formatCurrency } from '@/utils/formatters'
 import { saveAs } from 'file-saver'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 
@@ -26,7 +27,7 @@ const DOOGOO_COLORS = {
  */
 function formatCurrencyForPDF(amount, options = {}) {
   if (amount === null || amount === undefined || amount === '') {
-    return '0 €'
+    return formatCurrency(0)
   }
 
   // Convertit en nombre si ce n'est pas déjà le cas
@@ -40,34 +41,10 @@ function formatCurrencyForPDF(amount, options = {}) {
   }
 
   if (isNaN(numValue) || !isFinite(numValue)) {
-    return '0 €'
+    return formatCurrency(0)
   }
 
-  // Format avec séparateurs de milliers (espaces) comme en français
-  const decimals = options.decimals !== undefined ? options.decimals : numValue % 1 === 0 ? 0 : 2
-  const rounded = Math.round(numValue * Math.pow(10, decimals)) / Math.pow(10, decimals)
-
-  // Partie entière avec séparateurs de milliers (espaces)
-  const integerPart = Math.floor(Math.abs(rounded))
-  const integerStr = integerPart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-
-  // Partie décimale
-  let decimalStr = ''
-  if (decimals > 0) {
-    const decimalPart = rounded % 1
-    if (decimalPart !== 0) {
-      decimalStr = decimalPart.toFixed(decimals).substring(1).replace('.', ',')
-    }
-  }
-
-  // Gère le signe négatif
-  const sign = rounded < 0 ? '-' : ''
-
-  // Combine : signe + partie entière + partie décimale
-  const formatted = `${sign}${integerStr}${decimalStr}`
-
-  // Ajoute le symbole € avec un espace
-  return `${formatted} €`
+  return formatCurrency(numValue)
 }
 
 /**
@@ -309,7 +286,7 @@ export const exportToPDF = (title, data, columns = null, filename = null, option
           if (!isNaN(numValue) && isFinite(numValue)) {
             return formatCurrencyForPDF(numValue, { decimals: 0 })
           }
-          return '0 €'
+          return formatCurrency(0)
         }
 
         if (isPercentage) {
@@ -387,14 +364,14 @@ export const exportToPDF = (title, data, columns = null, filename = null, option
   // Calcul des largeurs de colonnes pour éviter les coupures
   const columnWidths = columns
     ? columns.map((col, _idx) => {
-        // Largeurs personnalisées selon le type de colonne
-        if (col.key === 'property') return 40
-        if (col.key === 'city') return 30
-        if (col.key === 'rent' || col.key === 'totalPaid') return 30
-        if (col.key === 'status') return 25
-        if (col.key === 'paymentDate') return 35
-        return null // Auto-width pour les autres
-      })
+      // Largeurs personnalisées selon le type de colonne
+      if (col.key === 'property') return 40
+      if (col.key === 'city') return 30
+      if (col.key === 'rent' || col.key === 'totalPaid') return 30
+      if (col.key === 'status') return 25
+      if (col.key === 'paymentDate') return 35
+      return null // Auto-width pour les autres
+    })
     : null
 
   autoTable(doc, {
@@ -437,54 +414,54 @@ export const exportToPDF = (title, data, columns = null, filename = null, option
       // Fusionne les largeurs et les alignements
       ...(columnWidths
         ? columnWidths.reduce((acc, width, idx) => {
-            if (width) acc[idx] = { cellWidth: width }
-            return acc
-          }, {})
+          if (width) acc[idx] = { cellWidth: width }
+          return acc
+        }, {})
         : {}),
       // Alignement numérique pour les colonnes de montant et pourcentage
       ...(columns
         ? columns.reduce((acc, col, idx) => {
-            const key = col.key || ''
-            const excludeFromAmount =
-              key.includes('delayed') ||
-              key.includes('id') ||
-              key === 'paymentStatus' ||
-              key === 'status' ||
-              key === 'property' ||
-              key === 'city' ||
-              key === 'paymentDate'
+          const key = col.key || ''
+          const excludeFromAmount =
+            key.includes('delayed') ||
+            key.includes('id') ||
+            key === 'paymentStatus' ||
+            key === 'status' ||
+            key === 'property' ||
+            key === 'city' ||
+            key === 'paymentDate'
 
-            const isAmount =
-              !excludeFromAmount &&
-              (key.includes('rent') ||
-                (key.includes('Amount') && !key.includes('delayed')) ||
-                (key.includes('Paid') && !key.includes('delayed') && key.includes('total')) ||
-                key.includes('totalPaid') ||
-                key.toLowerCase().includes('montant') ||
-                key.toLowerCase().includes('revenu') ||
-                (key.toLowerCase().includes('loyer') && !key.includes('delayed')))
+          const isAmount =
+            !excludeFromAmount &&
+            (key.includes('rent') ||
+              (key.includes('Amount') && !key.includes('delayed')) ||
+              (key.includes('Paid') && !key.includes('delayed') && key.includes('total')) ||
+              key.includes('totalPaid') ||
+              key.toLowerCase().includes('montant') ||
+              key.toLowerCase().includes('revenu') ||
+              (key.toLowerCase().includes('loyer') && !key.includes('delayed')))
 
-            const isPercentage =
-              key.includes('occupancy') ||
-              (key.includes('Rate') && !key.includes('delayed')) ||
-              (key.includes('rate') && !key.includes('delayed')) ||
-              key.toLowerCase().includes('pourcentage') ||
-              key.toLowerCase().includes('taux')
+          const isPercentage =
+            key.includes('occupancy') ||
+            (key.includes('Rate') && !key.includes('delayed')) ||
+            (key.includes('rate') && !key.includes('delayed')) ||
+            key.toLowerCase().includes('pourcentage') ||
+            key.toLowerCase().includes('taux')
 
-            // Pour "delayed", c'est un nombre simple (pas monétaire, pas pourcentage)
-            const isSimpleNumber =
-              key === 'delayed' &&
-              typeof (col.accessor ? col.accessor(data[0] || {}) : (data[0] || {})[col.key]) ===
-                'number'
+          // Pour "delayed", c'est un nombre simple (pas monétaire, pas pourcentage)
+          const isSimpleNumber =
+            key === 'delayed' &&
+            typeof (col.accessor ? col.accessor(data[0] || {}) : (data[0] || {})[col.key]) ===
+            'number'
 
-            if (isAmount || isPercentage || isSimpleNumber) {
-              acc[idx] = {
-                ...(acc[idx] || {}),
-                halign: 'right'
-              }
+          if (isAmount || isPercentage || isSimpleNumber) {
+            acc[idx] = {
+              ...(acc[idx] || {}),
+              halign: 'right'
             }
-            return acc
-          }, {})
+          }
+          return acc
+        }, {})
         : {})
     },
     didDrawPage: data => {

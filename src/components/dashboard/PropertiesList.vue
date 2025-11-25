@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 h-full flex flex-col">
     <div class="flex items-center justify-between">
       <h3 class="text-xl font-bold text-white">{{ $t('dashboard.properties') }}</h3>
       <button
@@ -26,7 +26,7 @@
       ></div>
     </div>
 
-    <div v-else-if="properties.length === 0" class="glass-panel rounded-2xl p-12 text-center">
+    <div v-else-if="properties.length === 0" class="glass-panel rounded-2xl p-12 text-center flex-1 flex flex-col justify-center items-center">
       <div class="w-20 h-20 mx-auto bg-white/5 rounded-full flex items-center justify-center mb-4">
         <svg class="w-10 h-10 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

@@ -11,7 +11,7 @@ export const useSettingsStore = defineStore('settings', () => {
   // State
   const language = ref('fr')
   const currency = ref('EUR')
-  const theme = ref('light')
+  const theme = ref('dark')
   const alertThreshold = ref(5)
   const notifications = ref({
     email: true,
@@ -98,7 +98,7 @@ export const useSettingsStore = defineStore('settings', () => {
               language: lang
             })
           })
-          .catch(() => {})
+          .catch(() => { })
       }
 
       // Recharger la page pour appliquer la nouvelle langue partout
@@ -126,7 +126,7 @@ export const useSettingsStore = defineStore('settings', () => {
               currency: curr
             })
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     }
   }

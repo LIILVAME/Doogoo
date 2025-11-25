@@ -8,28 +8,28 @@
       <StatCard
         :value="stats.totalProperties.toString()"
         :label="$t('dashboard.totalProperties')"
-        :icon="PropertiesIcon"
+        :icon="Building2"
         icon-bg-class="bg-violet-500"
         icon-color-class="text-violet-200"
       />
       <StatCard
         :value="stats.occupiedProperties.toString()"
         :label="$t('dashboard.occupied')"
-        :icon="OccupiedIcon"
+        :icon="Users"
         icon-bg-class="bg-emerald-500"
         icon-color-class="text-emerald-200"
       />
       <StatCard
         :value="stats.vacantProperties.toString()"
         :label="$t('dashboard.vacant')"
-        :icon="VacantIcon"
+        :icon="Home"
         icon-bg-class="bg-zinc-500"
         icon-color-class="text-zinc-200"
       />
       <StatCard
         :value="formatCurrency(stats.totalRent || 0)"
         :label="$t('dashboard.monthlyRent')"
-        :icon="RentIcon"
+        :icon="Wallet"
         icon-bg-class="bg-amber-500"
         icon-color-class="text-amber-200"
       />
@@ -40,14 +40,7 @@
       v-if="stats.latePayments > 0"
       class="mt-6 bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-center"
     >
-      <svg class="w-6 h-6 text-rose-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
-      </svg>
+      <AlertCircle class="w-6 h-6 text-rose-400 mr-3" />
       <div>
         <p class="font-semibold text-rose-200">
           {{ $t('stats.alerts.latePayments.message', { count: stats.latePayments }) }}
@@ -59,9 +52,10 @@
 </template>
 
 <script setup>
-import { h } from 'vue'
+import { defineProps } from 'vue'
 import StatCard from '../StatCard.vue'
 import { formatCurrency } from '@/utils/formatters'
+import { Building2, Users, Home, Wallet, AlertCircle } from 'lucide-vue-next'
 
 defineProps({
   stats: {
@@ -69,84 +63,4 @@ defineProps({
     required: true
   }
 })
-
-// Icône : Appartements
-const PropertiesIcon = () =>
-  h(
-    'svg',
-    {
-      fill: 'none',
-      stroke: 'currentColor',
-      viewBox: '0 0 24 24',
-      class: 'w-full h-full'
-    },
-    [
-      h('path', {
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        'stroke-width': '2',
-        d: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
-      })
-    ]
-  )
-
-// Icône : Occupé
-const OccupiedIcon = () =>
-  h(
-    'svg',
-    {
-      fill: 'none',
-      stroke: 'currentColor',
-      viewBox: '0 0 24 24',
-      class: 'w-full h-full'
-    },
-    [
-      h('path', {
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        'stroke-width': '2',
-        d: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
-      })
-    ]
-  )
-
-// Icône : Libre
-const VacantIcon = () =>
-  h(
-    'svg',
-    {
-      fill: 'none',
-      stroke: 'currentColor',
-      viewBox: '0 0 24 24',
-      class: 'w-full h-full'
-    },
-    [
-      h('path', {
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        'stroke-width': '2',
-        d: 'M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4'
-      })
-    ]
-  )
-
-// Icône : Loyers
-const RentIcon = () =>
-  h(
-    'svg',
-    {
-      fill: 'none',
-      stroke: 'currentColor',
-      viewBox: '0 0 24 24',
-      class: 'w-full h-full'
-    },
-    [
-      h('path', {
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        'stroke-width': '2',
-        d: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9.001 9.001 0 11-18 0 9.001 9.001 0 0118 0z'
-      })
-    ]
-  )
 </script>

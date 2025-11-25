@@ -4,23 +4,30 @@
     <Transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="handleClose"></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
-            class="relative w-full max-w-md transform overflow-hidden rounded-xl bg-white shadow-xl transition-all"
+            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
           >
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-900">{{ $t('payments.addPayment') }}</h2>
+            <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                  <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-white">{{ $t('payments.addPayment') }}</h2>
+              </div>
               <button
                 @click="handleClose"
-                class="text-gray-400 hover:text-gray-600 transition-colors"
+                class="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
                 :aria-label="$t('common.close')"
               >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -32,32 +39,33 @@
             </div>
 
             <!-- Form -->
-            <form @submit.prevent="handleSubmit" class="px-6 py-4">
-              <div class="space-y-4">
+            <form @submit.prevent="handleSubmit" class="px-6 py-5">
+              <div class="space-y-5">
                 <!-- Bien concerné -->
                 <div>
                   <label
                     for="payment-property"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
-                    {{ $t('payments.relatedProperty') }} <span class="text-red-500">*</span>
+                    {{ $t('payments.relatedProperty') }} <span class="text-rose-400">*</span>
                   </label>
                   <select
                     id="payment-property"
                     v-model="form.propertyId"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                     @change="handlePropertyChange"
                   >
-                    <option value="">{{ $t('payments.selectProperty') }}</option>
+                    <option value="" class="bg-zinc-900">{{ $t('payments.selectProperty') }}</option>
                     <option
                       v-for="property in propertiesWithTenants"
                       :key="property.id"
                       :value="property.id"
+                      class="bg-zinc-900"
                     >
                       {{ property.name }} - {{ property.city }}
                     </option>
-                    <option value="custom">{{ $t('payments.otherProperty') }}</option>
+                    <option value="custom" class="bg-zinc-900">{{ $t('payments.otherProperty') }}</option>
                   </select>
                   <!-- Champ texte libre si "Autre" sélectionné -->
                   <div v-if="form.propertyId === 'custom'" class="mt-2">
@@ -65,7 +73,7 @@
                       v-model="form.propertyCustom"
                       type="text"
                       :placeholder="$t('payments.propertyName')"
-                      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       required
                     />
                   </div>
@@ -73,86 +81,89 @@
 
                 <!-- Locataire (pré-rempli si bien sélectionné) -->
                 <div>
-                  <label for="payment-tenant" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ $t('payments.tenant') }} <span class="text-red-500">*</span>
+                  <label for="payment-tenant" class="block text-sm font-medium text-zinc-300 mb-2">
+                    {{ $t('payments.tenant') }} <span class="text-rose-400">*</span>
                   </label>
                   <input
                     id="payment-tenant"
                     v-model="form.tenant"
                     type="text"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                     :placeholder="$t('payments.placeholders.tenant')"
                   />
                 </div>
 
                 <!-- Montant -->
                 <div>
-                  <label for="payment-amount" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ $t('payments.amountEuro') }} <span class="text-red-500">*</span>
+                  <label for="payment-amount" class="block text-sm font-medium text-zinc-300 mb-2">
+                    {{ $t('payments.amountEuro') }} <span class="text-rose-400">*</span>
                   </label>
-                  <input
-                    id="payment-amount"
-                    v-model.number="form.amount"
-                    type="number"
-                    required
-                    min="0"
-                    step="10"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
-                    :placeholder="$t('payments.placeholders.amount')"
-                  />
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{ $t(`currency.${settingsStore.currency}`) }}</span>
+                    <input
+                      id="payment-amount"
+                      v-model.number="form.amount"
+                      type="number"
+                      required
+                      min="0"
+                      step="10"
+                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      :placeholder="$t('payments.placeholders.amount')"
+                    />
+                  </div>
                 </div>
 
                 <!-- Date d'échéance -->
                 <div>
                   <label
                     for="payment-due-date"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
-                    {{ $t('payments.dueDate') }} <span class="text-red-500">*</span>
+                    {{ $t('payments.dueDate') }} <span class="text-rose-400">*</span>
                   </label>
                   <input
                     id="payment-due-date"
                     v-model="form.dueDate"
                     type="date"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   />
                 </div>
 
                 <!-- Statut -->
                 <div>
-                  <label for="payment-status" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ $t('payments.status') }} <span class="text-red-500">*</span>
+                  <label for="payment-status" class="block text-sm font-medium text-zinc-300 mb-2">
+                    {{ $t('payments.status') }} <span class="text-rose-400">*</span>
                   </label>
                   <select
                     id="payment-status"
                     v-model="form.status"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   >
-                    <option value="">{{ $t('payments.selectStatus') }}</option>
-                    <option :value="TRANSACTION_STATUS.PAID">{{ $t('status.paid') }}</option>
-                    <option :value="TRANSACTION_STATUS.PENDING">{{ $t('status.pending') }}</option>
-                    <option :value="TRANSACTION_STATUS.LATE">{{ $t('status.late') }}</option>
+                    <option value="" class="bg-zinc-900">{{ $t('payments.selectStatus') }}</option>
+                    <option :value="TRANSACTION_STATUS.PAID" class="bg-zinc-900">{{ $t('status.paid') }}</option>
+                    <option :value="TRANSACTION_STATUS.PENDING" class="bg-zinc-900">{{ $t('status.pending') }}</option>
+                    <option :value="TRANSACTION_STATUS.LATE" class="bg-zinc-900">{{ $t('status.late') }}</option>
                   </select>
                 </div>
               </div>
 
               <!-- Actions -->
-              <div class="mt-6 flex items-center justify-end gap-3">
+              <div class="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
                 <button
                   type="button"
                   @click="handleClose"
                   :disabled="isLoading"
-                  class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-zinc-300 font-medium hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ $t('common.cancel') }}
                 </button>
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                 >
                   <svg
                     v-if="isLoading"

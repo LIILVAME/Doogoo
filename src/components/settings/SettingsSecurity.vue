@@ -3,18 +3,18 @@
     <div class="space-y-6">
       <!-- En-tête -->
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ $t('security.title') }}</h2>
-        <p class="text-gray-600">{{ $t('security.subtitle') }}</p>
+        <h2 class="text-2xl font-bold text-white mb-2">{{ $t('security.title') }}</h2>
+        <p class="text-zinc-400">{{ $t('security.subtitle') }}</p>
       </div>
 
       <!-- Carte 1: Mot de passe -->
-      <div class="card hover:shadow-md transition-shadow">
+      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-start">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4"
+            class="flex-shrink-0 w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mr-4 border border-emerald-500/20"
           >
             <svg
-              class="w-6 h-6 text-green-600"
+              class="w-6 h-6 text-emerald-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -28,10 +28,10 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">
+            <h3 class="text-lg font-semibold text-white mb-1">
               {{ $t('security.password.title') }}
             </h3>
-            <p class="text-sm text-gray-600 mb-4">{{ $t('security.password.description') }}</p>
+            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.password.description') }}</p>
             <button
               @click="isPasswordModalOpen = true"
               class="btn-primary inline-flex items-center"
@@ -51,13 +51,13 @@
       </div>
 
       <!-- Carte 2: Authentification à deux facteurs -->
-      <div class="card hover:shadow-md transition-shadow">
+      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-start">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4"
+            class="flex-shrink-0 w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mr-4 border border-blue-500/20"
           >
             <svg
-              class="w-6 h-6 text-blue-600"
+              class="w-6 h-6 text-blue-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -72,19 +72,19 @@
           </div>
           <div class="flex-1">
             <div class="flex items-center justify-between mb-1">
-              <h3 class="text-lg font-semibold text-gray-900">
+              <h3 class="text-lg font-semibold text-white">
                 {{ $t('security.twoFactor.title') }}
               </h3>
               <span
                 :class="[
-                  'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
-                  twoFactorEnabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                  'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border',
+                  twoFactorEnabled ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-zinc-400 border-white/10'
                 ]"
               >
                 <span
                   :class="[
                     'w-2 h-2 rounded-full mr-2',
-                    twoFactorEnabled ? 'bg-green-500' : 'bg-gray-400'
+                    twoFactorEnabled ? 'bg-emerald-500' : 'bg-zinc-500'
                   ]"
                 ></span>
                 {{
@@ -94,14 +94,14 @@
                 }}
               </span>
             </div>
-            <p class="text-sm text-gray-600 mb-4">{{ $t('security.twoFactor.description') }}</p>
+            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.twoFactor.description') }}</p>
             <button
               @click="toggleTwoFactor"
               :class="[
-                'inline-flex items-center px-4 py-2 rounded-lg font-medium transition-colors',
+                'inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors',
                 twoFactorEnabled
-                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  : 'bg-primary-500 text-white hover:bg-primary-600'
+                  ? 'bg-white/5 text-zinc-300 hover:bg-white/10 border border-white/10'
+                  : 'bg-white text-zinc-950 hover:bg-zinc-200'
               ]"
             >
               {{
@@ -114,19 +114,16 @@
         </div>
       </div>
 
-      <!-- Carte 3: Test de changement de mot de passe -->
-      <div class="card hover:shadow-md transition-shadow">
-        <PasswordChangeTest />
-      </div>
+
 
       <!-- Carte 4: Sessions actives -->
-      <div class="card hover:shadow-md transition-shadow">
+      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow">
         <div class="flex items-start">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4"
+            class="flex-shrink-0 w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mr-4 border border-purple-500/20"
           >
             <svg
-              class="w-6 h-6 text-purple-600"
+              class="w-6 h-6 text-purple-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -140,10 +137,10 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-900 mb-1">
+            <h3 class="text-lg font-semibold text-white mb-1">
               {{ $t('security.sessions.title') }}
             </h3>
-            <p class="text-sm text-gray-600 mb-4">{{ $t('security.sessions.description') }}</p>
+            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.sessions.description') }}</p>
             <button
               @click="handleSignOutAllDevices"
               :disabled="isSigningOut"
@@ -222,7 +219,6 @@ import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import ChangePasswordModal from './ChangePasswordModal.vue'
-import PasswordChangeTest from './PasswordChangeTest.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 const { t } = useI18n()

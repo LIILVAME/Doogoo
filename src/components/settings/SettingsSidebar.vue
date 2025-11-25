@@ -1,38 +1,40 @@
 <template>
-  <aside class="w-64 shrink-0 bg-gray-50 border-r border-gray-200 h-full">
-    <nav class="p-4 space-y-1">
-      <button
-        v-for="section in sections"
-        :key="section.id"
-        @click="$emit('change-section', section.id)"
-        :class="[
-          'w-full flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200',
-          activeSection === section.id
-            ? 'bg-green-100 text-green-700 font-semibold'
-            : 'text-gray-700 hover:bg-green-50 hover:text-green-600'
-        ]"
-      >
-        <span class="mr-3" aria-hidden="true">
-          <svg
-            v-if="iconConfigs[section.icon]"
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            :viewBox="iconConfigs[section.icon].viewBox"
-          >
-            <path
-              v-for="(path, index) in iconConfigs[section.icon].paths"
-              :key="`${section.id}-${index}`"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              :d="path"
-            />
-          </svg>
-        </span>
-        <span>{{ section.label }}</span>
-      </button>
-    </nav>
+  <aside class="w-64 shrink-0">
+    <div class="glass-panel rounded-2xl p-4">
+      <nav class="space-y-1">
+        <button
+          v-for="section in sections"
+          :key="section.id"
+          @click="$emit('change-section', section.id)"
+          :class="[
+            'w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+            activeSection === section.id
+              ? 'bg-white/10 text-white shadow-lg shadow-black/20'
+              : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+          ]"
+        >
+          <span class="mr-3" :class="activeSection === section.id ? 'text-violet-400' : 'text-zinc-500'" aria-hidden="true">
+            <svg
+              v-if="iconConfigs[section.icon]"
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              :viewBox="iconConfigs[section.icon].viewBox"
+            >
+              <path
+                v-for="(path, index) in iconConfigs[section.icon].paths"
+                :key="`${section.id}-${index}`"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                :d="path"
+              />
+            </svg>
+          </span>
+          <span>{{ section.label }}</span>
+        </button>
+      </nav>
+    </div>
   </aside>
 </template>
 

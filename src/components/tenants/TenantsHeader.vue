@@ -3,78 +3,72 @@
     <!-- Titre et bouton -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">{{ $t('tenants.title') }}</h1>
-        <p class="text-gray-600">{{ $t('tenants.subtitle') }}</p>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">{{ $t('tenants.title') }}</h1>
+        <p class="text-zinc-400">{{ $t('tenants.subtitle') }}</p>
       </div>
       <button 
         @click="$emit('add-tenant')"
-        class="btn-primary flex items-center justify-center shrink-0"
+        class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-colors shadow-lg shadow-white/5"
       >
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
+        <Plus class="w-5 h-5 mr-2" />
         {{ $t('tenants.addTenant') }}
       </button>
     </div>
 
     <!-- Statistiques globales -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       <!-- Total -->
-      <div class="card">
-        <div class="flex items-center justify-between">
+      <div class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"></div>
+        <div class="flex items-center justify-between relative z-10">
           <div>
-            <p class="text-xs text-gray-500 mb-1">Total</p>
-            <p class="text-2xl font-bold text-gray-900">{{ stats.totalTenants }}</p>
+            <p class="text-sm font-medium text-zinc-400 mb-1">Total</p>
+            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.totalTenants }}</p>
           </div>
-          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
+          <div class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-violet-500 text-violet-200">
+            <Users class="w-6 h-6" />
           </div>
         </div>
       </div>
 
       <!-- À jour -->
-      <div class="card">
-        <div class="flex items-center justify-between">
+      <div class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+        <div class="flex items-center justify-between relative z-10">
           <div>
-            <p class="text-xs text-gray-500 mb-1">{{ $t('status.onTime') }}</p>
-            <p class="text-2xl font-bold text-green-600">{{ stats.onTimeTenants }}</p>
+            <p class="text-sm font-medium text-zinc-400 mb-1">{{ $t('status.onTime') }}</p>
+            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.onTimeTenants }}</p>
           </div>
-          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+          <div class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-emerald-500 text-emerald-200">
+            <CheckCircle class="w-6 h-6" />
           </div>
         </div>
       </div>
 
       <!-- En retard -->
-      <div class="card">
-        <div class="flex items-center justify-between">
+      <div class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl group-hover:bg-rose-500/20 transition-all duration-500"></div>
+        <div class="flex items-center justify-between relative z-10">
           <div>
-            <p class="text-xs text-gray-500 mb-1">{{ $t('status.late') }}</p>
-            <p class="text-2xl font-bold text-red-600">{{ stats.lateTenants }}</p>
+            <p class="text-sm font-medium text-zinc-400 mb-1">{{ $t('status.late') }}</p>
+            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.lateTenants }}</p>
           </div>
-          <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+          <div class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-rose-500 text-rose-200">
+            <AlertCircle class="w-6 h-6" />
           </div>
         </div>
       </div>
 
       <!-- Loyers totaux -->
-      <div class="card">
-        <div class="flex items-center justify-between">
+      <div class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-500"></div>
+        <div class="flex items-center justify-between relative z-10">
           <div>
-            <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.totalRent') }}</p>
-            <p class="text-xl font-bold text-gray-900">{{ formatCurrency(stats.totalRent) }}</p>
+            <p class="text-sm font-medium text-zinc-400 mb-1">{{ $t('tenants.totalRent') }}</p>
+            <p class="text-2xl font-bold text-white tracking-tight">{{ formatCurrency(stats.totalRent) }}</p>
           </div>
-          <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9.001 9.001 0 11-18 0 9.001 9.001 0 0118 0z" />
-            </svg>
+          <div class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-amber-500 text-amber-200">
+            <Wallet class="w-6 h-6" />
           </div>
         </div>
       </div>
@@ -84,6 +78,7 @@
 
 <script setup>
 import { formatCurrency } from '@/utils/formatters'
+import { Users, CheckCircle, AlertCircle, Wallet, Plus } from 'lucide-vue-next'
 
 defineProps({
   stats: {

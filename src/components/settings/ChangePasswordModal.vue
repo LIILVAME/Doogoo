@@ -7,7 +7,7 @@
         @click.self="handleClose"
       >
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="handleClose"></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">

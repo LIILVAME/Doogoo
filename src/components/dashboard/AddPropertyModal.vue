@@ -4,7 +4,7 @@
     <Transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="handleClose"></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
@@ -93,16 +93,19 @@
                   <label for="property-rent" class="block text-sm font-medium text-gray-700 mb-2">
                     {{ $t('properties.monthlyRent') }} <span class="text-red-500">*</span>
                   </label>
-                  <input
-                    id="property-rent"
-                    v-model.number="form.rent"
-                    type="number"
-                    required
-                    min="0"
-                    step="10"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
-                    :placeholder="$t('payments.placeholders.amount')"
-                  />
+                  <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ $t(`currency.${settingsStore.currency}`) }}</span>
+                    <input
+                      id="property-rent"
+                      v-model.number="form.rent"
+                      type="number"
+                      required
+                      min="0"
+                      step="10"
+                      class="w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                      :placeholder="$t('payments.placeholders.amount')"
+                    />
+                  </div>
                 </div>
 
                 <!-- Statut -->
@@ -250,6 +253,7 @@
 import { ref, watch, toRef } from 'vue'
 import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 import { useToastStore } from '@/stores/toastStore'
+import { useSettingsStore } from '@/stores/settingsStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
 import { propertySchema, validate } from '@/utils/validators'
 
@@ -269,6 +273,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'submit', 'field-completed'])
 
 const toastStore = useToastStore()
+const settingsStore = useSettingsStore()
 
 // Focus trap pour accessibilité
 const { modalRef } = useModalFocusTrap(toRef(() => props.isOpen))

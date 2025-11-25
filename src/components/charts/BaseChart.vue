@@ -198,8 +198,7 @@ const chartOptions = computed(() => {
       enabled: false
     },
     grid: {
-      borderColor: '#E5E7EB',
-      strokeDashArray: 4
+      show: false
     },
     legend: {
       show: true,
@@ -247,10 +246,16 @@ const chartOptions = computed(() => {
     }
   }
 
-  // Merge avec les options personnalisées
-  return {
+  // Merge avec les options personnalisées en gardant grid.show = false
+  const mergedOptions = {
     ...defaultOptions,
-    ...props.options
+    ...props.options,
+    grid: {
+      ...(props.options?.grid || {}),
+      show: false // Force la grille à être désactivée
+    }
   }
+
+  return mergedOptions
 })
 </script>

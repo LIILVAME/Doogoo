@@ -1,65 +1,65 @@
 <template>
   <div class="space-y-6">
-    <div class="card">
-      <h3 class="text-lg font-semibold text-gray-900 mb-6">{{ $t('settings.notifications') }}</h3>
+    <div class="glass-panel rounded-2xl p-6">
+      <h3 class="text-lg font-semibold text-white mb-6">{{ $t('settings.notifications') }}</h3>
       
       <div class="space-y-4">
-        <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group">
+        <label class="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group border border-white/10">
           <div class="flex items-center">
             <input
               v-model="localPreferences.notifications.email"
               type="checkbox"
-              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+              class="w-4 h-4 text-violet-600 border-zinc-600 bg-zinc-800 rounded focus:ring-violet-500 focus:ring-offset-zinc-900"
             />
-            <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+            <span class="ml-3 text-sm font-medium text-zinc-300 group-hover:text-white">
               {{ $t('settings.emailNotifications') }}
             </span>
           </div>
         </label>
 
-        <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group">
+        <label class="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group border border-white/10">
           <div class="flex items-center">
             <input
               v-model="localPreferences.notifications.payments"
               type="checkbox"
-              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+              class="w-4 h-4 text-violet-600 border-zinc-600 bg-zinc-800 rounded focus:ring-violet-500 focus:ring-offset-zinc-900"
             />
-            <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+            <span class="ml-3 text-sm font-medium text-zinc-300 group-hover:text-white">
               {{ $t('settings.paymentAlerts') }}
             </span>
           </div>
         </label>
 
-        <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group">
+        <label class="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group border border-white/10">
           <div class="flex items-center">
             <input
               v-model="localPreferences.notifications.reminders"
               type="checkbox"
-              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+              class="w-4 h-4 text-violet-600 border-zinc-600 bg-zinc-800 rounded focus:ring-violet-500 focus:ring-offset-zinc-900"
             />
-            <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+            <span class="ml-3 text-sm font-medium text-zinc-300 group-hover:text-white">
               {{ $t('settings.paymentReminders') }}
             </span>
           </div>
         </label>
 
-        <label class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group">
+        <label class="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group border border-white/10">
           <div class="flex items-center">
             <input
               v-model="localPreferences.notifications.maintenance"
               type="checkbox"
-              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+              class="w-4 h-4 text-violet-600 border-zinc-600 bg-zinc-800 rounded focus:ring-violet-500 focus:ring-offset-zinc-900"
             />
-            <span class="ml-3 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+            <span class="ml-3 text-sm font-medium text-zinc-300 group-hover:text-white">
               {{ $t('settings.maintenanceNotifications') }}
             </span>
           </div>
         </label>
       </div>
 
-      <div class="mt-8 pt-6 border-t border-gray-100">
+      <div class="mt-8 pt-6 border-t border-white/10">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
             {{ $t('settings.alertThreshold') }}
           </label>
           <input
@@ -67,10 +67,10 @@
             type="number"
             min="0"
             max="30"
-            class="w-full max-w-xs border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+            class="w-full max-w-xs bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
             placeholder="5"
           />
-          <p class="text-xs text-gray-500 mt-2">{{ $t('settings.alertThresholdDescription') }}</p>
+          <p class="text-xs text-zinc-400 mt-2">{{ $t('settings.alertThresholdDescription') }}</p>
         </div>
       </div>
 

@@ -8,7 +8,7 @@
       >
         <!-- Overlay -->
         <div
-          class="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
           @click="handleCancel"
         />
 

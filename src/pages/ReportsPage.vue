@@ -1,44 +1,30 @@
 <template>
-  <div class="flex min-h-screen bg-gray-50">
-    <!-- Sidebar -->
-    <Sidebar />
-
-    <!-- Main Content -->
-    <main ref="mainElement" class="flex-1 overflow-y-auto">
+  <DashboardLayout>
+    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      <div
-        class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-6 xl:px-8 pt-16 pb-8 md:px-10 md:pt-10 md:pb-10"
-      >
-        <!-- Header -->
-        <div class="mb-8 flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('reports.title') }}</h1>
-            <p class="text-gray-600">{{ $t('reports.subtitle') }}</p>
-            <div class="border-b-2 border-green-500 w-20 mb-4 mt-3"></div>
-          </div>
 
-          <!-- Bouton d'action principal -->
-          <button
-            @click="handleExportPDF"
-            :disabled="reportsStore.loading || !reportData"
-            class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-sm hover:shadow-md transition-all flex items-center gap-2"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            {{ $t('reports.actions.exportPDF') }}
-          </button>
+      <!-- Header -->
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white mb-2">{{ $t('reports.title') }}</h1>
+          <p class="text-zinc-400">{{ $t('reports.subtitle') }}</p>
         </div>
+
+        <!-- Bouton d'action principal -->
+        <button
+          @click="handleExportPDF"
+          :disabled="reportsStore.loading || !reportData"
+          class="px-6 py-3 bg-white text-zinc-950 hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium transition-colors shadow-lg shadow-white/5 flex items-center gap-2"
+        >
+          <FileText class="w-5 h-5" />
+          {{ $t('reports.actions.exportPDF') }}
+        </button>
+      </div>
 
         <!-- Filtres -->
         <ReportFilters
@@ -60,8 +46,8 @@
             :label="$t('reports.kpi.totalRevenue')"
             :value="reportData.statistics.totalRevenue"
             icon="currency"
-            icon-color="text-green-600"
-            icon-bg-color="bg-green-50"
+            icon-color="text-emerald-400"
+            icon-bg-color="bg-emerald-500/10 border border-emerald-500/20"
             :formatter="formatCurrency"
             :tooltip="$t('reports.kpi.totalRevenueTooltip')"
           />
@@ -69,8 +55,8 @@
             :label="$t('reports.kpi.rentCollected')"
             :value="reportData.statistics.totalRevenue"
             icon="currency"
-            icon-color="text-blue-600"
-            icon-bg-color="bg-blue-50"
+            icon-color="text-blue-400"
+            icon-bg-color="bg-blue-500/10 border border-blue-500/20"
             :formatter="formatCurrency"
             :tooltip="$t('reports.kpi.rentCollectedTooltip')"
           />
@@ -78,8 +64,8 @@
             :label="$t('reports.kpi.occupancyRate')"
             :value="reportData.statistics.occupancyRate"
             icon="home"
-            icon-color="text-purple-600"
-            icon-bg-color="bg-purple-50"
+            icon-color="text-violet-400"
+            icon-bg-color="bg-violet-500/10 border border-violet-500/20"
             :formatter="val => `${val}%`"
             :tooltip="$t('reports.kpi.occupancyRateTooltip')"
           />
@@ -87,8 +73,8 @@
             :label="$t('reports.kpi.delayedPayments')"
             :value="reportData.statistics.latePayments"
             icon="clock"
-            icon-color="text-red-600"
-            icon-bg-color="bg-red-50"
+            icon-color="text-rose-400"
+            icon-bg-color="bg-rose-500/10 border border-rose-500/20"
             :tooltip="$t('reports.kpi.delayedPaymentsTooltip')"
           />
         </div>
@@ -96,7 +82,7 @@
         <!-- Loading State -->
         <div v-if="reportsStore.loading && !reportData" class="text-center py-12">
           <InlineLoader />
-          <p class="mt-4 text-gray-600">{{ $t('reports.loading') }}</p>
+          <p class="mt-4 text-zinc-400">{{ $t('reports.loading') }}</p>
         </div>
 
         <!-- Chart and Table Section -->
@@ -150,23 +136,22 @@
           @send-email="handleSendEmail"
         />
       </div>
-    </main>
 
-    <!-- Loading Overlay pour les exports -->
-    <LoadingOverlay
-      :isVisible="isExporting"
-      :message="$t('reports.export.loading') || 'Export en cours...'"
-      :description="$t('reports.export.loadingDescription') || 'Génération du fichier PDF'"
-    />
-  </div>
-</template>
+      <!-- Loading Overlay pour les exports -->
+      <LoadingOverlay
+        :isVisible="isExporting"
+        :message="$t('reports.export.loading') || 'Export en cours...'"
+        :description="$t('reports.export.loadingDescription') || 'Génération du fichier PDF'"
+      />
+    </DashboardLayout>
+  </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
 import { useI18n } from '@/composables/useLingui'
-import Sidebar from '../components/Sidebar.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import EmptyState from '../components/common/EmptyState.vue'
 import LoadingOverlay from '../components/common/LoadingOverlay.vue'
@@ -181,6 +166,7 @@ import { useToastStore } from '@/stores/toastStore'
 import { exportToPDF } from '@/utils/exportUtils'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { FileText } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const reportsStore = useReportsStore()

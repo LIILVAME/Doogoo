@@ -33,7 +33,7 @@
     <!-- Titre -->
     <h3
       v-if="title"
-      class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2 tracking-tight"
+      class="text-lg font-medium text-white mb-2"
     >
       {{ title }}
     </h3>
@@ -41,7 +41,7 @@
     <!-- Description -->
     <p
       v-if="description"
-      class="text-sm sm:text-base text-gray-900 dark:text-gray-300 mb-6 max-w-md mx-auto leading-relaxed"
+      class="text-zinc-400 mb-6 max-w-md mx-auto leading-relaxed"
     >
       {{ description }}
     </p>

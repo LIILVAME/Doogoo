@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabaseClient'
 import { withErrorHandling } from '@/utils/apiErrorHandler'
+import { formatCurrency } from '@/utils/formatters'
 
 /**
  * API centralisée pour les alertes
@@ -95,7 +96,7 @@ export async function getAlerts(userId) {
             type: ALERT_TYPES.LATE_PAYMENT,
             severity: 'high',
             title: `Paiement en retard - ${payment.properties?.name || 'N/A'}`,
-            message: `Le loyer de ${payment.amount}€ est en retard de ${daysLate} jour(s).`,
+            message: `Le loyer de ${formatCurrency(payment.amount)} est en retard de ${daysLate} jour(s).`,
             propertyId: payment.property_id,
             paymentId: payment.id,
             date: payment.due_date,
@@ -119,7 +120,7 @@ export async function getAlerts(userId) {
               type: ALERT_TYPES.UNPAID_AFTER_DAYS,
               severity: daysOverdue >= 10 ? 'high' : 'medium',
               title: `Paiement impayé - ${payment.properties?.name || 'N/A'}`,
-              message: `Le paiement de ${payment.amount}€ est impayé depuis ${daysOverdue} jour(s).`,
+              message: `Le paiement de ${formatCurrency(payment.amount)} est impayé depuis ${daysOverdue} jour(s).`,
               propertyId: payment.property_id,
               paymentId: payment.id,
               date: payment.due_date,

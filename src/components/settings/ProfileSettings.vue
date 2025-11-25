@@ -9,15 +9,15 @@
       <!-- Avatar / Photo de profil -->
       <div class="flex items-center gap-6">
         <div class="relative">
-          <div class="w-20 h-20 rounded-full border-2 border-gray-200 bg-gray-100 flex items-center justify-center overflow-hidden">
+          <div class="w-20 h-20 rounded-full border-2 border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
             <img
               v-if="preview"
               :src="preview"
               alt="Avatar"
               class="w-full h-full object-cover"
             />
-            <div v-else class="w-full h-full flex items-center justify-center bg-primary-100">
-              <span class="text-2xl font-semibold text-primary-600">
+            <div v-else class="w-full h-full flex items-center justify-center bg-violet-500/10">
+              <span class="text-2xl font-semibold text-violet-400">
                 {{ avatarInitial }}
               </span>
             </div>
@@ -46,65 +46,65 @@
             @change="onFileChange"
             class="hidden"
           />
-          <p class="text-xs text-gray-500 mt-2">Formats acceptés : JPG, PNG (max 2MB)</p>
+          <p class="text-xs text-zinc-400 mt-2">Formats acceptés : JPG, PNG (max 2MB)</p>
         </div>
       </div>
 
       <!-- Informations personnelles -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Nom complet <span class="text-red-500">*</span>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Nom complet <span class="text-rose-400">*</span>
           </label>
           <input
             v-model="profile.name"
             type="text"
             required
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+            class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
             placeholder="Votre nom complet"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Email <span class="text-red-500">*</span>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Email <span class="text-rose-400">*</span>
           </label>
           <input
             v-model="profile.email"
             type="email"
             required
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+            class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
             placeholder="votre@email.com"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
             Téléphone
           </label>
           <input
             v-model="profile.phone"
             type="tel"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+            class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
             placeholder="06 12 34 56 78"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
             Entreprise (optionnel)
           </label>
           <input
             v-model="profile.company"
             type="text"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+            class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
             placeholder="Nom de votre entreprise"
           />
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="flex justify-end pt-4 border-t border-gray-100">
+      <div class="flex justify-end pt-4 border-t border-white/10">
         <button
           type="submit"
           :disabled="isSaving"

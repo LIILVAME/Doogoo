@@ -19,14 +19,7 @@
             @click="isModalOpen = true"
             class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-colors shadow-lg shadow-white/5"
           >
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
+            <Plus class="w-5 h-5 mr-2" />
             {{ $t('payments.addPayment') }}
           </button>
         </div>
@@ -41,19 +34,7 @@
               <p class="text-2xl font-bold text-white">{{ pendingPayments.length }}</p>
             </div>
             <div class="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20">
-              <svg
-                class="w-6 h-6 text-amber-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <Clock class="w-6 h-6 text-amber-500" />
             </div>
           </div>
         </div>
@@ -62,22 +43,10 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.late') }}</p>
-              <p class="text-2xl font-bold text-rose-500">{{ latePayments.length }}</p>
+              <p class="text-2xl font-bold text-white">{{ latePayments.length }}</p>
             </div>
             <div class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center border border-rose-500/20">
-              <svg
-                class="w-6 h-6 text-rose-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
+              <AlertCircle class="w-6 h-6 text-rose-500" />
             </div>
           </div>
         </div>
@@ -86,22 +55,10 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.paidThisMonth') }}</p>
-              <p class="text-2xl font-bold text-emerald-500">{{ paidPayments.length }}</p>
+              <p class="text-2xl font-bold text-white">{{ paidPayments.length }}</p>
             </div>
             <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20">
-              <svg
-                class="w-6 h-6 text-emerald-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <CheckCircle class="w-6 h-6 text-emerald-500" />
             </div>
           </div>
         </div>
@@ -194,6 +151,7 @@ import AddPaymentModal from '../components/payments/AddPaymentModal.vue'
 import EditPaymentModal from '../components/payments/EditPaymentModal.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import { usePaymentsStore } from '@/stores/paymentsStore'
+import { Plus, Clock, AlertCircle, CheckCircle } from 'lucide-vue-next'
 
 const paymentsStore = usePaymentsStore()
 

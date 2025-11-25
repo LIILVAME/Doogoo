@@ -7,11 +7,11 @@
           v-model="localSearchTerm"
           type="text"
           :placeholder="$t('properties.searchPlaceholder')"
-          class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+          class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 pl-10 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
           @input="$emit('search', localSearchTerm)"
         />
         <svg 
-          class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" 
+          class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -28,17 +28,17 @@
         :key="filter.value"
         @click="handleFilterClick(filter.value)"
         :class="[
-          'px-4 py-2 rounded-lg font-medium transition-colors text-sm',
+          'px-4 py-2 rounded-xl font-medium transition-all text-sm',
           activeFilter === filter.value
-            ? 'bg-primary-600 text-white shadow-sm'
-            : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+            ? 'bg-violet-500 text-white shadow-lg shadow-violet-500/30'
+            : 'bg-white/5 text-zinc-300 border border-white/10 hover:bg-white/10 hover:border-white/20'
         ]"
       >
         {{ filter.label }}
         <span 
           v-if="filter.count !== undefined" 
           class="ml-2 px-2 py-0.5 rounded-full text-xs"
-          :class="activeFilter === filter.value ? 'bg-primary-500' : 'bg-gray-100'"
+          :class="activeFilter === filter.value ? 'bg-violet-400/30' : 'bg-white/10'"
         >
           {{ filter.count }}
         </span>

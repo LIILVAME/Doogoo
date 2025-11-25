@@ -1,6 +1,6 @@
 <template>
-  <section class="card">
-    <h2 class="text-lg font-semibold text-gray-900 mb-6">{{ title }}</h2>
+  <section class="glass-panel rounded-2xl p-6">
+    <h2 v-if="title" class="text-lg font-semibold text-white mb-6">{{ title }}</h2>
     <slot />
   </section>
 </template>

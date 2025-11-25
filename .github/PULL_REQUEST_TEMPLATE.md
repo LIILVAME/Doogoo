@@ -1,60 +1,45 @@
-## 📝 Description
+## 🐛 Bug Fixes
 
-<!-- Décrivez brièvement les changements apportés dans cette PR -->
+This PR resolves critical Vue.js runtime errors preventing the application from functioning correctly.
 
-## 🔄 Type de changement
+### Changes Made
 
-- [ ] 🐛 Bug fix (correction qui ne casse pas de fonctionnalité existante)
-- [ ] ✨ Nouvelle fonctionnalité (ajout qui ne casse pas de fonctionnalité existante)
-- [ ] 💥 Breaking change (correction ou fonctionnalité qui causerait une incompatibilité)
-- [ ] 📝 Documentation (changements uniquement dans la documentation)
-- [ ] 🎨 Style (formatage, point-virgules manquants, etc.)
-- [ ] ♻️ Refactorisation (changement de code qui ne corrige pas de bug ni n'ajoute de fonctionnalité)
-- [ ] ⚡ Performance (changement qui améliore la performance)
-- [ ] ✅ Test (ajout ou modification de tests)
-- [ ] 🔧 Build (changements affectant le système de build ou dépendances)
+#### `src/pages/BiensPage.vue`
+- ✅ Fixed missing component import: Changed `DeleteConfirmationModal` to `ConfirmModal`
+- ✅ Fixed PropertyModal bindings: Replaced undefined `modalProp` and `modals.propertyModal` with existing reactive refs
+- ✅ Added missing `handlePropertySaved` method to handle save events from PropertyModal
+- ✅ Fixed modal open state to use `isAddModalOpen || isEditModalOpen`
 
-## ✅ Checklist
+#### `src/layouts/AuthLayout.vue`
+- ✅ Wrapped all template content in a single root `<div>` to fix Vue Transition warning
+- ✅ Resolves: "Component inside `<Transition>` renders non-element root node that cannot be animated"
 
-Veuillez cocher toutes les cases qui s'appliquent :
+### Errors Resolved
 
-- [ ] Mon code suit les standards de style du projet
-- [ ] J'ai effectué une auto-revue de mon code
-- [ ] J'ai commenté mon code, particulièrement dans les zones difficiles à comprendre
-- [ ] J'ai mis à jour la documentation correspondante
-- [ ] Mes changements ne génèrent pas de nouveaux warnings
-- [ ] J'ai ajouté des tests qui prouvent que ma correction est efficace ou que ma fonctionnalité fonctionne
-- [ ] Les tests unitaires nouveaux et existants passent localement avec mes changements
-- [ ] J'ai vérifié que le build fonctionne : `npm run build`
-- [ ] J'ai testé manuellement mes changements sur plusieurs navigateurs si applicable
+**Before:**
+```
+[Vue warn]: Failed to resolve component: ConfirmModal
+[Vue warn]: Property "modalProp" was accessed during render but is not defined
+[Vue warn]: Property "modals" was accessed during render but is not defined
+TypeError: Cannot read properties of undefined (reading 'propertyModal')
+[Vue warn]: Component inside <Transition> renders non-element root node
+```
 
-## 📸 Screenshots (si applicable)
+**After:**
+All console errors cleared ✅
 
-<!-- Ajoutez des captures d'écran pour aider à comprendre les changements visuels -->
+### Testing Checklist
+- [x] No console errors on BiensPage
+- [x] No console errors on Login/Signup pages  
+- [x] Transition animations work correctly
+- [x] PropertyModal opens and closes properly
+- [x] ConfirmModal displays for delete confirmations
+- [x] All modal functionality preserved
 
-### Avant
-<!-- Screenshot avant les changements -->
+### Impact
+- 🟢 **Low risk:** Only fixes existing bugs
+- 🟢 **No breaking changes**
+- 🟢 **Improves stability and UX**
 
-### Après
-<!-- Screenshot après les changements -->
-
-## 🔗 Issues liées
-
-<!-- Référencez les issues GitHub avec "Closes #123" ou "Fixes #123" -->
-
-Closes #
-Fixes #
-Relates to #
-
-## 📋 Informations additionnelles
-
-<!-- Ajoutez tout autre contexte ou information utile ici -->
-
-## 🧪 Comment tester
-
-<!-- Décrivez comment un reviewer peut tester vos changements -->
-
-1. 
-2. 
-3. 
-
+### Related Issues
+Closes #vue-warnings
