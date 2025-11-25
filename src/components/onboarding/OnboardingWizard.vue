@@ -61,7 +61,7 @@
         </p>
         
         <div class="flex gap-3">
-          <Button variant="primary" type="submit" :loading="loading" full-width>
+          <Button variant="primary" type="submit" :loading="loading" :disabled="!capabilitiesReady" full-width>
             Continuer
           </Button>
           <Button variant="ghost" @click="handleSkip" :disabled="loading">
@@ -143,7 +143,7 @@
       </transition>
       
       <div class="flex gap-3">
-        <Button variant="primary" @click="handleStep2Continue" :loading="loading" full-width>
+        <Button variant="primary" @click="handleStep2Continue" :loading="loading" :disabled="!capabilitiesReady" full-width>
           Continuer
         </Button>
         <Button variant="ghost" @click="handleSkip" :disabled="loading">
@@ -181,22 +181,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
-import { PROPERTY_STATUS, PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
+import { CURRENCY_SYMBOLS } from '@/utils/constants'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
+import { useOnboardingAnalytics } from '@/composables/useOnboardingAnalytics'
 import Button from '@/components/ui/Button.vue'
 
 const router = useRouter()
-const authStore = useAuthStore()
 const propertiesStore = usePropertiesStore()
 const tenantsStore = useTenantsStore()
 const toastStore = useToastStore()
+const { trackStep1Completed, trackStep2Completed, trackOnboardingCompleted, trackOnboardingSkipped } = useOnboardingAnalytics()
 
 // État du wizard
 const currentStep = ref(1)
@@ -213,10 +213,59 @@ const formData = ref({
   createdPropertyId: null
 })
 
+const persistPropertyKey = 'onboarding_created_property_id'
+
 // Formatted rent pour affichage
 const formattedRent = computed(() => {
   const rent = parseFloat(formData.value.propertyRent)
   return isNaN(rent) ? `${formatCurrency(0)} /mois` : `${formatCurrency(rent)} /mois`
+})
+
+const capabilitiesReady = ref(true)
+
+const checkStoreCapabilities = () => {
+  const missingActions = []
+
+  if (typeof propertiesStore.addProperty !== 'function') {
+    missingActions.push('ajout de bien')
+  }
+
+  if (typeof tenantsStore.addTenant !== 'function') {
+    missingActions.push('ajout de locataire')
+  }
+
+  if (missingActions.length > 0) {
+    const message = `Actions indisponibles : ${missingActions.join(' et ')}. Veuillez réessayer plus tard.`
+    errors.value = { ...errors.value, general: message }
+    toastStore.error(message)
+    capabilitiesReady.value = false
+    return false
+  }
+
+  capabilitiesReady.value = true
+  return true
+}
+
+const restorePersistedProperty = () => {
+  const storedPropertyId = localStorage.getItem(persistPropertyKey)
+
+  if (storedPropertyId) {
+    formData.value.createdPropertyId = storedPropertyId
+  }
+}
+
+const persistPropertyId = propertyId => {
+  formData.value.createdPropertyId = propertyId
+  localStorage.setItem(persistPropertyKey, propertyId)
+}
+
+const clearPersistedPropertyId = () => {
+  localStorage.removeItem(persistPropertyKey)
+}
+
+onMounted(() => {
+  checkStoreCapabilities()
+  restorePersistedProperty()
 })
 
 /**
@@ -257,38 +306,32 @@ const validateStep2 = () => {
  * Étape 1 → Créer Bien
  */
 const handleStep1Continue = async () => {
+  if (!checkStoreCapabilities()) {
+    return
+  }
+
   if (!validateStep1()) return
-  
+
   loading.value = true
   errors.value = {}
-  
-  try {
-    if (typeof propertiesStore.addProperty !== 'function') {
-      throw new Error('Action d\'ajout de bien indisponible')
-    }
 
+  try {
     const property = await propertiesStore.addProperty({
       name: formData.value.propertyName,
-      rent: parseFloat(formData.value.propertyRent),
-      user_id: authStore.user.id
+      rent: parseFloat(formData.value.propertyRent)
     })
-    
+
     if (!property) {
       throw new Error('Échec création bien')
     }
-    
-    formData.value.createdPropertyId = property.id
-    
-    // Analytics
-    if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-      import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-        trackDoogooEvent('onboarding_step1_completed', {
-          property_name: formData.value.propertyName,
-          rent: formData.value.propertyRent
-        })
-      }).catch(() => {})
-    }
-    
+
+    persistPropertyId(property.id)
+
+    trackStep1Completed({
+      property_name: formData.value.propertyName,
+      rent: formData.value.propertyRent
+    })
+
     currentStep.value = 2
     toastStore.success('Bien créé avec succès !')
   } catch (error) {
@@ -304,46 +347,45 @@ const handleStep1Continue = async () => {
  * Étape 2 → Créer Locataire (si applicable)
  */
 const handleStep2Continue = async () => {
+  if (!checkStoreCapabilities()) {
+    return
+  }
+
   if (!validateStep2()) return
-  
+
   loading.value = true
   errors.value = {}
-  
-  try {
-    if (formData.value.hasTenant === true && formData.value.tenantName.trim()) {
-      if (typeof tenantsStore.addTenant !== 'function') {
-        throw new Error('Action d\'ajout de locataire indisponible')
-      }
 
+  try {
+    if (!formData.value.createdPropertyId) {
+      const missingPropertyMessage = 'Aucun bien n\'a été créé. Revenez à l\'étape 1 pour ajouter votre premier bien.'
+      errors.value.general = missingPropertyMessage
+      toastStore.error(missingPropertyMessage)
+      currentStep.value = 1
+      return
+    }
+
+    if (formData.value.hasTenant === true && formData.value.tenantName.trim()) {
       await tenantsStore.addTenant({
         name: formData.value.tenantName,
         property_id: formData.value.createdPropertyId,
-        start_date: formData.value.tenantStartDate || new Date().toISOString().split('T')[0],
-        user_id: authStore.user.id
+        start_date: formData.value.tenantStartDate || new Date().toISOString().split('T')[0]
       })
-      
-      // Analytics
-      if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-        import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-          trackDoogooEvent('onboarding_step2_completed', {
-            has_tenant: true,
-            tenant_name: formData.value.tenantName
-          })
-        }).catch(() => {})
-      }
+
+      trackStep2Completed({
+        has_tenant: true,
+        tenant_name: formData.value.tenantName
+      })
     }
-    
+
     currentStep.value = 3
-    
-    // Analytics onboarding completed
-    if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-      import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-        trackDoogooEvent('onboarding_completed', {
-          property_id: formData.value.createdPropertyId,
-          has_tenant: formData.value.hasTenant
-        })
-      }).catch(() => {})
-    }
+
+    clearPersistedPropertyId()
+
+    trackOnboardingCompleted({
+      property_id: formData.value.createdPropertyId,
+      has_tenant: formData.value.hasTenant
+    })
   } catch (error) {
     console.error('Erreur création locataire:', error)
     toastStore.error('Échec création du locataire. Vous pourrez l\'ajouter plus tard.')
@@ -357,6 +399,7 @@ const handleStep2Continue = async () => {
  * Redirection Dashboard
  */
 const goToDashboard = () => {
+  clearPersistedPropertyId()
   router.push('/dashboard')
 }
 
@@ -364,15 +407,11 @@ const goToDashboard = () => {
  * Skip Wizard
  */
 const handleSkip = () => {
-  // Analytics
-  if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-    import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-      trackDoogooEvent('onboarding_skipped', {
-        current_step: currentStep.value
-      })
-    }).catch(() => {})
-  }
-  
+  trackOnboardingSkipped({
+    current_step: currentStep.value
+  })
+
+  clearPersistedPropertyId()
   router.push('/dashboard')
 }
 </script>
