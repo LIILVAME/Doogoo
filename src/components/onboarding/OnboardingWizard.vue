@@ -263,6 +263,10 @@ const handleStep1Continue = async () => {
   errors.value = {}
   
   try {
+    if (typeof propertiesStore.addProperty !== 'function') {
+      throw new Error('Action d\'ajout de bien indisponible')
+    }
+
     const property = await propertiesStore.addProperty({
       name: formData.value.propertyName,
       rent: parseFloat(formData.value.propertyRent),
@@ -307,6 +311,10 @@ const handleStep2Continue = async () => {
   
   try {
     if (formData.value.hasTenant === true && formData.value.tenantName.trim()) {
+      if (typeof tenantsStore.addTenant !== 'function') {
+        throw new Error('Action d\'ajout de locataire indisponible')
+      }
+
       await tenantsStore.addTenant({
         name: formData.value.tenantName,
         property_id: formData.value.createdPropertyId,
