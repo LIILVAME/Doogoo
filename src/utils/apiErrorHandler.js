@@ -3,16 +3,9 @@ import { useDiagnosticStore } from '@/stores/diagnosticStore'
 import { isRetryableError } from './retry'
 import { canAttempt, recordSuccess, recordFailure, getState } from './circuitBreaker'
 
-/**
- * Gestionnaire d'erreur centralisé pour les appels API Supabase
- * @param {Error|Object} error - L'erreur retournée par Supabase ou une erreur JavaScript
- * @param {string} context - Contexte de l'erreur (ex: "fetchProperties", "createPayment")
- * @returns {Object} { success: false, message: string }
- */
-export function handleApiError(error, context = '') {
-  // Log l'erreur pour le debugging
-  console.warn(`[API ERROR] ${context}`, error)
+const noop = () => {}
 
+export function normalizeApiError(error, context = '') {
   // Détermine le message d'erreur
   let message = 'Erreur API inconnue'
 
@@ -46,10 +39,30 @@ export function handleApiError(error, context = '') {
     message = userFriendlyMessages[friendlyMessage]
   }
 
+  return {
+    success: false,
+    message,
+    error,
+    context
+  }
+}
+
+/**
+ * Gestionnaire d'erreur centralisé pour les appels API Supabase
+ * @param {Error|Object} error - L'erreur retournée par Supabase ou une erreur JavaScript
+ * @param {string} context - Contexte de l'erreur (ex: "fetchProperties", "createPayment")
+ * @returns {Object} { success: false, message: string }
+ */
+export function handleApiError(error, context = '', callbacks = {}) {
+  const normalizedError = normalizeApiError(error, context)
+  const { showToast = noop, recordDiagnostic = noop, captureException = noop } = callbacks
+
+  // Log l'erreur pour le debugging
+  console.warn(`[API ERROR] ${context}`, error)
+
   // Enregistre l'erreur dans le diagnosticStore
   try {
-    const diagnosticStore = useDiagnosticStore()
-    diagnosticStore.recordError(error, { context, message })
+    recordDiagnostic(error, { context, message: normalizedError.message })
   } catch (diagError) {
     // Si le diagnosticStore n'est pas disponible, on continue
     console.warn("Impossible d'enregistrer dans diagnosticStore:", diagError)
@@ -57,10 +70,7 @@ export function handleApiError(error, context = '') {
 
   // Affiche un toast d'erreur (si le toastStore est disponible)
   try {
-    const toastStore = useToastStore()
-    if (toastStore) {
-      toastStore.error(message)
-    }
+    showToast(normalizedError.message)
   } catch (toastError) {
     // Si le toastStore n'est pas disponible, on continue sans toast
     console.warn("Impossible d'afficher un toast:", toastError)
@@ -68,22 +78,12 @@ export function handleApiError(error, context = '') {
 
   // Capture les erreurs critiques dans Sentry (si configuré)
   try {
-    const sentryDsn = import.meta.env.VITE_SENTRY_DSN
-    if (sentryDsn && window.Sentry) {
-      window.Sentry.captureException(error, {
-        tags: { context },
-        extra: { message, userMessage: message }
-      })
-    }
+    captureException(error, { context, message: normalizedError.message })
   } catch {
     // Sentry non disponible, on continue
   }
 
-  return {
-    success: false,
-    message,
-    error
-  }
+  return normalizedError
 }
 
 /**
@@ -92,14 +92,52 @@ export function handleApiError(error, context = '') {
  * @param {string} context - Contexte pour les logs
  * @returns {Promise<Object>} { success: boolean, data?: any, error?: Error, retries?: number }
  */
+const getDefaultCallbacks = ({ toastStore, diagnosticStore, context }) => {
+  const sentryDsn = import.meta.env.VITE_SENTRY_DSN
+  const sentryClient = typeof globalThis !== 'undefined' ? globalThis.Sentry : undefined
+
+  return {
+    showToast: message => toastStore?.error?.(message),
+    recordDiagnostic: (error, meta) => diagnosticStore?.recordError?.(error, meta),
+    captureException: (error, meta) => {
+      if (sentryDsn && sentryClient?.captureException) {
+        sentryClient.captureException(error, {
+          tags: { context: meta?.context },
+          extra: { message: meta?.message, userMessage: meta?.message }
+        })
+      }
+    }
+  }
+}
+
+const resolveWithFallback = getter => {
+  try {
+    return getter()
+  } catch {
+    return undefined
+  }
+}
+
 export async function withErrorHandling(apiCall, context = '', options = {}) {
   const { retry } = await import('./retry')
   const { useConnectionStore } = await import('@/stores/connectionStore')
   const { useToastStore } = await import('@/stores/toastStore')
-  const diagnosticStore = useDiagnosticStore()
 
-  const connectionStore = useConnectionStore()
-  const toastStore = useToastStore()
+  const toastStore = options.toastStore ?? resolveWithFallback(() => useToastStore())
+  const diagnosticStore = options.diagnosticStore ?? resolveWithFallback(() => useDiagnosticStore())
+  const connectionStore = options.connectionStore ?? resolveWithFallback(() => useConnectionStore())
+  const callbacks = {
+    ...getDefaultCallbacks({ toastStore, diagnosticStore, context }),
+    ...(options.callbacks || {})
+  }
+
+  const safeConnectionStore = connectionStore || { isOnline: true, setOnline: noop }
+  const safeDiagnosticStore = diagnosticStore || {
+    trackLatency: noop,
+    logEvent: noop,
+    recordSuccess: noop
+  }
+  const safeToastStore = toastStore || { info: noop, error: noop }
 
   // Démarre la mesure de latence
   const startTime = performance.now()
@@ -146,7 +184,7 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
           }
         }
         // Erreur non réessayable, retourne directement
-        return handleApiError(result.error, context)
+        return handleApiError(result.error, context, callbacks)
       }
 
       // Succès
@@ -157,7 +195,7 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
     } catch (error) {
       // Erreur non réessayable, retourne directement
       if (!isRetryableError(error)) {
-        return handleApiError(error, context)
+        return handleApiError(error, context, callbacks)
       }
       // Erreur réessayable, retourne pour le retry
       return {
@@ -169,7 +207,7 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
   }
 
   // Si on n'est pas en ligne, ne pas essayer
-  if (!connectionStore.isOnline) {
+  if (!safeConnectionStore.isOnline) {
     return {
       success: false,
       error: new Error('No internet connection'),
@@ -180,8 +218,8 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
   // Affiche un toast de reconnexion si nécessaire
   let retryToastShown = false
   const showRetryToast = () => {
-    if (!retryToastShown && toastStore) {
-      toastStore.info('Tentative de reconnexion...')
+    if (!retryToastShown && safeToastStore) {
+      safeToastStore.info('Tentative de reconnexion...')
       retryToastShown = true
     }
   }
@@ -205,31 +243,35 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
 
   // Si le retry a échoué après toutes les tentatives
   if (!retryResult.success && retryResult.retries > 0) {
-    if (toastStore) {
-      toastStore.error('Connexion perdue. Vérifiez votre réseau.')
+    if (safeToastStore) {
+      safeToastStore.error('Connexion perdue. Vérifiez votre réseau.')
     }
-    connectionStore.setOnline(false)
+    safeConnectionStore.setOnline(false)
   }
 
   // Calcule et enregistre la latence
   const duration = performance.now() - startTime
-  diagnosticStore.trackLatency(endpoint, duration)
+  safeDiagnosticStore.trackLatency(endpoint, duration)
 
   // Avertit si la latence est élevée (plus de 3 secondes)
   if (duration > 3000) {
     console.warn(`[API] Latence élevée pour ${endpoint}: ${Math.round(duration)}ms`)
-    diagnosticStore.logEvent('warning', `Latence élevée: ${endpoint} (${Math.round(duration)}ms)`, {
-      endpoint,
-      duration
-    })
+    safeDiagnosticStore.logEvent(
+      'warning',
+      `Latence élevée: ${endpoint} (${Math.round(duration)}ms)`,
+      {
+        endpoint,
+        duration
+      }
+    )
   }
 
   // Si succès, met à jour la connexion et enregistre le succès
   if (retryResult.success) {
-    connectionStore.setOnline(true)
-    diagnosticStore.recordSuccess(endpoint)
+    safeConnectionStore.setOnline(true)
+    safeDiagnosticStore.recordSuccess(endpoint)
     recordSuccess(endpoint) // Enregistre le succès dans le circuit breaker
-    if (retryToastShown && toastStore) {
+    if (retryToastShown && safeToastStore) {
       // Le toast "reconnexion" sera automatiquement remplacé par le toast de succès de l'API
     }
   } else {
