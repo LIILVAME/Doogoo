@@ -2,10 +2,10 @@
   <div v-if="tenant" class="tenant-info">
     <div class="flex items-start justify-between mb-2 sm:mb-3">
       <div class="flex-1 min-w-0 pr-2">
-        <p class="text-xs text-gray-500 mb-1">{{ $t('payments.tenant') }}</p>
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('payments.tenant') }}</p>
         <p
-          class="font-semibold text-gray-900 text-sm sm:text-base truncate"
-          :class="{ 'cursor-pointer hover:text-violet-500 transition-colors': clickable }"
+          class="font-semibold text-white text-sm sm:text-base truncate transition-colors"
+          :class="{ 'cursor-pointer hover:text-violet-400': clickable }"
           @click="handleClick"
         >
           {{ tenant.name }}
@@ -21,20 +21,20 @@
 
     <div class="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
       <div>
-        <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.entryDate') }}</p>
-        <p class="font-medium text-gray-900">
-          {{ formatDate(tenant.entryDate, { shortMonth: true }) }}
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.entryDate') }}</p>
+        <p class="font-medium text-zinc-200">
+          {{ formatDate(tenant.entryDate) }}
         </p>
       </div>
       <div v-if="tenant.exitDate">
-        <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
-        <p class="font-medium text-gray-900">
-          {{ formatDate(tenant.exitDate, { shortMonth: true }) }}
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.exitDate') }}</p>
+        <p class="font-medium text-zinc-200">
+          {{ formatDate(tenant.exitDate) }}
         </p>
       </div>
       <div v-else>
-        <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
-        <p class="font-medium text-gray-400">{{ $t('tenants.inProgress') }}</p>
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.exitDate') }}</p>
+        <p class="font-medium text-zinc-500">{{ $t('tenants.inProgress') }}</p>
       </div>
     </div>
   </div>
@@ -66,9 +66,10 @@ const props = defineProps({
 const emit = defineEmits(['click-tenant'])
 
 const handleClick = e => {
-  if (!props.clickable) return
-  e.stopPropagation()
-  emit('click-tenant', props.tenant)
+  if (props.clickable) {
+    e.stopPropagation()
+    emit('click-tenant', props.tenant)
+  }
 }
 
 /**

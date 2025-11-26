@@ -11,6 +11,8 @@ import PricingPage from '../pages/PricingPage.vue'
 import ResourcesPage from '../pages/ResourcesPage.vue'
 import PrivacyPage from '../pages/PrivacyPage.vue'
 import TermsPage from '../pages/TermsPage.vue'
+import ComingSoonPage from '@/pages/ComingSoonPage.vue'
+import PropertyDetailsPage from '@/pages/PropertyDetailsPage.vue'
 
 // Pages authentifiées (lazy loaded pour améliorer les performances)
 const ConfirmEmailPage = () => import('../pages/ConfirmEmailPage.vue')
@@ -157,12 +159,25 @@ const routes = [
     meta: {
       requiresAuth: false,
       seo: {
-        title: 'Conditions Générales d\'Utilisation — Doogoo',
+        title: "Conditions Générales d'Utilisation — Doogoo",
         description:
-          'Conditions générales d\'utilisation de Doogoo. Consultez les termes et conditions régissant l\'utilisation de notre plateforme de gestion immobilière.',
+          "Conditions générales d'utilisation de Doogoo. Consultez les termes et conditions régissant l'utilisation de notre plateforme de gestion immobilière.",
         ogTitle: 'CGU — Doogoo',
-        ogDescription:
-          'Conditions générales d\'utilisation de la plateforme Doogoo.'
+        ogDescription: "Conditions générales d'utilisation de la plateforme Doogoo."
+      }
+    }
+  },
+  {
+    path: '/coming-soon',
+    name: 'ComingSoon',
+    component: ComingSoonPage,
+    meta: {
+      requiresAuth: false,
+      seo: {
+        title: 'Bientôt disponible — Doogoo',
+        description: 'Cette fonctionnalité arrive prochainement sur Doogoo.',
+        ogTitle: 'Bientôt disponible — Doogoo',
+        ogDescription: 'Cette fonctionnalité arrive prochainement.'
       }
     }
   },
@@ -211,8 +226,14 @@ const routes = [
   },
   {
     path: '/biens',
-    name: 'Biens',
+    name: 'Properties',
     component: BiensPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/biens/:id',
+    name: 'PropertyDetails',
+    component: PropertyDetailsPage,
     meta: {
       requiresAuth: true,
       seo: {

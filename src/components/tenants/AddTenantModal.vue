@@ -202,7 +202,7 @@
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.add') }}
+                  {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.save') }}
                 </button>
               </div>
             </form>

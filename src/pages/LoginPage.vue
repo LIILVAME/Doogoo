@@ -95,14 +95,6 @@
           :disabled="isSubmitDisabled"
         />
 
-        <!-- Boutons OAuth -->
-        <AuthOAuth
-          :loading="oauthLoading ? oauthProvider : false"
-          :disabled="authStore.loading"
-          :vertical="false"
-          @oauth="handleOAuth"
-        />
-
         <!-- Lien d'inscription -->
         <div class="mt-6 pt-6 border-t border-white/10 text-center">
           <p class="text-sm text-zinc-500">
@@ -129,7 +121,6 @@ import { useToastStore } from '@/stores/toastStore'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
-import AuthOAuth from '@/components/auth/AuthOAuth.vue'
 
 // Capture les erreurs de rendu pour éviter l'écran blanc
 onErrorCaptured((err, instance, info) => {
@@ -185,16 +176,12 @@ const passwordError = computed(() => {
   return ''
 })
 
-const oauthLoading = ref(false)
-const oauthProvider = ref(null)
-
 const isSubmitDisabled = computed(() => {
   const hasEmailError = Boolean(emailError.value)
   const hasPasswordError = Boolean(passwordError.value)
   return (
     !form.value.email ||
     !form.value.password ||
-    oauthLoading.value ||
     authStore.loading ||
     hasEmailError ||
     hasPasswordError
@@ -230,24 +217,6 @@ const handleLogin = async () => {
 /**
  * Gère la connexion OAuth
  */
-const handleOAuth = async provider => {
-  oauthLoading.value = true
-  oauthProvider.value = provider
-
-  try {
-    const redirectTo = route.query.redirect || '/dashboard'
-    if (provider === 'google') {
-      await authStore.loginWithGoogle(redirectTo)
-    } else if (provider === 'apple') {
-      await authStore.loginWithApple(redirectTo)
-    }
-    // La redirection se fait automatiquement par Supabase
-  } catch (error) {
-    console.error(`Erreur connexion ${provider}:`, error)
-    oauthLoading.value = false
-    oauthProvider.value = null
-  }
-}
 
 /**
  * Vérifie si l'utilisateur est déjà connecté

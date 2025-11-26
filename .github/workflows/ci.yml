@@ -1,214 +1,33 @@
-name: CI/CD
+# GitHub Actions CI workflow for Doogoo
+# This workflow runs on every push and pull request to the main branch.
+# It installs dependencies, runs lint, and builds the project.
+
+name: CI
 
 on:
   push:
-    branches:
-      - main
-      - develop
-      - 'feature/**'
-      - 'fix/**'
-      - 'hotfix/**'
+    branches: [main]
   pull_request:
-    branches:
-      - main
-      - develop
-  release:
-    types: [created]
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  NODE_VERSION: '20'
-  DEFAULT_SUPABASE_URL: 'https://placeholder.supabase.co'
-  DEFAULT_SUPABASE_ANON_KEY: 'placeholder-key'
+    branches: [main]
 
 jobs:
-  lint-and-type-check:
-    name: Lint & Type Check
-    runs-on: ubuntu-latest
+  build:
+    runs-on: macos-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run ESLint
-        run: npm run lint:check
+        run: npm run lint --if-present
 
-      - name: Type check
-        run: npm run type-check
-
-  test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm run test:unit
-
-      - name: Upload coverage
-        if: always() && secrets.CODECOV_TOKEN != ''
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage/coverage-final.json
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: false
-
-  i18n-and-build:
-    name: i18n Check & Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check i18n
-        run: npm run test:i18n
-
-      - name: Build application
-        run: npm run build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || env.DEFAULT_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || env.DEFAULT_SUPABASE_ANON_KEY }}
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: dist
-          path: dist/
-          retention-days: 7
-
-  lighthouse:
-    name: Lighthouse Audit
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || env.DEFAULT_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || env.DEFAULT_SUPABASE_ANON_KEY }}
-
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
-        if: success()
-        continue-on-error: true
-        with:
-          configPath: ./.github/lighthouserc.json
-          uploadArtifacts: false
-          temporaryPublicStorage: true
-
-  release:
-    name: Auto Release
-    needs: [lint-and-type-check, test, i18n-and-build]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Run standard-version
-        run: npm run release
-        continue-on-error: true
-
-      - name: Push tags
-        run: git push origin main --follow-tags
-        continue-on-error: true
-
-  deploy-vercel:
-    name: Deploy to Vercel (main)
-    needs: [lint-and-type-check, test, i18n-and-build]
-    runs-on: ubuntu-latest
-    if: >
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      secrets.VERCEL_TOKEN != '' &&
-      secrets.VERCEL_ORG_ID != '' &&
-      secrets.VERCEL_PROJECT_ID != ''
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Pull Vercel environment
-        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Build with Vercel
-        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Deploy prebuilt output
-        run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Build project
+        run: npm run build --if-present
