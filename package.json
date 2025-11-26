@@ -39,9 +39,11 @@
     "@sentry/tracing": "^7.120.4",
     "@sentry/vue": "^10.22.0",
     "@supabase/supabase-js": "^2.78.0",
+    "@vercel/analytics": "^1.5.0",
     "@vueuse/core": "^14.0.0",
     "@vueuse/integrations": "^14.0.0",
     "apexcharts": "^5.3.5",
+    "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "focus-trap": "^7.6.6",
     "jspdf": "^3.0.3",
@@ -53,7 +55,6 @@
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue3-apexcharts": "^1.10.0",
-    "xlsx": "^0.18.5",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -75,6 +76,7 @@
     "node-fetch": "^2.7.0",
     "postcss": "^8.4.38",
     "prettier": "^3.6.2",
+    "react": "^19.2.0",
     "sharp": "^0.34.4",
     "standard-version": "^9.5.0",
     "supabase": "^2.54.11",
@@ -84,12 +86,11 @@
     "vite": "^7.2.4",
     "vite-plugin-pwa": "^1.1.0",
     "vitest": "^4.0.6",
-    "vue-eslint-parser": "^10.0.0",
-    "react": "^19.2.0"
+    "vue-eslint-parser": "^10.0.0"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.52.5",
-    "@esbuild/linux-x64": "0.25.12"
+    "@esbuild/linux-x64": "0.25.12",
+    "@rollup/rollup-linux-x64-gnu": "4.52.5"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [

@@ -11,7 +11,12 @@
           @change="$emit('update:period', $event.target.value)"
           class="w-full px-3 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors"
         >
-          <option v-for="month in availableMonths" :key="month.value" :value="month.value" class="bg-zinc-900">
+          <option
+            v-for="month in availableMonths"
+            :key="month.value"
+            :value="month.value"
+            class="bg-zinc-900"
+          >
             {{ month.label }}
           </option>
         </select>
@@ -29,7 +34,9 @@
         >
           <option value="global" class="bg-zinc-900">{{ $t('reports.types.global') }}</option>
           <option value="monthly" class="bg-zinc-900">{{ $t('reports.types.monthly') }}</option>
-          <option value="rental-status" class="bg-zinc-900">{{ $t('reports.types.rentalStatus') }}</option>
+          <option value="rental-status" class="bg-zinc-900">
+            {{ $t('reports.types.rentalStatus') }}
+          </option>
         </select>
       </div>
 
@@ -44,7 +51,12 @@
           class="w-full px-3 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors"
         >
           <option value="all" class="bg-zinc-900">{{ $t('reports.filters.allProperties') }}</option>
-          <option v-for="property in properties" :key="property.id" :value="property.id" class="bg-zinc-900">
+          <option
+            v-for="property in properties"
+            :key="property.id"
+            :value="property.id"
+            class="bg-zinc-900"
+          >
             {{ property.name }}
           </option>
         </select>
@@ -52,14 +64,16 @@
 
       <!-- Bouton Actualiser -->
       <div class="flex items-end">
-        <button
+        <Button
+          class="w-full"
+          variant="primary"
+          size="md"
+          :loading="loading"
           @click="$emit('refresh')"
-          :disabled="loading"
-          class="w-full px-4 py-2.5 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-all shadow-lg shadow-emerald-500/20"
         >
           <span v-if="!loading">{{ $t('reports.filters.refresh') }}</span>
-          <span v-else class="flex items-center justify-center">
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+          <span v-else class="flex items-center justify-center gap-2">
+            <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
               <circle
                 class="opacity-25"
                 cx="12"
@@ -76,7 +90,7 @@
             </svg>
             {{ $t('reports.loading') }}
           </span>
-        </button>
+        </Button>
       </div>
     </div>
   </div>
@@ -84,6 +98,7 @@
 
 <script setup>
 // Utilise $t dans le template, pas besoin de t dans le script
+import Button from '@/components/ui/Button.vue'
 
 defineProps({
   selectedMonth: {

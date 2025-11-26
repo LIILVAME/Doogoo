@@ -35,7 +35,7 @@
   >
     <div
       v-if="connectionStore.isOnline && showOnlineBanner"
-      class="fixed top-0 left-0 right-0 w-full z-50 text-center py-2 text-sm font-medium bg-green-50 text-green-700 border-b border-green-200 shadow-sm"
+      class="fixed top-0 left-0 right-0 w-full z-50 text-center py-2 text-sm font-medium bg-success-100 text-success-700 border-b border-success-100 shadow-sm"
     >
       <div class="flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

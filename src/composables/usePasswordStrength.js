@@ -52,11 +52,11 @@ export function usePasswordStrength(password) {
    */
   const strengthColor = computed(() => {
     const colors = {
-      0: 'bg-red-500',
-      1: 'bg-orange-500',
-      2: 'bg-yellow-500',
-      3: 'bg-blue-500',
-      4: 'bg-green-500'
+      0: 'bg-danger-500',
+      1: 'bg-warning-500',
+      2: 'bg-warning-500',
+      3: 'bg-primary-500',
+      4: 'bg-success-500'
     }
     return colors[strength.value] || 'bg-gray-300'
   })

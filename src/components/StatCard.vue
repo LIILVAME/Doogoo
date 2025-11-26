@@ -1,7 +1,11 @@
 <template>
-  <div class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden">
+  <div
+    class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
+  >
     <!-- Glow effect on hover -->
-    <div class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"></div>
+    <div
+      class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"
+    ></div>
 
     <div v-if="loading" class="flex items-center justify-between relative z-10 animate-pulse">
       <div>
@@ -49,7 +53,7 @@ defineProps({
   },
   iconColorClass: {
     type: String,
-    default: 'text-green-600'
+    default: 'text-success-700'
   },
   loading: {
     type: Boolean,
@@ -57,4 +61,3 @@ defineProps({
   }
 })
 </script>
-

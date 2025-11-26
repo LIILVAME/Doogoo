@@ -171,7 +171,9 @@ onMounted(async () => {
             v-for="(result, index) in results"
             :key="index"
             class="border rounded-lg p-4"
-            :class="result.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'"
+            :class="
+              result.success ? 'bg-success-100 border-success-200' : 'bg-red-50 border-red-200'
+            "
           >
             <div class="flex items-start justify-between">
               <div class="flex-1">

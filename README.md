@@ -121,17 +121,17 @@
 
 ## 🛠️ Stack Technique
 
-| Côté            | Technologie             | Version | Usage                                                           |
-| --------------- | ----------------------- | ------- | --------------------------------------------------------------- |
-| **Frontend**    | Vue 3 (Composition API) | ^3.4.21 | SPA responsive avec Tailwind CSS                                |
-| **État global** | Pinia                   | ^3.0.3  | 8 stores modulaires (auth, properties, payments, tenants, etc.) |
-| **Backend**     | Supabase                | -       | Auth, Realtime, RLS, PostgreSQL, Edge Functions                 |
-| **Charts**      | ApexCharts              | ^5.3.5  | Visualisations des revenus et taux d'occupation                 |
-| **Build**       | Vite                    | ^5.2.0  | Build tool rapide & optimisé                                    |
-| **Routing**     | Vue Router              | ^4.3.0  | Navigation SPA avec guards d'authentification                   |
-| **Styling**     | Tailwind CSS            | ^3.4.3  | Framework CSS utility-first                                     |
-| **Exports**     | jsPDF + xlsx            | ^3.0.3  | Génération de rapports PDF/Excel                                |
-| **Hébergement** | GitHub Pages / Netlify  | -       | Config base `/Doogoo/` prête                                    |
+| Côté            | Technologie             | Version         | Usage                                                           |
+| --------------- | ----------------------- | --------------- | --------------------------------------------------------------- |
+| **Frontend**    | Vue 3 (Composition API) | ^3.4.21         | SPA responsive avec Tailwind CSS                                |
+| **État global** | Pinia                   | ^3.0.3          | 8 stores modulaires (auth, properties, payments, tenants, etc.) |
+| **Backend**     | Supabase                | -               | Auth, Realtime, RLS, PostgreSQL, Edge Functions                 |
+| **Charts**      | ApexCharts              | ^5.3.5          | Visualisations des revenus et taux d'occupation                 |
+| **Build**       | Vite                    | ^5.2.0          | Build tool rapide & optimisé                                    |
+| **Routing**     | Vue Router              | ^4.3.0          | Navigation SPA avec guards d'authentification                   |
+| **Styling**     | Tailwind CSS            | ^3.4.3          | Framework CSS utility-first                                     |
+| **Exports**     | jsPDF + exceljs         | ^3.0.3 / ^4.4.0 | Génération de rapports PDF/Excel                                |
+| **Hébergement** | GitHub Pages / Netlify  | -               | Config base `/Doogoo/` prête                                    |
 
 ### Architecture
 

@@ -52,7 +52,7 @@
           <div class="mt-6 pt-6 border-t border-gray-200 text-center">
             <router-link
               to="/login"
-              class="text-sm text-green-600 hover:text-green-700 font-semibold transition-colors"
+              class="text-sm text-success-700 hover:text-success-500 font-semibold transition-colors"
             >
               {{ $t('auth.reset.backToLogin') }}
             </router-link>
@@ -64,10 +64,10 @@
       <transition name="slide-fade">
         <div v-if="emailSent && !hasResetToken" class="text-center">
           <div
-            class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4"
+            class="inline-flex items-center justify-center w-16 h-16 bg-success-100 rounded-full mb-4"
           >
             <svg
-              class="w-8 h-8 text-green-600"
+              class="w-8 h-8 text-success-700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -184,7 +184,7 @@
           <div class="mt-6 pt-6 border-t border-gray-200 text-center">
             <router-link
               to="/login"
-              class="text-sm text-green-600 hover:text-green-700 font-semibold transition-colors"
+              class="text-sm text-success-700 hover:text-success-500 font-semibold transition-colors"
             >
               {{ $t('auth.reset.backToLogin') }}
             </router-link>

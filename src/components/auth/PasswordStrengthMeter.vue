@@ -59,11 +59,11 @@ const { strength, strengthLabel, strengthColor, strengthWidth } = usePasswordStr
 
 const strengthTextColor = computed(() => {
   const colors = {
-    0: 'text-red-600',
-    1: 'text-orange-600',
-    2: 'text-yellow-600',
-    3: 'text-blue-600',
-    4: 'text-green-600'
+    0: 'text-danger-600',
+    1: 'text-warning-700',
+    2: 'text-warning-700',
+    3: 'text-primary-600',
+    4: 'text-success-700'
   }
   return colors[strength.value] || 'text-gray-600'
 })

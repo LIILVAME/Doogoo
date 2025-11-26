@@ -57,18 +57,18 @@ export const STATUS_LABELS = {
  */
 export const STATUS_CLASSES = {
   // Occupation
-  [PROPERTY_STATUS.OCCUPIED]: 'bg-green-100 text-green-800',
+  [PROPERTY_STATUS.OCCUPIED]: 'bg-success-100 text-success-700',
   [PROPERTY_STATUS.VACANT]: 'bg-gray-100 text-gray-800',
 
   // Paiement locataire
-  [PAYMENT_STATUS.ON_TIME]: 'bg-green-100 text-green-800',
-  [PAYMENT_STATUS.LATE]: 'bg-red-100 text-red-800',
-  [PAYMENT_STATUS.PENDING]: 'bg-yellow-100 text-yellow-800',
+  [PAYMENT_STATUS.ON_TIME]: 'bg-success-100 text-success-700',
+  [PAYMENT_STATUS.LATE]: 'bg-danger-100 text-danger-700',
+  [PAYMENT_STATUS.PENDING]: 'bg-warning-100 text-warning-700',
 
   // Transaction
-  [TRANSACTION_STATUS.PAID]: 'bg-green-100 text-green-800',
-  [TRANSACTION_STATUS.LATE]: 'bg-red-100 text-red-800',
-  [TRANSACTION_STATUS.PENDING]: 'bg-yellow-100 text-yellow-800'
+  [TRANSACTION_STATUS.PAID]: 'bg-success-100 text-success-700',
+  [TRANSACTION_STATUS.LATE]: 'bg-danger-100 text-danger-700',
+  [TRANSACTION_STATUS.PENDING]: 'bg-warning-100 text-warning-700'
 }
 
 /**
@@ -112,4 +112,3 @@ export const BREAKPOINTS = {
   XL: 1280,
   '2XL': 1536
 }
-

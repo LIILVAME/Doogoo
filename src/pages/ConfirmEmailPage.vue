@@ -2,8 +2,15 @@
   <AuthLayout>
     <div class="text-center">
       <!-- Icône de succès -->
-      <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div
+        class="inline-flex items-center justify-center w-20 h-20 bg-success-100 rounded-full mb-6"
+      >
+        <svg
+          class="w-10 h-10 text-success-700"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"

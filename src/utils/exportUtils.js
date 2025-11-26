@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 
@@ -363,14 +363,14 @@ export const exportToPDF = (title, data, columns = null, filename = null, option
   // Calcul des largeurs de colonnes pour éviter les coupures
   const columnWidths = columns
     ? columns.map((col, _idx) => {
-      // Largeurs personnalisées selon le type de colonne
-      if (col.key === 'property') return 40
-      if (col.key === 'city') return 30
-      if (col.key === 'rent' || col.key === 'totalPaid') return 30
-      if (col.key === 'status') return 25
-      if (col.key === 'paymentDate') return 35
-      return null // Auto-width pour les autres
-    })
+        // Largeurs personnalisées selon le type de colonne
+        if (col.key === 'property') return 40
+        if (col.key === 'city') return 30
+        if (col.key === 'rent' || col.key === 'totalPaid') return 30
+        if (col.key === 'status') return 25
+        if (col.key === 'paymentDate') return 35
+        return null // Auto-width pour les autres
+      })
     : null
 
   autoTable(doc, {
@@ -413,54 +413,54 @@ export const exportToPDF = (title, data, columns = null, filename = null, option
       // Fusionne les largeurs et les alignements
       ...(columnWidths
         ? columnWidths.reduce((acc, width, idx) => {
-          if (width) acc[idx] = { cellWidth: width }
-          return acc
-        }, {})
+            if (width) acc[idx] = { cellWidth: width }
+            return acc
+          }, {})
         : {}),
       // Alignement numérique pour les colonnes de montant et pourcentage
       ...(columns
         ? columns.reduce((acc, col, idx) => {
-          const key = col.key || ''
-          const excludeFromAmount =
-            key.includes('delayed') ||
-            key.includes('id') ||
-            key === 'paymentStatus' ||
-            key === 'status' ||
-            key === 'property' ||
-            key === 'city' ||
-            key === 'paymentDate'
+            const key = col.key || ''
+            const excludeFromAmount =
+              key.includes('delayed') ||
+              key.includes('id') ||
+              key === 'paymentStatus' ||
+              key === 'status' ||
+              key === 'property' ||
+              key === 'city' ||
+              key === 'paymentDate'
 
-          const isAmount =
-            !excludeFromAmount &&
-            (key.includes('rent') ||
-              (key.includes('Amount') && !key.includes('delayed')) ||
-              (key.includes('Paid') && !key.includes('delayed') && key.includes('total')) ||
-              key.includes('totalPaid') ||
-              key.toLowerCase().includes('montant') ||
-              key.toLowerCase().includes('revenu') ||
-              (key.toLowerCase().includes('loyer') && !key.includes('delayed')))
+            const isAmount =
+              !excludeFromAmount &&
+              (key.includes('rent') ||
+                (key.includes('Amount') && !key.includes('delayed')) ||
+                (key.includes('Paid') && !key.includes('delayed') && key.includes('total')) ||
+                key.includes('totalPaid') ||
+                key.toLowerCase().includes('montant') ||
+                key.toLowerCase().includes('revenu') ||
+                (key.toLowerCase().includes('loyer') && !key.includes('delayed')))
 
-          const isPercentage =
-            key.includes('occupancy') ||
-            (key.includes('Rate') && !key.includes('delayed')) ||
-            (key.includes('rate') && !key.includes('delayed')) ||
-            key.toLowerCase().includes('pourcentage') ||
-            key.toLowerCase().includes('taux')
+            const isPercentage =
+              key.includes('occupancy') ||
+              (key.includes('Rate') && !key.includes('delayed')) ||
+              (key.includes('rate') && !key.includes('delayed')) ||
+              key.toLowerCase().includes('pourcentage') ||
+              key.toLowerCase().includes('taux')
 
-          // Pour "delayed", c'est un nombre simple (pas monétaire, pas pourcentage)
-          const isSimpleNumber =
-            key === 'delayed' &&
-            typeof (col.accessor ? col.accessor(data[0] || {}) : (data[0] || {})[col.key]) ===
-            'number'
+            // Pour "delayed", c'est un nombre simple (pas monétaire, pas pourcentage)
+            const isSimpleNumber =
+              key === 'delayed' &&
+              typeof (col.accessor ? col.accessor(data[0] || {}) : (data[0] || {})[col.key]) ===
+                'number'
 
-          if (isAmount || isPercentage || isSimpleNumber) {
-            acc[idx] = {
-              ...(acc[idx] || {}),
-              halign: 'right'
+            if (isAmount || isPercentage || isSimpleNumber) {
+              acc[idx] = {
+                ...(acc[idx] || {}),
+                halign: 'right'
+              }
             }
-          }
-          return acc
-        }, {})
+            return acc
+          }, {})
         : {})
     },
     didDrawPage: data => {
@@ -549,7 +549,7 @@ export const exportToPDF = (title, data, columns = null, filename = null, option
  * @param {string} sheetName - Nom de l'onglet (optionnel, pour Excel)
  * @param {boolean} asCSV - Si true, exporte en CSV, sinon en Excel (défaut: CSV)
  */
-export const exportToExcel = (filename, data, sheetName = 'Données', asCSV = true) => {
+export const exportToExcel = async (filename, data, sheetName = 'Données', asCSV = true) => {
   if (!data || data.length === 0) {
     console.warn('Aucune donnée à exporter')
     return
@@ -584,32 +584,36 @@ export const exportToExcel = (filename, data, sheetName = 'Données', asCSV = tr
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
       saveAs(blob, `${filename}.csv`)
     } else {
-      // Export Excel (format XLSX)
-      const ws = XLSX.utils.json_to_sheet(data)
+      // Export Excel (format XLSX) via ExcelJS pour éviter les vulnérabilités connues de sheetJS
+      const headers = Object.keys(data[0])
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet(sheetName)
 
-      // Définit la largeur des colonnes
-      const wscols = []
-      if (data.length > 0) {
-        const firstRow = data[0]
-        Object.keys(firstRow).forEach(key => {
-          const maxLength = Math.max(
-            key.length,
-            ...data.map(row => {
-              const value = row[key]
-              return value !== null && value !== undefined ? String(value).length : 0
-            })
-          )
-          wscols.push({ wch: Math.min(maxLength + 2, 50) })
+      const columns = headers.map(header => {
+        const maxLength = Math.max(
+          header.length,
+          ...data.map(row => {
+            const value = row[header]
+            return value !== null && value !== undefined ? String(value).length : 0
+          })
+        )
+        return { header, key: header, width: Math.min(maxLength + 2, 50) }
+      })
+      worksheet.columns = columns
+
+      data.forEach(row => {
+        const normalizedRow = {}
+        headers.forEach(header => {
+          normalizedRow[header] = row[header] ?? ''
         })
-      }
-      ws['!cols'] = wscols
+        worksheet.addRow(normalizedRow)
+      })
 
-      // Crée le workbook
-      const wb = XLSX.utils.book_new()
-      XLSX.utils.book_append_sheet(wb, ws, sheetName)
+      const headerRow = worksheet.getRow(1)
+      headerRow.font = { bold: true }
 
       // Génère le fichier
-      const buffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+      const buffer = await workbook.xlsx.writeBuffer()
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       })

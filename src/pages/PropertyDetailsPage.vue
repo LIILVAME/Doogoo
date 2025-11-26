@@ -85,11 +85,13 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <button
+            <Button
+              variant="secondary"
+              size="md"
+              class="flex items-center gap-2"
               @click="isEditModalOpen = true"
-              class="px-4 py-2 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 border border-violet-500/20 rounded-lg transition-colors flex items-center"
             >
-              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -98,12 +100,14 @@
                 />
               </svg>
               Modifier
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="danger"
+              size="md"
+              class="flex items-center gap-2"
               @click="showDeleteConfirm = true"
-              class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-lg transition-colors flex items-center"
             >
-              <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -112,7 +116,7 @@
                 />
               </svg>
               Supprimer
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -157,7 +161,9 @@
             <div class="glass-panel rounded-2xl p-6">
               <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-white">Photos</h2>
-                <button class="text-sm text-violet-400 hover:text-violet-300">Ajouter</button>
+                <button type="button" class="text-sm text-violet-400 hover:text-violet-300">
+                  Ajouter
+                </button>
               </div>
               <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div
@@ -228,6 +234,7 @@
                   </span>
                 </div>
                 <button
+                  type="button"
                   class="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-zinc-300 transition-colors"
                 >
                   Voir profil locataire
@@ -239,7 +246,9 @@
             <div class="glass-panel rounded-2xl p-6">
               <div class="flex items-center justify-between mb-4">
                 <h2 class="text-lg font-semibold text-white">Documents</h2>
-                <button class="text-sm text-violet-400 hover:text-violet-300">Ajouter</button>
+                <button type="button" class="text-sm text-violet-400 hover:text-violet-300">
+                  Ajouter
+                </button>
               </div>
               <div class="space-y-2">
                 <div
@@ -298,6 +307,7 @@ import { usePropertiesStore } from '@/stores/propertiesStore'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PropertyModal from '@/components/properties/PropertyModal.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import Button from '@/components/ui/Button.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { PROPERTY_STATUS, STATUS_CLASSES } from '@/utils/constants'
 import { useI18n } from '@/composables/useLingui'

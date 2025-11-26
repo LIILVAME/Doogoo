@@ -26,11 +26,8 @@
           >
             Se connecter
           </router-link>
-          <router-link
-            to="/signup"
-            class="text-sm font-medium bg-zinc-50 text-zinc-950 px-4 py-2 rounded-full hover:bg-zinc-200 transition-colors"
-          >
-            Essayer gratuitement
+          <router-link to="/signup" class="hidden sm:block">
+            <Button variant="primary" size="sm">Essayer gratuitement</Button>
           </router-link>
         </div>
       </div>
@@ -57,6 +54,7 @@
         <!-- Billing Toggle -->
         <div class="flex items-center justify-center gap-4 mb-12">
           <button
+            type="button"
             @click="billingPeriod = 'monthly'"
             :class="[
               'px-4 py-2 rounded-lg font-medium transition-all text-sm',
@@ -68,6 +66,7 @@
             Mensuel
           </button>
           <button
+            type="button"
             @click="billingPeriod = 'annual'"
             :class="[
               'px-4 py-2 rounded-lg font-medium transition-all text-sm flex items-center gap-2',
@@ -102,11 +101,8 @@
             </div>
           </div>
 
-          <router-link
-            to="/signup"
-            class="w-full h-12 px-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center mb-8"
-          >
-            Commencer gratuitement
+          <router-link to="/signup" class="mb-8 block">
+            <Button variant="secondary" size="md" class="w-full">Commencer gratuitement</Button>
           </router-link>
 
           <div class="space-y-4">
@@ -171,11 +167,8 @@
             </p>
           </div>
 
-          <router-link
-            to="/signup"
-            class="w-full h-12 px-6 rounded-xl bg-white text-zinc-950 font-medium hover:bg-zinc-200 transition-colors flex items-center justify-center mb-8"
-          >
-            Commencer l'essai gratuit
+          <router-link to="/signup" class="mb-8 block">
+            <Button variant="primary" size="md" class="w-full">Commencer l'essai gratuit</Button>
           </router-link>
 
           <div class="space-y-4">
@@ -231,9 +224,9 @@
 
           <a
             href="mailto:contact@doogoo.app?subject=Demande%20plan%20Entreprise"
-            class="w-full h-12 px-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center justify-center mb-8"
+            class="mb-8 block"
           >
-            Nous contacter
+            <Button variant="secondary" size="md" class="w-full">Nous contacter</Button>
           </a>
 
           <div class="space-y-4">
@@ -354,18 +347,16 @@
           Essayez Doogoo gratuitement. Aucune carte bancaire requise.
         </p>
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <router-link
-            to="/signup"
-            class="h-12 px-8 rounded-full bg-white text-zinc-950 font-medium hover:bg-zinc-200 transition-colors w-full sm:w-auto flex items-center justify-center gap-2"
-          >
-            Créer un compte gratuit
-            <ArrowRight class="w-4 h-4" />
+          <router-link to="/signup" class="w-full sm:w-auto">
+            <Button variant="primary" size="md" class="w-full sm:w-auto flex items-center gap-2">
+              Créer un compte gratuit
+              <ArrowRight class="w-4 h-4" />
+            </Button>
           </router-link>
-          <router-link
-            to="/features"
-            class="h-12 px-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-colors w-full sm:w-auto"
-          >
-            Découvrir les fonctionnalités
+          <router-link to="/features" class="w-full sm:w-auto">
+            <Button variant="secondary" size="md" class="w-full sm:w-auto">
+              Découvrir les fonctionnalités
+            </Button>
           </router-link>
         </div>
       </div>
@@ -452,6 +443,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Check, X, ArrowRight } from 'lucide-vue-next'
+import Button from '@/components/ui/Button.vue'
 
 const billingPeriod = ref('monthly')
 </script>

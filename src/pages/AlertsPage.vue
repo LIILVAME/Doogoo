@@ -14,7 +14,6 @@
         <p class="text-zinc-400">{{ $t('alerts.subtitle') }}</p>
       </div>
 
-
       <!-- Statistiques des alertes -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Alertes critiques -->
@@ -26,7 +25,9 @@
                 {{ alertsStore.highSeverityAlerts.length }}
               </p>
             </div>
-            <div class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center border border-rose-500/20">
+            <div
+              class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center border border-rose-500/20"
+            >
               <AlertTriangle class="w-6 h-6 text-rose-500" />
             </div>
           </div>
@@ -41,7 +42,9 @@
                 {{ alertsStore.mediumSeverityAlerts.length }}
               </p>
             </div>
-            <div class="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20">
+            <div
+              class="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20"
+            >
               <AlertCircle class="w-6 h-6 text-amber-500" />
             </div>
           </div>
@@ -56,13 +59,14 @@
                 {{ alertsStore.lowSeverityAlerts.length }}
               </p>
             </div>
-            <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20">
+            <div
+              class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20"
+            >
               <Info class="w-6 h-6 text-blue-500" />
             </div>
           </div>
         </div>
       </div>
-
 
       <!-- État de chargement -->
       <div v-if="alertsStore.loading" class="text-center py-16">
@@ -103,9 +107,12 @@
                 <span
                   class="px-2 py-1 rounded-full text-xs font-semibold"
                   :class="{
-                    'bg-rose-500/10 text-rose-400 border border-rose-500/20': alert.severity === 'high',
-                    'bg-amber-500/10 text-amber-400 border border-amber-500/20': alert.severity === 'medium',
-                    'bg-blue-500/10 text-blue-400 border border-blue-500/20': alert.severity === 'low'
+                    'bg-rose-500/10 text-rose-400 border border-rose-500/20':
+                      alert.severity === 'high',
+                    'bg-amber-500/10 text-amber-400 border border-amber-500/20':
+                      alert.severity === 'medium',
+                    'bg-blue-500/10 text-blue-400 border border-blue-500/20':
+                      alert.severity === 'low'
                   }"
                 >
                   {{
@@ -142,12 +149,9 @@
               >
                 {{ $t('alerts.view') }}
               </router-link>
-              <button
-                @click="alertsStore.markAsResolved(alert.id)"
-                class="px-4 py-2 bg-white/5 text-zinc-300 hover:bg-white/10 rounded-xl text-sm font-medium transition-colors border border-white/10"
-              >
+              <Button variant="secondary" size="sm" @click="alertsStore.markAsResolved(alert.id)">
                 {{ $t('alerts.markAsResolved') }}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -178,6 +182,7 @@ import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import EmptyState from '../components/common/EmptyState.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
+import Button from '@/components/ui/Button.vue'
 import { useAlertsStore } from '@/stores/alertsStore'
 import { formatDate } from '@/utils/formatters'
 import { AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-vue-next'

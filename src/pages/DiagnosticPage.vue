@@ -25,26 +25,26 @@
 
         <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
           <div class="text-sm text-gray-500 mb-1">Latence moyenne</div>
-          <div class="text-lg font-semibold text-gray-900">
-            {{ globalAverageLatency }}ms
-          </div>
+          <div class="text-lg font-semibold text-gray-900">{{ globalAverageLatency }}ms</div>
         </div>
 
         <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
           <div class="text-sm text-gray-500 mb-1">Succès API</div>
-          <div class="text-lg font-semibold text-green-600">
+          <div class="text-lg font-semibold text-success-700">
             {{ diagnosticStore.metrics.apiSuccess }}
           </div>
         </div>
       </div>
 
       <!-- Section 2: Filtres et export -->
-      <div class="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-200 flex flex-wrap items-center gap-4">
+      <div
+        class="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-200 flex flex-wrap items-center gap-4"
+      >
         <div class="flex items-center gap-2">
           <label class="text-sm font-medium text-gray-700">Filtrer par type:</label>
           <select
             v-model="selectedLogType"
-            class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="">Tous</option>
             <option value="error">Erreurs</option>
@@ -55,15 +55,17 @@
         </div>
 
         <button
+          type="button"
           @click="exportDiagnostics"
-          class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm font-medium"
+          class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
         >
           📥 Exporter diagnostic
         </button>
 
         <button
+          type="button"
           @click="resetDiagnostics"
-          class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors text-sm font-medium"
+          class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
         >
           🗑️ Réinitialiser
         </button>
@@ -78,18 +80,22 @@
           <table class="w-full">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contexte</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Type
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Message
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Contexte
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Date
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr
-                v-for="log in filteredLogs"
-                :key="log.id"
-                class="hover:bg-gray-50"
-              >
+              <tr v-for="log in filteredLogs" :key="log.id" class="hover:bg-gray-50">
                 <td class="px-4 py-3">
                   <span
                     class="px-2 py-1 text-xs font-medium rounded-full"
@@ -127,9 +133,7 @@
             :show-title="false"
           />
         </div>
-        <div v-else class="text-center text-gray-500 py-8">
-          Aucune donnée de latence disponible
-        </div>
+        <div v-else class="text-center text-gray-500 py-8">Aucune donnée de latence disponible</div>
       </div>
     </div>
   </div>
@@ -222,35 +226,35 @@ const latencyChartOptions = computed(() => ({
   },
   dataLabels: {
     enabled: true,
-    formatter: (val) => `${val}ms`
+    formatter: val => `${val}ms`
   },
-  colors: ['#22c55e'],
+  colors: ['#6366f1'],
   tooltip: {
     y: {
-      formatter: (val) => `${val}ms`
+      formatter: val => `${val}ms`
     }
   }
 }))
 
 // Style pour les types de logs
-const getLogTypeClass = (type) => {
+const getLogTypeClass = type => {
   const classes = {
-    error: 'bg-red-100 text-red-800',
-    warning: 'bg-yellow-100 text-yellow-800',
-    info: 'bg-blue-100 text-blue-800',
-    success: 'bg-green-100 text-green-800'
+    error: 'bg-danger-100 text-danger-700',
+    warning: 'bg-warning-100 text-warning-700',
+    info: 'bg-primary-100 text-primary-700',
+    success: 'bg-success-100 text-success-700'
   }
   return classes[type] || 'bg-gray-100 text-gray-800'
 }
 
 // Formatage du contexte
-const formatContext = (context) => {
+const formatContext = context => {
   if (!context || Object.keys(context).length === 0) return '-'
   return JSON.stringify(context, null, 2)
 }
 
 // Formatage de la date
-const formatDate = (timestamp) => {
+const formatDate = timestamp => {
   const date = new Date(timestamp)
   return date.toLocaleString('fr-FR')
 }
@@ -263,7 +267,7 @@ const exportDiagnostics = () => {
   const url = URL.createObjectURL(dataBlob)
   const link = document.createElement('a')
   link.href = url
-    link.download = `doogoo-diagnostics-${new Date().toISOString().split('T')[0]}.json`
+  link.download = `doogoo-diagnostics-${new Date().toISOString().split('T')[0]}.json`
   link.click()
   URL.revokeObjectURL(url)
 }
@@ -275,4 +279,3 @@ const resetDiagnostics = () => {
   }
 }
 </script>
-

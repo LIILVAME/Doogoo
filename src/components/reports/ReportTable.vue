@@ -4,7 +4,9 @@
       <h3 class="text-lg font-semibold text-white">{{ $t('reports.table.title') }}</h3>
     </div>
 
-    <div class="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <div
+      class="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+    >
       <table class="min-w-full divide-y divide-white/10">
         <thead class="bg-white/5">
           <tr>
@@ -69,7 +71,7 @@
                 {{ getStatusText(row.status) }}
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-success-700">
               {{ formatCurrency(row.totalPaid) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -104,9 +106,9 @@ defineProps({
 })
 
 const getStatusClass = status => {
-  if (status === 'occupied') return 'bg-green-100 text-green-800'
+  if (status === 'occupied') return 'bg-success-100 text-success-700'
   if (status === 'vacant') return 'bg-gray-100 text-gray-800'
-  return 'bg-yellow-100 text-yellow-800'
+  return 'bg-warning-100 text-warning-700'
 }
 
 const getStatusText = status => {

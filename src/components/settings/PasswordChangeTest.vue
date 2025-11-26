@@ -107,8 +107,8 @@
             <span
               :class="
                 testResults.clientValidationDetails?.passwordMatch
-                  ? 'text-green-600'
-                  : 'text-red-600'
+                  ? 'text-success-700'
+                  : 'text-danger-600'
               "
               >{{ testResults.clientValidationDetails?.passwordMatch ? '✅' : '❌' }}</span
             >
@@ -117,7 +117,9 @@
             • Longueur minimale (6+):
             <span
               :class="
-                testResults.clientValidationDetails?.minLength ? 'text-green-600' : 'text-red-600'
+                testResults.clientValidationDetails?.minLength
+                  ? 'text-success-700'
+                  : 'text-danger-600'
               "
               >{{ testResults.clientValidationDetails?.minLength ? '✅' : '❌' }}</span
             >
@@ -126,7 +128,9 @@
             • Différence avec l'ancien:
             <span
               :class="
-                testResults.clientValidationDetails?.different ? 'text-green-600' : 'text-red-600'
+                testResults.clientValidationDetails?.different
+                  ? 'text-success-700'
+                  : 'text-danger-600'
               "
               >{{ testResults.clientValidationDetails?.different ? '✅' : '❌' }}</span
             >
@@ -155,7 +159,7 @@
         </div>
         <p
           v-if="testResults.currentPasswordCheck === 'fail'"
-          class="text-xs text-red-600 mt-1 ml-6"
+          class="text-xs text-danger-600 mt-1 ml-6"
         >
           {{ testResults.currentPasswordCheckError }}
         </p>
@@ -180,7 +184,7 @@
                   : '⏸️ Non testé'
           }}</span>
         </div>
-        <p v-if="testResults.supabaseUpdate === 'fail'" class="text-xs text-red-600 mt-1 ml-6">
+        <p v-if="testResults.supabaseUpdate === 'fail'" class="text-xs text-danger-600 mt-1 ml-6">
           {{ testResults.supabaseUpdateError }}
         </p>
         <p v-if="testResults.supabaseUpdate === 'pass'" class="text-xs text-gray-600 mt-1 ml-6">
@@ -290,7 +294,7 @@
         <div
           :class="[
             'px-3 py-1 rounded-full text-sm font-medium',
-            allTestsPassed ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+            allTestsPassed ? 'bg-success-100 text-success-700' : 'bg-warning-100 text-warning-700'
           ]"
         >
           {{ allTestsPassed ? '✅ Tous les tests passent' : '⚠️ Certains tests ont échoué' }}
@@ -367,11 +371,11 @@ onUnmounted(() => {
 const getTestClass = status => {
   switch (status) {
     case 'pass':
-      return 'bg-green-100 text-green-600'
+      return 'bg-success-100 text-success-700'
     case 'fail':
-      return 'bg-red-100 text-red-600'
+      return 'bg-danger-100 text-danger-700'
     case 'pending':
-      return 'bg-yellow-100 text-yellow-600'
+      return 'bg-warning-100 text-warning-700'
     default:
       return 'bg-gray-100 text-gray-400'
   }
@@ -507,7 +511,7 @@ const allTestsPassed = computed(() => {
 })
 
 const borderColorClass = computed(() => {
-  if (allTestsPassed.value) return 'border-green-200 bg-green-50'
+  if (allTestsPassed.value) return 'border-success-200 bg-success-100'
   if (allTestsCompleted.value) return 'border-orange-200 bg-orange-50'
   return 'border-gray-200'
 })
