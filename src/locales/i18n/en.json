@@ -57,6 +57,7 @@
     "occupied": "Occupied",
     "vacant": "Vacant",
     "monthlyRent": "Monthly rent",
+    "rentCollected": "Rent Collected",
     "properties": "Properties",
     "payments": "Payments",
     "recentPayments": "Recent payments"

@@ -4,7 +4,10 @@
     <Transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="handleClose"></div>
+        <div
+          class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+          @click="handleClose"
+        ></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
@@ -15,9 +18,21 @@
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                  <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div
+                  class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20"
+                >
+                  <svg
+                    class="w-5 h-5 text-emerald-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
                 <h2 class="text-xl font-semibold text-white">{{ $t('payments.addPayment') }}</h2>
@@ -56,7 +71,9 @@
                     class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                     @change="handlePropertyChange"
                   >
-                    <option value="" class="bg-zinc-900">{{ $t('payments.selectProperty') }}</option>
+                    <option value="" class="bg-zinc-900">
+                      {{ $t('payments.selectProperty') }}
+                    </option>
                     <option
                       v-for="property in propertiesWithTenants"
                       :key="property.id"
@@ -65,7 +82,9 @@
                     >
                       {{ property.name }} - {{ property.city }}
                     </option>
-                    <option value="custom" class="bg-zinc-900">{{ $t('payments.otherProperty') }}</option>
+                    <option value="custom" class="bg-zinc-900">
+                      {{ $t('payments.otherProperty') }}
+                    </option>
                   </select>
                   <!-- Champ texte libre si "Autre" sélectionné -->
                   <div v-if="form.propertyId === 'custom'" class="mt-2">
@@ -100,7 +119,9 @@
                     {{ $t('payments.amountEuro') }} <span class="text-rose-400">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{ CURRENCY_SYMBOLS[settingsStore?.currency] || '€' }}</span>
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
+                      CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
+                    }}</span>
                     <input
                       id="payment-amount"
                       v-model.number="form.amount"
@@ -143,9 +164,15 @@
                     class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   >
                     <option value="" class="bg-zinc-900">{{ $t('payments.selectStatus') }}</option>
-                    <option :value="TRANSACTION_STATUS.PAID" class="bg-zinc-900">{{ $t('status.paid') }}</option>
-                    <option :value="TRANSACTION_STATUS.PENDING" class="bg-zinc-900">{{ $t('status.pending') }}</option>
-                    <option :value="TRANSACTION_STATUS.LATE" class="bg-zinc-900">{{ $t('status.late') }}</option>
+                    <option :value="TRANSACTION_STATUS.PAID" class="bg-zinc-900">
+                      {{ $t('status.paid') }}
+                    </option>
+                    <option :value="TRANSACTION_STATUS.PENDING" class="bg-zinc-900">
+                      {{ $t('status.pending') }}
+                    </option>
+                    <option :value="TRANSACTION_STATUS.LATE" class="bg-zinc-900">
+                      {{ $t('status.late') }}
+                    </option>
                   </select>
                 </div>
               </div>
@@ -215,6 +242,7 @@ import { ref, computed, watch } from 'vue'
 import { TRANSACTION_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useToastStore } from '@/stores/toastStore'
+import { useSettingsStore } from '@/stores/settingsStore'
 import { paymentSchema, validate } from '@/utils/validators'
 
 // Utilise $t dans le template, pas besoin de t dans le script
@@ -234,6 +262,7 @@ const emit = defineEmits(['close', 'submit'])
 
 const propertiesStore = usePropertiesStore()
 const toastStore = useToastStore()
+const settingsStore = useSettingsStore()
 
 const form = ref({
   propertyId: '',

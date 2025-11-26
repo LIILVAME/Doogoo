@@ -13,14 +13,15 @@ export const useToastStore = defineStore('toasts', () => {
    * Limite à 1 toast visible à la fois pour éviter la surcharge
    * @param {Object} toast - { type: 'success'|'error'|'info', message: string, timeout?: number, action?: { label, onClick } }
    */
-  const push = (toast) => {
+  const push = toast => {
     // Supprime le toast précédent s'il existe (limite à 1 toast visible)
     if (items.value.length > 0) {
       clear()
     }
 
-    const id = crypto.randomUUID?.() || Date.now().toString() + Math.random().toString(36).substr(2, 9)
-    
+    const id =
+      crypto.randomUUID?.() || Date.now().toString() + Math.random().toString(36).substr(2, 9)
+
     const toastItem = {
       id,
       type: 'info',
@@ -42,7 +43,7 @@ export const useToastStore = defineStore('toasts', () => {
    * Supprime un toast par son ID
    * @param {string} id - ID du toast à supprimer
    */
-  const remove = (id) => {
+  const remove = id => {
     const index = items.value.findIndex(t => t.id === id)
     if (index !== -1) {
       items.value.splice(index, 1)
@@ -71,6 +72,11 @@ export const useToastStore = defineStore('toasts', () => {
     push({ type: 'info', message, ...options })
   }
 
+  // Alias warning -> type dédié (utilisé par certains stores)
+  const warning = (message, options = {}) => {
+    push({ type: 'warning', message, timeout: 6000, ...options })
+  }
+
   return {
     // State
     items,
@@ -81,7 +87,7 @@ export const useToastStore = defineStore('toasts', () => {
     // Helpers
     success,
     error,
-    info
+    info,
+    warning
   }
 })
-

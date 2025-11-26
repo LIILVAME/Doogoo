@@ -131,6 +131,9 @@ msgstr "Vacants"
 msgid "dashboard.monthlyRent"
 msgstr "Loyers mensuels"
 
+msgid "dashboard.rentCollected"
+msgstr "Loyers perçus"
+
 msgid "dashboard.properties"
 msgstr "Biens"
 
@@ -1129,4 +1132,3 @@ msgstr "Prêt à optimiser la gestion de vos biens ?"
 
 msgid "landing.ctaDescription"
 msgstr "Rejoignez des centaines de propriétaires qui font confiance à Doogoo"
-

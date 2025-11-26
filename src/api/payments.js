@@ -16,10 +16,12 @@ export async function getPayments(userId) {
     return { success: false, message: 'User ID requis' }
   }
 
-  return withErrorHandling(async () => {
-    const { data, error } = await supabase
-      .from('payments_view')
-      .select(`
+  return withErrorHandling(
+    async () => {
+      const { data, error } = await supabase
+        .from('payments_view')
+        .select(
+          `
         *,
         properties (
           id,
@@ -30,12 +32,16 @@ export async function getPayments(userId) {
           id,
           name
         )
-      `)
-      .eq('user_id', userId)
-      .order('due_date', { ascending: false })
+      `
+        )
+        .eq('user_id', userId)
+        .order('due_date', { ascending: false })
 
-    return { data, error }
-  }, 'getPayments')
+      return { data, error }
+    },
+    'getPayments',
+    { timeout: 12000 }
+  )
 }
 
 /**
@@ -52,7 +58,8 @@ export async function getPaymentById(paymentId, userId) {
   return withErrorHandling(async () => {
     const { data, error } = await supabase
       .from('payments_view')
-      .select(`
+      .select(
+        `
         *,
         properties (
           id,
@@ -63,7 +70,8 @@ export async function getPaymentById(paymentId, userId) {
           id,
           name
         )
-      `)
+      `
+      )
       .eq('id', paymentId)
       .eq('user_id', userId)
       .single()
@@ -97,7 +105,8 @@ export async function createPayment(paymentData, userId) {
           user_id: userId
         }
       ])
-      .select(`
+      .select(
+        `
         *,
         properties (
           id,
@@ -108,7 +117,8 @@ export async function createPayment(paymentData, userId) {
           id,
           name
         )
-      `)
+      `
+      )
       .single()
 
     return { data, error }
@@ -151,12 +161,13 @@ export async function updatePayment(paymentId, updates, userId) {
     delete updateData.property_id
     delete updateData.tenant_id
 
-      const { data, error } = await supabase
+    const { data, error } = await supabase
       .from('payments')
       .update(updateData)
       .eq('id', paymentId)
       .eq('user_id', userId)
-      .select(`
+      .select(
+        `
         *,
         properties (
           id,
@@ -167,7 +178,8 @@ export async function updatePayment(paymentId, updates, userId) {
           id,
           name
         )
-      `)
+      `
+      )
       .single()
 
     return { data, error }
@@ -210,7 +222,8 @@ export async function getPaymentsByFilters(userId, filters = {}) {
   return withErrorHandling(async () => {
     let query = supabase
       .from('payments_view')
-      .select(`
+      .select(
+        `
         *,
         properties (
           id,
@@ -221,7 +234,8 @@ export async function getPaymentsByFilters(userId, filters = {}) {
           id,
           name
         )
-      `)
+      `
+      )
       .eq('user_id', userId)
 
     // Filtre par statut
@@ -251,4 +265,3 @@ export async function getPaymentsByFilters(userId, filters = {}) {
     return { data, error }
   }, 'getPaymentsByFilters')
 }
-

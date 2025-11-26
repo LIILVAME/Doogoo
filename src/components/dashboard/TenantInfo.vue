@@ -3,7 +3,13 @@
     <div class="flex items-start justify-between mb-2 sm:mb-3">
       <div class="flex-1 min-w-0 pr-2">
         <p class="text-xs text-gray-500 mb-1">{{ $t('payments.tenant') }}</p>
-        <p class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ tenant.name }}</p>
+        <p
+          class="font-semibold text-gray-900 text-sm sm:text-base truncate"
+          :class="{ 'cursor-pointer hover:text-violet-500 transition-colors': clickable }"
+          @click="handleClick"
+        >
+          {{ tenant.name }}
+        </p>
       </div>
       <span
         class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0"
@@ -50,8 +56,20 @@ const props = defineProps({
   tenant: {
     type: Object,
     default: null
+  },
+  clickable: {
+    type: Boolean,
+    default: false
   }
 })
+
+const emit = defineEmits(['click-tenant'])
+
+const handleClick = e => {
+  if (!props.clickable) return
+  e.stopPropagation()
+  emit('click-tenant', props.tenant)
+}
 
 /**
  * Classe CSS selon le statut de paiement

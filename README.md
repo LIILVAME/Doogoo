@@ -121,17 +121,17 @@
 
 ## 🛠️ Stack Technique
 
-| Côté | Technologie | Version | Usage |
-|------|-------------|---------|-------|
-| **Frontend** | Vue 3 (Composition API) | ^3.4.21 | SPA responsive avec Tailwind CSS |
-| **État global** | Pinia | ^3.0.3 | 8 stores modulaires (auth, properties, payments, tenants, etc.) |
-| **Backend** | Supabase | - | Auth, Realtime, RLS, PostgreSQL, Edge Functions |
-| **Charts** | ApexCharts | ^5.3.5 | Visualisations des revenus et taux d'occupation |
-| **Build** | Vite | ^5.2.0 | Build tool rapide & optimisé |
-| **Routing** | Vue Router | ^4.3.0 | Navigation SPA avec guards d'authentification |
-| **Styling** | Tailwind CSS | ^3.4.3 | Framework CSS utility-first |
-| **Exports** | jsPDF + xlsx | ^3.0.3 | Génération de rapports PDF/Excel |
-| **Hébergement** | GitHub Pages / Netlify | - | Config base `/Doogoo/` prête |
+| Côté            | Technologie             | Version | Usage                                                           |
+| --------------- | ----------------------- | ------- | --------------------------------------------------------------- |
+| **Frontend**    | Vue 3 (Composition API) | ^3.4.21 | SPA responsive avec Tailwind CSS                                |
+| **État global** | Pinia                   | ^3.0.3  | 8 stores modulaires (auth, properties, payments, tenants, etc.) |
+| **Backend**     | Supabase                | -       | Auth, Realtime, RLS, PostgreSQL, Edge Functions                 |
+| **Charts**      | ApexCharts              | ^5.3.5  | Visualisations des revenus et taux d'occupation                 |
+| **Build**       | Vite                    | ^5.2.0  | Build tool rapide & optimisé                                    |
+| **Routing**     | Vue Router              | ^4.3.0  | Navigation SPA avec guards d'authentification                   |
+| **Styling**     | Tailwind CSS            | ^3.4.3  | Framework CSS utility-first                                     |
+| **Exports**     | jsPDF + xlsx            | ^3.0.3  | Génération de rapports PDF/Excel                                |
+| **Hébergement** | GitHub Pages / Netlify  | -       | Config base `/Doogoo/` prête                                    |
 
 ### Architecture
 
@@ -348,12 +348,12 @@ Doogoo/
 
 ### Palette de couleurs
 
-| Couleur | Code | Usage |
-|---------|------|-------|
-| **Primary** | `#22c55e` (green-500) | Boutons, liens, éléments interactifs |
-| **Background** | `#f9fafb` (gray-50) | Fond principal de l'application |
-| **Text** | `#111827` (gray-900) | Texte principal |
-| **Border** | `#e5e7eb` (gray-200) | Bordures et séparateurs |
+| Couleur        | Code                  | Usage                                |
+| -------------- | --------------------- | ------------------------------------ |
+| **Primary**    | `#22c55e` (green-500) | Boutons, liens, éléments interactifs |
+| **Background** | `#f9fafb` (gray-50)   | Fond principal de l'application      |
+| **Text**       | `#111827` (gray-900)  | Texte principal                      |
+| **Border**     | `#e5e7eb` (gray-200)  | Bordures et séparateurs              |
 
 ### Typographie
 
@@ -362,11 +362,11 @@ Doogoo/
 
 ### Responsive Design
 
-| Breakpoint | Comportement |
-|------------|--------------|
-| **Mobile** (< 640px) | Navigation adaptée, grilles en colonne unique, sidebar masquée |
-| **Tablet** (640px - 1024px) | Grilles 2 colonnes, sidebar optionnelle |
-| **Desktop** (> 1024px) | Layout complet avec sidebar fixe, grilles 3-4 colonnes |
+| Breakpoint                  | Comportement                                                   |
+| --------------------------- | -------------------------------------------------------------- |
+| **Mobile** (< 640px)        | Navigation adaptée, grilles en colonne unique, sidebar masquée |
+| **Tablet** (640px - 1024px) | Grilles 2 colonnes, sidebar optionnelle                        |
+| **Desktop** (> 1024px)      | Layout complet avec sidebar fixe, grilles 3-4 colonnes         |
 
 ### Composants UI
 
@@ -427,11 +427,12 @@ npm run preview  # Prévisualiser le build de production
 ### GitHub Pages
 
 1. **Activer GitHub Pages** :
-   - Settings → Pages → Source → **GitHub Actions**
+   - Settings → Pages → Build and deployment → **GitHub Actions**
 
-2. **Workflow automatique** :
-   - Le workflow `deploy.yml` build et déploie automatiquement
-   - Base path : `/Doogoo/` (configuré dans `vite.config.js`)
+2. **Pipeline** :
+   - Workflow `.github/workflows/deploy.yml` déclenché sur `main` ou `workflow_dispatch`
+   - Base path forcé via `VITE_BASE_PATH=/Doogoo/` pendant le build
+   - Secrets à renseigner si besoin : `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
 
 3. **URL de déploiement** :
    - [https://liilvame.github.io/Doogoo/](https://liilvame.github.io/Doogoo/)
@@ -583,6 +584,7 @@ git push origin feature/ma-nouvelle-fonctionnalite
 ### 6. Ouvrir une Pull Request
 
 Créer une PR sur GitHub avec :
+
 - Description claire des changements
 - Screenshots si UI modifiée
 - Référence aux issues liées
@@ -641,4 +643,3 @@ SOFTWARE.
 [⬆ Retour en haut](#-vylo---monitoring-immobilier)
 
 </div>
-

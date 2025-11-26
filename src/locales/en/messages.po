@@ -131,6 +131,9 @@ msgstr "Vacant"
 msgid "dashboard.monthlyRent"
 msgstr "Monthly rent"
 
+msgid "dashboard.rentCollected"
+msgstr "Rent Collected"
+
 msgid "dashboard.properties"
 msgstr "Properties"
 
@@ -1129,4 +1132,3 @@ msgstr "Ready to optimize your property management?"
 
 msgid "landing.ctaDescription"
 msgstr "Join hundreds of property owners who trust Doogoo"
-
