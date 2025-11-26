@@ -16,20 +16,24 @@ export async function getProperties(userId) {
     return { success: false, message: 'User ID requis' }
   }
 
-  return withErrorHandling(async () => {
-    const { data, error } = await supabase
-      .from('properties')
-      .select(
-        `
+  return withErrorHandling(
+    async () => {
+      const { data, error } = await supabase
+        .from('properties')
+        .select(
+          `
         *,
         tenants (*)
       `
-      )
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
+        )
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
 
-    return { data, error }
-  }, 'getProperties')
+      return { data, error }
+    },
+    'getProperties',
+    { timeout: 12000 }
+  )
 }
 
 /**

@@ -28,7 +28,7 @@ export async function getAlerts(userId) {
   }
 
   // getAlerts fait plusieurs requêtes - on les exécute en parallèle pour réduire le temps total
-  // Timeout de 15s (au lieu de 8s) car plusieurs requêtes mais en parallèle
+  // Timeout porté à 20s pour absorber les pics de latence Supabase observés en production
   return withErrorHandling(
     async () => {
       const allAlerts = []
@@ -191,7 +191,7 @@ export async function getAlerts(userId) {
       return { data: sortedAlerts, error: null }
     },
     'getAlerts',
-    { timeout: 15000 } // 15s car requêtes en parallèle maintenant (au lieu de 20s)
+    { timeout: 20000 } // 20s car requêtes en parallèle mais parfois lentes en production
   )
 }
 
