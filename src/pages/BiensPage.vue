@@ -7,7 +7,7 @@
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      
+
       <!-- Header avec statistiques -->
       <PropertiesHeader :stats="stats" @add-property="isAddModalOpen = true" />
 
@@ -78,7 +78,11 @@
       <PropertyModal
         :is-open="isAddModalOpen || isEditModalOpen"
         :property="selectedProperty"
-        @close="isAddModalOpen = false; isEditModalOpen = false; selectedProperty = null"
+        @close="
+          isAddModalOpen = false
+          isEditModalOpen = false
+          selectedProperty = null
+        "
         @saved="handlePropertySaved"
       />
 
@@ -234,7 +238,8 @@ const filteredProperties = computed(() => {
       const matchName = property.name?.toLowerCase().includes(search)
       const matchCity = property.city?.toLowerCase().includes(search)
       const matchAddress = property.address?.toLowerCase().includes(search)
-      return matchName || matchCity || matchAddress
+      const matchTenant = property.tenant?.name?.toLowerCase().includes(search)
+      return matchName || matchCity || matchAddress || matchTenant
     })
   }
 
@@ -367,7 +372,7 @@ const cancelDelete = () => {
  * Gère la sauvegarde d'un bien (ajout ou édition)
  * Ferme les modals après la sauvegarde
  */
-const handlePropertySaved = async (propertyData) => {
+const handlePropertySaved = async propertyData => {
   try {
     if (selectedProperty.value) {
       // Mode édition

@@ -7,7 +7,20 @@
       <div class="flex items-start justify-between mb-4">
         <div class="flex-1">
           <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ tenant.name }}</h3>
-          <p class="text-sm text-gray-600 mb-1">{{ tenant.property }}</p>
+          <p
+            class="text-sm text-gray-600 mb-1 hover:text-primary-600 cursor-pointer transition-colors flex items-center gap-1"
+            @click.stop="navigateToProperty"
+          >
+            {{ tenant.property }}
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </p>
           <p class="text-xs text-gray-400">{{ tenant.propertyCity }}</p>
         </div>
         <span
@@ -23,14 +36,14 @@
         <div>
           <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.entryDate') }}</p>
           <p class="text-sm font-medium text-gray-900">
-            {{ formatDate(tenant.entryDate, { shortMonth: true }) }}
+            {{ formatDate(tenant.entryDate) }}
           </p>
         </div>
 
         <div v-if="tenant.exitDate">
           <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
           <p class="text-sm font-medium text-gray-900">
-            {{ formatDate(tenant.exitDate, { shortMonth: true }) }}
+            {{ formatDate(tenant.exitDate) }}
           </p>
         </div>
 
@@ -77,10 +90,13 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { PAYMENT_STATUS, STATUS_LABELS, STATUS_CLASSES } from '@/utils/constants'
 
 // Utilise $t dans le template, pas besoin de t dans le script
+
+const router = useRouter()
 
 const props = defineProps({
   tenant: {
@@ -90,6 +106,12 @@ const props = defineProps({
 })
 
 defineEmits(['edit', 'delete'])
+
+const navigateToProperty = () => {
+  if (props.tenant.propertyId) {
+    router.push(`/biens/${props.tenant.propertyId}`)
+  }
+}
 
 /**
  * Classe CSS selon le statut de paiement

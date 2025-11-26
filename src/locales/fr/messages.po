@@ -131,6 +131,9 @@ msgstr "Vacants"
 msgid "dashboard.monthlyRent"
 msgstr "Loyers mensuels"
 
+msgid "dashboard.rentCollected"
+msgstr "Loyers perçus"
+
 msgid "dashboard.properties"
 msgstr "Biens"
 

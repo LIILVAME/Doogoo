@@ -34,10 +34,21 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
+      // Timeout de 15 secondes pour éviter le chargement infini
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error('Délai de connexion dépassé. Vérifiez votre connexion Internet.')),
+          15000
+        )
+      )
+
+      const { data, error: authError } = await Promise.race([
+        supabase.auth.signInWithPassword({
+          email,
+          password
+        }),
+        timeoutPromise
+      ])
 
       if (authError) {
         error.value = authError.message
@@ -55,7 +66,7 @@ export const useAuthStore = defineStore('auth', () => {
           .then(({ trackDoogooEvent, DoogooEvents }) => {
             trackDoogooEvent(DoogooEvents.USER_LOGGED_IN)
           })
-          .catch(() => { })
+          .catch(() => {})
       }
 
       return { success: true, user: data.user }
@@ -144,7 +155,7 @@ export const useAuthStore = defineStore('auth', () => {
                 email: email
               })
             })
-            .catch(() => { })
+            .catch(() => {})
         }
 
         if (data.session) {
@@ -198,7 +209,14 @@ export const useAuthStore = defineStore('auth', () => {
         paymentsStore.stopRealtime()
 
         // Réinitialise tous les stores
-        const stores = [propertiesStore, paymentsStore, tenantsStore, alertsStore, analyticsStore, reportsStore]
+        const stores = [
+          propertiesStore,
+          paymentsStore,
+          tenantsStore,
+          alertsStore,
+          analyticsStore,
+          reportsStore
+        ]
         stores.forEach(store => {
           if (store.reset) {
             store.reset()
@@ -232,7 +250,7 @@ export const useAuthStore = defineStore('auth', () => {
           .then(({ trackDoogooEvent, DoogooEvents }) => {
             trackDoogooEvent(DoogooEvents.USER_LOGGED_OUT)
           })
-          .catch(() => { })
+          .catch(() => {})
       }
 
       profile.value = null

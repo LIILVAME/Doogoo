@@ -17,7 +17,7 @@
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-900">{{ $t('tenants.addTenant') }}</h2>
+              <h2 class="text-xl font-semibold text-gray-900">{{ $t('tenants.editTenant') }}</h2>
               <button
                 @click="handleClose"
                 class="text-gray-400 hover:text-gray-600 transition-colors"
@@ -39,11 +39,14 @@
               <div class="space-y-4">
                 <!-- Nom du locataire -->
                 <div>
-                  <label for="tenant-name" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    for="edit-tenant-name"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     {{ $t('tenants.tenantName') }} <span class="text-red-500">*</span>
                   </label>
                   <input
-                    id="tenant-name"
+                    id="edit-tenant-name"
                     v-model.trim="form.name"
                     type="text"
                     required
@@ -52,43 +55,31 @@
                   />
                 </div>
 
-                <!-- Bien associé -->
+                <!-- Bien associé (lecture seule) -->
                 <div>
-                  <label for="tenant-property" class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ $t('tenants.associatedProperty') }} <span class="text-red-500">*</span>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ $t('tenants.associatedProperty') }}
                   </label>
-                  <select
-                    id="tenant-property"
-                    v-model="form.propertyId"
-                    required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
-                    @change="handlePropertyChange"
+                  <div
+                    class="w-full border border-gray-200 bg-gray-50 rounded-lg px-4 py-2 text-gray-600"
                   >
-                    <option value="">{{ $t('tenants.selectProperty') }}</option>
-                    <option
-                      v-for="property in availableProperties"
-                      :key="property.id"
-                      :value="property.id"
-                    >
-                      {{ property.name }} - {{ property.city }}
-                    </option>
-                  </select>
-                  <p v-if="form.propertyId && selectedProperty" class="text-xs text-gray-500 mt-1">
-                    {{ $t('properties.propertyRent') }} :
-                    {{ formatCurrency(selectedProperty.rent) }}
+                    {{ propertyName }}
+                  </div>
+                  <p class="text-xs text-gray-500 mt-1">
+                    {{ $t('properties.propertyRent') }} : {{ formatCurrency(form.rent) }}
                   </p>
                 </div>
 
                 <!-- Date d'entrée -->
                 <div>
                   <label
-                    for="tenant-entry-date"
+                    for="edit-tenant-entry-date"
                     class="block text-sm font-medium text-gray-700 mb-2"
                   >
                     {{ $t('tenants.entryDate') }} <span class="text-red-500">*</span>
                   </label>
                   <input
-                    id="tenant-entry-date"
+                    id="edit-tenant-entry-date"
                     v-model="form.entryDate"
                     type="date"
                     required
@@ -99,14 +90,14 @@
                 <!-- Date de sortie (optionnelle) -->
                 <div>
                   <label
-                    for="tenant-exit-date"
+                    for="edit-tenant-exit-date"
                     class="block text-sm font-medium text-gray-700 mb-2"
                   >
                     {{ $t('tenants.exitDateOptional') }}
                     <span class="text-gray-400 text-xs">({{ $t('common.optional') }})</span>
                   </label>
                   <input
-                    id="tenant-exit-date"
+                    id="edit-tenant-exit-date"
                     v-model="form.exitDate"
                     type="date"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
@@ -115,7 +106,10 @@
 
                 <!-- Loyer -->
                 <div>
-                  <label for="tenant-rent" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    for="edit-tenant-rent"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     {{ $t('tenants.monthlyRent') }} <span class="text-red-500">*</span>
                   </label>
                   <div class="relative">
@@ -123,7 +117,7 @@
                       CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
                     }}</span>
                     <input
-                      id="tenant-rent"
+                      id="edit-tenant-rent"
                       v-model.number="form.rent"
                       type="number"
                       required
@@ -137,11 +131,14 @@
 
                 <!-- Statut de paiement -->
                 <div>
-                  <label for="tenant-status" class="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    for="edit-tenant-status"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     {{ $t('tenants.paymentStatus') }} <span class="text-red-500">*</span>
                   </label>
                   <select
-                    id="tenant-status"
+                    id="edit-tenant-status"
                     v-model="form.status"
                     required
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
@@ -199,7 +196,7 @@
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M12 4v16m8-8H4"
+                      d="M5 13l4 4L19 7"
                     />
                   </svg>
                   {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.save') }}
@@ -214,18 +211,23 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { usePropertiesStore } from '@/stores/propertiesStore'
-import { useToastStore } from '@/stores/toastStore'
+import { ref, watch } from 'vue'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
 import { PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
-import { tenantSchema, validate } from '@/utils/validators'
 
 const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false
+  },
+  tenant: {
+    type: Object,
+    default: null
+  },
+  propertyName: {
+    type: String,
+    default: ''
   },
   isLoading: {
     type: Boolean,
@@ -235,35 +237,30 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'submit'])
 
-const propertiesStore = usePropertiesStore()
-const toastStore = useToastStore()
 const settingsStore = useSettingsStore()
 
 const form = ref({
   name: '',
-  propertyId: '',
   entryDate: '',
   exitDate: '',
   rent: null,
   status: 'on_time'
 })
 
-const validationErrors = ref({})
-
 /**
- * Liste des biens disponibles (libres ou occupés - on peut remplacer le locataire)
+ * Initialise le formulaire avec les données du locataire
  */
-const availableProperties = computed(() => {
-  return propertiesStore.properties
-})
-
-/**
- * Bien sélectionné
- */
-const selectedProperty = computed(() => {
-  if (!form.value.propertyId) return null
-  return propertiesStore.properties.find(p => p.id === form.value.propertyId)
-})
+const initForm = () => {
+  if (props.tenant) {
+    form.value = {
+      name: props.tenant.name || '',
+      entryDate: props.tenant.entryDate || '',
+      exitDate: props.tenant.exitDate || '',
+      rent: props.tenant.rent || null,
+      status: props.tenant.status || 'on_time'
+    }
+  }
+}
 
 /**
  * Réinitialise le formulaire
@@ -271,7 +268,6 @@ const selectedProperty = computed(() => {
 const resetForm = () => {
   form.value = {
     name: '',
-    propertyId: '',
     entryDate: '',
     exitDate: '',
     rent: null,
@@ -288,78 +284,29 @@ const handleClose = () => {
 }
 
 /**
- * Gère le changement de sélection du bien
- * Pré-remplit le loyer si un bien est sélectionné
- */
-const handlePropertyChange = () => {
-  if (selectedProperty.value) {
-    form.value.rent = selectedProperty.value.rent || null
-  } else {
-    form.value.rent = null
-  }
-}
-
-/**
- * Soumet le formulaire avec validation Zod
+ * Soumet le formulaire
  */
 const handleSubmit = () => {
-  validationErrors.value = {}
-
-  // Prépare les données à soumettre
   const submitData = {
     name: form.value.name.trim(),
-    propertyId: form.value.propertyId,
     entryDate: form.value.entryDate,
     exitDate: form.value.exitDate || null,
     rent: Number(form.value.rent),
     status: form.value.status || 'on_time'
   }
 
-  // Validation avec Zod
-  const validationResult = validate(tenantSchema, submitData)
-
-  if (!validationResult.success) {
-    // Affiche les erreurs de validation
-    if (toastStore) {
-      toastStore.error(`Validation échouée : ${validationResult.error}`)
-    }
-
-    // Mappe les erreurs par champ
-    if (validationResult.errors) {
-      validationResult.errors.forEach(error => {
-        const match = error.match(/^([^.]+):/)
-        if (match) {
-          const field = match[1]
-          if (!validationErrors.value[field]) {
-            validationErrors.value[field] = []
-          }
-          validationErrors.value[field].push(error.replace(/^[^:]+:\s*/, ''))
-        }
-      })
-    }
-
-    return
-  }
-
-  // Ajoute les champs additionnels non validés par Zod mais nécessaires pour l'UI
-  const finalData = {
-    ...validationResult.data,
-    property: selectedProperty.value?.name || ''
-  }
-
-  emit('submit', finalData)
-
-  resetForm()
-  emit('close')
+  emit('submit', submitData)
 }
 
 /**
- * Réinitialise le formulaire quand le modal se ferme
+ * Initialise le formulaire quand le modal s'ouvre
  */
 watch(
   () => props.isOpen,
   newValue => {
-    if (!newValue) {
+    if (newValue) {
+      initForm()
+    } else {
       resetForm()
     }
   }

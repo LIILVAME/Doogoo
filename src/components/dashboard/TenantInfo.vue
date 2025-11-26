@@ -2,8 +2,14 @@
   <div v-if="tenant" class="tenant-info">
     <div class="flex items-start justify-between mb-2 sm:mb-3">
       <div class="flex-1 min-w-0 pr-2">
-        <p class="text-xs text-gray-500 mb-1">{{ $t('payments.tenant') }}</p>
-        <p class="font-semibold text-gray-900 text-sm sm:text-base truncate">{{ tenant.name }}</p>
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('payments.tenant') }}</p>
+        <p
+          class="font-semibold text-white text-sm sm:text-base truncate transition-colors"
+          :class="{ 'cursor-pointer hover:text-violet-400': clickable }"
+          @click="handleClick"
+        >
+          {{ tenant.name }}
+        </p>
       </div>
       <span
         class="inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0"
@@ -15,20 +21,20 @@
 
     <div class="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
       <div>
-        <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.entryDate') }}</p>
-        <p class="font-medium text-gray-900">
-          {{ formatDate(tenant.entryDate, { shortMonth: true }) }}
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.entryDate') }}</p>
+        <p class="font-medium text-zinc-200">
+          {{ formatDate(tenant.entryDate) }}
         </p>
       </div>
       <div v-if="tenant.exitDate">
-        <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
-        <p class="font-medium text-gray-900">
-          {{ formatDate(tenant.exitDate, { shortMonth: true }) }}
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.exitDate') }}</p>
+        <p class="font-medium text-zinc-200">
+          {{ formatDate(tenant.exitDate) }}
         </p>
       </div>
       <div v-else>
-        <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
-        <p class="font-medium text-gray-400">{{ $t('tenants.inProgress') }}</p>
+        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.exitDate') }}</p>
+        <p class="font-medium text-zinc-500">{{ $t('tenants.inProgress') }}</p>
       </div>
     </div>
   </div>
@@ -50,8 +56,21 @@ const props = defineProps({
   tenant: {
     type: Object,
     default: null
+  },
+  clickable: {
+    type: Boolean,
+    default: false
   }
 })
+
+const emit = defineEmits(['click-tenant'])
+
+const handleClick = e => {
+  if (props.clickable) {
+    e.stopPropagation()
+    emit('click-tenant', props.tenant)
+  }
+}
 
 /**
  * Classe CSS selon le statut de paiement

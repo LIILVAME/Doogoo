@@ -7,7 +7,7 @@
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      
+
       <!-- Header avec statistiques -->
       <TenantsHeader :stats="stats" @add-tenant="isModalOpen = true" />
 
@@ -75,8 +75,13 @@
 
       <!-- Liste des locataires (s'affiche même si vide, le composant gère l'état vide) -->
       <!-- S'affiche dès que le chargement initial est terminé -->
+      <TenantsHeader
+        :stats="tenantsStats"
+        v-model:searchQuery="searchQuery"
+        @add-tenant="isAddModalOpen = true"
+      />
+
       <TenantsList
-        v-if="!propertiesStore.loading && !propertiesStore.error"
         :tenants="filteredTenants"
         :has-filters="hasActiveFilters"
         @edit-tenant="handleEditTenant"
@@ -90,6 +95,20 @@
         :isLoading="propertiesStore.loading"
         @close="isModalOpen = false"
         @submit="handleAddTenant"
+      />
+
+      <!-- Modal d'édition de locataire -->
+      <EditTenantModal
+        :isOpen="isEditModalOpen"
+        :tenant="selectedTenant"
+        :propertyName="selectedPropertyName"
+        :isLoading="propertiesStore.loading"
+        @close="
+          isEditModalOpen = false
+          selectedTenant = null
+          selectedPropertyName = ''
+        "
+        @submit="handleUpdateTenant"
       />
 
       <!-- Modal de confirmation de suppression -->
@@ -114,7 +133,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
@@ -122,6 +141,7 @@ import PullToRefresh from '../components/common/PullToRefresh.vue'
 import TenantsHeader from '../components/tenants/TenantsHeader.vue'
 import TenantsList from '../components/tenants/TenantsList.vue'
 import AddTenantModal from '../components/tenants/AddTenantModal.vue'
+import EditTenantModal from '../components/tenants/EditTenantModal.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import ConfirmModal from '../components/common/ConfirmModal.vue'
 import { useTenantsStore } from '@/stores/tenantsStore'
@@ -129,9 +149,11 @@ import { usePropertiesStore } from '@/stores/propertiesStore'
 import { PAYMENT_STATUS } from '@/utils/constants'
 
 const { t } = useI18n()
-const router = useRouter()
+const route = useRoute()
 const tenantsStore = useTenantsStore()
 const propertiesStore = usePropertiesStore()
+
+const searchQuery = ref('')
 
 // Pull-to-refresh
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
@@ -188,9 +210,12 @@ onUnmounted(() => {
 // Utilise les locataires du store Pinia (synchronisé avec propertiesStore)
 const tenants = computed(() => tenantsStore.tenants)
 
-// État local pour filtres et modal
+// État local pour filtres et modals
 const activeFilter = ref('all')
 const isModalOpen = ref(false)
+const isEditModalOpen = ref(false)
+const selectedTenant = ref(null)
+const selectedPropertyName = ref('')
 
 /**
  * Statistiques globales depuis le store
@@ -215,17 +240,38 @@ const filters = computed(() => [
  * Vérifie si des filtres sont actifs
  */
 const hasActiveFilters = computed(() => {
-  return activeFilter.value !== 'all'
+  return activeFilter.value !== 'all' || searchQuery.value.length > 0
 })
 
 /**
  * Filtre les locataires selon le filtre actif
  */
 const filteredTenants = computed(() => {
-  if (activeFilter.value === 'all') {
-    return tenants.value
+  let result = tenants.value
+
+  // Apply status filter
+  if (activeFilter.value !== 'all') {
+    result = result.filter(tenant => tenant.status === activeFilter.value)
   }
-  return tenants.value.filter(tenant => tenant.status === activeFilter.value)
+
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(
+      t =>
+        t.name.toLowerCase().includes(query) ||
+        t.property.toLowerCase().includes(query) ||
+        (t.email && t.email.toLowerCase().includes(query))
+    )
+  }
+
+  return result
+})
+
+onMounted(() => {
+  if (route.query.search) {
+    searchQuery.value = route.query.search
+  }
 })
 
 /**
@@ -233,6 +279,7 @@ const filteredTenants = computed(() => {
  */
 const clearFilters = () => {
   activeFilter.value = 'all'
+  searchQuery.value = ''
 }
 
 /**
@@ -251,14 +298,33 @@ const handleAddTenant = async newTenant => {
 
 /**
  * Gère l'édition d'un locataire
- * Redirige vers la page de modification du bien associé
+ * Ouvre le modal d'édition avec les données du locataire
  */
 const handleEditTenant = tenant => {
-  // Un locataire est lié à un bien, on redirige vers la page de modification du bien
   if (tenant && tenant.propertyId) {
-    router.push({ path: '/biens', query: { mode: 'edit', id: tenant.propertyId } })
+    selectedTenant.value = tenant
+    selectedPropertyName.value = tenant.property || ''
+    isEditModalOpen.value = true
   } else {
     console.warn('⚠️ handleEditTenant: locataire sans propertyId', tenant)
+  }
+}
+
+/**
+ * Gère la mise à jour d'un locataire
+ */
+const handleUpdateTenant = async updatedData => {
+  if (!selectedTenant.value) return
+
+  try {
+    await tenantsStore.updateTenant(selectedTenant.value.id, updatedData)
+    isEditModalOpen.value = false
+    selectedTenant.value = null
+    selectedPropertyName.value = ''
+    // Le toast est géré dans le store
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du locataire:', error)
+    // Le toast d'erreur est géré dans le store
   }
 }
 
