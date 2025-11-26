@@ -77,13 +77,15 @@
         <InlineLoader />
       </div>
 
-      <TenantsList
-        :tenants="filteredTenants"
-        :has-filters="hasActiveFilters"
-        @edit-tenant="handleEditTenant"
-        @delete-tenant="handleDeleteTenant"
-        @clear-filters="clearFilters"
-      />
+      <div v-else>
+        <TenantsList
+          :tenants="filteredTenants"
+          :has-filters="hasActiveFilters"
+          @edit-tenant="handleEditTenant"
+          @delete-tenant="handleDeleteTenant"
+          @clear-filters="clearFilters"
+        />
+      </div>
 
       <!-- Modal d'ajout de locataire -->
       <AddTenantModal
