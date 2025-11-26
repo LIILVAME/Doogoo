@@ -87,6 +87,9 @@
     "vue-eslint-parser": "^10.0.0",
     "react": "^19.2.0"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.52.5"
+  },
   "lint-staged": {
     "*.{js,ts,vue}": [
       "eslint --fix",
