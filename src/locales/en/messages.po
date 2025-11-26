@@ -1132,4 +1132,3 @@ msgstr "Ready to optimize your property management?"
 
 msgid "landing.ctaDescription"
 msgstr "Join hundreds of property owners who trust Doogoo"
-

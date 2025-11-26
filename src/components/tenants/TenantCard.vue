@@ -1,14 +1,23 @@
 <template>
   <div
-    class="card cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col justify-between min-h-[280px]"
+    class="glass-panel rounded-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col justify-between min-h-[280px] group overflow-hidden"
   >
+    <!-- Glow -->
+    <div
+      class="absolute -right-16 -top-16 w-36 h-36 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500 opacity-0 group-hover:opacity-100 pointer-events-none"
+    ></div>
+
     <!-- Contenu principal -->
-    <div class="flex-1">
+    <div class="flex-1 flex flex-col p-5 relative z-10">
       <div class="flex items-start justify-between mb-4">
-        <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ tenant.name }}</h3>
+        <div class="flex-1 min-w-0 pr-3">
+          <h3
+            class="text-lg font-semibold text-white mb-1 truncate group-hover:text-violet-300 transition-colors"
+          >
+            {{ tenant.name }}
+          </h3>
           <p
-            class="text-sm text-gray-600 mb-1 hover:text-primary-600 cursor-pointer transition-colors flex items-center gap-1"
+            class="text-sm text-zinc-300 mb-1 hover:text-violet-300 cursor-pointer transition-colors flex items-center gap-1 truncate"
             @click.stop="navigateToProperty"
           >
             {{ tenant.property }}
@@ -21,10 +30,10 @@
               />
             </svg>
           </p>
-          <p class="text-xs text-gray-400">{{ tenant.propertyCity }}</p>
+          <p class="text-xs text-zinc-500 uppercase tracking-wide">{{ tenant.propertyCity }}</p>
         </div>
         <span
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0"
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium shrink-0 backdrop-blur-md border border-white/10"
           :class="statusClass"
         >
           {{ statusText }}
@@ -32,35 +41,40 @@
       </div>
 
       <!-- Informations du locataire -->
-      <div class="mt-4 space-y-3">
-        <div>
-          <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.entryDate') }}</p>
-          <p class="text-sm font-medium text-gray-900">
-            {{ formatDate(tenant.entryDate) }}
-          </p>
+      <div class="mt-3 space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="text-xs text-zinc-500 mb-1">{{ $t('tenants.entryDate') }}</p>
+            <p class="text-sm font-medium text-white">
+              {{ formatDate(tenant.entryDate, { shortMonth: true }) }}
+            </p>
+          </div>
+          <div v-if="tenant.exitDate">
+            <p class="text-xs text-zinc-500 mb-1">{{ $t('tenants.exitDate') }}</p>
+            <p class="text-sm font-medium text-white">
+              {{ formatDate(tenant.exitDate, { shortMonth: true }) }}
+            </p>
+          </div>
+          <div v-else>
+            <p class="text-xs text-zinc-500 mb-1">{{ $t('tenants.exitDate') }}</p>
+            <p class="text-sm font-medium text-zinc-400">{{ $t('tenants.inProgress') }}</p>
+          </div>
         </div>
 
-        <div v-if="tenant.exitDate">
-          <p class="text-xs text-gray-500 mb-1">{{ $t('tenants.exitDate') }}</p>
-          <p class="text-sm font-medium text-gray-900">
-            {{ formatDate(tenant.exitDate) }}
-          </p>
-        </div>
-
-        <div class="pt-3 border-t border-gray-100">
-          <p class="text-xs text-gray-500 mb-1">{{ $t('properties.monthlyRent') }}</p>
-          <p class="text-xl font-bold text-gray-900">{{ formatCurrency(tenant.rent) }}</p>
+        <div class="pt-3 border-t border-white/10">
+          <p class="text-xs text-zinc-500 mb-1">{{ $t('properties.monthlyRent') }}</p>
+          <p class="text-xl font-bold text-white">{{ formatCurrency(tenant.rent) }}</p>
         </div>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
+    <div class="mt-auto px-5 py-3 border-t border-white/10 flex items-center gap-3 bg-black/20">
       <button
         @click.stop="$emit('edit', tenant)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-150"
+        class="flex-1 px-3 py-2 text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
       >
-        <svg class="w-4 h-4 inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -72,9 +86,9 @@
       </button>
       <button
         @click.stop="$emit('delete', tenant.id)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-150"
+        class="flex-1 px-3 py-2 text-sm font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
       >
-        <svg class="w-4 h-4 inline mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -109,7 +123,7 @@ defineEmits(['edit', 'delete'])
 
 const navigateToProperty = () => {
   if (props.tenant.propertyId) {
-    router.push(`/biens/${props.tenant.propertyId}`)
+    router.push({ path: '/biens', query: { mode: 'edit', id: props.tenant.propertyId } })
   }
 }
 

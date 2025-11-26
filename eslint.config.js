@@ -10,7 +10,15 @@ export default [
 
   // Global ignores
   {
-    ignores: ['node_modules/**', 'dist/**', 'coverage/**', '*.config.js', '*.config.ts']
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'coverage/**',
+      '*.config.js',
+      '*.config.ts',
+      'Doogoo/**',
+      'Doogoo-1/**'
+    ]
   },
 
   // Node.js scripts

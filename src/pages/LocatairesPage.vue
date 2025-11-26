@@ -9,7 +9,11 @@
       />
 
       <!-- Header avec statistiques -->
-      <TenantsHeader :stats="stats" @add-tenant="isModalOpen = true" />
+      <TenantsHeader
+        :stats="stats"
+        v-model:searchQuery="searchQuery"
+        @add-tenant="isModalOpen = true"
+      />
 
       <!-- Filtres -->
       <div class="mb-6 flex flex-wrap items-center gap-4">
@@ -73,14 +77,6 @@
         <InlineLoader />
       </div>
 
-      <!-- Liste des locataires (s'affiche même si vide, le composant gère l'état vide) -->
-      <!-- S'affiche dès que le chargement initial est terminé -->
-      <TenantsHeader
-        :stats="tenantsStats"
-        v-model:searchQuery="searchQuery"
-        @add-tenant="isAddModalOpen = true"
-      />
-
       <TenantsList
         :tenants="filteredTenants"
         :has-filters="hasActiveFilters"
@@ -103,11 +99,7 @@
         :tenant="selectedTenant"
         :propertyName="selectedPropertyName"
         :isLoading="propertiesStore.loading"
-        @close="
-          isEditModalOpen = false
-          selectedTenant = null
-          selectedPropertyName = ''
-        "
+        @close="closeEditTenantModal"
         @submit="handleUpdateTenant"
       />
 
@@ -216,6 +208,12 @@ const isModalOpen = ref(false)
 const isEditModalOpen = ref(false)
 const selectedTenant = ref(null)
 const selectedPropertyName = ref('')
+
+const closeEditTenantModal = () => {
+  isEditModalOpen.value = false
+  selectedTenant.value = null
+  selectedPropertyName.value = ''
+}
 
 /**
  * Statistiques globales depuis le store

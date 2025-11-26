@@ -78,11 +78,7 @@
       <PropertyModal
         :is-open="isAddModalOpen || isEditModalOpen"
         :property="selectedProperty"
-        @close="
-          isAddModalOpen = false
-          isEditModalOpen = false
-          selectedProperty = null
-        "
+        @close="closePropertyModal"
         @saved="handlePropertySaved"
       />
 
@@ -198,6 +194,12 @@ const activeFilter = ref('all')
 const isAddModalOpen = ref(false)
 const isEditModalOpen = ref(false)
 const selectedProperty = ref(null)
+
+const closePropertyModal = () => {
+  isAddModalOpen.value = false
+  isEditModalOpen.value = false
+  selectedProperty.value = null
+}
 
 /**
  * Statistiques globales depuis le store
@@ -381,10 +383,7 @@ const handlePropertySaved = async propertyData => {
       // Mode ajout
       await handleAddProperty(propertyData)
     }
-    // Ferme les modals et réinitialise la sélection
-    isAddModalOpen.value = false
-    isEditModalOpen.value = false
-    selectedProperty.value = null
+    closePropertyModal()
   } catch (error) {
     console.error('Erreur lors de la sauvegarde du bien:', error)
   }

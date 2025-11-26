@@ -210,7 +210,8 @@ const statusText = computed(() => {
 })
 
 const navigateToDetails = () => {
-  router.push(`/biens/${props.property.id}`)
+  // Pas de page détail dédiée : on ouvre la modale d'édition via query param
+  router.push({ path: '/biens', query: { mode: 'edit', id: props.property.id } })
 }
 
 const handleTenantClick = tenant => {

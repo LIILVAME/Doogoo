@@ -1132,4 +1132,3 @@ msgstr "Prêt à optimiser la gestion de vos biens ?"
 
 msgid "landing.ctaDescription"
 msgstr "Rejoignez des centaines de propriétaires qui font confiance à Doogoo"
-
