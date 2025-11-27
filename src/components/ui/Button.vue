@@ -14,7 +14,14 @@
       fill="none"
       viewBox="0 0 24 24"
     >
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      ></circle>
       <path
         class="opacity-75"
         fill="currentColor"
@@ -34,12 +41,12 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (v) => ['primary', 'secondary', 'ghost', 'danger'].includes(v)
+    validator: v => ['primary', 'secondary', 'ghost', 'danger'].includes(v)
   },
   size: {
     type: String,
     default: 'md',
-    validator: (v) => ['sm', 'md', 'lg'].includes(v)
+    validator: v => ['sm', 'md', 'lg'].includes(v)
   },
   type: {
     type: String,
@@ -70,7 +77,7 @@ const emit = defineEmits(['click'])
  */
 const baseClasses = [
   'inline-flex items-center justify-center',
-  'font-medium rounded-lg',
+  'font-medium rounded-full',
   'transition-all duration-200',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none'
@@ -138,7 +145,7 @@ const buttonClasses = computed(() => [
 /**
  * Handle click event
  */
-const handleClick = (event) => {
+const handleClick = event => {
   if (props.type !== 'submit' && !props.disabled && !props.loading) {
     emit('click', event)
   }

@@ -1,11 +1,12 @@
 <template>
   <div>
-    <!-- Skip Link pour navigation clavier -->
-    <a href="#auth-content" class="skip-link">Aller au formulaire de connexion</a>
-    
-    <div class="min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-8 relative overflow-hidden">
+    <div
+      class="min-h-screen flex items-center justify-center bg-zinc-950 px-4 py-8 relative overflow-hidden"
+    >
       <!-- Background Glow -->
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] glow-bg pointer-events-none z-0"></div>
+      <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] glow-bg pointer-events-none z-0"
+      ></div>
 
       <div class="w-full max-w-md relative z-10">
         <!-- Logo avec animation -->
