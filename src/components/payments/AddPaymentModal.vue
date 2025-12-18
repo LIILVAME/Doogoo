@@ -124,13 +124,13 @@
                     }}</span>
                     <input
                       id="payment-amount"
-                      v-model.number="form.amount"
-                      type="number"
+                      v-model="form.amount"
+                      type="text"
+                      inputmode="decimal"
                       required
-                      min="0"
-                      step="10"
                       class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       :placeholder="$t('payments.placeholders.amount')"
+                      pattern="[0-9]+([.,][0-9]{1,2})?"
                     />
                   </div>
                 </div>
@@ -189,11 +189,11 @@
                 </button>
                 <button
                   type="submit"
-                  :disabled="isLoading"
+                  :disabled="isLoading || isSubmitting"
                   class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                 >
                   <svg
-                    v-if="isLoading"
+                    v-if="isLoading || isSubmitting"
                     class="w-5 h-5 mr-2 animate-spin"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -226,7 +226,11 @@
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.add') }}
+                  {{
+                    isLoading || isSubmitting
+                      ? $t('common.saving') || 'Enregistrement...'
+                      : $t('common.add')
+                  }}
                 </button>
               </div>
             </form>
@@ -243,6 +247,7 @@ import { TRANSACTION_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { toNumber } from '@/utils/formDataConverters'
 import { paymentSchema, validate } from '@/utils/validators'
 
 // Utilise $t dans le template, pas besoin de t dans le script
@@ -264,10 +269,13 @@ const propertiesStore = usePropertiesStore()
 const toastStore = useToastStore()
 const settingsStore = useSettingsStore()
 
+const isSubmitting = ref(false)
+
 const form = ref({
   propertyId: '',
   propertyCustom: '',
   tenant: '',
+  tenantId: '',
   amount: null,
   dueDate: '',
   status: TRANSACTION_STATUS.PENDING
@@ -290,6 +298,7 @@ const resetForm = () => {
     propertyId: '',
     propertyCustom: '',
     tenant: '',
+    tenantId: '',
     amount: null,
     dueDate: '',
     status: TRANSACTION_STATUS.PENDING
@@ -306,7 +315,7 @@ const handleClose = () => {
 
 /**
  * Gère le changement de sélection du bien
- * Pré-remplit le nom du locataire et le montant si un bien est sélectionné
+ * Pré-remplit le nom du locataire, l'ID du locataire et le montant si un bien est sélectionné
  */
 const handlePropertyChange = () => {
   if (form.value.propertyId && form.value.propertyId !== 'custom') {
@@ -314,92 +323,193 @@ const handlePropertyChange = () => {
 
     if (selectedProperty) {
       form.value.tenant = selectedProperty.tenant?.name || ''
+      form.value.tenantId = selectedProperty.tenant?.id || ''
       form.value.amount = selectedProperty.rent || null
     }
   } else {
     // Réinitialise si on sélectionne "custom" ou vide
     if (form.value.propertyId !== 'custom') {
       form.value.tenant = ''
+      form.value.tenantId = ''
       form.value.amount = null
     }
   }
 }
 
-/**
- * Soumet le formulaire avec validation Zod
- */
-const handleSubmit = () => {
-  validationErrors.value = {}
+// Note: calculateDefaultEndDate pourrait être utilisé pour suggérer automatiquement une date de fin
+// de période, mais n'est pas implémenté pour l'instant
 
-  // Détermine le nom du bien
-  let propertyName = ''
+/**
+ * Prépare les données du formulaire pour qu'elles soient conformes aux interfaces TypeScript
+ * (CreatePaymentData)
+ *
+ * Règles de transformation :
+ *
+ * 1. **Champs obligatoires :**
+ *    - `propertyId` : UUID valide (string) ou null si custom
+ *    - `amount` : Nombre positif strictement supérieur à 0 (converti via `toNumber`)
+ *    - `dueDate` : Date au format ISO (YYYY-MM-DD)
+ *
+ * 2. **Champs optionnels :**
+ *    - `tenantId` : UUID du locataire si bien sélectionné avec locataire
+ *    - `tenant` : Nom du locataire (string, pour affichage)
+ *    - `property` : Nom du bien (string, pour affichage)
+ *    - `status` : Statut du paiement (défaut: 'pending')
+ *
+ * 3. **Validation :**
+ *    - Lance une erreur si `amount` est manquant, invalide, ou ≤ 0
+ *    - Lance une erreur si `propertyId` est manquant (sauf si custom avec nom)
+ *    - Lance une erreur si `dueDate` est manquant ou invalide
+ *
+ * 4. **Logique métier :**
+ *    - Si bien "custom", propertyId peut être null mais propertyName doit être fourni
+ *    - Si bien sélectionné, récupère automatiquement tenantId si disponible
+ *
+ * @returns {Object} Objet conforme à CreatePaymentData
+ * @throws {Error} Si les champs obligatoires sont manquants ou invalides
+ *
+ * @example
+ * // Paiement avec bien existant
+ * form.value = {
+ *   propertyId: 'uuid-123',
+ *   tenant: 'Jean Dupont',
+ *   tenantId: 'tenant-uuid-456',
+ *   amount: '1200',
+ *   dueDate: '2024-12-31',
+ *   status: 'pending'
+ * }
+ * preparePaymentData() // → { propertyId: 'uuid-123', tenantId: 'tenant-uuid-456', amount: 1200, dueDate: '2024-12-31', status: 'pending', ... }
+ */
+const preparePaymentData = () => {
+  // Validation : propertyId doit être présent ou custom avec nom
   let propertyId = null
+  let propertyName = ''
 
   if (form.value.propertyId === 'custom') {
     propertyName = form.value.propertyCustom.trim()
     if (!propertyName) {
-      if (toastStore) {
-        toastStore.error('Le nom du bien est requis')
-      }
-      return
+      throw new Error('Le nom du bien est requis')
     }
-    propertyId = null
+    propertyId = null // Custom property n'a pas d'UUID
   } else if (form.value.propertyId) {
     const selectedProperty = propertiesStore.properties.find(p => p.id === form.value.propertyId)
-    propertyName = selectedProperty?.name || ''
-    propertyId = form.value.propertyId // UUID, pas besoin de conversion
+    if (!selectedProperty) {
+      throw new Error('Le bien sélectionné est introuvable')
+    }
+    propertyName = selectedProperty.name || ''
+    propertyId = form.value.propertyId.trim()
   } else {
-    if (toastStore) {
-      toastStore.error('Veuillez sélectionner un bien')
-    }
-    return
+    throw new Error('Veuillez sélectionner un bien')
   }
 
-  // Prépare les données à soumettre (convertit propertyId en UUID ou génère un UUID temporaire)
+  // Validation : tenant doit être présent
+  if (!form.value.tenant || form.value.tenant.trim() === '') {
+    throw new Error('Le nom du locataire est requis')
+  }
+
+  // Validation : amount doit être un nombre valide
+  const amountValue = toNumber(form.value.amount)
+  if (amountValue === undefined || amountValue <= 0) {
+    throw new Error('Le montant est requis et doit être supérieur à 0')
+  }
+
+  // Validation : dueDate doit être présent
+  if (!form.value.dueDate || form.value.dueDate.trim() === '') {
+    throw new Error("La date d'échéance est requise")
+  }
+
+  // Prépare les données en convertissant tous les champs
   const submitData = {
-    propertyId: propertyId || '00000000-0000-0000-0000-000000000000', // UUID temporaire si custom
-    amount: Number(form.value.amount),
-    dueDate: form.value.dueDate,
-    status: form.value.status || 'pending'
+    propertyId: propertyId || '00000000-0000-0000-0000-000000000000', // UUID temporaire pour custom (Zod requiert UUID)
+    amount: amountValue, // Toujours un number valide à ce stade
+    dueDate: form.value.dueDate.trim(),
+    status: form.value.status || TRANSACTION_STATUS.PENDING
   }
 
-  // Validation avec Zod
-  const validationResult = validate(paymentSchema, submitData)
+  // Ajoute tenantId si disponible
+  if (form.value.tenantId && form.value.tenantId.trim()) {
+    submitData.tenantId = form.value.tenantId.trim()
+  }
 
-  if (!validationResult.success) {
-    // Affiche les erreurs de validation
-    if (toastStore) {
-      toastStore.error(`Validation échouée : ${validationResult.error}`)
-    }
+  // Ajoute les champs pour l'UI (non validés par Zod mais nécessaires pour l'affichage)
+  submitData.property = propertyName
+  submitData.tenant = form.value.tenant.trim()
 
-    // Mappe les erreurs par champ
-    if (validationResult.errors) {
-      validationResult.errors.forEach(error => {
-        const match = error.match(/^([^.]+):/)
-        if (match) {
-          const field = match[1]
-          if (!validationErrors.value[field]) {
-            validationErrors.value[field] = []
+  return submitData
+}
+
+/**
+ * Soumet le formulaire avec validation et gestion d'erreurs
+ * Affiche un toast d'erreur en cas de problème de validation
+ */
+const handleSubmit = async () => {
+  if (isSubmitting.value) {
+    return // Évite les soumissions multiples
+  }
+
+  validationErrors.value = {}
+
+  try {
+    isSubmitting.value = true
+
+    // Prépare les données en garantissant la conformité avec les interfaces TypeScript
+    const preparedData = preparePaymentData()
+
+    // Validation supplémentaire avec Zod pour les règles métier (UUID, format date, etc.)
+    const validationResult = validate(paymentSchema, preparedData)
+
+    if (!validationResult.success) {
+      // Affiche les erreurs de validation Zod
+      const errorMessage = validationResult.error || 'Erreur de validation'
+      toastStore.error(`Validation échouée : ${errorMessage}`)
+
+      // Mappe les erreurs par champ pour affichage dans le formulaire (si nécessaire)
+      if (validationResult.errors) {
+        validationResult.errors.forEach(error => {
+          const match = error.match(/^([^.]+):/)
+          if (match) {
+            const field = match[1]
+            if (!validationErrors.value[field]) {
+              validationErrors.value[field] = []
+            }
+            validationErrors.value[field].push(error.replace(/^[^:]+:\s*/, ''))
           }
-          validationErrors.value[field].push(error.replace(/^[^:]+:\s*/, ''))
-        }
-      })
+        })
+      }
+
+      return
     }
 
-    return
+    // Les données sont validées et prêtes
+    emit('submit', validationResult.data)
+
+    resetForm()
+    emit('close')
+  } catch (error) {
+    // Affiche l'erreur à l'utilisateur via le système de notification
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erreur lors de la préparation des données'
+
+    // Messages d'erreur utilisateur-friendly
+    let userMessage = errorMessage
+    if (errorMessage.includes('montant')) {
+      userMessage = 'Le montant doit être supérieur à 0'
+    } else if (errorMessage.includes('bien')) {
+      userMessage = 'Veuillez sélectionner un bien ou saisir un nom de bien'
+    } else if (errorMessage.includes('locataire')) {
+      userMessage = 'Le nom du locataire est requis'
+    } else if (errorMessage.includes("date d'échéance") || errorMessage.includes('date')) {
+      userMessage = "La date d'échéance est requise"
+    } else if (errorMessage.includes('Erreur lors de la préparation')) {
+      userMessage =
+        'Erreur lors de la validation des données. Vérifiez que tous les champs requis sont remplis.'
+    }
+
+    toastStore.error(userMessage)
+    console.error('Erreur de validation du formulaire:', errorMessage)
+  } finally {
+    isSubmitting.value = false
   }
-
-  // Ajoute les champs additionnels non validés par Zod mais nécessaires pour l'UI
-  const finalData = {
-    ...validationResult.data,
-    property: propertyName,
-    tenant: form.value.tenant?.trim() || ''
-  }
-
-  emit('submit', finalData)
-
-  resetForm()
-  emit('close')
 }
 
 /**

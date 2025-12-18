@@ -3,18 +3,97 @@
     <div class="p-6 lg:p-10 max-w-7xl mx-auto">
       <!-- Welcome Message -->
       <div class="mb-8">
-        <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2">
-          Hey {{ userFirstName }} 👋
-        </h1>
+        <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2">Hey {{ userFirstName }} 👋</h1>
         <p class="text-zinc-400 text-lg">
           {{ welcomeMessage }}
         </p>
       </div>
 
-      <DashboardHeader 
-        :stats="stats" 
-        :loading="propertiesStore.loading || paymentsStore.loading"
-      />
+      <!-- Section Alertes (Actions requises) -->
+      <div
+        v-if="!propertiesStore.loading && !paymentsStore.loading && metrics.alerts.hasAlerts"
+        class="mb-6 space-y-3"
+      >
+        <div
+          v-if="metrics.alerts.latePaymentsCount > 0"
+          class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-center justify-between"
+        >
+          <div class="flex items-center">
+            <svg
+              class="w-6 h-6 text-rose-400 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div>
+              <p class="font-semibold text-rose-200">
+                {{ metrics.alerts.latePaymentsCount }}
+                {{
+                  metrics.alerts.latePaymentsCount > 1
+                    ? 'paiements en retard'
+                    : 'paiement en retard'
+                }}
+              </p>
+              <p class="text-sm text-rose-300/80">
+                Total à récupérer : {{ formatCurrency(metrics.financial.pendingRevenue) }}
+              </p>
+            </div>
+          </div>
+          <router-link
+            to="/paiements"
+            class="text-rose-400 hover:text-rose-300 text-sm font-medium underline"
+          >
+            Voir les paiements →
+          </router-link>
+        </div>
+
+        <div
+          v-if="metrics.alerts.expiringLeasesCount > 0"
+          class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-center justify-between"
+        >
+          <div class="flex items-center">
+            <svg
+              class="w-6 h-6 text-amber-400 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div>
+              <p class="font-semibold text-amber-200">
+                {{ metrics.alerts.expiringLeasesCount }}
+                {{ metrics.alerts.expiringLeasesCount > 1 ? 'baux expirant' : 'bail expirant' }}
+                dans moins de 30 jours
+              </p>
+              <p class="text-sm text-amber-300/80">Action requise : renouvellement ou libération</p>
+            </div>
+          </div>
+          <router-link
+            to="/locataires"
+            class="text-amber-400 hover:text-amber-300 text-sm font-medium underline"
+          >
+            Voir les locataires →
+          </router-link>
+        </div>
+      </div>
+
+      <DashboardHeader :stats="stats" :loading="propertiesStore.loading || paymentsStore.loading" />
+
+      <!-- Métriques Financières (optionnel, peut être activé si nécessaire) -->
+      <!-- <DashboardMetrics :loading="propertiesStore.loading || paymentsStore.loading" /> -->
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Liste des biens -->
@@ -30,10 +109,7 @@
 
         <!-- Section Paiements & Activité -->
         <div class="space-y-8">
-          <PaymentsSection 
-            :payments="recentPayments" 
-            :loading="paymentsStore.loading"
-          />
+          <PaymentsSection :payments="recentPayments" :loading="paymentsStore.loading" />
           <!-- Vous pouvez ajouter d'autres widgets ici (ex: Activité récente) -->
         </div>
       </div>
@@ -64,6 +140,8 @@ import { ref, computed, onMounted } from 'vue'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { usePaymentsStore } from '@/stores/paymentsStore'
 import { useAuthStore } from '@/stores/authStore'
+import { useDashboardMetrics } from '@/composables/useDashboardMetrics'
+import { formatCurrency } from '@/utils/formatters'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
 import PropertiesList from '@/components/dashboard/PropertiesList.vue'
@@ -74,6 +152,9 @@ import DeleteConfirmationModal from '@/components/common/DeleteConfirmationModal
 const propertiesStore = usePropertiesStore()
 const paymentsStore = usePaymentsStore()
 const authStore = useAuthStore()
+
+// Utilise le composable de métriques pour calculer les KPIs en temps réel
+const { metrics } = useDashboardMetrics()
 
 const showPropertyModal = ref(false)
 const showDeleteModal = ref(false)
@@ -98,9 +179,9 @@ const userFirstName = computed(() => {
 const welcomeMessage = computed(() => {
   const hour = new Date().getHours()
   const propertyCount = propertiesStore.properties.length
-  
+
   if (hour < 12) {
-    return propertyCount > 0 
+    return propertyCount > 0
       ? `Bon début de journée ! Vous gérez ${propertyCount} bien${propertyCount > 1 ? 's' : ''} 🏡`
       : 'Bon début de journée ! Commencez par ajouter votre premier bien 🏡'
   } else if (hour < 18) {
@@ -116,25 +197,37 @@ const welcomeMessage = computed(() => {
 
 onMounted(async () => {
   // Initialize realtime subscription for properties
-  propertiesStore.initRealtime();
+  propertiesStore.initRealtime()
   await Promise.all([propertiesStore.fetchProperties(), paymentsStore.fetchPayments()])
 })
 
+/**
+ * Statistiques enrichies avec les métriques du Dashboard
+ * Combine les métriques calculées avec les stats de base
+ */
 const stats = computed(() => {
   const allProperties = propertiesStore.properties
   const occupied = allProperties.filter(p => p.status === 'occupied').length
   const vacant = allProperties.filter(p => p.status === 'vacant').length
-  const totalRent = allProperties.reduce((sum, p) => sum + (Number(p.rent) || 0), 0)
+  const totalRent = allProperties.reduce((sum, p) => sum + (p.rent || 0), 0)
 
-  // Calcul des retards de paiement
-  const latePayments = paymentsStore.payments.filter(p => p.status === 'late').length
+  // Utilise les métriques calculées depuis le composable
+  const dashboardMetrics = metrics.value
 
   return {
     totalProperties: allProperties.length,
     occupiedProperties: occupied,
     vacantProperties: vacant,
     totalRent,
-    latePayments
+    latePayments: dashboardMetrics.alerts.latePaymentsCount,
+    // Métriques financières
+    totalRevenue: dashboardMetrics.financial.totalRevenue,
+    pendingRevenue: dashboardMetrics.financial.pendingRevenue,
+    // Métriques immobilières
+    occupancyRate: dashboardMetrics.property.occupancyRate,
+    // Alertes
+    hasAlerts: dashboardMetrics.alerts.hasAlerts,
+    expiringLeasesCount: dashboardMetrics.alerts.expiringLeasesCount
   }
 })
 

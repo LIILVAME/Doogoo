@@ -16,9 +16,50 @@
     </div>
 
     <div v-else class="flex items-center justify-between relative z-10">
-      <div>
+      <div class="flex-1">
         <p class="text-sm font-medium text-zinc-400 mb-1">{{ label }}</p>
         <p class="text-2xl font-bold text-white tracking-tight">{{ value }}</p>
+        <!-- Trend indicator -->
+        <div v-if="trend && trendValue" class="flex items-center mt-1">
+          <svg
+            v-if="trend === 'up'"
+            class="w-4 h-4 text-emerald-400 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+            />
+          </svg>
+          <svg
+            v-else-if="trend === 'down'"
+            class="w-4 h-4 text-rose-400 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+            />
+          </svg>
+          <span
+            :class="{
+              'text-emerald-400': trend === 'up',
+              'text-rose-400': trend === 'down',
+              'text-zinc-400': trend === 'neutral'
+            }"
+            class="text-xs font-medium"
+          >
+            {{ trendValue }}
+          </span>
+        </div>
       </div>
       <div
         :class="[
@@ -58,6 +99,20 @@ defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  trend: {
+    type: String,
+    default: null,
+    validator: value => value === null || ['up', 'down', 'neutral'].includes(value)
+  },
+  trendValue: {
+    type: String,
+    default: ''
+  },
+  color: {
+    type: String,
+    default: 'default',
+    validator: value => ['default', 'success', 'warning', 'danger', 'info'].includes(value)
   }
 })
 </script>

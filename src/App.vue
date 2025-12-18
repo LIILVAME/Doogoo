@@ -101,7 +101,8 @@ const handleAuthHash = async () => {
       })
 
       if (error) {
-        console.error("Erreur lors de l'échange des tokens:", error)
+        // Log sécurisé : ne pas exposer les tokens
+        console.error("Erreur lors de l'échange des tokens (masqué pour sécurité)")
         router.push('/login?error=token_exchange_failed')
         return true
       }
@@ -130,8 +131,9 @@ const handleAuthHash = async () => {
     }
 
     return false
-  } catch (error) {
-    console.error('Erreur lors du traitement du hash auth:', error)
+  } catch {
+    // Log sécurisé : le hash peut contenir des tokens, ne pas l'exposer
+    console.error('Erreur lors du traitement du hash auth')
     router.push('/login?error=hash_processing_failed')
     return true
   }
@@ -250,7 +252,14 @@ onMounted(async () => {
             const analyticsStore = useAnalyticsStore()
             const reportsStore = useReportsStore()
 
-            const stores = [propertiesStore, paymentsStore, tenantsStore, alertsStore, analyticsStore, reportsStore]
+            const stores = [
+              propertiesStore,
+              paymentsStore,
+              tenantsStore,
+              alertsStore,
+              analyticsStore,
+              reportsStore
+            ]
             stores.forEach(store => {
               if (store.reset) {
                 store.reset()

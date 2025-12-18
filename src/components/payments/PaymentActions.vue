@@ -78,6 +78,32 @@
           <!-- Divider -->
           <div class="border-t border-gray-100 my-1"></div>
 
+          <!-- Télécharger la quittance PDF (uniquement si statut = paid) -->
+          <button
+            v-if="payment.status === 'paid'"
+            @click="generateRentReceipt"
+            class="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            :aria-label="`Télécharger la quittance pour ${payment.id}`"
+          >
+            <svg
+              class="w-5 h-5 mr-3 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span class="font-medium">Télécharger la quittance</span>
+          </button>
+
+          <!-- Divider (uniquement si quittance visible) -->
+          <div v-if="payment.status === 'paid'" class="border-t border-gray-100 my-1"></div>
+
           <!-- Télécharger la facture PDF -->
           <button
             @click="generatePDF"
@@ -126,7 +152,10 @@ import { jsPDF } from 'jspdf'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import { usePaymentsStore } from '@/stores/paymentsStore'
+import { usePropertiesStore } from '@/stores/propertiesStore'
+import { useTenantsStore } from '@/stores/tenantsStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import { generateRentReceipt as generateReceiptPDF } from '@/utils/pdfGenerator'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 const { t } = useI18n()
@@ -143,6 +172,8 @@ const emit = defineEmits(['edit', 'delete'])
 const toast = useToastStore()
 const authStore = useAuthStore()
 const paymentsStore = usePaymentsStore()
+const propertiesStore = usePropertiesStore()
+const tenantsStore = useTenantsStore()
 const open = ref(false)
 const menuContainer = ref(null)
 const showDeleteConfirm = ref(false)
@@ -225,6 +256,89 @@ const deleteConfirmMessage = computed(() => {
     `Êtes-vous sûr de vouloir supprimer ce paiement de ${formatCurrency(props.payment.amount)} ?`
   )
 })
+
+/**
+ * Génère et télécharge la quittance de loyer PDF
+ */
+const generateRentReceipt = async () => {
+  try {
+    open.value = false
+
+    // Vérifie que le paiement est payé
+    if (props.payment.status !== 'paid') {
+      toast.error('Une quittance ne peut être générée que pour un paiement payé')
+      return
+    }
+
+    // Récupère les données de la propriété
+    let property = null
+    if (props.payment.propertyId) {
+      property = propertiesStore.properties.find(p => p.id === props.payment.propertyId) || null
+    }
+
+    // Récupère les données du locataire
+    let tenant = null
+    if (property?.tenant) {
+      // Le tenant est dans la propriété
+      tenant = {
+        id: property.tenant.id,
+        name: property.tenant.name,
+        entryDate: property.tenant.entryDate,
+        exitDate: property.tenant.exitDate,
+        rent: property.tenant.rent,
+        status: property.tenant.status,
+        propertyId: property.id
+      }
+    } else {
+      // Cherche dans le store des tenants
+      const allTenants = tenantsStore.tenants
+      tenant = allTenants.find(t => t.propertyId === props.payment.propertyId) || null
+    }
+
+    // Récupère les informations du propriétaire
+    let ownerName = null
+    let ownerEmail = null
+    let ownerPhone = null
+    let ownerAddress = null
+
+    if (authStore.profile) {
+      ownerName = authStore.profile.full_name || authStore.profile.name
+      ownerPhone = authStore.profile.phone
+      ownerAddress = authStore.profile.address
+    } else {
+      try {
+        const profile = await authStore.fetchProfile()
+        if (profile) {
+          ownerName = profile.full_name || profile.name
+          ownerPhone = profile.phone
+          ownerAddress = profile.address
+        }
+      } catch (err) {
+        console.warn('Impossible de charger le profil pour la quittance:', err)
+      }
+    }
+
+    if (authStore.user?.email) {
+      ownerEmail = authStore.user.email
+    }
+
+    // Génère la quittance
+    await generateReceiptPDF({
+      payment: props.payment,
+      tenant,
+      property,
+      ownerName: ownerName || 'Propriétaire',
+      ownerEmail: ownerEmail || '',
+      ownerPhone: ownerPhone || '',
+      ownerAddress: ownerAddress || undefined
+    })
+
+    toast.success('Quittance téléchargée avec succès')
+  } catch (error) {
+    console.error('Erreur lors de la génération de la quittance:', error)
+    toast.error(error.message || 'Erreur lors de la génération de la quittance')
+  }
+}
 
 /**
  * Génère et télécharge la facture PDF

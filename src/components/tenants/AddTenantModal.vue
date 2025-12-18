@@ -165,11 +165,11 @@
                 </button>
                 <button
                   type="submit"
-                  :disabled="isLoading"
+                  :disabled="isLoading || isSubmitting"
                   class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg
-                    v-if="isLoading"
+                    v-if="isLoading || isSubmitting"
                     class="w-5 h-5 mr-2 animate-spin"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -202,7 +202,11 @@
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.save') }}
+                  {{
+                    isLoading || isSubmitting
+                      ? $t('common.saving') || 'Enregistrement...'
+                      : $t('common.save')
+                  }}
                 </button>
               </div>
             </form>
@@ -220,6 +224,7 @@ import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
 import { PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
+import { toNumber } from '@/utils/formDataConverters'
 import { tenantSchema, validate } from '@/utils/validators'
 
 const props = defineProps({
@@ -238,6 +243,8 @@ const emit = defineEmits(['close', 'submit'])
 const propertiesStore = usePropertiesStore()
 const toastStore = useToastStore()
 const settingsStore = useSettingsStore()
+
+const isSubmitting = ref(false)
 
 const form = ref({
   name: '',
@@ -300,57 +307,152 @@ const handlePropertyChange = () => {
 }
 
 /**
- * Soumet le formulaire avec validation Zod
+ * Prépare les données du formulaire pour qu'elles soient conformes aux interfaces TypeScript
+ * (CreateTenantData / UpdateTenantData)
+ *
+ * Règles de transformation :
+ *
+ * 1. **Champs obligatoires :**
+ *    - `name` : Chaîne non vide (trimée)
+ *    - `propertyId` : UUID valide (string)
+ *    - `entryDate` : Date au format ISO (YYYY-MM-DD)
+ *    - `rent` : Nombre positif strictement supérieur à 0 (converti via `toNumber`)
+ *
+ * 2. **Champs optionnels :**
+ *    - `exitDate` : Date au format ISO ou null si non renseignée
+ *    - `status` : Inclus seulement si défini ('on_time' | 'late' | 'pending' | 'paid')
+ *
+ * 3. **Validation :**
+ *    - Lance une erreur si `rent` est manquant, invalide, ou ≤ 0
+ *    - Valide que `propertyId` est présent et non vide
+ *    - Valide que `entryDate` est au format correct
+ *
+ * @returns {Object} Objet conforme à CreateTenantData
+ * @throws {Error} Si les champs obligatoires sont manquants ou invalides
+ *
+ * @example
+ * // Formulaire complet
+ * form.value = {
+ *   name: 'Jean Dupont',
+ *   propertyId: 'uuid-123',
+ *   entryDate: '2024-01-01',
+ *   exitDate: '',
+ *   rent: '1200',
+ *   status: 'on_time'
+ * }
+ * prepareTenantData() // → { name: 'Jean Dupont', propertyId: 'uuid-123', entryDate: '2024-01-01', exitDate: null, rent: 1200, status: 'on_time' }
  */
-const handleSubmit = () => {
-  validationErrors.value = {}
+const prepareTenantData = () => {
+  // Validation de base : propertyId doit être présent
+  if (!form.value.propertyId || form.value.propertyId.trim() === '') {
+    throw new Error('Le bien associé est requis')
+  }
 
-  // Prépare les données à soumettre
+  // Validation : entryDate doit être présent
+  if (!form.value.entryDate || form.value.entryDate.trim() === '') {
+    throw new Error("La date d'entrée est requise")
+  }
+
+  // Validation : rent doit être un nombre valide
+  const rentValue = toNumber(form.value.rent)
+  if (rentValue === undefined || rentValue <= 0) {
+    throw new Error('Le loyer est requis et doit être un montant positif')
+  }
+
+  // Prépare les données en convertissant tous les champs numériques
   const submitData = {
     name: form.value.name.trim(),
-    propertyId: form.value.propertyId,
-    entryDate: form.value.entryDate,
-    exitDate: form.value.exitDate || null,
-    rent: Number(form.value.rent),
+    propertyId: form.value.propertyId.trim(),
+    entryDate: form.value.entryDate.trim(),
+    rent: rentValue, // Toujours un number valide à ce stade
     status: form.value.status || 'on_time'
   }
 
-  // Validation avec Zod
-  const validationResult = validate(tenantSchema, submitData)
+  // Date de sortie : incluse seulement si renseignée
+  if (form.value.exitDate && form.value.exitDate.trim()) {
+    submitData.exitDate = form.value.exitDate.trim()
+  } else {
+    submitData.exitDate = null
+  }
 
-  if (!validationResult.success) {
-    // Affiche les erreurs de validation
-    if (toastStore) {
-      toastStore.error(`Validation échouée : ${validationResult.error}`)
-    }
+  return submitData
+}
 
-    // Mappe les erreurs par champ
-    if (validationResult.errors) {
-      validationResult.errors.forEach(error => {
-        const match = error.match(/^([^.]+):/)
-        if (match) {
-          const field = match[1]
-          if (!validationErrors.value[field]) {
-            validationErrors.value[field] = []
+/**
+ * Soumet le formulaire avec validation et gestion d'erreurs
+ * Affiche un toast d'erreur en cas de problème de validation
+ */
+const handleSubmit = async () => {
+  if (isSubmitting.value) {
+    return // Évite les soumissions multiples
+  }
+
+  validationErrors.value = {}
+
+  try {
+    isSubmitting.value = true
+
+    // Prépare les données en garantissant la conformité avec les interfaces TypeScript
+    const preparedData = prepareTenantData()
+
+    // Validation supplémentaire avec Zod pour les règles métier
+    const validationResult = validate(tenantSchema, preparedData)
+
+    if (!validationResult.success) {
+      // Affiche les erreurs de validation Zod
+      const errorMessage = validationResult.error || 'Erreur de validation'
+      toastStore.error(`Validation échouée : ${errorMessage}`)
+
+      // Mappe les erreurs par champ pour affichage dans le formulaire (si nécessaire)
+      if (validationResult.errors) {
+        validationResult.errors.forEach(error => {
+          const match = error.match(/^([^.]+):/)
+          if (match) {
+            const field = match[1]
+            if (!validationErrors.value[field]) {
+              validationErrors.value[field] = []
+            }
+            validationErrors.value[field].push(error.replace(/^[^:]+:\s*/, ''))
           }
-          validationErrors.value[field].push(error.replace(/^[^:]+:\s*/, ''))
-        }
-      })
+        })
+      }
+
+      return
     }
 
-    return
+    // Ajoute les champs additionnels non validés par Zod mais nécessaires pour l'UI
+    const finalData = {
+      ...validationResult.data,
+      property: selectedProperty.value?.name || ''
+    }
+
+    emit('submit', finalData)
+
+    resetForm()
+    emit('close')
+  } catch (error) {
+    // Affiche l'erreur à l'utilisateur via le système de notification
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erreur lors de la préparation des données'
+
+    // Messages d'erreur utilisateur-friendly
+    let userMessage = errorMessage
+    if (errorMessage.includes('loyer')) {
+      userMessage = 'Le loyer doit être un montant positif'
+    } else if (errorMessage.includes('bien associé')) {
+      userMessage = 'Veuillez sélectionner un bien'
+    } else if (errorMessage.includes("date d'entrée")) {
+      userMessage = "La date d'entrée est requise"
+    } else if (errorMessage.includes('Erreur lors de la préparation')) {
+      userMessage =
+        'Erreur lors de la validation des données. Vérifiez que tous les champs requis sont remplis.'
+    }
+
+    toastStore.error(userMessage)
+    console.error('Erreur de validation du formulaire:', errorMessage)
+  } finally {
+    isSubmitting.value = false
   }
-
-  // Ajoute les champs additionnels non validés par Zod mais nécessaires pour l'UI
-  const finalData = {
-    ...validationResult.data,
-    property: selectedProperty.value?.name || ''
-  }
-
-  emit('submit', finalData)
-
-  resetForm()
-  emit('close')
 }
 
 /**

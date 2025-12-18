@@ -320,11 +320,11 @@
                 </button>
                 <button
                   type="submit"
-                  :disabled="isLoading"
+                  :disabled="isLoading || isSubmitting"
                   class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                 >
                   <svg
-                    v-if="isLoading"
+                    v-if="isLoading || isSubmitting"
                     class="w-5 h-5 mr-2 animate-spin"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -357,7 +357,11 @@
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.save') }}
+                  {{
+                    isLoading || isSubmitting
+                      ? $t('common.saving') || 'Enregistrement...'
+                      : $t('common.save')
+                  }}
                 </button>
               </div>
             </form>
@@ -371,9 +375,12 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { PROPERTY_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
-
+import { toNumber } from '@/utils/formDataConverters'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useToastStore } from '@/stores/toastStore'
+
 const settingsStore = useSettingsStore()
+const toastStore = useToastStore()
 // Utilise $t dans le template, pas besoin de t dans le script
 
 const props = defineProps({
@@ -392,6 +399,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'saved'])
+
+const isSubmitting = ref(false)
 
 const form = ref({
   name: '',
@@ -474,37 +483,165 @@ const handleClose = () => {
 }
 
 /**
- * Soumet le formulaire
+ * Prépare les données du formulaire pour qu'elles soient conformes aux interfaces TypeScript
+ * (CreatePropertyData / UpdatePropertyData)
+ *
+ * Règles de transformation :
+ *
+ * 1. **Champs obligatoires :**
+ *    - `name` : Chaîne non vide (trimée)
+ *    - `city` : Chaîne non vide (trimée)
+ *    - `rent` : Nombre positif strictement supérieur à 0 (converti via `toNumber`)
+ *
+ * 2. **Champs optionnels :**
+ *    - `address` : Inclus seulement si non vide après trim
+ *    - `type` : Inclus seulement si défini
+ *    - `status` : Inclus seulement si défini ('occupied' | 'vacant')
+ *    - `surface` : Inclus seulement si valeur numérique valide ≥ 0
+ *    - `pieces` : Inclus seulement si valeur numérique valide ≥ 0
+ *    - `description` : Toujours inclus, chaîne vide si non renseignée
+ *
+ * 3. **Gestion du locataire (tenant) :**
+ *    - Si `status === 'occupied'` ET données locataire complètes (name + entryDate) :
+ *      → Inclut l'objet tenant avec name (trimé), entryDate, et status (défaut: 'on_time')
+ *    - Sinon : → `tenant: null`
+ *
+ * 4. **Validation :**
+ *    - Lance une erreur si `rent` est manquant, invalide, ou ≤ 0
+ *
+ * @returns {Object} Objet conforme à CreatePropertyData / UpdatePropertyData
+ * @throws {Error} Si le loyer est manquant ou invalide
+ *
+ * @example
+ * // Formulaire avec toutes les données
+ * form.value = {
+ *   name: 'Appartement T3',
+ *   city: 'Paris',
+ *   rent: '1200',
+ *   surface: '75',
+ *   pieces: '3',
+ *   status: 'occupied',
+ *   tenant: { name: 'Jean Dupont', entryDate: '2024-01-01', status: 'on_time' }
+ * }
+ * preparePropertyData() // → { name: 'Appartement T3', city: 'Paris', rent: 1200, surface: 75, pieces: 3, status: 'occupied', tenant: {...}, description: '' }
+ *
+ * @example
+ * // Formulaire minimal
+ * form.value = {
+ *   name: 'Studio',
+ *   city: 'Lyon',
+ *   rent: 800,
+ *   status: 'vacant'
+ * }
+ * preparePropertyData() // → { name: 'Studio', city: 'Lyon', rent: 800, status: 'vacant', tenant: null, description: '' }
  */
-const handleSubmit = () => {
-  // TODO v0.2.0 : Valider les données avec un schéma (Zod, Yup, etc.)
-
-  // Prépare les données à soumettre
-  const submitData = {
-    name: form.value.name,
-    address: form.value.address,
-    city: form.value.city,
-    type: form.value.type,
-    surface: form.value.surface,
-    pieces: form.value.pieces,
-    description: form.value.description,
-    rent: Number(form.value.rent),
-    status: form.value.status,
-    // Ajoute les informations du locataire seulement si le bien est occupé
-    tenant:
-      form.value.status === PROPERTY_STATUS.OCCUPIED
-        ? {
-            name: form.value.tenant.name,
-            entryDate: form.value.tenant.entryDate,
-            status: form.value.tenant.status
-          }
-        : null
+const preparePropertyData = () => {
+  // Validation de base : rent doit être un nombre valide
+  const rentValue = toNumber(form.value.rent)
+  if (rentValue === undefined || rentValue <= 0) {
+    throw new Error('Le loyer est requis et doit être un nombre positif')
   }
 
-  emit('saved', submitData)
+  // Validation : name et city doivent être non vides
+  const name = (form.value.name || '').trim()
+  const city = (form.value.city || '').trim()
+  if (!name || !city) {
+    throw new Error('Le nom et la ville sont requis')
+  }
 
-  resetForm()
-  emit('close')
+  // Prépare les données en convertissant tous les champs numériques
+  const submitData = {
+    name,
+    city,
+    rent: rentValue, // Toujours un number valide à ce stade
+    status: form.value.status || undefined
+  }
+
+  // Champs optionnels : seulement inclus s'ils ont une valeur valide
+  if (form.value.address?.trim()) {
+    submitData.address = form.value.address.trim()
+  }
+
+  if (form.value.type) {
+    submitData.type = form.value.type
+  }
+
+  // Conversion des champs numériques optionnels
+  const surfaceValue = toNumber(form.value.surface)
+  if (surfaceValue !== undefined && surfaceValue >= 0) {
+    submitData.surface = surfaceValue
+  }
+
+  const piecesValue = toNumber(form.value.pieces)
+  if (piecesValue !== undefined && piecesValue >= 0) {
+    submitData.pieces = piecesValue
+  }
+
+  // Description : chaîne vide est OK, undefined si non renseigné
+  if (form.value.description?.trim()) {
+    submitData.description = form.value.description.trim()
+  } else {
+    submitData.description = ''
+  }
+
+  // Informations du locataire : seulement si le bien est occupé et que les données sont valides
+  if (form.value.status === PROPERTY_STATUS.OCCUPIED) {
+    if (form.value.tenant?.name?.trim() && form.value.tenant?.entryDate) {
+      submitData.tenant = {
+        name: form.value.tenant.name.trim(),
+        entryDate: form.value.tenant.entryDate,
+        status: form.value.tenant.status || 'on_time'
+      }
+    } else {
+      // Si bien occupé mais données locataire incomplètes, on envoie null
+      // Le store gérera l'erreur ou utilisera les valeurs par défaut
+      submitData.tenant = null
+    }
+  } else {
+    submitData.tenant = null
+  }
+
+  return submitData
+}
+
+/**
+ * Soumet le formulaire
+ * Affiche un toast d'erreur en cas de problème de validation
+ */
+const handleSubmit = async () => {
+  if (isSubmitting.value) {
+    return // Évite les soumissions multiples
+  }
+
+  try {
+    isSubmitting.value = true
+
+    // Prépare les données en garantissant la conformité avec les interfaces TypeScript
+    const submitData = preparePropertyData()
+
+    emit('saved', submitData)
+
+    resetForm()
+    emit('close')
+  } catch (error) {
+    // Affiche l'erreur à l'utilisateur via le système de notification
+    const errorMessage =
+      error instanceof Error ? error.message : 'Erreur lors de la préparation des données'
+
+    // Messages d'erreur utilisateur-friendly
+    let userMessage = errorMessage
+    if (errorMessage.includes('loyer')) {
+      userMessage = 'Le loyer doit être un montant positif'
+    } else if (errorMessage.includes('Erreur lors de la préparation')) {
+      userMessage =
+        'Erreur lors de la validation des données. Vérifiez que tous les champs requis sont remplis.'
+    }
+
+    toastStore.error(userMessage)
+    console.error('Erreur de validation du formulaire:', errorMessage)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 /**

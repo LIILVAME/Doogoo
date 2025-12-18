@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { useToastStore } from '@/stores/toastStore'
+import { sanitizeObject } from '@/utils/sanitizeLogs'
 
 /**
  * Store Pinia pour gérer l'authentification
@@ -137,11 +138,15 @@ export const useAuthStore = defineStore('auth', () => {
           )
 
           if (import.meta.env.DEV && phoneFromMetadata) {
-            console.debug('✅ Profil créé/mis à jour avec téléphone:', phoneFromMetadata)
+            // Données sanitizées pour éviter l'exposition du téléphone
+            console.debug('✅ Profil créé/mis à jour avec téléphone (masqué pour sécurité)')
           }
         } catch (profileError) {
           // Le trigger devrait déjà avoir créé le profil, donc cette erreur n'est pas critique
-          console.warn('Erreur lors de la mise à jour du profil:', profileError)
+          console.warn(
+            'Erreur lors de la mise à jour du profil:',
+            sanitizeObject(profileError, ['message'])
+          )
         }
 
         user.value = data.user
@@ -173,7 +178,8 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err) {
       error.value = err.message
       toastStore.error(`Erreur d'inscription : ${err.message}`)
-      console.error('Erreur signup Supabase:', err)
+      // Log sécurisé : on ne log que le message d'erreur, pas l'objet complet
+      console.error('Erreur signup Supabase:', sanitizeObject(err, ['message']))
       loading.value = false
       return { success: false, error: err.message }
     }
@@ -531,7 +537,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // maybeSingle() retourne null au lieu d'erreur si aucun résultat
       if (profileError) {
-        console.error('Error fetching profile:', profileError)
+        console.error('Error fetching profile:', sanitizeObject(profileError, ['message']))
         profile.value = null
         profileFetchInProgress = false
         return null
@@ -550,6 +556,7 @@ export const useAuthStore = defineStore('auth', () => {
           if (!updateError && updatedProfile) {
             data.phone = updatedProfile.phone
             if (import.meta.env.DEV) {
+              // Pas de log du téléphone pour éviter l'exposition de données sensibles
               console.debug('✅ Téléphone synchronisé depuis user_metadata vers profiles')
             }
           }
@@ -564,7 +571,7 @@ export const useAuthStore = defineStore('auth', () => {
       profileFetchInProgress = false
       return data || null
     } catch (err) {
-      console.error('Error fetching profile:', err)
+      console.error('Error fetching profile:', sanitizeObject(err, ['message']))
       profile.value = null
       profileFetchInProgress = false
       return null
@@ -593,6 +600,7 @@ export const useAuthStore = defineStore('auth', () => {
             full_name: profileData.fullName || profileData.name,
             phone: profileData.phone || null,
             company: profileData.company || null,
+            address: profileData.address || null,
             avatar_url: profileData.avatar_url || null
           },
           {
@@ -621,7 +629,7 @@ export const useAuthStore = defineStore('auth', () => {
       toastStore.success('Profil mis à jour avec succès')
       return { success: true, profile: data }
     } catch (err) {
-      console.error('Error updating profile:', err)
+      console.error('Error updating profile:', sanitizeObject(err, ['message']))
       toastStore.error(`Erreur lors de la mise à jour : ${err.message}`)
       throw err
     }
@@ -657,6 +665,7 @@ export const useAuthStore = defineStore('auth', () => {
                     .eq('user_id', session.user.id)
 
                   if (import.meta.env.DEV) {
+                    // Pas de log du téléphone pour éviter l'exposition de données sensibles
                     console.debug('✅ Téléphone synchronisé au login depuis user_metadata')
                   }
                 }

@@ -118,16 +118,21 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
+import { sanitizeObject } from '@/utils/sanitizeLogs'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
 
 // Capture les erreurs de rendu pour éviter l'écran blanc
 onErrorCaptured((err, instance, info) => {
-  console.error('🔴 Erreur dans LoginPage:', err)
+  // Log sécurisé : on ne log que le message d'erreur et les infos non sensibles
+  console.error('🔴 Erreur dans LoginPage:', sanitizeObject(err, ['message', 'stack']))
   console.error('📍 Info:', info)
   console.error('🎭 Instance:', instance?.$options?.name)
-  console.error('📚 Stack:', err?.stack)
+  // Stack peut contenir des infos sensibles, on le sanitize
+  if (err?.stack) {
+    console.error('📚 Stack:', err.stack.substring(0, 200) + '...') // Limite la longueur
+  }
   // Ne propage pas l'erreur pour éviter l'écran blanc complet
   return false
 })
@@ -244,13 +249,15 @@ onMounted(async () => {
 
     if (error) {
       if (import.meta.env.DEV) {
-        console.debug('🔵 LoginPage - Erreur OAuth:', error)
+        // Ne pas logger le token OAuth en clair
+        console.debug('🔵 LoginPage - Erreur OAuth détectée')
       }
       toastStore.error(`Erreur d'authentification : ${error}`)
       window.history.replaceState({}, document.title, window.location.pathname)
     } else if (accessToken) {
       if (import.meta.env.DEV) {
-        console.debug('🔵 LoginPage - Token OAuth détecté')
+        // Ne pas logger le token OAuth en clair (données sensibles)
+        console.debug('🔵 LoginPage - Token OAuth détecté (masqué pour sécurité)')
       }
       setTimeout(async () => {
         try {
@@ -261,7 +268,7 @@ onMounted(async () => {
             toastStore.success(t('login.oauthSuccess'))
           }
         } catch (err) {
-          console.error('🔴 Erreur lors du callback OAuth:', err)
+          console.error('🔴 Erreur lors du callback OAuth:', sanitizeObject(err, ['message']))
         }
       }, 500)
     }
@@ -283,12 +290,21 @@ onMounted(async () => {
         }
       } catch (err) {
         // Erreur silencieuse - l'utilisateur peut simplement se connecter
-        console.warn('⚠️ LoginPage - Impossible de récupérer la session:', err)
+        console.warn(
+          '⚠️ LoginPage - Impossible de récupérer la session:',
+          sanitizeObject(err, ['message'])
+        )
       }
     }
   } catch (err) {
-    console.error('🔴 ERREUR CRITIQUE dans onMounted de LoginPage:', err)
-    console.error('Stack:', err.stack)
+    console.error(
+      '🔴 ERREUR CRITIQUE dans onMounted de LoginPage:',
+      sanitizeObject(err, ['message'])
+    )
+    // Stack peut contenir des infos sensibles, on le limite
+    if (err?.stack) {
+      console.error('Stack:', err.stack.substring(0, 200) + '...')
+    }
     // Ne pas bloquer le rendu en cas d'erreur
   }
 })

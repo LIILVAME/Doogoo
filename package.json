@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test:unit": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:staged": "vitest related --run --coverage=false",
     "lint": "eslint . --fix",
     "lint:check": "eslint .",
     "format": "prettier --write \"src/**/*.{js,ts,vue,json,css}\"",
@@ -95,7 +96,8 @@
   "lint-staged": {
     "*.{js,ts,vue}": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "npm run test:staged"
     ],
     "*.{json,css,md}": [
       "prettier --write"

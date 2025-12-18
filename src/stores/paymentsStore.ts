@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, type Ref, type ComputedRef } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import { useAuthStore } from './authStore'
 import { usePropertiesStore } from './propertiesStore'
@@ -8,6 +8,94 @@ import { TRANSACTION_STATUS } from '@/utils/constants'
 import { formatCurrency } from '@/utils/formatters'
 import { paymentsApi } from '@/api'
 import { useStoreLoader } from '@/composables/useStoreLoader'
+import { sanitizeObject } from '@/utils/sanitizeLogs'
+import type { Payment } from '@/types/api'
+import type { RealtimeChannel } from '@supabase/supabase-js'
+
+/**
+ * Types pour les données de paiement
+ */
+
+/**
+ * Paiement avec données transformées depuis l'API
+ */
+export interface PaymentData extends Payment {
+  property: string
+  tenant: string
+}
+
+/**
+ * Données pour créer un nouveau paiement
+ */
+export interface CreatePaymentData {
+  propertyId?: string
+  property?: string
+  tenant?: string
+  tenantId?: string
+  amount: number
+  dueDate?: string
+  date?: string
+  status?: 'paid' | 'pending' | 'late'
+}
+
+/**
+ * Données pour mettre à jour un paiement
+ */
+export interface UpdatePaymentData {
+  amount?: number
+  dueDate?: string
+  status?: 'paid' | 'pending' | 'late'
+}
+
+/**
+ * Filtres pour les paiements
+ */
+export interface PaymentFilters {
+  status?: 'paid' | 'pending' | 'late'
+  propertyId?: string
+  startDate?: string
+  endDate?: string
+  orderAscending?: boolean
+}
+
+/**
+ * Résumé des paiements (statistiques)
+ */
+export interface PaymentSummary {
+  total: number
+  pending: number
+  late: number
+  paid: number
+  totalRevenue: number
+  pendingRevenue: number
+  lateRevenue: number
+  paidRevenue: number
+}
+
+/**
+ * Données de paiement depuis l'API Supabase
+ */
+interface PaymentApiData {
+  id: string
+  property_id: string
+  tenant_id?: string | null
+  amount: number | string
+  due_date?: string
+  date?: string
+  status: 'paid' | 'pending' | 'late'
+  properties?: { id: string; name: string; city?: string } | null
+  tenants?: { id: string; name: string } | null
+}
+
+/**
+ * Réponse API pour les paiements
+ */
+interface PaymentsApiResponse {
+  success: boolean
+  data?: PaymentApiData | PaymentApiData[]
+  message?: string
+  error?: Error
+}
 
 /**
  * Store Pinia pour gérer les paiements
@@ -17,82 +105,90 @@ export const usePaymentsStore = defineStore(
   'payments',
   () => {
     // State
-    const payments = ref([])
-    const loading = ref(false) // Toujours initialisé à false
-    const error = ref(null)
+    const payments: Ref<PaymentData[]> = ref([])
+    const loading: Ref<boolean> = ref(false)
+    const error: Ref<string | null> = ref(null)
 
     // Surveillance automatique du loading pour éviter les blocages
     const { cleanup: _cleanupLoader } = useStoreLoader(loading, 'PaymentsStore')
-    let realtimeChannel = null
+    let realtimeChannel: RealtimeChannel | null = null
     let isRealtimeInitialized = false
-    let isRealtimeActive = false // Flag pour désactiver les callbacks lors du cleanup
+    let isRealtimeActive = false
     let lastFetchTime = 0
-    const FETCH_CACHE_MS = 5000 // Cache de 5 secondes pour éviter les requêtes multiples
+    const FETCH_CACHE_MS = 5000
+
+    /**
+     * Transforme les données de l'API vers le format du store
+     */
+    const transformPaymentData = (payment: PaymentApiData): PaymentData => {
+      return {
+        id: payment.id,
+        propertyId: payment.property_id,
+        property: payment.properties?.name || 'N/A',
+        tenant: payment.tenants?.name || payment.properties?.name || 'N/A',
+        amount: Number(payment.amount),
+        dueDate: payment.due_date || payment.date || '',
+        status: payment.status
+      }
+    }
 
     /**
      * Récupère tous les paiements de l'utilisateur depuis Supabase
      */
-    const fetchPayments = async (force = false) => {
-      // Vérifie que l'utilisateur est authentifié avant de fetcher
+    const fetchPayments = async (force = false): Promise<void> => {
       const authStore = useAuthStore()
       if (!authStore.user) {
-        console.warn('fetchPayments: User not authenticated, skipping fetch')
-        // S'assure que loading est false si pas d'utilisateur
+        if (import.meta.env.DEV) {
+          console.warn('fetchPayments: User not authenticated, skipping fetch')
+        }
         loading.value = false
         return
       }
 
       // Évite les requêtes multiples si déjà en cours (sauf si force = true)
       if (loading.value && !force) {
-        console.debug('fetchPayments: requête déjà en cours, skip')
+        if (import.meta.env.DEV) {
+          console.debug('fetchPayments: requête déjà en cours, skip')
+        }
         return
       }
 
       // Si loading est à true (bloqué), on le reset avant de commencer
-      // Le composable useStoreLoader devrait l'avoir déjà fait, mais sécurité supplémentaire
       if (loading.value) {
-        console.warn('⚠️ fetchPayments: loading déjà à true au début, reset avant fetch')
+        if (import.meta.env.DEV) {
+          console.warn('⚠️ fetchPayments: loading déjà à true au début, reset avant fetch')
+        }
         loading.value = false
       }
 
       // Cache de 5 secondes pour éviter les requêtes trop fréquentes
       const now = Date.now()
       if (!force && now - lastFetchTime < FETCH_CACHE_MS && payments.value.length > 0) {
-        // S'assure que loading est false si on utilise le cache
         loading.value = false
         return
       }
 
-      // Note: Le composable useStoreLoader gère déjà le timeout de sécurité
-      // On fait confiance au finally pour remettre loading à false
       loading.value = true
       error.value = null
 
       try {
         // Timeout explicite de 10 secondes pour éviter blocage
-        const timeoutPromise = new Promise((_, reject) => {
+        const timeoutPromise = new Promise<never>((_, reject) => {
           setTimeout(
             () => reject(new Error('Timeout: La requête a pris plus de 10 secondes')),
             10000
           )
         })
 
-        const apiPromise = paymentsApi.getPayments(authStore.user.id)
+        const apiPromise = paymentsApi.getPayments(
+          authStore.user.id
+        ) as Promise<PaymentsApiResponse>
         const result = await Promise.race([apiPromise, timeoutPromise])
 
         if (result.success && result.data) {
           lastFetchTime = Date.now()
-
-          // Transforme les données Supabase pour correspondre au format attendu
-          payments.value = (result.data || []).map(payment => ({
-            id: payment.id,
-            propertyId: payment.property_id,
-            property: payment.properties?.name || 'N/A',
-            tenant: payment.tenants?.name || payment.properties?.name || 'N/A',
-            amount: Number(payment.amount),
-            dueDate: payment.due_date,
-            status: payment.status
-          }))
+          const dataArray = Array.isArray(result.data) ? result.data : [result.data]
+          payments.value = dataArray.map(transformPaymentData)
         } else {
           error.value = result.message || 'Erreur lors de la récupération des paiements'
 
@@ -103,16 +199,19 @@ export const usePaymentsStore = defineStore(
           const toastStore = useToastStore()
 
           if (!connectionStore.isOnline && payments.value.length > 0) {
-            // Affiche un toast informatif mais continue avec les données du cache
             if (toastStore) {
               toastStore.info('⚠️ Données locales affichées (connexion perdue)')
             }
           }
         }
       } catch (err) {
-        // Gestion d'erreur pour éviter que loading reste bloqué
-        console.error('Erreur lors du chargement des paiements:', err)
-        error.value = err.message || 'Erreur lors de la récupération des paiements'
+        const errorObj = err as Error
+        // Log sécurisé : ne pas exposer les détails sensibles
+        console.error(
+          'Erreur lors du chargement des paiements:',
+          sanitizeObject(errorObj, ['message'])
+        )
+        error.value = errorObj.message || 'Erreur lors de la récupération des paiements'
 
         // Si erreur et qu'on a des données en cache, on continue avec le cache
         if (payments.value.length > 0) {
@@ -123,18 +222,14 @@ export const usePaymentsStore = defineStore(
           }
         }
       } finally {
-        // Garantit que loading est toujours remis à false, même en cas d'erreur
-        // Le composable useStoreLoader surveille aussi, mais c'est notre responsabilité principale
         loading.value = false
       }
     }
 
     /**
      * Ajoute un nouveau paiement dans Supabase
-     * @param {Object} paymentData - Données du paiement à ajouter
-     * @returns {Object} Le paiement créé avec son ID
      */
-    const addPayment = async paymentData => {
+    const addPayment = async (paymentData: CreatePaymentData): Promise<PaymentData> => {
       loading.value = true
       error.value = null
 
@@ -146,7 +241,7 @@ export const usePaymentsStore = defineStore(
         }
 
         // Trouve le tenant_id si property_id est fourni
-        let tenantId = null
+        let tenantId: string | null = null
         if (paymentData.propertyId) {
           const propertiesStore = usePropertiesStore()
           const property = propertiesStore.properties.find(p => p.id === paymentData.propertyId)
@@ -156,59 +251,54 @@ export const usePaymentsStore = defineStore(
         }
 
         // Optimistic UI : Ajoute temporairement le paiement à la liste
-        const optimisticPayment = {
+        const optimisticPayment: PaymentData = {
           id: `temp-${Date.now()}`,
-          propertyId: paymentData.propertyId,
+          propertyId: paymentData.propertyId || '',
           property: paymentData.property || 'N/A',
           tenant: paymentData.tenant || 'N/A',
           amount: Number(paymentData.amount),
-          dueDate: paymentData.dueDate || paymentData.date,
-          status: paymentData.status || 'pending'
+          dueDate: paymentData.dueDate || paymentData.date || '',
+          status: paymentData.status || TRANSACTION_STATUS.PENDING
         }
         const oldPayments = [...payments.value]
         payments.value.unshift(optimisticPayment)
 
         // Crée le paiement via l'API
-        const result = await paymentsApi.createPayment(
+        const result = (await paymentsApi.createPayment(
           {
             ...paymentData,
             tenantId
           },
           authStore.user.id
-        )
+        )) as PaymentsApiResponse
 
         if (!result.success) {
           // Revert l'optimistic update
           payments.value = oldPayments
-          error.value = result.message
+          error.value = result.message || 'Erreur lors de la création du paiement'
           loading.value = false
-          throw new Error(result.message)
+          throw new Error(result.message || 'Erreur lors de la création du paiement')
         }
 
-        const data = result.data
+        const data = Array.isArray(result.data) ? result.data[0] : result.data
+        if (!data) {
+          throw new Error('Données de paiement invalides')
+        }
+        const newPayment = transformPaymentData(data)
 
         // Track payment added event
         if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
           import('@/utils/analytics')
             .then(({ trackDoogooEvent, DoogooEvents }) => {
+              // Données sanitizées pour analytics
               trackDoogooEvent(DoogooEvents.PAYMENT_ADDED, {
-                amount: data.amount || 0,
-                status: data.status || 'pending'
+                amount: newPayment.amount,
+                status: newPayment.status
               })
             })
-            .catch(() => { })
-        }
-
-        // Transforme pour le format attendu
-        // Note: La vue payments_view expose due_date, mais la table utilise 'date'
-        const newPayment = {
-          id: data.id,
-          propertyId: data.property_id,
-          property: data.properties?.name || paymentData.property || 'N/A',
-          tenant: data.tenants?.name || paymentData.tenant || 'N/A',
-          amount: Number(data.amount),
-          dueDate: data.due_date || data.date, // Utilise due_date de la vue ou date de la table
-          status: data.status
+            .catch(() => {
+              // Ignore les erreurs d'analytics
+            })
         }
 
         // Remplace le paiement temporaire par le vrai paiement retourné par l'API
@@ -222,10 +312,10 @@ export const usePaymentsStore = defineStore(
         }
 
         loading.value = false
-
         return newPayment
       } catch (err) {
-        error.value = err.message
+        const errorObj = err as Error
+        error.value = errorObj.message
         loading.value = false
         throw err
       }
@@ -233,10 +323,8 @@ export const usePaymentsStore = defineStore(
 
     /**
      * Met à jour un paiement existant dans Supabase
-     * @param {string} id - ID UUID du paiement à mettre à jour
-     * @param {Object} updates - Données à mettre à jour
      */
-    const updatePayment = async (id, updates) => {
+    const updatePayment = async (id: string, updates: UpdatePaymentData): Promise<PaymentData> => {
       loading.value = true
       error.value = null
 
@@ -253,15 +341,17 @@ export const usePaymentsStore = defineStore(
           throw new Error('Payment not found')
         }
         const oldPayment = { ...payments.value[paymentIndex] }
-        const optimisticUpdates = {
+        const optimisticUpdates: PaymentData = {
           ...oldPayment,
           ...updates,
-          amount: updates.amount ? Number(updates.amount) : oldPayment.amount
+          amount: updates.amount ? Number(updates.amount) : oldPayment.amount,
+          dueDate: updates.dueDate || oldPayment.dueDate,
+          status: updates.status || oldPayment.status
         }
         payments.value[paymentIndex] = optimisticUpdates
 
         // Prépare les données de mise à jour
-        const updateData = {
+        const updateData: Partial<UpdatePaymentData & { date?: string }> = {
           amount: updates.amount ? Number(updates.amount) : undefined,
           dueDate: updates.dueDate || undefined,
           status: updates.status || undefined
@@ -269,34 +359,35 @@ export const usePaymentsStore = defineStore(
 
         // Supprime les propriétés undefined
         Object.keys(updateData).forEach(key => {
-          if (updateData[key] === undefined) {
-            delete updateData[key]
+          const k = key as keyof typeof updateData
+          if (updateData[k] === undefined) {
+            delete updateData[k]
           }
         })
 
         // Met à jour via l'API
-        const result = await paymentsApi.updatePayment(id, updateData, authStore.user.id)
+        const result = (await paymentsApi.updatePayment(
+          id,
+          updateData,
+          authStore.user.id
+        )) as PaymentsApiResponse
 
         if (!result.success) {
           // Revert l'optimistic update
           payments.value[paymentIndex] = oldPayment
-          error.value = result.message
+          error.value = result.message || 'Erreur lors de la mise à jour du paiement'
           loading.value = false
-          throw new Error(result.message)
+          throw new Error(result.message || 'Erreur lors de la mise à jour du paiement')
         }
 
-        const data = result.data
+        const data = Array.isArray(result.data) ? result.data[0] : result.data
+        if (!data) {
+          throw new Error('Données de paiement invalides')
+        }
+        const updatedPayment = transformPaymentData(data)
 
         // Met à jour dans la liste locale avec les vraies données
-        payments.value[paymentIndex] = {
-          id: data.id,
-          propertyId: data.property_id,
-          property: data.properties?.name || 'N/A',
-          tenant: data.tenants?.name || 'N/A',
-          amount: Number(data.amount),
-          dueDate: data.due_date || data.date,
-          status: data.status
-        }
+        payments.value[paymentIndex] = updatedPayment
 
         // Track payment updated event
         if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
@@ -304,10 +395,12 @@ export const usePaymentsStore = defineStore(
             .then(({ trackDoogooEvent, DoogooEvents }) => {
               trackDoogooEvent(DoogooEvents.PAYMENT_UPDATED, {
                 payment_id: id,
-                status: data.status || updates.status
+                status: updatedPayment.status
               })
             })
-            .catch(() => { })
+            .catch(() => {
+              // Ignore les erreurs d'analytics
+            })
         }
 
         if (toastStore) {
@@ -315,8 +408,10 @@ export const usePaymentsStore = defineStore(
         }
 
         loading.value = false
+        return updatedPayment
       } catch (err) {
-        error.value = err.message
+        const errorObj = err as Error
+        error.value = errorObj.message
         loading.value = false
         throw err
       }
@@ -324,9 +419,8 @@ export const usePaymentsStore = defineStore(
 
     /**
      * Supprime un paiement dans Supabase
-     * @param {string} id - ID UUID du paiement à supprimer
      */
-    const removePayment = async id => {
+    const removePayment = async (id: string): Promise<void> => {
       loading.value = true
       error.value = null
 
@@ -345,14 +439,17 @@ export const usePaymentsStore = defineStore(
         const oldPayments = [...payments.value]
         payments.value = payments.value.filter(p => p.id !== id)
 
-        const result = await paymentsApi.deletePayment(id, authStore.user.id)
+        const result = (await paymentsApi.deletePayment(
+          id,
+          authStore.user.id
+        )) as PaymentsApiResponse
 
         if (!result.success) {
           // Revert l'optimistic update
           payments.value = oldPayments
-          error.value = result.message
+          error.value = result.message || 'Erreur lors de la suppression du paiement'
           loading.value = false
-          throw new Error(result.message)
+          throw new Error(result.message || 'Erreur lors de la suppression du paiement')
         }
 
         // Track payment deleted event
@@ -363,7 +460,9 @@ export const usePaymentsStore = defineStore(
                 payment_id: id
               })
             })
-            .catch(() => { })
+            .catch(() => {
+              // Ignore les erreurs d'analytics
+            })
         }
 
         if (toastStore) {
@@ -372,7 +471,8 @@ export const usePaymentsStore = defineStore(
 
         loading.value = false
       } catch (err) {
-        error.value = err.message
+        const errorObj = err as Error
+        error.value = errorObj.message
         loading.value = false
         throw err
       }
@@ -381,21 +481,21 @@ export const usePaymentsStore = defineStore(
     /**
      * Computed : Paiements en attente
      */
-    const pendingPayments = computed(() =>
+    const pendingPayments: ComputedRef<PaymentData[]> = computed(() =>
       payments.value.filter(p => p.status === TRANSACTION_STATUS.PENDING)
     )
 
     /**
      * Computed : Paiements en retard
      */
-    const latePayments = computed(() =>
+    const latePayments: ComputedRef<PaymentData[]> = computed(() =>
       payments.value.filter(p => p.status === TRANSACTION_STATUS.LATE)
     )
 
     /**
      * Computed : Paiements effectués
      */
-    const paidPayments = computed(() =>
+    const paidPayments: ComputedRef<PaymentData[]> = computed(() =>
       payments.value.filter(p => p.status === TRANSACTION_STATUS.PAID)
     )
 
@@ -403,17 +503,17 @@ export const usePaymentsStore = defineStore(
      * Initialise l'abonnement temps réel pour les paiements
      * Écoute les changements INSERT/UPDATE/DELETE sur la table payments
      */
-    const initRealtime = () => {
-      // Vérifie que l'utilisateur est authentifié avant d'initialiser
+    const initRealtime = (): void => {
       const authStore = useAuthStore()
       if (!authStore.user) {
-        console.warn('⚠️ Cannot init Realtime: user not authenticated')
+        if (import.meta.env.DEV) {
+          console.warn('⚠️ Cannot init Realtime: user not authenticated')
+        }
         return
       }
 
       // Évite d'initialiser plusieurs fois - vérifie aussi si le channel est actif
       if (isRealtimeInitialized && realtimeChannel && isRealtimeActive) {
-        // Déjà initialisé, retourne silencieusement (pas de log pour éviter le spam)
         return
       }
 
@@ -439,86 +539,89 @@ export const usePaymentsStore = defineStore(
             event: '*',
             schema: 'public',
             table: 'payments',
-            filter: `user_id=eq.${authStore.user.id}` // Seulement les paiements de l'utilisateur
+            filter: `user_id=eq.${authStore.user.id}`
           },
           async payload => {
             // Vérifie que Realtime est toujours actif et que le store est valide
-            if (!isRealtimeActive || !payments.value || !payments.value) return
+            if (!isRealtimeActive || !payments.value) return
 
             const { eventType, new: rowNew, old: rowOld } = payload
             const toast = useToastStore()
 
             if (eventType === 'INSERT') {
               // Charge les données complètes avec relations via l'API
-              const result = await paymentsApi.getPaymentById(rowNew.id, authStore.user.id)
+              const result = (await paymentsApi.getPaymentById(
+                rowNew.id,
+                authStore.user.id
+              )) as PaymentsApiResponse
 
               if (result.success && result.data) {
-                const data = result.data
-                const newPayment = {
-                  id: data.id,
-                  propertyId: data.property_id,
-                  property: data.properties?.name || 'N/A',
-                  tenant: data.tenants?.name || data.properties?.name || 'N/A',
-                  amount: Number(data.amount),
-                  dueDate: data.due_date,
-                  status: data.status
-                }
+                // getPaymentById retourne un objet unique, pas un array
+                const data = Array.isArray(result.data) ? result.data[0] : result.data
+                if (!data) return
+                const newPayment = transformPaymentData(data)
 
                 // Ajoute seulement s'il n'existe pas déjà
                 if (payments.value && !payments.value.find(p => p.id === newPayment.id)) {
                   payments.value.unshift(newPayment)
-                  if (toast) toast.info(`Nouveau paiement : ${formatCurrency(newPayment.amount)}`)
+                  if (toast) {
+                    // Log sécurisé : ne pas exposer le montant en détail dans les logs
+                    toast.info(`Nouveau paiement : ${formatCurrency(newPayment.amount)}`)
+                  }
                 }
               }
             }
 
             if (eventType === 'UPDATE') {
               // Vérifie que le store est encore valide
-              if (!payments.value || !payments.value) return
+              if (!payments.value) return
 
               // Recharge le paiement avec ses relations via l'API
-              const result = await paymentsApi.getPaymentById(rowNew.id, authStore.user.id)
+              const result = (await paymentsApi.getPaymentById(
+                rowNew.id,
+                authStore.user.id
+              )) as PaymentsApiResponse
 
               if (result.success && result.data) {
-                const data = result.data
-                const updatedPayment = {
-                  id: data.id,
-                  propertyId: data.property_id,
-                  property: data.properties?.name || 'N/A',
-                  tenant: data.tenants?.name || 'N/A',
-                  amount: Number(data.amount),
-                  dueDate: data.due_date,
-                  status: data.status
-                }
+                // getPaymentById retourne un objet unique, pas un array
+                const data = Array.isArray(result.data) ? result.data[0] : result.data
+                if (!data) return
+                const updatedPayment = transformPaymentData(data)
 
                 const index = payments.value.findIndex(p => p.id === updatedPayment.id)
                 if (index !== -1 && payments.value) {
                   payments.value[index] = updatedPayment
-                  if (toast) toast.info(`Paiement mis à jour`)
+                  if (toast) {
+                    toast.info('Paiement mis à jour')
+                  }
                 }
               }
             }
 
             if (eventType === 'DELETE') {
               // Vérifie que le store est encore valide
-              if (!payments.value || !payments.value) return
+              if (!payments.value) return
               payments.value = payments.value.filter(p => p.id !== rowOld.id)
-              if (toast) toast.info('Paiement supprimé')
+              if (toast) {
+                toast.info('Paiement supprimé')
+              }
             }
           }
         )
         .subscribe(status => {
           if (status === 'SUBSCRIBED') {
-            console.log('✅ Realtime subscribed to payments')
+            if (import.meta.env.DEV) {
+              console.log('✅ Realtime subscribed to payments')
+            }
           } else if (status === 'CHANNEL_ERROR') {
             console.error('❌ Realtime error for payments')
-            isRealtimeInitialized = false // Réinitialise pour permettre une nouvelle tentative
+            isRealtimeInitialized = false
             isRealtimeActive = false
             realtimeChannel = null
-            // Ne pas afficher d'erreur toast pour éviter le spam
-            // Le Realtime est optionnel, l'application fonctionne sans
           } else if (status === 'CLOSED') {
-            console.log('🔌 Realtime channel closed for payments')
+            if (import.meta.env.DEV) {
+              console.log('🔌 Realtime channel closed for payments')
+            }
             isRealtimeInitialized = false
             isRealtimeActive = false
             realtimeChannel = null
@@ -529,27 +632,31 @@ export const usePaymentsStore = defineStore(
     /**
      * Arrête l'abonnement temps réel
      */
-    const stopRealtime = () => {
+    const stopRealtime = (): void => {
       // Désactive les callbacks en premier pour éviter les erreurs
       isRealtimeActive = false
 
       if (realtimeChannel) {
         try {
           supabase.removeChannel(realtimeChannel)
-        } catch (e) {
-          // Ignore les erreurs lors du nettoyage
-          console.warn('Error removing Realtime channel (non blocking):', e)
+        } catch {
+          // Log sécurisé : ne pas exposer les détails d'erreur
+          if (import.meta.env.DEV) {
+            console.warn('Error removing Realtime channel (non blocking)')
+          }
         }
         realtimeChannel = null
         isRealtimeInitialized = false
-        console.log('🔌 Realtime unsubscribed from payments')
+        if (import.meta.env.DEV) {
+          console.log('🔌 Realtime unsubscribed from payments')
+        }
       }
     }
 
     /**
      * Réinitialise le store
      */
-    const reset = () => {
+    const reset = (): void => {
       payments.value = []
       loading.value = false
       error.value = null
@@ -580,7 +687,7 @@ export const usePaymentsStore = defineStore(
     // Configuration de persistance avec pinia-plugin-persistedstate
     persist: {
       key: 'vylo-payments',
-      paths: ['payments'], // Seulement persister les données, pas loading/error
+      paths: ['payments'],
       storage: localStorage
     }
   }
