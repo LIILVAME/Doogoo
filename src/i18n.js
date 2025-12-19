@@ -35,7 +35,8 @@ function getTranslation(key, locale = currentLocale, values = {}) {
       if (locale !== 'en') {
         return getTranslation(key, 'en', values)
       }
-      console.warn(`[i18n] Missing translation: ${key} in locale: ${locale}`)
+      // OPTIMISATION : On renvoie la clé sans spammer la console
+      // Les traductions manquantes sont gérées silencieusement pour éviter le lag
       return key
     }
   }
@@ -73,7 +74,11 @@ function setLocale(locale) {
       window.dispatchEvent(new CustomEvent('locale-changed', { detail: { locale } }))
     }
   } else {
-    console.warn(`[i18n] Locale "${locale}" not found, falling back to "fr"`)
+    // OPTIMISATION : Fallback silencieux pour éviter les logs en production
+    // En dev, on peut activer le log si nécessaire
+    if (import.meta.env.DEV) {
+      console.warn(`[i18n] Locale "${locale}" not found, falling back to "fr"`)
+    }
     currentLocale = 'fr'
   }
 }
