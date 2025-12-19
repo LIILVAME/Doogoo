@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { computed, type ComputedRef } from 'vue'
 import { usePropertiesStore } from './propertiesStore'
+import { useAuthStore } from './authStore'
 import { useToastStore } from './toastStore'
 import { PROPERTY_STATUS, PAYMENT_STATUS } from '@/utils/constants'
 import { sanitizeObject } from '@/utils/sanitizeLogs'
+import { tenantsApi } from '@/api'
 import type { PropertyData } from './propertiesStore'
 
 /**
@@ -32,6 +34,7 @@ export interface CreateTenantData {
   propertyId?: string
   property?: string // Nom de la propriété (fallback si propertyId non fourni)
   name: string // Nom complet (PII)
+  email?: string // Email du locataire (optionnel)
   entryDate: string
   exitDate?: string | null
   rent: number | string
@@ -52,12 +55,12 @@ export interface UpdateTenantData {
 /**
  * Store Pinia pour gérer les locataires
  *
- * NOTE: Ce store est dérivé de propertiesStore.
- * Il n'a pas de state propre mais calcule les locataires depuis les propriétés.
- * Les actions CRUD passent par propertiesStore.updateProperty().
+ * NOTE: Ce store est dérivé de propertiesStore pour les computed.
+ * Les actions CRUD utilisent directement l'API layer tenantsApi.
  */
 export const useTenantsStore = defineStore('tenants', () => {
   const propertiesStore = usePropertiesStore()
+  const authStore = useAuthStore()
 
   /**
    * Computed : Liste des locataires extraits des propriétés
@@ -102,19 +105,8 @@ export const useTenantsStore = defineStore('tenants', () => {
         })
         .filter((t): t is TenantData => t !== null) // Supprime les valeurs null
 
-      // Debug en développement (sécurisé)
-      if (import.meta.env.DEV && mapped.length === 0 && propertiesStore.properties.length > 0) {
-        // Log sécurisé : statistiques uniquement, pas de PII
-        console.warn('⚠️ Aucun locataire trouvé dans les propriétés:', {
-          totalProperties: propertiesStore.properties.length,
-          propertiesWithTenants: propertiesStore.properties.filter(p => p.tenant !== null).length,
-          occupiedProperties: propertiesStore.properties.filter(
-            p => p.status === PROPERTY_STATUS.OCCUPIED
-          ).length,
-          // Ne pas logger les noms de propriétés ni de locataires (PII)
-          propertiesCount: propertiesStore.properties.length
-        })
-      }
+      // Pas de log d'avertissement pour éviter le bruit pendant l'initialisation
+      // Le computed se met à jour automatiquement lorsque les données sont disponibles
 
       return mapped
     } catch (error) {
@@ -126,15 +118,21 @@ export const useTenantsStore = defineStore('tenants', () => {
   })
 
   /**
-   * Ajoute un nouveau locataire à un bien existant
-   * @param tenantData - Données du locataire à ajouter
-   * @returns Le bien mis à jour ou null si erreur
+   * Crée un nouveau locataire dans la base de données
+   * @param tenantData - Données du locataire à créer
+   * @returns Le locataire créé ou null si erreur
    */
-  const addTenant = async (tenantData: CreateTenantData): Promise<PropertyData | null> => {
+  const createTenant = async (tenantData: CreateTenantData): Promise<PropertyData | null> => {
     const toast = useToastStore()
 
     try {
-      // Trouve le bien correspondant par son ID (UUID maintenant)
+      // Vérifie que l'utilisateur est authentifié
+      if (!authStore.user?.id) {
+        toast.error('Vous devez être connecté pour ajouter un locataire')
+        return null
+      }
+
+      // Trouve le bien correspondant par son ID
       let property: PropertyData | undefined = undefined
 
       if (tenantData.propertyId) {
@@ -143,25 +141,8 @@ export const useTenantsStore = defineStore('tenants', () => {
         property = propertiesStore.properties.find(p => p.name === tenantData.property)
       }
 
-      if (property) {
-        // Met à jour le bien avec le nouveau locataire via Supabase
-        await propertiesStore.updateProperty(property.id, {
-          status: PROPERTY_STATUS.OCCUPIED,
-          tenant: {
-            name: tenantData.name, // PII - mais nécessaire pour la création
-            entryDate: tenantData.entryDate,
-            exitDate: tenantData.exitDate || null,
-            rent: Number(tenantData.rent),
-            status: tenantData.status || PAYMENT_STATUS.ON_TIME
-          }
-        })
-
-        // Toast avec nom de locataire OK (affichage utilisateur)
-        toast.success(`Locataire "${tenantData.name}" ajouté avec succès`)
-        return property
-      } else {
+      if (!property) {
         const errorMsg = 'Bien non trouvé pour le locataire'
-        // Log sécurisé : ne pas logger le nom de propriété qui peut être sensible
         if (import.meta.env.DEV) {
           console.warn(errorMsg, {
             hasPropertyId: !!tenantData.propertyId,
@@ -171,10 +152,89 @@ export const useTenantsStore = defineStore('tenants', () => {
         toast.error(errorMsg)
         return null
       }
+
+      // Crée le locataire via l'API layer
+      const result = await tenantsApi.createTenant(
+        {
+          propertyId: property.id,
+          name: tenantData.name,
+          email: tenantData.email,
+          entryDate: tenantData.entryDate,
+          exitDate: tenantData.exitDate || null,
+          rent: Number(tenantData.rent) || 0,
+          status: tenantData.status || PAYMENT_STATUS.ON_TIME
+        },
+        authStore.user.id
+      )
+
+      if (result.success && result.data) {
+        // Met à jour le statut de la propriété pour qu'elle soit "occupied"
+        await propertiesStore.updateProperty(property.id, {
+          status: PROPERTY_STATUS.OCCUPIED
+        })
+
+        // Recharge les propriétés pour avoir les données à jour
+        await propertiesStore.fetchProperties(true)
+
+        // Retourne la propriété mise à jour
+        const updatedProperty = propertiesStore.properties.find(p => p.id === property.id)
+        toast.success(`Locataire "${tenantData.name}" ajouté avec succès`)
+        return updatedProperty || property
+      } else {
+        const errorMsg = result.error?.message || 'Erreur lors de la création du locataire'
+        toast.error(errorMsg)
+        return null
+      }
     } catch (error) {
       const errorObj = error as Error
       toast.error(`Erreur lors de l'ajout du locataire : ${errorObj.message}`)
       throw error
+    }
+  }
+
+  /**
+   * Ajoute un nouveau locataire (alias pour createTenant pour compatibilité)
+   * @param tenantData - Données du locataire à ajouter
+   * @returns Le bien mis à jour ou null si erreur
+   */
+  const addTenant = async (tenantData: CreateTenantData): Promise<PropertyData | null> => {
+    return createTenant(tenantData)
+  }
+
+  /**
+   * Récupère un locataire par son ID
+   * @param tenantId - ID UUID du locataire
+   * @returns Le locataire ou null si non trouvé
+   */
+  const getTenantById = async (tenantId: string): Promise<TenantData | null> => {
+    if (!authStore.user?.id) {
+      return null
+    }
+
+    try {
+      const result = await tenantsApi.getTenantById(tenantId, authStore.user.id)
+      if (result.success && result.data) {
+        // Convertit les données API en format TenantData
+        const property = propertiesStore.properties.find(p => p.id === result.data.property_id)
+        if (property) {
+          return {
+            id: result.data.id,
+            propertyId: result.data.property_id,
+            name: result.data.name,
+            property: property.name,
+            propertyCity: property.city,
+            entryDate: result.data.entry_date,
+            exitDate: result.data.exit_date || null,
+            rent: Number(result.data.rent) || 0,
+            status: result.data.status || PAYMENT_STATUS.ON_TIME
+          }
+        }
+      }
+      return null
+    } catch (error) {
+      const errorObj = error as Error
+      console.error('Erreur lors de la récupération du locataire:', sanitizeObject(errorObj, ['message']))
+      return null
     }
   }
 
@@ -275,7 +335,9 @@ export const useTenantsStore = defineStore('tenants', () => {
     // State (computed)
     tenants,
     // Actions
-    addTenant,
+    createTenant,
+    addTenant, // Alias pour compatibilité
+    getTenantById,
     updateTenant,
     removeTenant,
     reset,

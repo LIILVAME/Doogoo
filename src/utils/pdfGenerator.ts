@@ -2,7 +2,21 @@ import { jsPDF } from 'jspdf'
 import type { PaymentData } from '@/stores/paymentsStore'
 import type { PropertyData } from '@/stores/propertiesStore'
 import type { TenantData } from '@/stores/tenantsStore'
-import { formatCurrency, formatDate } from './formatters'
+import { useAuthStore } from '@/stores/authStore'
+
+/**
+ * Helper pour nettoyer le formatage monétaire (espace simple vs insécable pour PDF)
+ * jspdf ne gère pas bien les espaces insécables (\u00A0, \u202F) utilisés par Intl.NumberFormat
+ */
+const formatCurrencyClean = (amount: number): string => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2
+  })
+    .format(amount)
+    .replace(/\s/g, ' ') // Remplace les espaces insécables
+}
 
 /**
  * Interface pour les données nécessaires à la génération d'une quittance
@@ -35,284 +49,145 @@ export interface RentReceiptData {
  * ```
  */
 export async function generateRentReceipt(data: RentReceiptData): Promise<void> {
-  const { payment, tenant, property, ownerName, ownerEmail, ownerPhone, ownerAddress } = data
+  const { payment, tenant, property } = data
+  const authStore = useAuthStore()
 
   // Validation : le paiement doit être payé
   if (payment.status !== 'paid') {
     throw new Error('Une quittance ne peut être générée que pour un paiement avec le statut "paid"')
   }
 
-  // Initialise le document PDF A4
-  const doc = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4'
-  })
+  const doc = new jsPDF()
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const margin = 20
-  let yPosition = margin
+  // Données Propriétaire
+  const ownerName = data.ownerName || authStore.profile?.full_name || authStore.user?.email || 'Propriétaire'
+  const ownerEmail = data.ownerEmail || authStore.user?.email || ''
+  const ownerPhone = data.ownerPhone || authStore.profile?.phone || ''
+  const ownerAddress = data.ownerAddress || authStore.profile?.address || ''
 
-  // Couleurs
-  const primaryColor = [34, 197, 94] // Vert (emerald-500)
-  const grayColor = [107, 114, 128] // Gray-500
-  const darkGrayColor = [55, 65, 81] // Gray-700
+  // Données Locataire
+  const tenantName = tenant?.name || 'Locataire'
+  const tenantAddress = property?.address || property?.name || ''
 
-  // ============================================
-  // EN-TÊTE
-  // ============================================
+  // Période
+  const paymentDate = payment.dueDate ? new Date(payment.dueDate) : new Date(payment.createdAt || new Date())
+  const month = paymentDate.toLocaleString('fr-FR', { month: 'long', year: 'numeric' })
+  const startDate = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), 1)
+  const endDate = new Date(paymentDate.getFullYear(), paymentDate.getMonth() + 1, 0)
+  const periodStr = `du ${startDate.toLocaleDateString('fr-FR')} au ${endDate.toLocaleDateString('fr-FR')}`
 
-  // Titre principal
-  doc.setFillColor(...primaryColor)
-  doc.rect(0, 0, pageWidth, 35, 'F')
+  // Montant
+  const amount = typeof payment.amount === 'string' ? parseFloat(payment.amount) : payment.amount || 0
 
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(20)
+  // --- Mise en page ---
+  doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
-  doc.text('QUITTANCE DE LOYER', pageWidth / 2, 20, { align: 'center' })
+  doc.text('PROPRIÉTAIRE', 20, 20)
 
-  doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('Document justificatif de paiement', pageWidth / 2, 28, { align: 'center' })
-
-  yPosition = 50
-
-  // ============================================
-  // COORDONNÉES DU PROPRIÉTAIRE (à gauche)
-  // ============================================
-
-  doc.setTextColor(...darkGrayColor)
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.text('PROPRIÉTAIRE', margin, yPosition)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(0, 0, 0)
-  yPosition += 7
-
-  if (ownerName) {
-    doc.setFontSize(11)
-    doc.text(ownerName, margin, yPosition)
-    yPosition += 7
-  }
-
+  doc.text(ownerName, 20, 30)
   if (ownerEmail) {
-    doc.setFontSize(9)
-    doc.text(ownerEmail, margin, yPosition)
-    yPosition += 5
+    doc.text(ownerEmail, 20, 35)
   }
-
   if (ownerPhone) {
-    doc.text(`Tél: ${ownerPhone}`, margin, yPosition)
-    yPosition += 5
+    doc.text(ownerPhone, 20, 40)
   }
-
   if (ownerAddress) {
-    doc.setFontSize(9)
-    // Découpe l'adresse en lignes si elle est longue
-    const addressLines = doc.splitTextToSize(ownerAddress, 80) // 80mm de largeur
-    addressLines.forEach((line: string) => {
-      doc.text(line, margin, yPosition)
-      yPosition += 5
-    })
+    const addressLines = doc.splitTextToSize(ownerAddress, 80)
+    doc.text(addressLines, 20, ownerPhone ? 45 : ownerEmail ? 40 : 35)
   }
 
-  // ============================================
-  // COORDONNÉES DU LOCATAIRE (à droite)
-  // ============================================
-
-  const rightColumnX = pageWidth - margin - 70
-  let destY = 50
-
-  doc.setTextColor(...darkGrayColor)
+  doc.setFontSize(18)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(79, 70, 229)
+  doc.text('QUITTANCE DE LOYER', 105, 20, { align: 'center' })
   doc.setFontSize(10)
+  doc.setTextColor(100)
+  doc.text('Document justificatif de paiement', 105, 28, { align: 'center' })
+  doc.setTextColor(0)
+
+  doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
-  doc.text('LOCATAIRE', rightColumnX, destY)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(0, 0, 0)
-  destY += 7
-
-  const tenantName = tenant?.name || payment.tenant || 'Locataire'
-  if (tenantName) {
-    doc.setFontSize(11)
-    doc.text(tenantName, rightColumnX, destY)
-    destY += 7
-  }
-
-  // Adresse du bien loué (sous le nom du locataire)
-  if (property) {
-    const propertyAddress = property.address
-      ? `${property.address}, ${property.city}`
-      : property.city || property.name || 'Adresse non renseignée'
-
-    doc.setFontSize(9)
-    doc.text(propertyAddress, rightColumnX, destY)
-  }
-
-  yPosition = 90
-
-  // ============================================
-  // CORPS : DÉTAILS DE LA QUITTANCE
-  // ============================================
-
-  // Ligne de séparation
-  doc.setDrawColor(229, 231, 235) // Gray-200
-  doc.setLineWidth(0.5)
-  doc.line(margin, yPosition, pageWidth - margin, yPosition)
-  yPosition += 12
-
-  // Période couverte
-  const dueDate = payment.dueDate ? new Date(payment.dueDate) : new Date()
-  const periodStart = new Date(dueDate.getFullYear(), dueDate.getMonth(), 1)
-  const periodEnd = new Date(dueDate.getFullYear(), dueDate.getMonth() + 1, 0)
-
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(0, 0, 0)
-  doc.text('Période:', margin, yPosition)
-
-  doc.setFont('helvetica', 'normal')
-  const periodText = `du ${formatDate(periodStart.toISOString(), { day: 'numeric', month: 'long', year: 'numeric' })} au ${formatDate(periodEnd.toISOString(), { day: 'numeric', month: 'long', year: 'numeric' })}`
-  doc.text(periodText, margin + 22, yPosition)
-  yPosition += 10
-
-  // Adresse du bien loué (détail)
-  if (property) {
-    doc.setFontSize(9)
-    doc.setTextColor(...grayColor)
-    doc.text('Bien loué:', margin, yPosition)
-    doc.setTextColor(0, 0, 0)
-    const fullAddress = property.address
-      ? `${property.address}, ${property.city}`
-      : property.city || property.name
-    doc.text(fullAddress, margin + 22, yPosition)
-    yPosition += 8
-  }
-
-  yPosition += 5
-
-  // Tableau des détails
-  doc.setFillColor(249, 250, 251) // Gray-50
-  doc.rect(margin, yPosition, pageWidth - 2 * margin, 8, 'F')
-
-  yPosition += 6
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Détail', margin + 5, yPosition)
-  doc.text('Montant', pageWidth - margin - 35, yPosition, { align: 'right' })
-
-  yPosition += 10
-  doc.setDrawColor(229, 231, 235)
-  doc.line(margin, yPosition, pageWidth - margin, yPosition)
-  yPosition += 8
-
-  // Ligne : Loyer nu
+  doc.text('LOCATAIRE', 120, 40)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(10)
-  const rentAmount = payment.amount || 0
-  const charges = 0 // Charges non gérées pour l'instant (peut être ajouté plus tard)
-  const totalAmount = rentAmount + charges
-
-  doc.text('Loyer nu (hors charges)', margin + 5, yPosition)
-  doc.text(formatCurrency(rentAmount), pageWidth - margin - 5, yPosition, { align: 'right' })
-  yPosition += 8
-
-  // Ligne : Charges (si > 0)
-  if (charges > 0) {
-    doc.text('Charges', margin + 5, yPosition)
-    doc.text(formatCurrency(charges), pageWidth - margin - 5, yPosition, { align: 'right' })
-    yPosition += 8
+  doc.text(tenantName, 120, 50)
+  if (tenantAddress) {
+    const tenantAddrLines = doc.splitTextToSize(tenantAddress, 70)
+    doc.text(tenantAddrLines, 120, 55)
   }
 
-  yPosition += 5
-  doc.setDrawColor(200, 200, 200)
-  doc.line(pageWidth - margin - 60, yPosition, pageWidth - margin, yPosition)
-  yPosition += 8
+  doc.setDrawColor(200)
+  doc.line(20, 75, 190, 75)
 
-  // Total payé
-  doc.setFontSize(11)
+  let currentY = 90
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...primaryColor)
-  doc.text('Total payé:', pageWidth - margin - 45, yPosition)
-  doc.text(formatCurrency(totalAmount), pageWidth - margin - 5, yPosition, { align: 'right' })
-
-  yPosition += 12
-
-  // Date du paiement
-  doc.setFontSize(9)
+  doc.text('Période :', 20, currentY)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(0, 0, 0)
-  const paymentDateText = payment.dueDate
-    ? formatDate(payment.dueDate, { day: 'numeric', month: 'long', year: 'numeric' })
-    : 'Non spécifiée'
-  doc.text(`Date du paiement: ${paymentDateText}`, margin, yPosition)
+  doc.text(periodStr, 60, currentY)
 
-  yPosition += 7
-  // Mode de règlement (non disponible dans PaymentData, peut être ajouté plus tard)
-  doc.text('Mode de règlement: Non spécifié', margin, yPosition)
-
-  yPosition += 20
-
-  // ============================================
-  // PIED DE PAGE : PHRASE LÉGALE
-  // ============================================
-
-  doc.setDrawColor(229, 231, 235)
-  doc.line(margin, yPosition, pageWidth - margin, yPosition)
-  yPosition += 12
-
-  doc.setFontSize(9)
-  doc.setTextColor(0, 0, 0)
+  currentY += 10
+  doc.setFont('helvetica', 'bold')
+  doc.text('Bien loué :', 20, currentY)
   doc.setFont('helvetica', 'normal')
+  doc.text(property?.name || '', 60, currentY)
 
-  // Phrase légale
-  const ownerNameText = ownerName || 'le propriétaire'
-  const amountText = formatCurrency(totalAmount)
-  const legalText = `Je soussigné(e) ${ownerNameText} certifie avoir reçu la somme de ${amountText} au titre du loyer et des charges pour la période mentionnée ci-dessus. Cette quittance annule tous les reçus qui auraient pu être donnés pour acompte.`
+  currentY += 20
+  doc.setFillColor(245, 247, 250)
+  doc.rect(20, currentY - 5, 170, 10, 'F')
+  doc.setFont('helvetica', 'bold')
+  doc.text('Détail', 25, currentY + 1)
+  doc.text('Montant', 160, currentY + 1)
 
-  // Découpe le texte en lignes pour qu'il s'adapte à la largeur de la page
-  // jsPDF gère automatiquement les accents UTF-8 dans les versions récentes (v3.0+)
-  const splitLegalText = doc.splitTextToSize(legalText, pageWidth - 2 * margin)
-  doc.text(splitLegalText, margin, yPosition, { align: 'justify' })
+  currentY += 15
+  doc.setFont('helvetica', 'normal')
+  doc.text('Loyer nu (hors charges)', 25, currentY)
+  doc.text(formatCurrencyClean(amount), 160, currentY)
 
-  yPosition += splitLegalText.length * 6 + 15
+  currentY += 15
+  doc.setDrawColor(0)
+  doc.line(110, currentY - 5, 180, currentY - 5)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Total payé :', 110, currentY + 5)
+  doc.text(formatCurrencyClean(amount), 160, currentY + 5)
 
-  // Date de génération
-  const today = new Date()
-  const generationDate = formatDate(today.toISOString(), {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  })
-  doc.text(`Fait à ${property?.city || ''}, le ${generationDate}`, margin, yPosition)
+  currentY += 20
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'italic')
+  doc.text(
+    `Date du paiement : ${new Date(payment.createdAt || new Date()).toLocaleDateString('fr-FR')}`,
+    20,
+    currentY
+  )
 
-  yPosition += 20
+  // --- CORRECTION WRAPPING TEXTE LÉGAL ---
+  currentY += 20
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const marginX = 20
+  const maxTextWidth = pageWidth - marginX * 2
 
-  // Espace pour la signature
-  doc.setDrawColor(150, 150, 150)
-  doc.line(margin, yPosition, margin + 50, yPosition)
-  doc.setFontSize(8)
-  doc.setTextColor(...grayColor)
-  doc.text('Signature du propriétaire', margin, yPosition + 4)
+  const legalText = `Je soussigné(e) ${ownerName} certifie avoir reçu la somme de ${formatCurrencyClean(amount)} au titre du loyer et des charges pour la période mentionnée ci-dessus. Cette quittance annule tous les reçus qui auraient pu être donnés pour acompte.`
 
-  // ============================================
-  // TÉLÉCHARGEMENT
-  // ============================================
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  // Utilisation de splitTextToSize pour gérer le retour à la ligne
+  const legalLines = doc.splitTextToSize(legalText, maxTextWidth)
+  doc.text(legalLines, marginX, currentY)
 
-  // Génère le nom de fichier
-  const sanitizeName = (name: string): string => {
-    return name
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // Supprime les accents
-      .replace(/[^a-z0-9]/gi, '_')
-      .toLowerCase()
-  }
+  // Ajustement de Y pour la signature
+  // Calcul de la hauteur : nombre de lignes * hauteur de ligne
+  const lineHeight = 10 * doc.getLineHeightFactor()
+  const textHeight = legalLines.length * lineHeight
+  currentY += textHeight + 15
 
-  const tenantSanitized = sanitizeName(tenantName)
-  const monthName = formatDate(periodStart.toISOString(), { month: 'short', year: 'numeric' })
-  const filename = `Quittance_${tenantSanitized}_${monthName}.pdf`
+  // Signature
+  const cityMatch = ownerAddress.match(/\d{5}\s+([^,]+)/) || ownerAddress.split(',').pop()
+  const city = cityMatch ? (Array.isArray(cityMatch) ? cityMatch[1] : cityMatch).trim() : property?.city || '...'
 
-  // Sauvegarde le PDF
-  doc.save(filename)
+  doc.text(`Fait à ${city}, le ${new Date().toLocaleDateString('fr-FR')}`, 120, currentY)
+  doc.text('Signature du propriétaire', 120, currentY + 10)
+
+  const fileName = `Quittance_${tenantName.replace(/\s+/g, '_')}_${month}.pdf`
+  doc.save(fileName)
 }

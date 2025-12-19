@@ -278,8 +278,9 @@ const generateRentReceipt = async () => {
 
     // Récupère les données du locataire
     let tenant = null
+    
+    // Priorité 1 : Le tenant est dans la propriété
     if (property?.tenant) {
-      // Le tenant est dans la propriété
       tenant = {
         id: property.tenant.id,
         name: property.tenant.name,
@@ -289,8 +290,15 @@ const generateRentReceipt = async () => {
         status: property.tenant.status,
         propertyId: property.id
       }
+    } else if (props.payment.tenantId) {
+      // Priorité 2 : Utilise tenantId du paiement pour récupérer le locataire via l'API
+      try {
+        tenant = await tenantsStore.getTenantById(props.payment.tenantId)
+      } catch (err) {
+        console.warn('Impossible de récupérer le locataire par ID:', err)
+      }
     } else {
-      // Cherche dans le store des tenants
+      // Priorité 3 : Cherche dans le store des tenants par propertyId
       const allTenants = tenantsStore.tenants
       tenant = allTenants.find(t => t.propertyId === props.payment.propertyId) || null
     }

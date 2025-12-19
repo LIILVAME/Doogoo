@@ -7,7 +7,7 @@ import { withErrorHandling } from '@/utils/apiErrorHandler'
  */
 
 /**
- * Récupère tous les locataires d'un utilisateur (via les propriétés)
+ * Récupère tous les locataires d'un utilisateur
  * @param {string} userId - ID de l'utilisateur
  * @returns {Promise<Object>} { success: boolean, data?: Array, error?: Error }
  */
@@ -19,19 +19,9 @@ export async function getTenants(userId) {
   return withErrorHandling(async () => {
     const { data, error } = await supabase
       .from('tenants')
-      .select(
-        `
-        *,
-        properties (
-          id,
-          name,
-          city,
-          address
-        )
-      `
-      )
-      .eq('properties.user_id', userId)
-      .order('entry_date', { ascending: false })
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
 
     return { data, error }
   }, 'getTenants')
@@ -51,19 +41,9 @@ export async function getTenantById(tenantId, userId) {
   return withErrorHandling(async () => {
     const { data, error } = await supabase
       .from('tenants')
-      .select(
-        `
-        *,
-        properties (
-          id,
-          name,
-          city,
-          address
-        )
-      `
-      )
+      .select('*')
       .eq('id', tenantId)
-      .eq('properties.user_id', userId)
+      .eq('user_id', userId)
       .single()
 
     return { data, error }
@@ -73,7 +53,7 @@ export async function getTenantById(tenantId, userId) {
 /**
  * Crée un nouveau locataire
  * @param {Object} tenantData - Données du locataire
- * @param {string} userId - ID de l'utilisateur
+ * @param {string} userId - ID de l'utilisateur (owner_id)
  * @returns {Promise<Object>} { success: boolean, data?: Object, error?: Error }
  */
 export async function createTenant(tenantData, userId) {
@@ -82,18 +62,24 @@ export async function createTenant(tenantData, userId) {
   }
 
   return withErrorHandling(async () => {
+    const insertData = {
+      property_id: tenantData.propertyId || null,
+      user_id: userId, // CRITIQUE : requis pour RLS
+      name: tenantData.name,
+      entry_date: tenantData.entryDate,
+      exit_date: tenantData.exitDate || null,
+      rent: Number(tenantData.rent) || 0,
+      status: tenantData.status || 'on_time'
+    }
+
+    // Ajoute l'email si fourni
+    if (tenantData.email !== undefined) {
+      insertData.email = tenantData.email || null
+    }
+
     const { data, error } = await supabase
       .from('tenants')
-      .insert([
-        {
-          property_id: tenantData.propertyId,
-          name: tenantData.name,
-          entry_date: tenantData.entryDate,
-          exit_date: tenantData.exitDate || null,
-          rent: Number(tenantData.rent) || 0,
-          status: tenantData.status || 'on_time'
-        }
-      ])
+      .insert([insertData])
       .select()
       .single()
 
