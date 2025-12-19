@@ -45,8 +45,32 @@
           </div>
         </div>
         <div class="flex-1">
-          <label for="avatar-upload" class="btn-secondary inline-flex items-center cursor-pointer">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <label
+            for="avatar-upload"
+            class="btn-secondary inline-flex items-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            :class="{ 'opacity-50 cursor-not-allowed': isUploading }"
+          >
+            <svg
+              v-if="isUploading"
+              class="animate-spin w-4 h-4 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -54,16 +78,19 @@
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            Changer la photo
+            {{ isUploading ? 'Upload en cours...' : 'Changer la photo' }}
           </label>
           <input
             id="avatar-upload"
             type="file"
             accept="image/*"
             @change="onFileChange"
+            :disabled="isUploading"
             class="hidden"
           />
-          <p class="text-xs text-zinc-400 mt-2">Formats acceptés : JPG, PNG (max 2MB)</p>
+          <p class="text-xs text-zinc-400 mt-2">
+            {{ isUploading ? 'Upload en cours...' : 'Formats acceptés : JPG, PNG (max 2MB)' }}
+          </p>
         </div>
       </div>
 
@@ -185,6 +212,7 @@ const profile = ref({
 const preview = ref(null)
 const isSaving = ref(false)
 const isLoading = ref(false)
+const isUploading = ref(false)
 const avatarFile = ref(null)
 
 // Initialise les valeurs depuis le store
@@ -257,22 +285,43 @@ const onFileChange = async e => {
   // Validation de la taille (max 2MB)
   if (file.size > 2 * 1024 * 1024) {
     toastStore.error('Le fichier est trop volumineux (max 2MB)')
+    // Réinitialise l'input
+    e.target.value = ''
     return
   }
 
   // Validation du type
   if (!file.type.startsWith('image/')) {
     toastStore.error('Format de fichier non supporté. Veuillez choisir une image.')
+    // Réinitialise l'input
+    e.target.value = ''
     return
   }
 
-  // Crée une prévisualisation
+  // Crée une prévisualisation immédiate
   preview.value = URL.createObjectURL(file)
   avatarFile.value = file
 
-  // TODO v0.3.0 : Uploader le fichier vers Supabase Storage
-  // Pour l'instant, on garde juste la prévisualisation locale
-  // await uploadAvatar(file)
+  // Upload immédiat vers Supabase Storage
+  isUploading.value = true
+  try {
+    const avatarUrl = await authStore.uploadAvatar(file)
+    // Met à jour la prévisualisation avec l'URL publique
+    if (preview.value && preview.value.startsWith('blob:')) {
+      URL.revokeObjectURL(preview.value)
+    }
+    preview.value = avatarUrl
+    avatarFile.value = null // Réinitialise car upload réussi
+    toastStore.success('Photo de profil mise à jour avec succès')
+  } catch (error) {
+    // En cas d'erreur, garde la prévisualisation locale mais affiche l'erreur
+    console.error('Erreur upload avatar:', error)
+    // L'erreur est déjà affichée dans uploadAvatar via toastStore
+  } finally {
+    isUploading.value = false
+    // Réinitialise l'input pour permettre de sélectionner le même fichier
+    e.target.value = ''
+  }
 }
 
 /**
@@ -282,41 +331,50 @@ const saveProfile = async () => {
   isSaving.value = true
 
   try {
-    // Upload de l'avatar si un fichier a été sélectionné
-    let avatarUrl = preview.value
-
-    if (avatarFile.value) {
-      // TODO v0.3.0 : Uploader vers Supabase Storage
-      // Pour l'instant, on garde juste la prévisualisation locale
-      // const filePath = `avatars/${authStore.user.id}/${avatarFile.value.name}`
-      // const { data: uploadData, error: uploadError } = await supabase.storage
-      //   .from('avatars')
-      //   .upload(filePath, avatarFile.value)
-      // if (!uploadError && uploadData) {
-      //   const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
-      //   avatarUrl = urlData.publicUrl
-      // }
-    }
-
     // Validation : le nom ne peut pas être vide
     if (!profile.value.name || profile.value.name.trim() === '') {
       toastStore.error('Le nom complet est requis pour générer les quittances')
+      isSaving.value = false
       return
     }
 
-    // Met à jour le profil dans Supabase
+    // Si un fichier avatar est en attente (non uploadé), on l'upload d'abord
+    if (avatarFile.value && !isUploading.value) {
+      try {
+        isUploading.value = true
+        const avatarUrl = await authStore.uploadAvatar(avatarFile.value)
+        // Met à jour la prévisualisation avec l'URL publique
+        if (preview.value && preview.value.startsWith('blob:')) {
+          URL.revokeObjectURL(preview.value)
+        }
+        preview.value = avatarUrl
+        avatarFile.value = null
+      } catch (error) {
+        // L'erreur est déjà affichée dans uploadAvatar
+        isSaving.value = false
+        return
+      } finally {
+        isUploading.value = false
+      }
+    }
+
+    // Récupère l'URL de l'avatar (soit depuis preview si c'est une URL publique, soit null)
+    const avatarUrl =
+      preview.value && !preview.value.startsWith('blob:') ? preview.value : null
+
+    // Met à jour le profil dans Supabase avec toutes les données
     await authStore.updateProfile({
       fullName: profile.value.name.trim(),
-      email: profile.value.email, // L'email n'est pas modifié ici (lecture seule)
       phone: profile.value.phone?.trim() || null,
       company: profile.value.company?.trim() || null,
       address: profile.value.address?.trim() || null,
-      avatar_url: avatarUrl && !avatarUrl.startsWith('blob:') ? avatarUrl : null
+      avatar_url: avatarUrl
     })
 
-    // Recharge le profil pour avoir les données à jour
+    // Recharge le profil pour avoir les données à jour (déjà fait dans updateProfile, mais on s'assure)
     await authStore.fetchProfile()
 
+    // Nettoie les références locales
     avatarFile.value = null
   } catch (err) {
     console.error('Error saving profile:', err)

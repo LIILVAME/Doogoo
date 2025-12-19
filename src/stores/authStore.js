@@ -581,8 +581,64 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Upload un avatar vers Supabase Storage et met à jour le profil
+   * @param {File} file - Fichier image à uploader
+   * @returns {Promise<string>} URL publique de l'avatar
+   */
+  const uploadAvatar = async file => {
+    if (!user.value) {
+      throw new Error('User not authenticated')
+    }
+
+    const toastStore = useToastStore()
+
+    try {
+      // 1. Génère un nom de fichier unique
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.value.id}-${Date.now()}.${fileExt}`
+      const filePath = fileName
+
+      // 2. Upload dans le bucket 'avatars'
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true // Remplace l'ancien avatar si existe
+      })
+
+      if (uploadError) {
+        // Si le bucket n'existe pas, on informe l'utilisateur
+        if (uploadError.message?.includes('Bucket not found')) {
+          throw new Error(
+            "Le bucket 'avatars' n'existe pas. Veuillez le créer dans Supabase Dashboard → Storage."
+          )
+        }
+        throw uploadError
+      }
+
+      // 3. Récupère l'URL publique
+      const {
+        data: { publicUrl }
+      } = supabase.storage.from('avatars').getPublicUrl(filePath)
+
+      // 4. Met à jour le profil avec l'URL de l'avatar
+      await updateProfile({ avatar_url: publicUrl })
+
+      // 5. Met à jour l'état local immédiatement pour la réactivité
+      if (profile.value) {
+        profile.value = { ...profile.value, avatar_url: publicUrl }
+      }
+
+      return publicUrl
+    } catch (err) {
+      console.error('Error uploading avatar:', sanitizeObject(err, ['message']))
+      toastStore.error(`Erreur lors de l'upload de l'avatar : ${err.message}`)
+      throw err
+    }
+  }
+
+  /**
    * Met à jour le profil utilisateur dans Supabase
    * @param {Object} profileData - Données du profil à mettre à jour
+   *   Peut contenir : fullName (ou name), phone, company, address, avatar_url
    */
   const updateProfile = async profileData => {
     if (!user.value) {
@@ -592,28 +648,29 @@ export const useAuthStore = defineStore('auth', () => {
     const toastStore = useToastStore()
 
     try {
+      // Normalise les noms de champs (accepte fullName ou name)
+      const updates = {
+        id: user.value.id,
+        user_id: user.value.id,
+        full_name: profileData.fullName || profileData.name || profileData.full_name || null,
+        phone: profileData.phone || null,
+        company: profileData.company || null,
+        address: profileData.address || null,
+        avatar_url: profileData.avatar_url || null
+      }
+
       // Met à jour le profil dans la table profiles
       const { data, error: updateError } = await supabase
         .from('profiles')
-        .upsert(
-          {
-            id: user.value.id,
-            user_id: user.value.id,
-            full_name: profileData.fullName || profileData.name,
-            phone: profileData.phone || null,
-            company: profileData.company || null,
-            address: profileData.address || null,
-            avatar_url: profileData.avatar_url || null
-          },
-          {
-            onConflict: 'user_id'
-          }
-        )
+        .upsert(updates, {
+          onConflict: 'user_id'
+        })
         .select()
         .single()
 
       if (updateError) throw updateError
 
+      // Met à jour l'état local immédiatement pour la réactivité
       profile.value = data
 
       // Met également à jour l'email dans auth.users si changé
@@ -783,6 +840,7 @@ export const useAuthStore = defineStore('auth', () => {
     initAuthListener,
     fetchProfile,
     updateProfile,
+    uploadAvatar,
     updatePreferences,
     updatePassword,
     loginWithGoogle,
