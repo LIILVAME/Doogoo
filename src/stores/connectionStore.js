@@ -38,12 +38,16 @@ export const useConnectionStore = defineStore('connection', () => {
 
     // Écoute les événements online/offline du navigateur
     const handleOnline = () => {
-      console.log('🌐 Connexion rétablie')
+      if (import.meta.env.DEV) {
+        console.debug('🌐 Connexion rétablie')
+      }
       setOnline(true)
     }
 
     const handleOffline = () => {
-      console.log('📴 Connexion perdue')
+      if (import.meta.env.DEV) {
+        console.debug('📴 Connexion perdue')
+      }
       setOnline(false)
     }
 

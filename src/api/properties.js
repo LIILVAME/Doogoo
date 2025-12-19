@@ -107,32 +107,36 @@ export async function updateProperty(propertyId, updates, userId) {
     return { success: false, message: 'Property ID et User ID requis' }
   }
 
-  return withErrorHandling(async () => {
-    // Prépare les données de mise à jour
-    const updateData = {
-      ...updates
-    }
+  return withErrorHandling(
+    async () => {
+      // Prépare les données de mise à jour
+      const updateData = {
+        ...updates
+      }
 
-    // Convertit le loyer en nombre si présent
-    if (updateData.rent !== undefined) {
-      updateData.rent = Number(updateData.rent)
-    }
+      // Convertit le loyer en nombre si présent
+      if (updateData.rent !== undefined) {
+        updateData.rent = Number(updateData.rent)
+      }
 
-    // Supprime les champs non autorisés
-    delete updateData.id
-    delete updateData.user_id
-    delete updateData.created_at
+      // Supprime les champs non autorisés
+      delete updateData.id
+      delete updateData.user_id
+      delete updateData.created_at
 
-    const { data, error } = await supabase
-      .from('properties')
-      .update(updateData)
-      .eq('id', propertyId)
-      .eq('user_id', userId)
-      .select()
-      .single()
+      const { data, error } = await supabase
+        .from('properties')
+        .update(updateData)
+        .eq('id', propertyId)
+        .eq('user_id', userId)
+        .select()
+        .single()
 
-    return { data, error }
-  }, 'updateProperty')
+      return { data, error }
+    },
+    'updateProperty',
+    { timeout: 30000 }
+  ) // Timeout augmenté à 30s pour éviter les timeouts sur les mises à jour complexes
 }
 
 /**

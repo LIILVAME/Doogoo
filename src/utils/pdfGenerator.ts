@@ -176,8 +176,8 @@ export async function generateRentReceipt(data: RentReceiptData): Promise<void> 
   doc.text(legalLines, marginX, currentY)
 
   // Ajustement de Y pour la signature
-  // Calcul de la hauteur : nombre de lignes * hauteur de ligne
-  const lineHeight = 10 * doc.getLineHeightFactor()
+  // Calcul de la hauteur : nombre de lignes * hauteur de ligne (environ 4.5mm par ligne pour font size 10)
+  const lineHeight = 4.5
   const textHeight = legalLines.length * lineHeight
   currentY += textHeight + 15
 

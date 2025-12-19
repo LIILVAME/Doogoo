@@ -611,7 +611,7 @@ export const usePaymentsStore = defineStore(
         .subscribe(status => {
           if (status === 'SUBSCRIBED') {
             if (import.meta.env.DEV) {
-              console.log('✅ Realtime subscribed to payments')
+              console.debug('✅ Realtime subscribed to payments')
             }
           } else if (status === 'CHANNEL_ERROR') {
             console.error('❌ Realtime error for payments')
@@ -620,7 +620,7 @@ export const usePaymentsStore = defineStore(
             realtimeChannel = null
           } else if (status === 'CLOSED') {
             if (import.meta.env.DEV) {
-              console.log('🔌 Realtime channel closed for payments')
+              console.debug('🔌 Realtime channel closed for payments')
             }
             isRealtimeInitialized = false
             isRealtimeActive = false
@@ -648,7 +648,7 @@ export const usePaymentsStore = defineStore(
         realtimeChannel = null
         isRealtimeInitialized = false
         if (import.meta.env.DEV) {
-          console.log('🔌 Realtime unsubscribed from payments')
+          console.debug('🔌 Realtime unsubscribed from payments')
         }
       }
     }

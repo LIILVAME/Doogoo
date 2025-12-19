@@ -405,12 +405,20 @@ export const usePropertiesStore = defineStore(
       loading.value = true
       error.value = null
 
-      try {
-        const authStore = useAuthStore()
-        const toastStore = useToastStore()
-        if (!authStore.user) {
-          throw new Error('User not authenticated')
+      const authStore = useAuthStore()
+      const toastStore = useToastStore()
+
+      if (!authStore.user) {
+        const errorMsg = 'User not authenticated'
+        error.value = errorMsg
+        loading.value = false
+        if (toastStore) {
+          toastStore.error('Vous devez être connecté pour modifier un bien')
         }
+        throw new Error(errorMsg)
+      }
+
+      try {
 
         // Optimistic UI : Sauvegarde l'ancien état et applique les modifications
         const propertyIndex = properties.value.findIndex(p => p.id === id)
@@ -554,8 +562,29 @@ export const usePropertiesStore = defineStore(
         return updatedProperty
       } catch (err) {
         const errorObj = err as Error
-        error.value = errorObj.message
+        const errorMessage = errorObj.message || 'Erreur lors de la mise à jour du bien'
+        
+        // Log sécurisé de l'erreur
+        console.error(
+          'Erreur lors de la mise à jour du bien:',
+          sanitizeObject(errorObj, ['message'])
+        )
+        
+        error.value = errorMessage
         loading.value = false
+
+        // Affiche un toast avec le message d'erreur exact
+        if (toastStore) {
+          // Messages d'erreur plus conviviaux
+          if (errorMessage.includes('Timeout') || errorMessage.includes('timeout')) {
+            toastStore.error('La modification a pris trop de temps. Veuillez réessayer.')
+          } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+            toastStore.error('Erreur de connexion. Vérifiez votre réseau.')
+          } else {
+            toastStore.error(`Erreur: ${errorMessage}`)
+          }
+        }
+
         throw err
       }
     }
@@ -756,7 +785,7 @@ export const usePropertiesStore = defineStore(
         .subscribe(status => {
           if (status === 'SUBSCRIBED') {
             if (import.meta.env.DEV) {
-              console.log('✅ Realtime subscribed to properties')
+              console.debug('✅ Realtime subscribed to properties')
             }
           } else if (status === 'CHANNEL_ERROR') {
             console.error('❌ Realtime error for properties')
@@ -765,7 +794,7 @@ export const usePropertiesStore = defineStore(
             realtimeChannel = null
           } else if (status === 'CLOSED') {
             if (import.meta.env.DEV) {
-              console.log('🔌 Realtime channel closed for properties')
+              console.debug('🔌 Realtime channel closed for properties')
             }
             isRealtimeInitialized = false
             isRealtimeActive = false
@@ -793,7 +822,7 @@ export const usePropertiesStore = defineStore(
         realtimeChannel = null
         isRealtimeInitialized = false
         if (import.meta.env.DEV) {
-          console.log('🔌 Realtime unsubscribed from properties')
+          console.debug('🔌 Realtime unsubscribed from properties')
         }
       }
     }

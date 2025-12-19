@@ -25,6 +25,7 @@ vi.mock('jspdf', () => {
     setLineWidth: vi.fn().mockReturnThis(),
     line: vi.fn().mockReturnThis(),
     splitTextToSize: vi.fn((text: string) => [text]),
+    getTextDimensions: vi.fn(() => ({ w: 100, h: 10 })),
     save: vi.fn()
   }
 
@@ -36,6 +37,20 @@ vi.mock('jspdf', () => {
     }
   }
 })
+
+// Mock authStore
+vi.mock('@/stores/authStore', () => ({
+  useAuthStore: () => ({
+    profile: {
+      full_name: 'Jean Dupont',
+      phone: '01 23 45 67 89',
+      address: '123 Rue Example, 75001 Paris'
+    },
+    user: {
+      email: 'jean@example.com'
+    }
+  })
+}))
 
 // Mock formatters
 vi.mock('@/utils/formatters', () => ({

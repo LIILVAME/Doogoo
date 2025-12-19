@@ -79,10 +79,20 @@
           />
         </div>
 
-        <!-- Loading State -->
+        <!-- Loading State avec progression -->
         <div v-if="reportsStore.loading && !reportData" class="text-center py-12">
           <InlineLoader />
-          <p class="mt-4 text-zinc-400">{{ $t('reports.loading') }}</p>
+          <p class="mt-4 text-zinc-400 mb-4">{{ $t('reports.loading') }}</p>
+          <!-- Barre de progression -->
+          <div class="max-w-md mx-auto">
+            <div class="w-full bg-zinc-800 rounded-full h-2 mb-2">
+              <div
+                class="bg-indigo-500 h-2 rounded-full transition-all duration-300"
+                :style="{ width: `${progress}%` }"
+              ></div>
+            </div>
+            <p class="text-sm text-zinc-500">{{ progress }}%</p>
+          </div>
         </div>
 
         <!-- Chart and Table Section -->
@@ -191,6 +201,7 @@ const reportType = ref('global')
 const selectedProperty = ref('all')
 const reportData = ref(null)
 const selectedMonth = ref('')
+const progress = ref(0) // Progression du chargement (0-100)
 
 // Génère les 12 derniers mois
 const availableMonths = computed(() => {
@@ -448,17 +459,37 @@ const getWeekNumber = date => {
 }
 
 /**
- * Charge le rapport
+ * Charge le rapport avec feedback de progression
  */
 const loadReport = async () => {
   if (!selectedMonth.value) {
     selectedMonth.value = availableMonths.value[0]?.value || ''
   }
 
+  progress.value = 0
+  reportData.value = null
+
   try {
+    // Simule la progression pendant le chargement
+    const progressInterval = setInterval(() => {
+      if (progress.value < 90) {
+        progress.value += 10
+      }
+    }, 200)
+
     const data = await reportsStore.generateMonthlyReport(selectedMonth.value)
+    
+    clearInterval(progressInterval)
+    progress.value = 100
+    
+    // Petit délai pour afficher 100% avant de masquer
+    setTimeout(() => {
+      progress.value = 0
+    }, 300)
+    
     reportData.value = data
   } catch (error) {
+    progress.value = 0
     toast.error(`Erreur lors du chargement du rapport : ${error.message}`)
   }
 }

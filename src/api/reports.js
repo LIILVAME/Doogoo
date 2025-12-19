@@ -47,30 +47,30 @@ export async function generateMonthlyReport(userId, month) {
         endDate = new Date(year, (monthMap[monthName] || 0) + 1, 0, 23, 59, 59)
       }
 
-      // 1️⃣ Récupère les paiements du mois
-      const { data: payments, error: paymentsError } = await supabase
-        .from('payments_view')
-        .select(
+      // 1️⃣ & 2️⃣ Parallélise les appels pour améliorer les performances
+      const [paymentsResult, propertiesResult] = await Promise.all([
+        supabase
+          .from('payments_view')
+          .select(
+            `
+            *,
+            properties (id, name, city),
+            tenants (id, name)
           `
-        *,
-        properties (id, name, city),
-        tenants (id, name)
-      `
-        )
-        .eq('user_id', userId)
-        .gte('due_date', startDate.toISOString().split('T')[0])
-        .lte('due_date', endDate.toISOString().split('T')[0])
-        .order('due_date', { ascending: false })
+          )
+          .eq('user_id', userId)
+          .gte('due_date', startDate.toISOString().split('T')[0])
+          .lte('due_date', endDate.toISOString().split('T')[0])
+          .order('due_date', { ascending: false }),
+        supabase.from('properties').select('*').eq('user_id', userId)
+      ])
+
+      const { data: payments, error: paymentsError } = paymentsResult
+      const { data: properties, error: propertiesError } = propertiesResult
 
       if (paymentsError) {
         return { data: null, error: paymentsError }
       }
-
-      // 2️⃣ Récupère les propriétés
-      const { data: properties, error: propertiesError } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('user_id', userId)
 
       if (propertiesError) {
         return { data: null, error: propertiesError }
