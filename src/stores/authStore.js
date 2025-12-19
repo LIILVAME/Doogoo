@@ -593,54 +593,70 @@ export const useAuthStore = defineStore('auth', () => {
     const toastStore = useToastStore()
 
     try {
-      // 1. Génère un nom de fichier unique
+      // 1. Générer un nom de fichier unique (ID User + Timestamp) pour éviter les conflits de cache
       const fileExt = file.name.split('.').pop()
       const fileName = `${user.value.id}-${Date.now()}.${fileExt}`
       const filePath = fileName
 
-      // 2. Upload dans le bucket 'avatars'
+      // 2. Upload vers le bucket 'avatars'
+      // Note : Le bucket doit avoir les politiques RLS 'insert' activées pour les utilisateurs authentifiés
       const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, {
         cacheControl: '3600',
-        upsert: true // Remplace l'ancien avatar si existe
+        upsert: false // Ne pas remplacer, créer un nouveau fichier unique
       })
 
       if (uploadError) {
-        // Si le bucket n'existe pas, on informe l'utilisateur
+        // Gestion des erreurs spécifiques
+        let errorMessage = uploadError.message || "Erreur lors de l'upload de l'avatar"
+        
         if (uploadError.message?.includes('Bucket not found')) {
-          throw new Error(
-            "Le bucket 'avatars' n'existe pas. Veuillez le créer dans Supabase Dashboard → Storage."
-          )
+          errorMessage = "Le bucket 'avatars' n'existe pas. Veuillez le créer dans Supabase Dashboard → Storage."
+        } else if (uploadError.message?.includes('row-level security') || uploadError.message?.includes('RLS')) {
+          errorMessage = "Erreur de sécurité : Vérifiez que les politiques RLS du bucket 'avatars' sont correctement configurées."
+        } else if (uploadError.message?.includes('already exists')) {
+          // Si le fichier existe déjà (peu probable avec timestamp), on génère un nouveau nom
+          const retryFileName = `${user.value.id}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+          const { error: retryError } = await supabase.storage.from('avatars').upload(retryFileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          })
+          if (retryError) {
+            errorMessage = retryError.message || "Erreur lors de la nouvelle tentative d'upload"
+            throw new Error(errorMessage)
+          }
+          // Utilise le nouveau nom pour l'URL
+          const { data } = supabase.storage.from('avatars').getPublicUrl(retryFileName)
+          await updateProfile({ avatar_url: data.publicUrl })
+          return data.publicUrl
         }
-        throw uploadError
+        
+        throw new Error(errorMessage)
       }
 
-      // 3. Récupère l'URL publique
-      const {
-        data: { publicUrl }
-      } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      // 3. Récupérer l'URL publique
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath)
 
-      // 4. Met à jour le profil avec l'URL de l'avatar
-      await updateProfile({ avatar_url: publicUrl })
+      // 4. Sauvegarder l'URL dans le profil
+      await updateProfile({ avatar_url: data.publicUrl })
 
-      // 5. Met à jour l'état local immédiatement pour la réactivité
-      if (profile.value) {
-        profile.value = { ...profile.value, avatar_url: publicUrl }
+      return data.publicUrl
+    } catch (error) {
+      console.error('Erreur upload avatar:', sanitizeObject(error, ['message']))
+      // Affiche l'erreur dans un toast
+      if (toastStore) {
+        toastStore.error(error.message || "Erreur lors de l'upload de l'avatar")
       }
-
-      return publicUrl
-    } catch (err) {
-      console.error('Error uploading avatar:', sanitizeObject(err, ['message']))
-      toastStore.error(`Erreur lors de l'upload de l'avatar : ${err.message}`)
-      throw err
+      throw error // Propager l'erreur pour l'afficher dans l'UI
     }
   }
 
   /**
    * Met à jour le profil utilisateur dans Supabase
-   * @param {Object} profileData - Données du profil à mettre à jour
+   * @param {Object} updates - Données du profil à mettre à jour
    *   Peut contenir : fullName (ou name), phone, company, address, avatar_url
+   * @returns {Promise<boolean>}
    */
-  const updateProfile = async profileData => {
+  const updateProfile = async updates => {
     if (!user.value) {
       throw new Error('User not authenticated')
     }
@@ -649,34 +665,46 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       // Normalise les noms de champs (accepte fullName ou name)
-      const updates = {
-        id: user.value.id,
-        user_id: user.value.id,
-        full_name: profileData.fullName || profileData.name || profileData.full_name || null,
-        phone: profileData.phone || null,
-        company: profileData.company || null,
-        address: profileData.address || null,
-        avatar_url: profileData.avatar_url || null
+      const normalizedUpdates = {
+        full_name: updates.fullName || updates.name || updates.full_name || undefined,
+        phone: updates.phone !== undefined ? (updates.phone || null) : undefined,
+        company: updates.company !== undefined ? (updates.company || null) : undefined,
+        address: updates.address !== undefined ? (updates.address || null) : undefined,
+        avatar_url: updates.avatar_url !== undefined ? (updates.avatar_url || null) : undefined
       }
 
-      // Met à jour le profil dans la table profiles
-      const { data, error: updateError } = await supabase
+      // Supprime les champs undefined pour ne mettre à jour que ce qui est fourni
+      Object.keys(normalizedUpdates).forEach(key => {
+        if (normalizedUpdates[key] === undefined) {
+          delete normalizedUpdates[key]
+        }
+      })
+
+      // 1. Update Supabase
+      const { error } = await supabase
         .from('profiles')
-        .upsert(updates, {
-          onConflict: 'user_id'
-        })
-        .select()
-        .single()
+        .update(normalizedUpdates)
+        .eq('id', user.value.id)
 
-      if (updateError) throw updateError
+      if (error) {
+        // Gestion des erreurs spécifiques
+        if (error.message?.includes('row-level security') || error.message?.includes('RLS')) {
+          throw new Error(
+            "Erreur de sécurité : Vérifiez que les politiques RLS de la table 'profiles' sont correctement configurées."
+          )
+        }
+        throw error
+      }
 
-      // Met à jour l'état local immédiatement pour la réactivité
-      profile.value = data
+      // 2. Update State Local (Réactivité immédiate)
+      if (profile.value) {
+        profile.value = { ...profile.value, ...normalizedUpdates }
+      }
 
       // Met également à jour l'email dans auth.users si changé
-      if (profileData.email && profileData.email !== user.value.email) {
+      if (updates.email && updates.email !== user.value.email) {
         const { error: emailError } = await supabase.auth.updateUser({
-          email: profileData.email
+          email: updates.email
         })
 
         if (emailError) {
@@ -686,11 +714,11 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       toastStore.success('Profil mis à jour avec succès')
-      return { success: true, profile: data }
-    } catch (err) {
-      console.error('Error updating profile:', sanitizeObject(err, ['message']))
-      toastStore.error(`Erreur lors de la mise à jour : ${err.message}`)
-      throw err
+      return true
+    } catch (error) {
+      console.error('Erreur mise à jour profil:', sanitizeObject(error, ['message']))
+      toastStore.error(`Erreur lors de la mise à jour : ${error.message}`)
+      throw error
     }
   }
 
