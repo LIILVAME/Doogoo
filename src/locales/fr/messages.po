@@ -1049,6 +1049,12 @@ msgstr "Authentification à deux facteurs activée"
 msgid "security.twoFactor.disabledMessage"
 msgstr "Authentification à deux facteurs désactivée"
 
+msgid "security.twoFactor.comingSoon"
+msgstr "Bientôt disponible"
+
+msgid "security.twoFactor.comingSoonDescription"
+msgstr "Cette fonctionnalité sera disponible dans une prochaine version."
+
 msgid "security.sessions.title"
 msgstr "Sessions actives"
 

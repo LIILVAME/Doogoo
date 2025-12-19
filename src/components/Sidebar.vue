@@ -347,18 +347,17 @@ onMounted(async () => {
   lastScrollY.value = window.scrollY || window.pageYOffset
   isDesktop.value = window.innerWidth >= 1024
 
-  // Charge les alertes pour le badge (non bloquant, échoue silencieusement si timeout)
-  // Note: fetchAlerts peut être lent, on ne bloque pas le chargement de la sidebar
-  if (authStore.user) {
-    // Exécute en arrière-plan sans attendre
-    alertsStore.fetchAlerts().catch(error => {
-      // Non bloquant si les alertes ne peuvent pas être chargées
-      console.debug(
-        'Impossible de charger les alertes pour le badge (non bloquant):',
-        error.message
-      )
-    })
-  }
+  // DÉSACTIVÉ V1 : fetchAlerts bloque l'app avec des timeouts en cascade
+  // Les alertes seront chargées uniquement depuis AlertsPage.vue
+  // TODO V1.1 : Réactiver avec un système de cache et timeout plus court
+  // if (authStore.user) {
+  //   alertsStore.fetchAlerts().catch(error => {
+  //     console.debug(
+  //       'Impossible de charger les alertes pour le badge (non bloquant):',
+  //       error.message
+  //     )
+  //   })
+  // }
 
   // Écouteurs d'événements
   window.addEventListener('scroll', handleScroll, { passive: true })

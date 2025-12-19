@@ -520,7 +520,9 @@ export default {
       enable: 'Enable',
       disable: 'Disable',
       enabledMessage: 'Two-factor authentication enabled',
-      disabledMessage: 'Two-factor authentication disabled'
+      disabledMessage: 'Two-factor authentication disabled',
+      comingSoon: 'Coming soon',
+      comingSoonDescription: 'This feature will be available in a future version.'
     },
     sessions: {
       title: 'Active sessions',

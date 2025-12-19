@@ -130,11 +130,13 @@
 import { ref, watch, onMounted } from 'vue'
 import { useI18n } from '@/composables/useLingui'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import SettingsSection from './SettingsSection.vue'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()
+const authStore = useAuthStore()
 const toastStore = useToastStore()
 
 const isSaving = ref(false)
@@ -177,7 +179,7 @@ onMounted(() => {
 })
 
 /**
- * Sauvegarde les préférences dans le store
+ * Sauvegarde les préférences dans le store ET dans Supabase
  */
 const savePreferences = async () => {
   isSaving.value = true
@@ -196,6 +198,28 @@ const savePreferences = async () => {
     
     settingsStore.setAlertThreshold(localPreferences.value.alertThreshold)
     settingsStore.setNotifications(localPreferences.value.notifications)
+    
+    // Sauvegarde également dans Supabase si l'utilisateur est connecté
+    if (authStore.isAuthenticated && authStore.user) {
+      try {
+        const preferencesToSave = {
+          theme: localPreferences.value.theme,
+          currency: localPreferences.value.currency,
+          language: localPreferences.value.language,
+          alertThreshold: localPreferences.value.alertThreshold,
+          notifications: localPreferences.value.notifications
+        }
+        
+        await authStore.updatePreferences(preferencesToSave)
+        
+        if (import.meta.env.DEV) {
+          console.debug('✅ Préférences sauvegardées dans Supabase')
+        }
+      } catch (supabaseError) {
+        // Erreur non bloquante - les préférences sont déjà dans localStorage
+        console.warn('Erreur lors de la sauvegarde Supabase (non bloquant):', supabaseError)
+      }
+    }
     
     // Toast de confirmation
     if (toastStore) {

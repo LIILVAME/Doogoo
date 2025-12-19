@@ -519,7 +519,9 @@ export default {
       enable: 'Activer',
       disable: 'Désactiver',
       enabledMessage: 'Authentification à deux facteurs activée',
-      disabledMessage: 'Authentification à deux facteurs désactivée'
+      disabledMessage: 'Authentification à deux facteurs désactivée',
+      comingSoon: 'Bientôt disponible',
+      comingSoonDescription: 'Cette fonctionnalité sera disponible dans une prochaine version.'
     },
     sessions: {
       title: 'Sessions actives',

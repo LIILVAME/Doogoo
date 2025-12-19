@@ -47,6 +47,47 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   /**
+   * Charge les préférences depuis Supabase et les fusionne avec localStorage
+   * Les préférences Supabase ont la priorité si elles existent
+   * @param {Object} supabasePreferences - Préférences depuis Supabase (colonne preferences JSONB)
+   */
+  const loadPreferencesFromSupabase = (supabasePreferences) => {
+    if (!supabasePreferences || typeof supabasePreferences !== 'object') {
+      return
+    }
+
+    try {
+      // Fusionne les préférences Supabase avec les valeurs actuelles
+      // Les préférences Supabase ont la priorité
+      if (supabasePreferences.language) {
+        language.value = supabasePreferences.language
+      }
+      if (supabasePreferences.currency) {
+        currency.value = supabasePreferences.currency
+      }
+      if (supabasePreferences.theme) {
+        // Normalise 'auto' en 'system' pour la cohérence
+        theme.value = supabasePreferences.theme === 'auto' ? 'system' : supabasePreferences.theme
+      }
+      if (supabasePreferences.alertThreshold !== undefined) {
+        alertThreshold.value = supabasePreferences.alertThreshold
+      }
+      if (supabasePreferences.notifications && typeof supabasePreferences.notifications === 'object') {
+        notifications.value = { ...notifications.value, ...supabasePreferences.notifications }
+      }
+
+      // Sauvegarde les préférences fusionnées dans localStorage
+      saveSettings()
+
+      if (import.meta.env.DEV) {
+        console.debug('✅ Préférences chargées depuis Supabase et synchronisées avec localStorage')
+      }
+    } catch (error) {
+      console.warn('Erreur lors du chargement des préférences depuis Supabase:', error)
+    }
+  }
+
+  /**
    * Sauvegarde les paramètres dans localStorage
    */
   const saveSettings = () => {
@@ -340,6 +381,7 @@ export const useSettingsStore = defineStore('settings', () => {
     setNotifications,
     setAlertThreshold,
     loadSettings,
+    loadPreferencesFromSupabase,
     saveSettings,
     applyTheme,
     detectSystemTheme

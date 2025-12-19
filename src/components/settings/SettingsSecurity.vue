@@ -50,8 +50,8 @@
         </div>
       </div>
 
-      <!-- Carte 2: Authentification à deux facteurs -->
-      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow">
+      <!-- Carte 2: Authentification à deux facteurs (V1 - Désactivé) -->
+      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow opacity-75">
         <div class="flex items-start">
           <div
             class="flex-shrink-0 w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mr-4 border border-blue-500/20"
@@ -76,39 +76,18 @@
                 {{ $t('security.twoFactor.title') }}
               </h3>
               <span
-                :class="[
-                  'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border',
-                  twoFactorEnabled ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/5 text-zinc-400 border-white/10'
-                ]"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-amber-500/10 text-amber-400 border-amber-500/20"
               >
-                <span
-                  :class="[
-                    'w-2 h-2 rounded-full mr-2',
-                    twoFactorEnabled ? 'bg-emerald-500' : 'bg-zinc-500'
-                  ]"
-                ></span>
-                {{
-                  twoFactorEnabled
-                    ? $t('security.twoFactor.enabled')
-                    : $t('security.twoFactor.disabled')
-                }}
+                <span class="w-2 h-2 rounded-full mr-2 bg-amber-500"></span>
+                {{ $t('security.twoFactor.comingSoon') }}
               </span>
             </div>
-            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.twoFactor.description') }}</p>
+            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.twoFactor.comingSoonDescription') }}</p>
             <button
-              @click="toggleTwoFactor"
-              :class="[
-                'inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors',
-                twoFactorEnabled
-                  ? 'bg-white/5 text-zinc-300 hover:bg-white/10 border border-white/10'
-                  : 'bg-white text-zinc-950 hover:bg-zinc-200'
-              ]"
+              disabled
+              class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors bg-white/5 text-zinc-400 border border-white/10 cursor-not-allowed opacity-50"
             >
-              {{
-                twoFactorEnabled
-                  ? $t('security.twoFactor.disable')
-                  : $t('security.twoFactor.enable')
-              }}
+              {{ $t('security.twoFactor.enable') }}
             </button>
           </div>
         </div>
@@ -226,20 +205,11 @@ const authStore = useAuthStore()
 const toastStore = useToastStore()
 
 const isPasswordModalOpen = ref(false)
-const twoFactorEnabled = ref(false)
 const isSigningOut = ref(false)
 const showSignOutConfirm = ref(false)
 
-const toggleTwoFactor = () => {
-  twoFactorEnabled.value = !twoFactorEnabled.value
-  if (toastStore) {
-    toastStore.success(
-      twoFactorEnabled.value
-        ? t('security.twoFactor.enabledMessage')
-        : t('security.twoFactor.disabledMessage')
-    )
-  }
-}
+// Note: 2FA désactivé pour la V1 - sera implémenté dans une version future
+// Le toggle a été retiré pour éviter un faux sentiment de sécurité
 
 const handlePasswordChanged = () => {
   // Le toast est déjà affiché dans ChangePasswordModal

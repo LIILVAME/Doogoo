@@ -172,6 +172,14 @@ onMounted(async () => {
 
     // Étape 2 — Si session active, charger les données des stores
     if (authStore.user) {
+      // Charge le profil pour récupérer les préférences
+      const profile = await authStore.fetchProfile()
+      
+      // Charge les préférences depuis Supabase si disponibles
+      if (profile?.preferences) {
+        settingsStore.loadPreferencesFromSupabase(profile.preferences)
+      }
+
       await Promise.all([propertiesStore.fetchProperties(), paymentsStore.fetchPayments()])
 
       // Initialise le realtime après avoir chargé les données
@@ -189,7 +197,12 @@ onMounted(async () => {
         if (session?.user) {
           // Charge le profil après connexion
           try {
-            await authStore.fetchProfile()
+            const profile = await authStore.fetchProfile()
+            
+            // Charge les préférences depuis Supabase si disponibles
+            if (profile?.preferences) {
+              settingsStore.loadPreferencesFromSupabase(profile.preferences)
+            }
           } catch (err) {
             console.warn('Impossible de charger le profil après connexion (non bloquant):', err)
           }

@@ -221,27 +221,8 @@ const handleSubmit = async () => {
       throw new Error(t('security.password.currentPasswordIncorrect'))
     }
 
-    // Si la vérification réussit, met à jour le mot de passe
-    // Note: Supabase updateUser ne nécessite pas l'ancien mot de passe
-    // si l'utilisateur est déjà authentifié, mais on le vérifie quand même
-    const { error: updateError } = await supabase.auth.updateUser({
-      password: form.value.newPassword
-    })
-
-    if (updateError) {
-      // Gestion des erreurs spécifiques
-      let errorMessage = t('security.password.changeError')
-      
-      if (updateError.message.includes('same')) {
-        errorMessage = t('security.password.samePassword')
-      } else if (updateError.message.includes('weak') || updateError.message.includes('strength')) {
-        errorMessage = t('security.password.passwordTooWeak')
-      } else {
-        errorMessage = updateError.message || errorMessage
-      }
-      
-      throw new Error(errorMessage)
-    }
+    // Si la vérification réussit, met à jour le mot de passe via authStore
+    await authStore.updatePassword(form.value.newPassword)
 
     // Succès : réinitialise le formulaire et ferme le modal
     form.value = {
@@ -269,8 +250,16 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('Erreur lors du changement de mot de passe:', error)
     
+    // Gestion des erreurs spécifiques
+    let message = error.message || t('security.password.changeError')
+    
+    if (error.message?.includes('same')) {
+      message = t('security.password.samePassword')
+    } else if (error.message?.includes('weak') || error.message?.includes('strength')) {
+      message = t('security.password.passwordTooWeak')
+    }
+    
     // Affiche le message d'erreur dans le formulaire et dans un toast
-    const message = error.message || t('security.password.changeError')
     errorMessage.value = message
     toastStore.error(message, {
       timeout: 6000 // 6 secondes pour les erreurs

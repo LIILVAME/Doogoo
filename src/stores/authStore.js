@@ -569,6 +569,8 @@ export const useAuthStore = defineStore('auth', () => {
       profile.value = data || null
       lastProfileFetchTime = Date.now()
       profileFetchInProgress = false
+      
+      // Retourne les préférences si disponibles
       return data || null
     } catch (err) {
       console.error('Error fetching profile:', sanitizeObject(err, ['message']))
@@ -631,6 +633,62 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err) {
       console.error('Error updating profile:', sanitizeObject(err, ['message']))
       toastStore.error(`Erreur lors de la mise à jour : ${err.message}`)
+      throw err
+    }
+  }
+
+  /**
+   * Met à jour les préférences utilisateur dans Supabase
+   * @param {Object} newPrefs - Objet contenant les préférences (notifications, theme, currency, etc.)
+   */
+  const updatePreferences = async newPrefs => {
+    if (!user.value) {
+      throw new Error('User not authenticated')
+    }
+
+    try {
+      // Met à jour uniquement la colonne preferences dans la table profiles
+      const { data, error: updateError } = await supabase
+        .from('profiles')
+        .update({ preferences: newPrefs })
+        .eq('user_id', user.value.id)
+        .select()
+        .single()
+
+      if (updateError) throw updateError
+
+      // Met à jour le profil local avec les nouvelles préférences
+      if (data && profile.value) {
+        profile.value = { ...profile.value, preferences: data.preferences }
+      }
+
+      return { success: true, preferences: data.preferences }
+    } catch (err) {
+      console.error('Error updating preferences:', sanitizeObject(err, ['message']))
+      throw err
+    }
+  }
+
+  /**
+   * Met à jour le mot de passe de l'utilisateur
+   * @param {string} newPassword - Nouveau mot de passe
+   * @returns {Promise<{success: boolean}>}
+   */
+  const updatePassword = async newPassword => {
+    if (!user.value) {
+      throw new Error('User not authenticated')
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) throw error
+
+      return { success: true }
+    } catch (err) {
+      console.error('Error updating password:', sanitizeObject(err, ['message']))
       throw err
     }
   }
@@ -725,6 +783,8 @@ export const useAuthStore = defineStore('auth', () => {
     initAuthListener,
     fetchProfile,
     updateProfile,
+    updatePreferences,
+    updatePassword,
     loginWithGoogle,
     loginWithApple
   }

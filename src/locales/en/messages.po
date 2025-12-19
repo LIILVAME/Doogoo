@@ -1049,6 +1049,12 @@ msgstr "Two-factor authentication enabled"
 msgid "security.twoFactor.disabledMessage"
 msgstr "Two-factor authentication disabled"
 
+msgid "security.twoFactor.comingSoon"
+msgstr "Coming soon"
+
+msgid "security.twoFactor.comingSoonDescription"
+msgstr "This feature will be available in a future version."
+
 msgid "security.sessions.title"
 msgstr "Active sessions"
 
