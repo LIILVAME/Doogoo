@@ -12,18 +12,37 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
-            class="relative w-full max-w-md transform overflow-hidden rounded-xl bg-white shadow-xl transition-all"
+            class="relative w-full max-w-md mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
           >
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-900">{{ $t('tenants.editTenant') }}</h2>
+            <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20"
+                >
+                  <svg
+                    class="w-5 h-5 text-blue-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-white">{{ $t('tenants.editTenant') }}</h2>
+              </div>
               <button
                 @click="handleClose"
-                class="text-gray-400 hover:text-gray-600 transition-colors"
+                class="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
                 :aria-label="$t('common.close')"
               >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -35,37 +54,37 @@
             </div>
 
             <!-- Form -->
-            <form @submit.prevent="handleSubmit" class="px-6 py-4">
-              <div class="space-y-4">
+            <form @submit.prevent="handleSubmit" class="px-6 py-5">
+              <div class="space-y-5">
                 <!-- Nom du locataire -->
                 <div>
                   <label
                     for="edit-tenant-name"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
-                    {{ $t('tenants.tenantName') }} <span class="text-red-500">*</span>
+                    {{ $t('tenants.tenantName') }} <span class="text-rose-400">*</span>
                   </label>
                   <input
                     id="edit-tenant-name"
                     v-model.trim="form.name"
                     type="text"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                     :placeholder="$t('tenants.placeholders.name')"
                   />
                 </div>
 
                 <!-- Bien associé (lecture seule) -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                  <label class="block text-sm font-medium text-zinc-300 mb-2">
                     {{ $t('tenants.associatedProperty') }}
                   </label>
                   <div
-                    class="w-full border border-gray-200 bg-gray-50 rounded-lg px-4 py-2 text-gray-600"
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-zinc-300"
                   >
                     {{ propertyName }}
                   </div>
-                  <p class="text-xs text-gray-500 mt-1">
+                  <p class="text-xs text-zinc-400 mt-1">
                     {{ $t('properties.propertyRent') }} : {{ formatCurrency(form.rent) }}
                   </p>
                 </div>
@@ -74,16 +93,16 @@
                 <div>
                   <label
                     for="edit-tenant-entry-date"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
-                    {{ $t('tenants.entryDate') }} <span class="text-red-500">*</span>
+                    {{ $t('tenants.entryDate') }} <span class="text-rose-400">*</span>
                   </label>
                   <input
                     id="edit-tenant-entry-date"
                     v-model="form.entryDate"
                     type="date"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   />
                 </div>
 
@@ -91,16 +110,16 @@
                 <div>
                   <label
                     for="edit-tenant-exit-date"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
                     {{ $t('tenants.exitDateOptional') }}
-                    <span class="text-gray-400 text-xs">({{ $t('common.optional') }})</span>
+                    <span class="text-zinc-400 text-xs">({{ $t('common.optional') }})</span>
                   </label>
                   <input
                     id="edit-tenant-exit-date"
                     v-model="form.exitDate"
                     type="date"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   />
                 </div>
 
@@ -108,12 +127,12 @@
                 <div>
                   <label
                     for="edit-tenant-rent"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
-                    {{ $t('tenants.monthlyRent') }} <span class="text-red-500">*</span>
+                    {{ $t('tenants.monthlyRent') }} <span class="text-rose-400">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
                       CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
                     }}</span>
                     <input
@@ -123,7 +142,7 @@
                       required
                       min="0"
                       step="10"
-                      class="w-full border border-gray-300 rounded-lg pl-14 pr-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       :placeholder="$t('tenants.placeholders.rent')"
                     />
                   </div>
@@ -133,40 +152,49 @@
                 <div>
                   <label
                     for="edit-tenant-status"
-                    class="block text-sm font-medium text-gray-700 mb-2"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
                   >
-                    {{ $t('tenants.paymentStatus') }} <span class="text-red-500">*</span>
+                    {{ $t('tenants.paymentStatus') }} <span class="text-rose-400">*</span>
                   </label>
                   <select
                     id="edit-tenant-status"
                     v-model="form.status"
                     required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   >
-                    <option value="">{{ $t('tenants.selectStatus') }}</option>
-                    <option :value="PAYMENT_STATUS.ON_TIME">{{ $t('status.onTime') }}</option>
-                    <option :value="PAYMENT_STATUS.LATE">{{ $t('status.late') }}</option>
+                    <option value="" class="bg-zinc-900">{{ $t('tenants.selectStatus') }}</option>
+                    <option :value="PAYMENT_STATUS.ON_TIME" class="bg-zinc-900">
+                      {{ $t('status.onTime') }}
+                    </option>
+                    <option :value="PAYMENT_STATUS.LATE" class="bg-zinc-900">
+                      {{ $t('status.late') }}
+                    </option>
                   </select>
                 </div>
               </div>
 
+              <!-- Section Documents -->
+              <div class="mt-6 pt-5 border-t border-white/10">
+                <TenantDocuments v-if="tenant?.id" :tenant-id="tenant.id" />
+              </div>
+
               <!-- Actions -->
-              <div class="mt-6 flex items-center justify-end gap-3">
+              <div class="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
                 <button
                   type="button"
                   @click="handleClose"
                   :disabled="isLoading"
-                  class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-zinc-300 font-medium hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ $t('common.cancel') }}
                 </button>
                 <button
                   type="submit"
-                  :disabled="isLoading"
-                  class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="isLoading || isSubmitting"
+                  class="btn-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                 >
                   <svg
-                    v-if="isLoading"
+                    v-if="isLoading || isSubmitting"
                     class="w-5 h-5 mr-2 animate-spin"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -199,7 +227,11 @@
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  {{ isLoading ? $t('common.saving') || 'Enregistrement...' : $t('common.save') }}
+                  {{
+                    isLoading || isSubmitting
+                      ? $t('common.saving') || 'Enregistrement...'
+                      : $t('common.save')
+                  }}
                 </button>
               </div>
             </form>
@@ -215,6 +247,7 @@ import { ref, watch } from 'vue'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
 import { PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
+import TenantDocuments from './TenantDocuments.vue'
 
 const props = defineProps({
   isOpen: {
@@ -238,6 +271,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'submit'])
 
 const settingsStore = useSettingsStore()
+
+const isSubmitting = ref(false)
 
 const form = ref({
   name: '',
@@ -286,16 +321,30 @@ const handleClose = () => {
 /**
  * Soumet le formulaire
  */
-const handleSubmit = () => {
-  const submitData = {
-    name: form.value.name.trim(),
-    entryDate: form.value.entryDate,
-    exitDate: form.value.exitDate || null,
-    rent: Number(form.value.rent),
-    status: form.value.status || 'on_time'
+const handleSubmit = async () => {
+  if (isSubmitting.value) {
+    return // Évite les soumissions multiples
   }
 
-  emit('submit', submitData)
+  try {
+    isSubmitting.value = true
+
+    const submitData = {
+      name: form.value.name.trim(),
+      entryDate: form.value.entryDate,
+      exitDate: form.value.exitDate || null,
+      rent: Number(form.value.rent),
+      status: form.value.status || 'on_time'
+    }
+
+    emit('submit', submitData)
+    resetForm()
+    emit('close')
+  } catch (error) {
+    console.error('Erreur lors de la soumission du formulaire:', error)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 /**

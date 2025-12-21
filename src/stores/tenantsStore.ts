@@ -5,7 +5,7 @@ import { useAuthStore } from './authStore'
 import { useToastStore } from './toastStore'
 import { PROPERTY_STATUS, PAYMENT_STATUS } from '@/utils/constants'
 import { sanitizeObject } from '@/utils/sanitizeLogs'
-import { tenantsApi } from '@/api'
+import { tenantsApi, documentsApi } from '@/api'
 import type { PropertyData } from './propertiesStore'
 
 /**
@@ -233,7 +233,10 @@ export const useTenantsStore = defineStore('tenants', () => {
       return null
     } catch (error) {
       const errorObj = error as Error
-      console.error('Erreur lors de la récupération du locataire:', sanitizeObject(errorObj, ['message']))
+      console.error(
+        'Erreur lors de la récupération du locataire:',
+        sanitizeObject(errorObj, ['message'])
+      )
       return null
     }
   }
@@ -247,24 +250,32 @@ export const useTenantsStore = defineStore('tenants', () => {
     const toast = useToastStore()
 
     try {
-      // Trouve le locataire dans la liste
-      const tenant = tenants.value.find(t => t.id === tenantId)
+      // Vérifie que l'utilisateur est authentifié
+      if (!authStore.user?.id) {
+        toast.error('Vous devez être connecté pour mettre à jour un locataire')
+        return
+      }
 
-      if (tenant && tenant.propertyId) {
-        const property = propertiesStore.properties.find(p => p.id === tenant.propertyId)
+      // Prépare les données pour l'API (format Supabase)
+      const apiUpdates: Record<string, unknown> = {}
+      if (updates.name !== undefined) apiUpdates.name = updates.name
+      if (updates.entryDate !== undefined) apiUpdates.entry_date = updates.entryDate
+      if (updates.exitDate !== undefined) apiUpdates.exit_date = updates.exitDate || null
+      if (updates.rent !== undefined) apiUpdates.rent = Number(updates.rent)
+      if (updates.status !== undefined) apiUpdates.status = updates.status
 
-        if (property && property.tenant) {
-          await propertiesStore.updateProperty(property.id, {
-            tenant: {
-              ...property.tenant,
-              ...updates,
-              // Convertit le loyer en number si présent
-              rent: updates.rent ? Number(updates.rent) : property.tenant.rent
-            }
-          })
+      // Met à jour le locataire directement via l'API
+      const result = await tenantsApi.updateTenant(tenantId, apiUpdates, authStore.user.id)
 
-          toast.success('Locataire mis à jour avec succès')
-        }
+      if (result.success && result.data) {
+        // Recharge les propriétés pour avoir les données à jour
+        await propertiesStore.fetchProperties(true)
+        toast.success('Locataire mis à jour avec succès')
+      } else {
+        const errorMsg =
+          result.error?.message || result.message || 'Erreur lors de la mise à jour du locataire'
+        toast.error(errorMsg)
+        throw new Error(errorMsg)
       }
     } catch (error) {
       const errorObj = error as Error
@@ -321,6 +332,126 @@ export const useTenantsStore = defineStore('tenants', () => {
   )
 
   /**
+   * Upload un document pour un locataire
+   * @param tenantId - ID UUID du locataire
+   * @param file - Fichier à uploader
+   * @returns Liste des documents mis à jour
+   */
+  const uploadDocument = async (tenantId: string, file: File): Promise<unknown[]> => {
+    const toast = useToastStore()
+
+    try {
+      if (!authStore.user?.id) {
+        toast.error('Vous devez être connecté pour uploader un document')
+        return []
+      }
+
+      const result = await documentsApi.uploadDocument(tenantId, file, authStore.user.id)
+
+      if (result.success) {
+        toast.success('Document uploadé avec succès')
+        // Rafraîchit la liste des documents
+        return await fetchDocuments(tenantId)
+      } else {
+        const errorMsg = result.error?.message || result.message || "Erreur lors de l'upload"
+        toast.error(errorMsg)
+        return []
+      }
+    } catch (error) {
+      const errorObj = error as Error
+      toast.error(`Erreur lors de l'upload : ${errorObj.message}`)
+      throw error
+    }
+  }
+
+  /**
+   * Récupère la liste des documents d'un locataire
+   * @param tenantId - ID UUID du locataire
+   * @returns Liste des documents
+   */
+  const fetchDocuments = async (tenantId: string): Promise<unknown[]> => {
+    try {
+      if (!authStore.user?.id) {
+        return []
+      }
+
+      const result = await documentsApi.listDocuments(tenantId, authStore.user.id)
+
+      if (result.success && result.data) {
+        return result.data
+      }
+
+      return []
+    } catch (error) {
+      const errorObj = error as Error
+      console.error(
+        'Erreur lors de la récupération des documents:',
+        sanitizeObject(errorObj, ['message'])
+      )
+      return []
+    }
+  }
+
+  /**
+   * Génère une URL signée pour télécharger un document
+   * @param tenantId - ID UUID du locataire
+   * @param fileName - Nom du fichier
+   * @returns URL signée ou null
+   */
+  const getDocumentUrl = async (tenantId: string, fileName: string): Promise<string | null> => {
+    try {
+      if (!authStore.user?.id) {
+        return null
+      }
+
+      const result = await documentsApi.getDocumentUrl(tenantId, fileName, authStore.user.id, 3600)
+
+      if (result.success && result.data?.signedUrl) {
+        return result.data.signedUrl
+      }
+
+      return null
+    } catch (error) {
+      const errorObj = error as Error
+      console.error("Erreur lors de la génération de l'URL:", sanitizeObject(errorObj, ['message']))
+      return null
+    }
+  }
+
+  /**
+   * Supprime un document
+   * @param tenantId - ID UUID du locataire
+   * @param fileName - Nom du fichier à supprimer
+   * @returns Liste des documents mis à jour
+   */
+  const deleteDocument = async (tenantId: string, fileName: string): Promise<unknown[]> => {
+    const toast = useToastStore()
+
+    try {
+      if (!authStore.user?.id) {
+        toast.error('Vous devez être connecté pour supprimer un document')
+        return []
+      }
+
+      const result = await documentsApi.deleteDocument(tenantId, fileName, authStore.user.id)
+
+      if (result.success) {
+        toast.success('Document supprimé avec succès')
+        // Rafraîchit la liste des documents
+        return await fetchDocuments(tenantId)
+      } else {
+        const errorMsg = result.error?.message || result.message || 'Erreur lors de la suppression'
+        toast.error(errorMsg)
+        return []
+      }
+    } catch (error) {
+      const errorObj = error as Error
+      toast.error(`Erreur lors de la suppression : ${errorObj.message}`)
+      throw error
+    }
+  }
+
+  /**
    * Réinitialise le store (placeholder pour cohérence)
    *
    * NOTE: Rien à faire car tenants est computed depuis propertiesStore.
@@ -341,6 +472,11 @@ export const useTenantsStore = defineStore('tenants', () => {
     updateTenant,
     removeTenant,
     reset,
+    // Document actions
+    uploadDocument,
+    fetchDocuments,
+    getDocumentUrl,
+    deleteDocument,
     // Getters
     onTimeTenants,
     lateTenants,

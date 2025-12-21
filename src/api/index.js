@@ -17,6 +17,7 @@
 export * as propertiesApi from './properties'
 export * as paymentsApi from './payments'
 export * as tenantsApi from './tenants'
+export * as documentsApi from './documents'
 export { analyticsApi } from './analytics'
 export { reportsApi } from './reports'
 export { alertsApi } from './alerts'

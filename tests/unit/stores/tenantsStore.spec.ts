@@ -20,11 +20,14 @@ import type { PropertyData } from '@/stores/propertiesStore'
 const mockProperties: Ref<PropertyData[]> = ref([])
 const mockUpdateProperty = vi.fn()
 
+const mockFetchProperties = vi.fn()
+
 const mockPropertiesStore = {
   get properties() {
     return mockProperties.value
   },
-  updateProperty: mockUpdateProperty
+  updateProperty: mockUpdateProperty,
+  fetchProperties: mockFetchProperties
 }
 
 // Mock du toastStore
@@ -35,6 +38,11 @@ const mockToastStore = {
   info: vi.fn()
 }
 
+// Mock de authStore
+const mockAuthStore = {
+  user: { id: 'user-1' }
+}
+
 // Mock des stores dépendants
 vi.mock('@/stores/propertiesStore', () => ({
   usePropertiesStore: () => mockPropertiesStore
@@ -43,6 +51,30 @@ vi.mock('@/stores/propertiesStore', () => ({
 vi.mock('@/stores/toastStore', () => ({
   useToastStore: () => mockToastStore
 }))
+
+vi.mock('@/stores/authStore', () => ({
+  useAuthStore: () => mockAuthStore
+}))
+
+// Mock des APIs (factory function pour créer les mocks)
+vi.mock('@/api', () => ({
+  tenantsApi: {
+    updateTenant: vi.fn(),
+    createTenant: vi.fn()
+  },
+  documentsApi: {
+    uploadDocument: vi.fn(),
+    listDocuments: vi.fn(),
+    getDocumentUrl: vi.fn(),
+    deleteDocument: vi.fn()
+  }
+}))
+
+// Références aux mocks pour utilisation dans les tests
+let mockTenantsApi: {
+  updateTenant: ReturnType<typeof vi.fn>
+  createTenant: ReturnType<typeof vi.fn>
+}
 
 // Mock de l'environnement pour éviter les logs de debug dans les tests
 vi.mock('import.meta', () => ({
@@ -127,9 +159,17 @@ describe('TenantsStore Unit Tests', () => {
     null
   )
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Réinitialise Pinia pour chaque test
     setActivePinia(createPinia())
+
+    // Importe les mocks depuis le module mocké
+    const { tenantsApi } = await import('@/api')
+    mockTenantsApi = tenantsApi as {
+      updateTenant: ReturnType<typeof vi.fn>
+      createTenant: ReturnType<typeof vi.fn>
+    }
+
     store = useTenantsStore()
 
     // Réinitialise tous les mocks
@@ -379,7 +419,7 @@ describe('TenantsStore Unit Tests', () => {
       mockProperties.value = [mockPropertyVacant]
     })
 
-    it('should call propertiesStore.updateProperty with correct data when propertyId is provided', async () => {
+    it('should call tenantsApi.createTenant and update property status when propertyId is provided', async () => {
       // Arrange
       const newTenantData = {
         propertyId: 'prop-3',
@@ -389,22 +429,40 @@ describe('TenantsStore Unit Tests', () => {
         rent: 1500,
         status: PAYMENT_STATUS.ON_TIME as const
       }
+      mockTenantsApi.createTenant.mockResolvedValue({
+        success: true,
+        data: {
+          id: 'new-tenant-id',
+          property_id: 'prop-3',
+          name: 'Nouveau Locataire',
+          entry_date: '2024-12-01',
+          exit_date: null,
+          rent: 1500,
+          status: PAYMENT_STATUS.ON_TIME
+        }
+      })
       mockUpdateProperty.mockResolvedValue(undefined)
+      mockFetchProperties.mockResolvedValue(undefined)
 
       // Act
       await store.addTenant(newTenantData)
 
       // Assert
-      expect(mockUpdateProperty).toHaveBeenCalledWith('prop-3', {
-        status: PROPERTY_STATUS.OCCUPIED,
-        tenant: {
+      expect(mockTenantsApi.createTenant).toHaveBeenCalledWith(
+        {
+          propertyId: 'prop-3',
           name: 'Nouveau Locataire',
           entryDate: '2024-12-01',
           exitDate: null,
           rent: 1500,
           status: PAYMENT_STATUS.ON_TIME
-        }
+        },
+        'user-1'
+      )
+      expect(mockUpdateProperty).toHaveBeenCalledWith('prop-3', {
+        status: PROPERTY_STATUS.OCCUPIED
       })
+      expect(mockFetchProperties).toHaveBeenCalledWith(true)
       expect(mockToastStore.success).toHaveBeenCalledWith(
         'Locataire "Nouveau Locataire" ajouté avec succès'
       )
@@ -418,21 +476,34 @@ describe('TenantsStore Unit Tests', () => {
         entryDate: '2024-12-01',
         rent: 1500
       }
+      mockTenantsApi.createTenant.mockResolvedValue({
+        success: true,
+        data: {
+          id: 'new-tenant-id',
+          property_id: 'prop-3',
+          name: 'Nouveau Locataire',
+          entry_date: '2024-12-01',
+          rent: 1500,
+          status: PAYMENT_STATUS.ON_TIME
+        }
+      })
       mockUpdateProperty.mockResolvedValue(undefined)
+      mockFetchProperties.mockResolvedValue(undefined)
 
       // Act
       await store.addTenant(newTenantData)
 
       // Assert
-      expect(mockUpdateProperty).toHaveBeenCalledWith('prop-3', {
-        status: PROPERTY_STATUS.OCCUPIED,
-        tenant: expect.objectContaining({
+      expect(mockTenantsApi.createTenant).toHaveBeenCalledWith(
+        expect.objectContaining({
+          propertyId: 'prop-3',
           name: 'Nouveau Locataire',
           entryDate: '2024-12-01',
           rent: 1500,
           status: PAYMENT_STATUS.ON_TIME // Status par défaut
-        })
-      })
+        }),
+        'user-1'
+      )
     })
 
     it('should convert rent to number when provided as string', async () => {
@@ -445,19 +516,22 @@ describe('TenantsStore Unit Tests', () => {
         rent: '1200' as any, // String au lieu de number (test de conversion)
         status: PAYMENT_STATUS.ON_TIME as const
       }
+      mockTenantsApi.createTenant.mockResolvedValue({
+        success: true,
+        data: { id: 'new-tenant-id', property_id: 'prop-3', rent: 1200 }
+      })
       mockUpdateProperty.mockResolvedValue(undefined)
+      mockFetchProperties.mockResolvedValue(undefined)
 
       // Act
       await store.addTenant(newTenantData)
 
       // Assert
-      expect(mockUpdateProperty).toHaveBeenCalledWith(
-        'prop-3',
+      expect(mockTenantsApi.createTenant).toHaveBeenCalledWith(
         expect.objectContaining({
-          tenant: expect.objectContaining({
-            rent: 1200 // Doit être converti en number
-          })
-        })
+          rent: 1200 // Doit être converti en number
+        }),
+        'user-1'
       )
     })
 
@@ -475,12 +549,13 @@ describe('TenantsStore Unit Tests', () => {
 
       // Assert
       expect(result).toBe(null)
+      expect(mockTenantsApi.createTenant).not.toHaveBeenCalled()
       expect(mockUpdateProperty).not.toHaveBeenCalled()
       expect(mockToastStore.error).toHaveBeenCalledWith('Bien non trouvé pour le locataire')
       expect(mockToastStore.success).not.toHaveBeenCalled()
     })
 
-    it('should throw error when updateProperty fails', async () => {
+    it('should throw error when createTenant API fails', async () => {
       // Arrange
       const newTenantData = {
         propertyId: 'prop-3',
@@ -488,8 +563,8 @@ describe('TenantsStore Unit Tests', () => {
         entryDate: '2024-12-01',
         rent: 1000
       }
-      const errorMessage = 'Erreur de mise à jour'
-      mockUpdateProperty.mockRejectedValue(new Error(errorMessage))
+      const errorMessage = 'Erreur de création'
+      mockTenantsApi.createTenant.mockRejectedValue(new Error(errorMessage))
 
       // Act & Assert
       await expect(store.addTenant(newTenantData)).rejects.toThrow(errorMessage)
@@ -505,29 +580,42 @@ describe('TenantsStore Unit Tests', () => {
       mockProperties.value = [mockPropertyWithOnTimeTenant]
     })
 
-    it('should call propertiesStore.updateProperty with merged tenant data', async () => {
+    it('should call tenantsApi.updateTenant with correct data and refresh properties', async () => {
       // Arrange
       const updates = {
         name: 'Jean Dupont Modifié',
         rent: 1100,
         status: PAYMENT_STATUS.LATE as const
       }
-      mockUpdateProperty.mockResolvedValue(undefined)
+      mockTenantsApi.updateTenant.mockResolvedValue({
+        success: true,
+        data: {
+          id: 'tenant-1',
+          name: 'Jean Dupont Modifié',
+          entry_date: '2024-01-01',
+          exit_date: null,
+          rent: 1100,
+          status: PAYMENT_STATUS.LATE
+        }
+      })
+      mockFetchProperties.mockResolvedValue(undefined)
 
       // Act
       await store.updateTenant('tenant-1', updates)
 
       // Assert
-      expect(mockUpdateProperty).toHaveBeenCalledWith('prop-1', {
-        tenant: {
-          id: 'tenant-1',
-          name: 'Jean Dupont Modifié', // Mis à jour
-          entryDate: '2024-01-01', // Conservé depuis le tenant original
-          exitDate: null,
-          rent: 1100, // Mis à jour et converti en number
-          status: PAYMENT_STATUS.LATE // Mis à jour
-        }
-      })
+      expect(mockTenantsApi.updateTenant).toHaveBeenCalledWith(
+        'tenant-1',
+        {
+          name: 'Jean Dupont Modifié',
+          entry_date: undefined, // Pas dans les updates
+          exit_date: undefined, // Pas dans les updates
+          rent: 1100, // Converti en number
+          status: PAYMENT_STATUS.LATE
+        },
+        'user-1'
+      )
+      expect(mockFetchProperties).toHaveBeenCalledWith(true)
       expect(mockToastStore.success).toHaveBeenCalledWith('Locataire mis à jour avec succès')
     })
 
@@ -537,61 +625,75 @@ describe('TenantsStore Unit Tests', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         rent: '1200' as any // String (test de conversion)
       }
-      mockUpdateProperty.mockResolvedValue(undefined)
+      mockTenantsApi.updateTenant.mockResolvedValue({
+        success: true,
+        data: { id: 'tenant-1', rent: 1200 }
+      })
+      mockFetchProperties.mockResolvedValue(undefined)
 
       // Act
       await store.updateTenant('tenant-1', updates)
 
       // Assert
-      expect(mockUpdateProperty).toHaveBeenCalledWith(
-        'prop-1',
+      expect(mockTenantsApi.updateTenant).toHaveBeenCalledWith(
+        'tenant-1',
         expect.objectContaining({
-          tenant: expect.objectContaining({
-            rent: 1200 // Doit être converti en number
-          })
-        })
+          rent: 1200 // Doit être converti en number
+        }),
+        'user-1'
       )
     })
 
-    it('should preserve existing tenant rent if rent is not in updates', async () => {
+    it('should not include rent in API call if rent is not in updates', async () => {
       // Arrange
       const updates = {
         name: 'Nouveau Nom'
         // Pas de rent dans les updates
       }
-      mockUpdateProperty.mockResolvedValue(undefined)
+      mockTenantsApi.updateTenant.mockResolvedValue({
+        success: true,
+        data: { id: 'tenant-1', name: 'Nouveau Nom' }
+      })
+      mockFetchProperties.mockResolvedValue(undefined)
 
       // Act
       await store.updateTenant('tenant-1', updates)
 
       // Assert
-      expect(mockUpdateProperty).toHaveBeenCalledWith(
-        'prop-1',
-        expect.objectContaining({
-          tenant: expect.objectContaining({
-            rent: 1000 // Doit conserver le rent original
-          })
-        })
+      expect(mockTenantsApi.updateTenant).toHaveBeenCalledWith(
+        'tenant-1',
+        {
+          name: 'Nouveau Nom'
+          // rent ne doit pas être présent
+        },
+        'user-1'
       )
     })
 
-    it('should not call updateProperty if tenant is not found', async () => {
+    it('should handle API error when tenant is not found', async () => {
       // Arrange
       const updates = { name: 'Nouveau Nom' }
+      mockTenantsApi.updateTenant.mockResolvedValue({
+        success: false,
+        error: { message: 'Tenant not found' },
+        message: 'Tenant not found'
+      })
 
-      // Act
-      await store.updateTenant('non-existent-tenant-id', updates)
-
-      // Assert
-      expect(mockUpdateProperty).not.toHaveBeenCalled()
+      // Act & Assert
+      await expect(store.updateTenant('non-existent-tenant-id', updates)).rejects.toThrow(
+        'Tenant not found'
+      )
+      expect(mockTenantsApi.updateTenant).toHaveBeenCalled()
+      expect(mockFetchProperties).not.toHaveBeenCalled()
       expect(mockToastStore.success).not.toHaveBeenCalled()
+      expect(mockToastStore.error).toHaveBeenCalledWith('Tenant not found')
     })
 
-    it('should throw error when updateProperty fails', async () => {
+    it('should throw error when updateTenant API fails', async () => {
       // Arrange
       const updates = { name: 'Nouveau Nom' }
       const errorMessage = 'Erreur de mise à jour'
-      mockUpdateProperty.mockRejectedValue(new Error(errorMessage))
+      mockTenantsApi.updateTenant.mockRejectedValue(new Error(errorMessage))
 
       // Act & Assert
       await expect(store.updateTenant('tenant-1', updates)).rejects.toThrow(errorMessage)
