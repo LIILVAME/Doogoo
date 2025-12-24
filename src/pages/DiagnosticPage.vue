@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 p-6">
-    <div class="max-w-7xl mx-auto">
+    <div class="w-full p-6 lg:p-8 xl:p-10">
       <!-- Header -->
       <div class="mb-6">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">🔍 Diagnostic & Monitoring</h1>

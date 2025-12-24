@@ -29,7 +29,13 @@
     "unknown": "Unknown",
     "refreshing": "Refreshing...",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "uploading": "Uploading...",
+    "birthDate": "Date of birth",
+    "birthPlace": "Place of birth",
+    "placeholders": {
+      "birthPlace": "Ex: Paris, London, New York"
+    }
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -101,7 +107,26 @@
       "city": "Ex: Paris"
     },
     "searchPlaceholder": "Search for a property by name, city or address...",
-    "confirmDelete": "Are you sure you want to delete this property?"
+    "confirmDelete": "Are you sure you want to delete this property?",
+    "zip": "Postal code",
+    "chargesAmount": "Charges (monthly)",
+    "modal": {
+      "surface": "Surface (sqm)",
+      "pieces": "Rooms",
+      "description": "Description",
+      "type": "Type",
+      "heatingType": "Heating type",
+      "image": "Property image",
+      "uploadImage": "Choose an image",
+      "imageHint": "JPG, PNG (max 5MB)"
+    },
+    "types": {
+      "apartment": "Apartment",
+      "house": "House",
+      "parking": "Parking",
+      "commercial": "Commercial space",
+      "other": "Other"
+    }
   },
   "payments": {
     "title": "Payment tracking",

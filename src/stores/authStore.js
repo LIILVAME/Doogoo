@@ -653,7 +653,9 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Met à jour le profil utilisateur dans Supabase
    * @param {Object} updates - Données du profil à mettre à jour
-   *   Peut contenir : fullName (ou name), phone, company, address, avatar_url
+   *   Peut contenir : fullName (ou name), first_name, last_name, phone, company, 
+   *   address, address_line, postal_code, city, siret, rcs, iban, bic, bank_name, 
+   *   signature_url, avatar_url
    * @returns {Promise<boolean>}
    */
   const updateProfile = async updates => {
@@ -664,13 +666,27 @@ export const useAuthStore = defineStore('auth', () => {
     const toastStore = useToastStore()
 
     try {
-      // Normalise les noms de champs (accepte fullName ou name)
+      // Normalise les noms de champs (accepte fullName ou name, et tous les nouveaux champs)
       const normalizedUpdates = {
         full_name: updates.fullName || updates.name || updates.full_name || undefined,
+        first_name: updates.first_name !== undefined ? (updates.first_name || null) : undefined,
+        last_name: updates.last_name !== undefined ? (updates.last_name || null) : undefined,
         phone: updates.phone !== undefined ? (updates.phone || null) : undefined,
         company: updates.company !== undefined ? (updates.company || null) : undefined,
         address: updates.address !== undefined ? (updates.address || null) : undefined,
-        avatar_url: updates.avatar_url !== undefined ? (updates.avatar_url || null) : undefined
+        address_line: updates.address_line !== undefined ? (updates.address_line || null) : undefined,
+        postal_code: updates.postal_code !== undefined ? (updates.postal_code || null) : undefined,
+        city: updates.city !== undefined ? (updates.city || null) : undefined,
+        siret: updates.siret !== undefined ? (updates.siret || null) : undefined,
+        rcs: updates.rcs !== undefined ? (updates.rcs || null) : undefined,
+        iban: updates.iban !== undefined ? (updates.iban || null) : undefined,
+        bic: updates.bic !== undefined ? (updates.bic || null) : undefined,
+        bank_name: updates.bank_name !== undefined ? (updates.bank_name || null) : undefined,
+        signature_url: updates.signature_url !== undefined ? (updates.signature_url || null) : undefined,
+        avatar_url: updates.avatar_url !== undefined ? (updates.avatar_url || null) : undefined,
+        landlord_type: updates.landlord_type !== undefined ? (updates.landlord_type || null) : undefined,
+        capital_social: updates.capital_social !== undefined ? (updates.capital_social || null) : undefined,
+        legal_form: updates.legal_form !== undefined ? (updates.legal_form || null) : undefined
       }
 
       // Supprime les champs undefined pour ne mettre à jour que ce qui est fourni

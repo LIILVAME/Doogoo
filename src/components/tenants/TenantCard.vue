@@ -69,20 +69,38 @@
     </div>
 
     <!-- Actions -->
-    <div class="mt-auto px-5 py-3 border-t border-white/10 flex items-center gap-3 bg-black/20">
+    <div class="mt-auto px-5 py-3 border-t border-white/10 flex flex-col gap-2 bg-black/20">
+      <!-- Bouton Générer le Bail -->
       <button
-        @click.stop="$emit('edit', tenant)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
+        @click.stop="$emit('generate-lease', tenant)"
+        class="w-full px-3 py-2 text-sm font-medium text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
       >
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
           />
         </svg>
-        {{ $t('common.edit') }}
+        {{ $t('tenants.generateLease') || '📄 Générer le Bail' }}
+      </button>
+      
+      <!-- Actions secondaires -->
+      <div class="flex items-center gap-3">
+        <button
+          @click.stop="$emit('edit', tenant)"
+          class="flex-1 px-3 py-2 text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+          {{ $t('common.edit') }}
       </button>
       <button
         @click.stop="$emit('delete', tenant.id)"
@@ -98,6 +116,7 @@
         </svg>
         {{ $t('common.delete') }}
       </button>
+      </div>
     </div>
   </div>
 </template>
@@ -119,7 +138,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['edit', 'delete'])
+defineEmits(['edit', 'delete', 'generate-lease'])
 
 const navigateToProperty = () => {
   if (props.tenant.propertyId) {

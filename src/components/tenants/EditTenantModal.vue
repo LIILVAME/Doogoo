@@ -123,6 +123,41 @@
                   />
                 </div>
 
+                <!-- Date de naissance -->
+                <div>
+                  <label
+                    for="edit-tenant-birth-date"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
+                  >
+                    {{ $t('common.birthDate') }} <span class="text-rose-400">*</span>
+                  </label>
+                  <input
+                    id="edit-tenant-birth-date"
+                    v-model="form.birthDate"
+                    type="date"
+                    required
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <!-- Lieu de naissance -->
+                <div>
+                  <label
+                    for="edit-tenant-birth-place"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
+                  >
+                    {{ $t('common.birthPlace') }} <span class="text-rose-400">*</span>
+                  </label>
+                  <input
+                    id="edit-tenant-birth-place"
+                    v-model.trim="form.birthPlace"
+                    type="text"
+                    required
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                    :placeholder="$t('common.placeholders.birthPlace')"
+                  />
+                </div>
+
                 <!-- Loyer -->
                 <div>
                   <label
@@ -279,7 +314,9 @@ const form = ref({
   entryDate: '',
   exitDate: '',
   rent: null,
-  status: 'on_time'
+  status: 'on_time',
+  birthDate: '',
+  birthPlace: ''
 })
 
 /**
@@ -292,7 +329,9 @@ const initForm = () => {
       entryDate: props.tenant.entryDate || '',
       exitDate: props.tenant.exitDate || '',
       rent: props.tenant.rent || null,
-      status: props.tenant.status || 'on_time'
+      status: props.tenant.status || 'on_time',
+      birthDate: props.tenant.birthDate || '',
+      birthPlace: props.tenant.birthPlace || ''
     }
   }
 }
@@ -306,7 +345,9 @@ const resetForm = () => {
     entryDate: '',
     exitDate: '',
     rent: null,
-    status: 'on_time'
+    status: 'on_time',
+    birthDate: '',
+    birthPlace: ''
   }
 }
 
@@ -334,7 +375,9 @@ const handleSubmit = async () => {
       entryDate: form.value.entryDate,
       exitDate: form.value.exitDate || null,
       rent: Number(form.value.rent),
-      status: form.value.status || 'on_time'
+      status: form.value.status || 'on_time',
+      birthDate: form.value.birthDate || null,
+      birthPlace: form.value.birthPlace || null
     }
 
     emit('submit', submitData)

@@ -229,7 +229,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useTenantsStore } from '@/stores/tenantsStore'
-import DeleteConfirmationModal from '@/components/common/DeleteConfirmationModal.vue'
+import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal.vue'
 
 const props = defineProps({
   tenantId: {

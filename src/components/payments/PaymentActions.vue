@@ -156,7 +156,7 @@ import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { generateRentReceipt as generateReceiptPDF } from '@/utils/pdfGenerator'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import ConfirmModal from '@/components/modals/ConfirmModal.vue'
 
 const { t } = useI18n()
 
@@ -309,21 +309,23 @@ const generateRentReceipt = async () => {
     let ownerPhone = null
     let ownerAddress = null
 
-    if (authStore.profile) {
-      ownerName = authStore.profile.full_name || authStore.profile.name
-      ownerPhone = authStore.profile.phone
-      ownerAddress = authStore.profile.address
-    } else {
-      try {
-        const profile = await authStore.fetchProfile()
-        if (profile) {
-          ownerName = profile.full_name || profile.name
-          ownerPhone = profile.phone
-          ownerAddress = profile.address
-        }
-      } catch (err) {
-        console.warn('Impossible de charger le profil pour la quittance:', err)
-      }
+    const profile = authStore.profile || (await authStore.fetchProfile().catch(() => null))
+    
+    if (profile) {
+      // Construction du nom complet depuis first_name + last_name (ou fallback sur full_name legacy)
+      ownerName = (profile.first_name && profile.last_name)
+        ? `${profile.first_name} ${profile.last_name}`
+        : profile.full_name || profile.name || null
+      ownerPhone = profile.phone || null
+      // Construction de l'adresse structurée (ou fallback sur address legacy)
+      ownerAddress = (profile.address_line || profile.postal_code || profile.city)
+        ? [
+            profile.address_line,
+            profile.postal_code && profile.city
+              ? `${profile.postal_code} ${profile.city}`
+              : profile.city || profile.postal_code
+          ].filter(Boolean).join(', ')
+        : profile.address || null
     }
 
     if (authStore.user?.email) {

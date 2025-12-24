@@ -29,7 +29,13 @@
     "unknown": "Inconnu",
     "refreshing": "Actualisation...",
     "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+    "closeMenu": "Fermer le menu",
+    "uploading": "Upload en cours...",
+    "birthDate": "Date de naissance",
+    "birthPlace": "Lieu de naissance",
+    "placeholders": {
+      "birthPlace": "Ex: Paris, Lyon, Marseille"
+    }
   },
   "sidebar": {
     "dashboard": "Tableau de bord",
@@ -101,7 +107,26 @@
       "city": "Ex: Paris"
     },
     "searchPlaceholder": "Rechercher un bien par nom, ville ou adresse...",
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce bien ?"
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce bien ?",
+    "zip": "Code postal",
+    "chargesAmount": "Charges (mensuelles)",
+    "modal": {
+      "surface": "Surface (m²)",
+      "pieces": "Nombre de pièces",
+      "description": "Description",
+      "type": "Type",
+      "heatingType": "Type de chauffage",
+      "image": "Image du bien",
+      "uploadImage": "Choisir une image",
+      "imageHint": "JPG, PNG (max 5MB)"
+    },
+    "types": {
+      "apartment": "Appartement",
+      "house": "Maison",
+      "parking": "Parking",
+      "commercial": "Local commercial",
+      "other": "Autre"
+    }
   },
   "payments": {
     "title": "Suivi des paiements",

@@ -22,7 +22,14 @@ export async function getPayments(userId) {
         .from('payments_view')
         .select(
           `
-        *,
+        id,
+        property_id,
+        tenant_id,
+        amount,
+        due_date,
+        status,
+        created_at,
+        updated_at,
         properties (
           id,
           name,
@@ -36,11 +43,12 @@ export async function getPayments(userId) {
         )
         .eq('user_id', userId)
         .order('due_date', { ascending: false })
+        .limit(1000) // Limite pour éviter les requêtes trop lourdes
 
       return { data, error }
     },
     'getPayments',
-    { timeout: 12000 }
+    { timeout: 10000 } // Réduit de 12s à 10s avec optimisations
   )
 }
 
@@ -264,4 +272,80 @@ export async function getPaymentsByFilters(userId, filters = {}) {
 
     return { data, error }
   }, 'getPaymentsByFilters')
+}
+
+/**
+ * Génère automatiquement les paiements mensuels pour tous les locataires actifs
+ * @param {string} userId - ID de l'utilisateur
+ * @param {Object} options - Options optionnelles (month, year)
+ * @returns {Promise<Object>} { success: boolean, data?: Object, error?: Error }
+ */
+export async function generateMonthlyRents(userId, options = {}) {
+  if (!userId) {
+    return { success: false, message: 'User ID requis' }
+  }
+
+  return withErrorHandling(async () => {
+    // Récupère le token de session (avec timeout pour éviter les blocages)
+    const sessionPromise = supabase.auth.getSession()
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('getSession timeout after 5s')), 5000)
+    })
+    
+    let session, sessionError
+    try {
+      const result = await Promise.race([sessionPromise, timeoutPromise])
+      session = result?.data?.session
+      sessionError = result?.error
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Timeout lors de la récupération de la session. Veuillez réessayer.',
+        error: error
+      }
+    }
+
+    if (sessionError || !session) {
+      return {
+        success: false,
+        message: 'Session non valide',
+        error: sessionError
+      }
+    }
+
+    // Appelle l'Edge Function pour génération manuelle
+    // Note: Essaie d'abord avec camelCase, puis avec kebab-case si ça échoue
+    let functionName = 'generateMonthlyRents'
+    let result = await supabase.functions.invoke(functionName, {
+      body: {
+        month: options.month,
+        year: options.year
+      },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    })
+
+    // Si camelCase échoue, essayons kebab-case (nom du dossier)
+    if (result.error && (result.error.message?.includes('Failed to send') || result.error.message?.includes('CORS') || result.error.name === 'FunctionsFetchError')) {
+      functionName = 'generate-monthly-rents'
+      result = await supabase.functions.invoke(functionName, {
+        body: {
+          month: options.month,
+          year: options.year
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      })
+    }
+
+    const { data, error } = result
+
+    if (error) {
+      return { success: false, message: error.message || 'Erreur lors de la génération', error }
+    }
+
+    return { success: true, data }
+  }, 'generateMonthlyRents', { timeout: 30000 }) // Timeout de 30s pour la génération des loyers
 }

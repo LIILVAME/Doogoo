@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 lg:p-8 xl:p-10 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -15,54 +15,33 @@
             <h1 class="text-3xl font-bold text-white mb-2">{{ $t('payments.title') }}</h1>
             <p class="text-zinc-400">{{ $t('payments.subtitle') }}</p>
           </div>
-          <button
-            @click="isModalOpen = true"
-            class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-colors shadow-lg shadow-white/5"
-          >
-            <Plus class="w-5 h-5 mr-2" />
-            {{ $t('payments.addPayment') }}
-          </button>
+          <div class="flex items-center gap-3">
+            <button
+              @click="handleGenerateMonthlyRents"
+              :disabled="paymentsStore.loading || isGenerating"
+              class="flex items-center justify-center shrink-0 bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 hover:border-violet-500/40 px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw
+                :class="[
+                  'w-5 h-5 mr-2',
+                  isGenerating ? 'animate-spin' : ''
+                ]"
+              />
+              {{ isGenerating ? 'Génération...' : '🔄 Générer les loyers' }}
+            </button>
+            <button
+              @click="isModalOpen = true"
+              class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-colors shadow-lg shadow-white/5"
+            >
+              <Plus class="w-5 h-5 mr-2" />
+              {{ $t('payments.addPayment') }}
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Résumé des paiements -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="glass-panel rounded-2xl p-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.pending') }}</p>
-              <p class="text-2xl font-bold text-white">{{ pendingPayments.length }}</p>
-            </div>
-            <div class="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center border border-amber-500/20">
-              <Clock class="w-6 h-6 text-amber-500" />
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-panel rounded-2xl p-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.late') }}</p>
-              <p class="text-2xl font-bold text-white">{{ latePayments.length }}</p>
-            </div>
-            <div class="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center border border-rose-500/20">
-              <AlertCircle class="w-6 h-6 text-rose-500" />
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-panel rounded-2xl p-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-zinc-400 mb-1">{{ $t('payments.paidThisMonth') }}</p>
-              <p class="text-2xl font-bold text-white">{{ paidPayments.length }}</p>
-            </div>
-            <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20">
-              <CheckCircle class="w-6 h-6 text-emerald-500" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <StatsGrid :stats="paymentStatsArray" />
 
       <!-- État de chargement (uniquement si aucune donnée) -->
       <div
@@ -137,21 +116,41 @@
         @close="isEditModalOpen = false"
         @submit="handleUpdatePayment"
       />
+
+      <!-- Modal de confirmation de suppression -->
+      <ConfirmModal
+        :isOpen="showDeleteConfirm"
+        title="Supprimer ce paiement ?"
+        :message="deleteConfirmMessage"
+        confirm-label="Supprimer"
+        cancel-label="Annuler"
+        variant="danger"
+        :isLoading="isDeletingPayment"
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+        @update:isOpen="showDeleteConfirm = $event"
+      />
     </div>
   </DashboardLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from '@/composables/useLingui'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
 import PaymentsSection from '../components/dashboard/PaymentsSection.vue'
 import AddPaymentModal from '../components/payments/AddPaymentModal.vue'
 import EditPaymentModal from '../components/payments/EditPaymentModal.vue'
+import ConfirmModal from '@/components/modals/ConfirmModal.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
 import { usePaymentsStore } from '@/stores/paymentsStore'
-import { Plus, Clock, AlertCircle, CheckCircle } from 'lucide-vue-next'
+import { formatCurrency } from '@/utils/formatters'
+import { Plus, Clock, AlertCircle, CheckCircle, RefreshCw } from 'lucide-vue-next'
+
+const { t } = useI18n()
 
 const paymentsStore = usePaymentsStore()
 
@@ -189,6 +188,14 @@ const isModalOpen = ref(false)
 const isEditModalOpen = ref(false)
 const selectedPayment = ref(null)
 
+// État pour la suppression
+const showDeleteConfirm = ref(false)
+const paymentToDelete = ref(null)
+const isDeletingPayment = ref(false)
+
+// État pour la génération mensuelle
+const isGenerating = ref(false)
+
 /**
  * Paiements en attente
  */
@@ -209,6 +216,36 @@ const latePayments = computed(() => {
 const paidPayments = computed(() => {
   return paymentsStore.paidPayments
 })
+
+/**
+ * Stats pour StatsGrid
+ */
+const paymentStatsArray = computed(() => [
+  {
+    label: t('payments.pending'),
+    value: pendingPayments.value.length.toString(),
+    icon: Clock,
+    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+    iconBgColor: 'bg-opacity-10 bg-amber-500',
+    iconColor: 'text-amber-500'
+  },
+  {
+    label: t('payments.late'),
+    value: latePayments.value.length.toString(),
+    icon: AlertCircle,
+    glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
+    iconBgColor: 'bg-opacity-10 bg-rose-500',
+    iconColor: 'text-rose-500'
+  },
+  {
+    label: t('payments.paidThisMonth'),
+    value: paidPayments.value.length.toString(),
+    icon: CheckCircle,
+    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+    iconBgColor: 'bg-opacity-10 bg-emerald-500',
+    iconColor: 'text-emerald-500'
+  }
+])
 
 /**
  * Gère l'ajout d'un nouveau paiement via le store Pinia (Supabase)
@@ -250,15 +287,70 @@ const handleUpdatePayment = async updatedData => {
 }
 
 /**
- * Gère la suppression d'un paiement
+ * Gère la suppression d'un paiement (ouvre la modal de confirmation)
  */
-const handleDeletePayment = async paymentId => {
+const handleDeletePayment = paymentId => {
+  paymentToDelete.value = paymentsStore.payments.find(p => p.id === paymentId)
+  showDeleteConfirm.value = true
+}
+
+/**
+ * Message de confirmation avec le montant
+ */
+const deleteConfirmMessage = computed(() => {
+  if (!paymentToDelete.value) return 'Êtes-vous sûr de vouloir supprimer ce paiement ?'
+  return (
+    t('payments.confirmDelete', { amount: formatCurrency(paymentToDelete.value.amount) }) ||
+    `Êtes-vous sûr de vouloir supprimer ce paiement de ${formatCurrency(paymentToDelete.value.amount)} ?`
+  )
+})
+
+/**
+ * Confirme et supprime le paiement
+ */
+const confirmDelete = async () => {
+  if (!paymentToDelete.value) return
+
+  isDeletingPayment.value = true
   try {
-    await paymentsStore.removePayment(paymentId)
+    await paymentsStore.removePayment(paymentToDelete.value.id)
+    paymentToDelete.value = null
+    showDeleteConfirm.value = false
     // Le toast est géré dans le store
   } catch (error) {
     // Le toast d'erreur est géré dans le store
     console.error('Erreur lors de la suppression du paiement:', error)
+  } finally {
+    isDeletingPayment.value = false
+  }
+}
+
+/**
+ * Annule la suppression
+ */
+const cancelDelete = () => {
+  paymentToDelete.value = null
+  showDeleteConfirm.value = false
+}
+
+/**
+ * Génère automatiquement les paiements mensuels pour tous les locataires actifs
+ */
+const handleGenerateMonthlyRents = async () => {
+  if (isGenerating.value) return
+
+  isGenerating.value = true
+  try {
+    const result = await paymentsStore.generateMonthlyRents()
+    // Le toast est géré dans le store
+    if (import.meta.env.DEV) {
+      console.log('Génération terminée:', result)
+    }
+  } catch (error) {
+    // Le toast d'erreur est géré dans le store
+    console.error('Erreur lors de la génération des loyers:', error)
+  } finally {
+    isGenerating.value = false
   }
 }
 </script>

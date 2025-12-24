@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 space-y-6 w-full">
       <!-- Welcome Message -->
       <div class="mb-8">
         <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2">Hey {{ userFirstName }} 👋</h1>
@@ -90,11 +90,10 @@
         </div>
       </div>
 
-      <DashboardHeader :stats="stats" :loading="propertiesStore.loading || paymentsStore.loading" />
+      <!-- Statistiques globales -->
+      <StatsGrid :stats="dashboardStatsArray" />
 
-      <!-- Métriques Financières (optionnel, peut être activé si nécessaire) -->
-      <!-- <DashboardMetrics :loading="propertiesStore.loading || paymentsStore.loading" /> -->
-
+      <!-- Grille principale : Biens / Paiements -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Liste des biens -->
         <div class="lg:col-span-2 space-y-6 h-full flex flex-col">
@@ -143,11 +142,12 @@ import { useAuthStore } from '@/stores/authStore'
 import { useDashboardMetrics } from '@/composables/useDashboardMetrics'
 import { formatCurrency } from '@/utils/formatters'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
-import DashboardHeader from '@/components/dashboard/DashboardHeader.vue'
-import PropertiesList from '@/components/dashboard/PropertiesList.vue'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
+import PropertiesList from '@/components/properties/PropertiesList.vue'
 import PaymentsSection from '@/components/dashboard/PaymentsSection.vue'
 import PropertyModal from '@/components/properties/PropertyModal.vue'
-import DeleteConfirmationModal from '@/components/common/DeleteConfirmationModal.vue'
+import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal.vue'
+import { Building2, Users, Home, Wallet } from 'lucide-vue-next'
 
 const propertiesStore = usePropertiesStore()
 const paymentsStore = usePaymentsStore()
@@ -237,6 +237,47 @@ const recentProperties = computed(() => {
 
 const recentPayments = computed(() => {
   return paymentsStore.payments.slice(0, 5) // Affiche les 5 derniers paiements
+})
+
+/**
+ * Statistiques formatées pour StatsGrid
+ */
+const dashboardStatsArray = computed(() => {
+  const isLoading = propertiesStore.loading || paymentsStore.loading
+  return [
+    {
+      label: 'Total de biens',
+      value: isLoading ? '...' : stats.value.totalProperties.toString(),
+      icon: Building2,
+      glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+      iconBgColor: 'bg-opacity-10 bg-violet-500',
+      iconColor: 'text-violet-200'
+    },
+    {
+      label: 'Biens occupés',
+      value: isLoading ? '...' : stats.value.occupiedProperties.toString(),
+      icon: Users,
+      glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+      iconBgColor: 'bg-opacity-10 bg-emerald-500',
+      iconColor: 'text-emerald-200'
+    },
+    {
+      label: 'Biens libres',
+      value: isLoading ? '...' : stats.value.vacantProperties.toString(),
+      icon: Home,
+      glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
+      iconBgColor: 'bg-opacity-10 bg-zinc-500',
+      iconColor: 'text-zinc-200'
+    },
+    {
+      label: 'Loyers mensuels',
+      value: isLoading ? '...' : formatCurrency(stats.value.totalRent || 0),
+      icon: Wallet,
+      glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+      iconBgColor: 'bg-opacity-10 bg-amber-500',
+      iconColor: 'text-amber-200'
+    }
+  ]
 })
 
 const openAddPropertyModal = () => {

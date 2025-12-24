@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 lg:p-8 xl:p-10 w-full">
       <!-- Loading State -->
       <div v-if="loading" class="flex items-center justify-center min-h-[400px]">
         <div
@@ -120,7 +120,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <!-- Main Info -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Overview Card -->
@@ -306,7 +306,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PropertyModal from '@/components/properties/PropertyModal.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import ConfirmModal from '@/components/modals/ConfirmModal.vue'
 import Button from '@/components/ui/Button.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { PROPERTY_STATUS, STATUS_CLASSES } from '@/utils/constants'

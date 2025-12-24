@@ -69,7 +69,9 @@ export async function createTenant(tenantData, userId) {
       entry_date: tenantData.entryDate,
       exit_date: tenantData.exitDate || null,
       rent: Number(tenantData.rent) || 0,
-      status: tenantData.status || 'on_time'
+      status: tenantData.status || 'on_time',
+      birth_date: tenantData.birthDate || null,
+      birth_place: tenantData.birthPlace || null
     }
 
     // Ajoute l'email si fourni

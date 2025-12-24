@@ -1,7 +1,7 @@
 <template>
   <div
     @click="navigateToDetails"
-    class="glass-panel rounded-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col min-h-[320px] sm:min-h-[350px] lg:min-h-[380px] group relative overflow-hidden"
+    class="glass-panel rounded-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col min-h-[320px] sm:min-h-[350px] lg:min-h-[380px] min-w-[280px] sm:min-w-[320px] group relative overflow-hidden"
   >
     <!-- Glow effect on hover -->
     <div
@@ -63,44 +63,23 @@
         </h3>
         <p class="text-sm text-zinc-300 mb-2 truncate drop-shadow-sm">{{ property.city }}</p>
 
-        <div class="flex items-center gap-3 text-xs text-zinc-400 mb-3">
-          <span class="flex items-center bg-white/5 px-2 py-1 rounded-md border border-white/5">
-            <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center">
+            <i class="ri-building-line mr-1"></i>
             {{ getTypeName(property.type) }}
           </span>
           <span
             v-if="property.surface"
-            class="flex items-center bg-white/5 px-2 py-1 rounded-md border border-white/5"
+            class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center"
           >
-            <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-              />
-            </svg>
+            <i class="ri-ruler-line mr-1"></i>
             {{ property.surface }} m²
           </span>
           <span
             v-if="property.pieces"
-            class="flex items-center bg-white/5 px-2 py-1 rounded-md border border-white/5"
+            class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center"
           >
-            <svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
+            <i class="ri-layout-grid-line mr-1"></i>
             {{ property.pieces }} p.
           </span>
         </div>
@@ -108,13 +87,9 @@
 
       <!-- Informations locatives -->
       <div class="flex-1 flex flex-col">
-        <div class="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
-          <p class="text-xs text-zinc-500 uppercase tracking-wider">
-            {{ $t('properties.monthlyRent') }}
-          </p>
-          <p class="text-xl font-bold text-white whitespace-nowrap">
-            {{ formatCurrency(property.rent) }}
-          </p>
+        <div class="flex items-end justify-between mb-4">
+          <span class="text-sm text-gray-500 uppercase font-semibold">{{ $t('properties.monthlyRent') }}</span>
+          <span class="text-2xl font-bold text-white">{{ formatCurrency(property.rent) }}</span>
         </div>
 
         <!-- Informations locataire ou placeholder -->
@@ -140,12 +115,12 @@
     </div>
 
     <!-- Actions -->
-    <div class="px-5 py-3 border-t border-white/5 flex items-center gap-3 bg-black/20">
+    <div class="px-4 sm:px-5 py-3 border-t border-white/5 flex items-center gap-2 sm:gap-3 bg-black/20">
       <button
         @click.stop="$emit('edit', property)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
+        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
       >
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -153,13 +128,13 @@
             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
           />
         </svg>
-        <span class="hidden sm:inline">{{ $t('common.edit') }}</span>
+        <span class="hidden sm:inline whitespace-nowrap">{{ $t('common.edit') }}</span>
       </button>
       <button
         @click.stop="$emit('delete', property.id)"
-        class="flex-1 px-3 py-2 text-sm font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center"
+        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
       >
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -167,7 +142,7 @@
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
-        <span class="hidden sm:inline">{{ $t('common.delete') }}</span>
+        <span class="hidden sm:inline whitespace-nowrap">{{ $t('common.delete') }}</span>
       </button>
     </div>
   </div>
@@ -177,7 +152,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
-import TenantInfo from '../dashboard/TenantInfo.vue'
+import TenantInfo from '@/components/tenants/TenantInfo.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { PROPERTY_STATUS, STATUS_CLASSES } from '@/utils/constants'
 

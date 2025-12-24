@@ -25,6 +25,8 @@ export interface TenantData {
   exitDate: string | null // Date de sortie (null si toujours présent)
   rent: number // Loyer (number, pas string)
   status: 'on_time' | 'late' | 'pending' | 'paid' // Statut de paiement
+  birthDate?: string | null // Date de naissance (ISO format, pour conformité Loi Alur)
+  birthPlace?: string | null // Lieu de naissance (pour conformité Loi Alur)
 }
 
 /**
@@ -39,6 +41,8 @@ export interface CreateTenantData {
   exitDate?: string | null
   rent: number | string
   status?: 'on_time' | 'late' | 'pending' | 'paid'
+  birthDate?: string | null // Date de naissance (ISO format, pour conformité Loi Alur)
+  birthPlace?: string | null // Lieu de naissance (pour conformité Loi Alur)
 }
 
 /**
@@ -50,6 +54,8 @@ export interface UpdateTenantData {
   exitDate?: string | null
   rent?: number | string
   status?: 'on_time' | 'late' | 'pending' | 'paid'
+  birthDate?: string | null // Date de naissance (ISO format, pour conformité Loi Alur)
+  birthPlace?: string | null // Lieu de naissance (pour conformité Loi Alur)
 }
 
 /**
@@ -100,7 +106,9 @@ export const useTenantsStore = defineStore('tenants', () => {
             entryDate: property.tenant.entryDate,
             exitDate: property.tenant.exitDate || null,
             rent: property.rent,
-            status: property.tenant.status || PAYMENT_STATUS.ON_TIME
+            status: property.tenant.status || PAYMENT_STATUS.ON_TIME,
+            birthDate: property.tenant.birthDate || null,
+            birthPlace: property.tenant.birthPlace || null
           }
         })
         .filter((t): t is TenantData => t !== null) // Supprime les valeurs null
@@ -162,7 +170,9 @@ export const useTenantsStore = defineStore('tenants', () => {
           entryDate: tenantData.entryDate,
           exitDate: tenantData.exitDate || null,
           rent: Number(tenantData.rent) || 0,
-          status: tenantData.status || PAYMENT_STATUS.ON_TIME
+          status: tenantData.status || PAYMENT_STATUS.ON_TIME,
+          birthDate: tenantData.birthDate || null,
+          birthPlace: tenantData.birthPlace || null
         },
         authStore.user.id
       )
@@ -226,7 +236,9 @@ export const useTenantsStore = defineStore('tenants', () => {
             entryDate: result.data.entry_date,
             exitDate: result.data.exit_date || null,
             rent: Number(result.data.rent) || 0,
-            status: result.data.status || PAYMENT_STATUS.ON_TIME
+            status: result.data.status || PAYMENT_STATUS.ON_TIME,
+            birthDate: result.data.birth_date || null,
+            birthPlace: result.data.birth_place || null
           }
         }
       }
@@ -263,6 +275,8 @@ export const useTenantsStore = defineStore('tenants', () => {
       if (updates.exitDate !== undefined) apiUpdates.exit_date = updates.exitDate || null
       if (updates.rent !== undefined) apiUpdates.rent = Number(updates.rent)
       if (updates.status !== undefined) apiUpdates.status = updates.status
+      if (updates.birthDate !== undefined) apiUpdates.birth_date = updates.birthDate || null
+      if (updates.birthPlace !== undefined) apiUpdates.birth_place = updates.birthPlace || null
 
       // Met à jour le locataire directement via l'API
       const result = await tenantsApi.updateTenant(tenantId, apiUpdates, authStore.user.id)

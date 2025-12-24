@@ -18,105 +18,18 @@
     </div>
 
     <!-- Statistiques globales -->
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-      <!-- Total -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-zinc-400 mb-1 truncate">{{ $t('common.all') }}</p>
-            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.totalProperties }}</p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-violet-500 text-violet-200"
-          >
-            <Building2 class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Occupés -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-zinc-400 mb-1 truncate">
-              {{ $t('properties.occupied') }}
-            </p>
-            <p class="text-2xl font-bold text-white tracking-tight">
-              {{ stats.occupiedProperties }}
-            </p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-emerald-500 text-emerald-200"
-          >
-            <Users class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Libres -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-zinc-500/10 rounded-full blur-3xl group-hover:bg-zinc-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-zinc-400 mb-1 truncate">
-              {{ $t('properties.free') }}
-            </p>
-            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.vacantProperties }}</p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-zinc-500 text-zinc-200"
-          >
-            <Home class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Loyers totaux -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-zinc-400 mb-1 truncate">
-              {{ $t('dashboard.rentCollected') }}
-            </p>
-            <p class="text-2xl font-bold text-white tracking-tight truncate">
-              {{ formatCurrency(stats.totalRent) }}
-            </p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-amber-500 text-amber-200"
-          >
-            <Wallet class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <StatsGrid :stats="statsArray" />
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from '@/composables/useLingui'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { Building2, Users, Home, Wallet, Plus } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   stats: {
     type: Object,
     required: true,
@@ -128,6 +41,43 @@ defineProps({
     })
   }
 })
+
+const { t } = useI18n()
+
+const statsArray = computed(() => [
+  {
+    label: t('common.all'),
+    value: props.stats.totalProperties.toString(),
+    icon: Building2,
+    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+    iconBgColor: 'bg-opacity-10 bg-violet-500',
+    iconColor: 'text-violet-200'
+  },
+  {
+    label: t('properties.occupied'),
+    value: props.stats.occupiedProperties.toString(),
+    icon: Users,
+    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+    iconBgColor: 'bg-opacity-10 bg-emerald-500',
+    iconColor: 'text-emerald-200'
+  },
+  {
+    label: t('properties.free'),
+    value: props.stats.vacantProperties.toString(),
+    icon: Home,
+    glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
+    iconBgColor: 'bg-opacity-10 bg-zinc-500',
+    iconColor: 'text-zinc-200'
+  },
+  {
+    label: t('dashboard.rentCollected'),
+    value: formatCurrency(props.stats.totalRent),
+    icon: Wallet,
+    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+    iconBgColor: 'bg-opacity-10 bg-amber-500',
+    iconColor: 'text-amber-200'
+  }
+])
 
 defineEmits(['add-property'])
 </script>

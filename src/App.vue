@@ -22,12 +22,16 @@
   <!-- Application normale une fois la session initialisée -->
   <div v-else class="min-h-screen">
     <router-view v-slot="{ Component, route }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" :key="route.fullPath" />
+      <transition name="page" mode="out-in">
+        <component 
+          :is="Component" 
+          :key="route.fullPath + '-' + settingsStore.language" 
+        />
       </transition>
     </router-view>
   </div>
   <Toast />
+  <NetworkErrorModal />
 </template>
 
 <script setup>
@@ -46,6 +50,7 @@ import { useKeyboardAvoidance } from '@/composables/useKeyboardAvoidance'
 import Toast from '@/components/common/Toast.vue'
 import ConnectionBanner from '@/components/common/ConnectionBanner.vue'
 import DegradedModeBanner from '@/components/common/DegradedModeBanner.vue'
+import NetworkErrorModal from '@/components/ui/NetworkErrorModal.vue'
 
 // Initialise le keyboard avoidance pour mobile
 useKeyboardAvoidance()
@@ -313,14 +318,35 @@ onMounted(async () => {
 </script>
 
 <style>
-/* Transitions fade pour la navigation entre pages */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+/* Transition de Page : Fade + Slide Up */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.page-enter-from {
   opacity: 0;
+  transform: translateY(10px); /* Arrive de 10px plus bas */
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px); /* Part 10px plus haut */
+}
+
+/* Transition de Liste (pour les cartes de biens/locataires) */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+
+.list-move {
+  transition: transform 0.4s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
 }
 </style>

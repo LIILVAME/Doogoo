@@ -15,7 +15,7 @@
         <!-- Modal -->
         <div
           ref="modalRef"
-          class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all"
+          class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 md:mx-auto max-h-[90vh] overflow-y-auto p-6 transform transition-all"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="'confirm-title-' + modalId"

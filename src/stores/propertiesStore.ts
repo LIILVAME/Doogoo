@@ -38,6 +38,9 @@ export interface PropertyData extends Omit<Property, 'tenant' | 'status'> {
   description: string
   type: string
   image: string
+  zip?: string
+  heatingType?: string
+  chargesAmount?: number | null
 }
 
 /**
@@ -68,6 +71,7 @@ export interface CreatePropertyData {
 export interface UpdatePropertyData {
   name?: string
   address?: string
+  zip?: string
   city?: string
   rent?: number | string
   status?: 'occupied' | 'vacant'
@@ -75,6 +79,9 @@ export interface UpdatePropertyData {
   pieces?: number
   description?: string
   type?: string
+  heatingType?: string
+  chargesAmount?: number | null
+  image_url?: string
   tenant?: {
     name: string
     entryDate: string
@@ -105,12 +112,21 @@ interface PropertyApiData {
   city: string
   rent: number | string
   status: 'occupied' | 'vacant'
-  surface?: number | string | null
-  pieces?: number | string | null
+  // Noms de colonnes DB (snake_case)
+  surface_m2?: number | string | null // DB: "surface_m2"
+  rooms?: number | string | null // DB: "rooms"
+  image?: string | null // DB: "image"
+  heating_type?: string | null // DB: "heating_type"
+  charges_amount?: number | string | null // DB: "charges_amount"
+  zip?: string | null
   description?: string | null
   type?: string | null
   created_at?: string
   updated_at?: string
+  // Compatibilité avec anciens noms (fallback)
+  surface?: number | string | null // Ancien nom (fallback)
+  pieces?: number | string | null // Ancien nom (fallback)
+  image_url?: string | null // Ancien nom (fallback)
   tenants?: Array<{
     id: string
     name: string
@@ -140,7 +156,8 @@ export const usePropertiesStore = defineStore(
   () => {
     // State
     const properties: Ref<PropertyData[]> = ref([])
-    const loading: Ref<boolean> = ref(false)
+    const loading: Ref<boolean> = ref(false) // Réservé uniquement pour fetchProperties
+    const isUpdating: Ref<boolean> = ref(false) // Pour les opérations d'écriture (add, update, delete)
     const error: Ref<string | null> = ref(null)
 
     // Surveillance automatique du loading pour éviter les blocages
@@ -159,6 +176,7 @@ export const usePropertiesStore = defineStore(
         id: prop.id,
         name: prop.name,
         address: prop.address || '',
+        zip: (prop as any).zip || '',
         city: prop.city,
         status: prop.status,
         rent: Number(prop.rent),
@@ -170,14 +188,19 @@ export const usePropertiesStore = defineStore(
                 entryDate: prop.tenants[0].entry_date,
                 exitDate: prop.tenants[0].exit_date || null,
                 rent: Number(prop.tenants[0].rent),
-                status: prop.tenants[0].status || 'on_time'
+                status: prop.tenants[0].status || 'on_time',
+                birthDate: prop.tenants[0].birth_date || null,
+                birthPlace: prop.tenants[0].birth_place || null
               }
             : null,
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
-        surface: Number(prop.surface) || 0,
-        pieces: Number(prop.pieces) || 0,
+        // MAPPING Backend -> Frontend (noms de colonnes DB -> Frontend)
+        image: (prop as any).image || (prop as any).image_url || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400', // DB "image" -> Frontend "image"
+        surface: Number((prop as any).surface_m2 || prop.surface) || 0, // DB "surface_m2" -> Frontend "surface"
+        pieces: Number((prop as any).rooms || prop.pieces) || 0, // DB "rooms" -> Frontend "pieces"
         description: prop.description || '',
-        type: prop.type || 'apartment'
+        type: prop.type || 'apartment',
+        heatingType: (prop as any).heating_type || 'Individuel', // DB "heating_type" -> Frontend "heatingType"
+        chargesAmount: (prop as any).charges_amount ? Number((prop as any).charges_amount) : null // DB "charges_amount" -> Frontend "chargesAmount"
       }
     }
 
@@ -221,18 +244,11 @@ export const usePropertiesStore = defineStore(
       error.value = null
 
       try {
-        // Timeout explicite de 10 secondes pour éviter blocage
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(
-            () => reject(new Error('Timeout: La requête a pris plus de 10 secondes')),
-            10000
-          )
-        })
-
-        const apiPromise = propertiesApi.getProperties(
+        // Le timeout est géré par withErrorHandling dans l'API (10s)
+        // Pas besoin de double timeout ici
+        const result = await propertiesApi.getProperties(
           authStore.user.id
         ) as Promise<PropertiesApiResponse>
-        const result = await Promise.race([apiPromise, timeoutPromise])
 
         if (result.success && result.data) {
           lastFetchTime = Date.now()
@@ -279,7 +295,7 @@ export const usePropertiesStore = defineStore(
      * Ajoute un nouveau bien dans Supabase
      */
     const addProperty = async (propertyData: CreatePropertyData): Promise<PropertyData> => {
-      loading.value = true
+      isUpdating.value = true
       error.value = null
 
       try {
@@ -326,7 +342,7 @@ export const usePropertiesStore = defineStore(
           // Revert l'optimistic update
           properties.value = oldProperties
           error.value = result.message || 'Erreur lors de la création du bien'
-          loading.value = false
+          isUpdating.value = false
           throw new Error(result.message || 'Erreur lors de la création du bien')
         }
 
@@ -385,12 +401,12 @@ export const usePropertiesStore = defineStore(
           }
         }
 
-        loading.value = false
+        isUpdating.value = false
         return properties.value[tempIndex] || newProperty
       } catch (err) {
         const errorObj = err as Error
         error.value = errorObj.message
-        loading.value = false
+        isUpdating.value = false
         throw err
       }
     }
@@ -402,7 +418,7 @@ export const usePropertiesStore = defineStore(
       id: string,
       updates: UpdatePropertyData
     ): Promise<PropertyData> => {
-      loading.value = true
+      isUpdating.value = true
       error.value = null
 
       const authStore = useAuthStore()
@@ -411,7 +427,7 @@ export const usePropertiesStore = defineStore(
       if (!authStore.user) {
         const errorMsg = 'User not authenticated'
         error.value = errorMsg
-        loading.value = false
+        isUpdating.value = false
         if (toastStore) {
           toastStore.error('Vous devez être connecté pour modifier un bien')
         }
@@ -433,17 +449,24 @@ export const usePropertiesStore = defineStore(
         }
         properties.value[propertyIndex] = optimisticUpdates
 
-        // Prépare les données pour Supabase
+        // Prépare les données pour Supabase avec mapping STRICT vers les colonnes de la BDD
         const supabaseUpdates: Record<string, unknown> = {
+          // Champs simples (même nom)
           name: updates.name,
           address: updates.address,
           city: updates.city,
+          zip: updates.zip,
           rent: updates.rent ? Number(updates.rent) : undefined,
           status: updates.status,
-          surface: updates.surface !== undefined ? Number(updates.surface) : undefined,
-          pieces: updates.pieces !== undefined ? Number(updates.pieces) : undefined,
           description: updates.description,
-          type: updates.type
+          type: updates.type,
+          
+          // MAPPING Frontend -> Backend (noms de colonnes DB)
+          rooms: updates.pieces !== undefined ? Number(updates.pieces) : undefined, // Frontend "pieces" -> DB "rooms"
+          surface_m2: updates.surface !== undefined ? Number(updates.surface) : undefined, // Frontend "surface" -> DB "surface_m2"
+          image: updates.image_url || updates.image, // Frontend "image_url" -> DB "image"
+          heating_type: updates.heatingType, // Frontend "heatingType" -> DB "heating_type"
+          charges_amount: updates.chargesAmount !== undefined ? Number(updates.chargesAmount) : undefined // Frontend "chargesAmount" -> DB "charges_amount"
         }
 
         // Supprime les propriétés undefined
@@ -453,7 +476,7 @@ export const usePropertiesStore = defineStore(
           }
         })
 
-        // Met à jour le bien via l'API
+        // Met à jour le bien via l'API (timeout réduit à 15s)
         const result = (await propertiesApi.updateProperty(
           id,
           supabaseUpdates,
@@ -464,30 +487,61 @@ export const usePropertiesStore = defineStore(
           // Revert l'optimistic update
           properties.value[propertyIndex] = oldProperty
           error.value = result.message || 'Erreur lors de la mise à jour du bien'
-          loading.value = false
+          isUpdating.value = false
           throw new Error(result.message || 'Erreur lors de la mise à jour du bien')
         }
 
-        // Gère le locataire si nécessaire
-        if (updates.status === PROPERTY_STATUS.OCCUPIED && updates.tenant) {
-          // Récupère le bien avec ses locataires pour vérifier
-          const propertyResult = (await propertiesApi.getPropertyById(
-            id,
-            authStore.user.id
-          )) as PropertiesApiResponse
+        // L'API retourne seulement l'ID et les champs mis à jour (optimisation)
+        // On fusionne avec les données existantes pour avoir la propriété complète
+        const apiData = Array.isArray(result.data) ? result.data[0] : result.data
+        
+        if (apiData) {
+          // Fusionne les updates avec l'ancienne propriété pour avoir toutes les données
+          // Note: supabaseUpdates contient les noms DB, on doit les mapper vers le format Frontend
+          const mergedProperty: PropertyData = {
+            ...oldProperty,
+            // Mise à jour des champs simples
+            name: supabaseUpdates.name !== undefined ? String(supabaseUpdates.name) : oldProperty.name,
+            address: supabaseUpdates.address !== undefined ? String(supabaseUpdates.address) : oldProperty.address,
+            city: supabaseUpdates.city !== undefined ? String(supabaseUpdates.city) : oldProperty.city,
+            zip: supabaseUpdates.zip !== undefined ? String(supabaseUpdates.zip) : oldProperty.zip,
+            rent: supabaseUpdates.rent !== undefined ? Number(supabaseUpdates.rent) : oldProperty.rent,
+            status: supabaseUpdates.status !== undefined ? (supabaseUpdates.status as 'occupied' | 'vacant') : oldProperty.status,
+            description: supabaseUpdates.description !== undefined ? String(supabaseUpdates.description) : oldProperty.description,
+            type: supabaseUpdates.type !== undefined ? String(supabaseUpdates.type) : oldProperty.type,
+            // MAPPING Backend -> Frontend
+            surface: supabaseUpdates.surface_m2 !== undefined ? Number(supabaseUpdates.surface_m2) : oldProperty.surface, // DB "surface_m2" -> Frontend "surface"
+            pieces: supabaseUpdates.rooms !== undefined ? Number(supabaseUpdates.rooms) : oldProperty.pieces, // DB "rooms" -> Frontend "pieces"
+            image: supabaseUpdates.image !== undefined ? String(supabaseUpdates.image) : oldProperty.image, // DB "image" -> Frontend "image"
+            heatingType: supabaseUpdates.heating_type !== undefined ? String(supabaseUpdates.heating_type) : oldProperty.heatingType, // DB "heating_type" -> Frontend "heatingType"
+            chargesAmount: supabaseUpdates.charges_amount !== undefined ? Number(supabaseUpdates.charges_amount) : oldProperty.chargesAmount // DB "charges_amount" -> Frontend "chargesAmount"
+          }
+          
+          // Met à jour localement avec les données fusionnées
+          properties.value[propertyIndex] = mergedProperty
+        }
 
-          const existingTenant =
-            propertyResult.success &&
-            propertyResult.data &&
-            !Array.isArray(propertyResult.data) &&
-            propertyResult.data.tenants &&
-            propertyResult.data.tenants.length > 0
-              ? propertyResult.data.tenants[0]
+        // Gère le locataire si nécessaire (en parallèle pour optimiser)
+        const tenantOperations: Promise<void>[] = []
+
+        if (updates.status === PROPERTY_STATUS.OCCUPIED && updates.tenant) {
+          // Utilise l'ancien tenant s'il existe
+          const existingTenant = oldProperty.tenant
+            ? {
+                id: oldProperty.tenant.id,
+                name: oldProperty.tenant.name,
+                entryDate: oldProperty.tenant.entryDate,
+                exitDate: oldProperty.tenant.exitDate,
+                rent: oldProperty.tenant.rent,
+                status: oldProperty.tenant.status
+              }
               : null
 
           if (existingTenant) {
             // Met à jour le locataire existant
-            await tenantsApi.updateTenant(
+            tenantOperations.push(
+              tenantsApi
+                .updateTenant(
               existingTenant.id,
               {
                 name: updates.tenant.name,
@@ -497,10 +551,18 @@ export const usePropertiesStore = defineStore(
                 status: updates.tenant.status || 'on_time'
               },
               authStore.user.id
+                )
+                .then(() => {})
+                .catch(err => {
+                  console.error('Erreur mise à jour locataire:', err)
+                  // Ne bloque pas la mise à jour de la propriété
+                })
             )
           } else {
             // Crée un nouveau locataire
-            await tenantsApi.createTenant(
+            tenantOperations.push(
+              tenantsApi
+                .createTenant(
               {
                 propertyId: id,
                 name: updates.tenant.name,
@@ -510,30 +572,73 @@ export const usePropertiesStore = defineStore(
                 status: updates.tenant.status || 'on_time'
               },
               authStore.user.id
+                )
+                .then(() => {})
+                .catch(err => {
+                  console.error('Erreur création locataire:', err)
+                  // Ne bloque pas la mise à jour de la propriété
+                })
             )
           }
         } else if (updates.status === PROPERTY_STATUS.VACANT) {
           // Supprime le locataire si le bien devient libre
-          const propertyResult = (await propertiesApi.getPropertyById(
-            id,
-            authStore.user.id
-          )) as PropertiesApiResponse
-
-          if (
-            propertyResult.success &&
-            propertyResult.data &&
-            !Array.isArray(propertyResult.data) &&
-            propertyResult.data.tenants &&
-            propertyResult.data.tenants.length > 0
-          ) {
-            for (const tenant of propertyResult.data.tenants) {
-              await tenantsApi.deleteTenant(tenant.id, authStore.user.id)
-            }
+          const tenantToDelete = oldProperty.tenant
+          if (tenantToDelete) {
+            tenantOperations.push(
+              tenantsApi
+                .deleteTenant(tenantToDelete.id, authStore.user.id)
+                .then(() => {})
+                .catch(err => {
+                  console.error('Erreur suppression locataire:', err)
+                  // Ne bloque pas la mise à jour de la propriété
+                })
+            )
           }
         }
 
-        // Recharge les propriétés pour avoir les données à jour
-        await fetchProperties(true)
+        // Attend les opérations sur les locataires (avec timeout pour éviter blocage)
+        if (tenantOperations.length > 0) {
+          try {
+            await Promise.race([
+              Promise.all(tenantOperations),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Timeout opérations locataire')), 10000)
+              )
+            ])
+          } catch (tenantError) {
+            // Log mais ne bloque pas - on recharge juste la propriété après
+            console.warn('Erreur lors des opérations locataire:', tenantError)
+          }
+        }
+
+        // Si Realtime est actif, il mettra à jour automatiquement les tenants
+        // Sinon, on peut recharger uniquement la propriété avec ses tenants en arrière-plan
+        // (mais on ne bloque pas l'opération pour ça)
+        if (!isRealtimeActive) {
+          // Recharge en arrière-plan sans bloquer (fire and forget)
+          propertiesApi
+            .getPropertyById(id, authStore.user.id)
+            .then((propertyResult: PropertiesApiResponse) => {
+              if (propertyResult.success && propertyResult.data) {
+                const apiData = Array.isArray(propertyResult.data)
+                  ? propertyResult.data[0]
+                  : propertyResult.data
+                if (apiData) {
+                  const refreshedProperty = transformPropertyData(apiData as PropertyApiData)
+                  const index = properties.value.findIndex(p => p.id === id)
+                  if (index !== -1) {
+                    properties.value[index] = refreshedProperty
+            }
+          }
+        }
+            })
+            .catch(refreshError => {
+              // Si le refresh échoue, on garde les données optimistes
+              if (import.meta.env.DEV) {
+                console.warn('Impossible de rafraîchir la propriété:', refreshError)
+              }
+            })
+        }
 
         // Track property updated event
         if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
@@ -558,7 +663,7 @@ export const usePropertiesStore = defineStore(
           throw new Error('Propriété introuvable après mise à jour')
         }
 
-        loading.value = false
+        isUpdating.value = false
         return updatedProperty
       } catch (err) {
         const errorObj = err as Error
@@ -571,7 +676,7 @@ export const usePropertiesStore = defineStore(
         )
         
         error.value = errorMessage
-        loading.value = false
+        isUpdating.value = false
 
         // Affiche un toast avec le message d'erreur exact
         if (toastStore) {
@@ -593,7 +698,7 @@ export const usePropertiesStore = defineStore(
      * Supprime un bien dans Supabase
      */
     const removeProperty = async (id: string): Promise<void> => {
-      loading.value = true
+      isUpdating.value = true
       error.value = null
 
       try {
@@ -620,7 +725,7 @@ export const usePropertiesStore = defineStore(
           // Revert l'optimistic update
           properties.value = oldProperties
           error.value = result.message || 'Erreur lors de la suppression du bien'
-          loading.value = false
+          isUpdating.value = false
           throw new Error(result.message || 'Erreur lors de la suppression du bien')
         }
 
@@ -641,11 +746,11 @@ export const usePropertiesStore = defineStore(
           toastStore.success('Bien supprimé avec succès')
         }
 
-        loading.value = false
+        isUpdating.value = false
       } catch (err) {
         const errorObj = err as Error
         error.value = errorObj.message
-        loading.value = false
+        isUpdating.value = false
         throw err
       }
     }
@@ -787,17 +892,50 @@ export const usePropertiesStore = defineStore(
             if (import.meta.env.DEV) {
               console.debug('✅ Realtime subscribed to properties')
             }
+            isRealtimeActive = true
           } else if (status === 'CHANNEL_ERROR') {
             console.error('❌ Realtime error for properties')
             isRealtimeInitialized = false
             isRealtimeActive = false
+            
+            // Tentative de reconnexion après 5 secondes
+            if (realtimeChannel) {
+              try {
+                supabase.removeChannel(realtimeChannel)
+              } catch {
+                // Ignore les erreurs de nettoyage
+              }
             realtimeChannel = null
+              
+              // Reconnexion automatique après délai
+              setTimeout(() => {
+                if (authStore.user && !isRealtimeInitialized) {
+                  if (import.meta.env.DEV) {
+                    console.debug('🔄 Tentative de reconnexion Realtime...')
+                  }
+                  initRealtime()
+                }
+              }, 5000)
+            }
           } else if (status === 'CLOSED') {
             if (import.meta.env.DEV) {
               console.debug('🔌 Realtime channel closed for properties')
             }
             isRealtimeInitialized = false
             isRealtimeActive = false
+            
+            // Reconnexion automatique si fermeture inattendue
+            if (authStore.user) {
+              setTimeout(() => {
+                if (!isRealtimeInitialized && authStore.user) {
+                  if (import.meta.env.DEV) {
+                    console.debug('🔄 Reconnexion Realtime après fermeture...')
+                  }
+                  initRealtime()
+                }
+              }, 3000)
+            }
+            
             realtimeChannel = null
           }
         })
@@ -833,6 +971,7 @@ export const usePropertiesStore = defineStore(
     const reset = (): void => {
       properties.value = []
       loading.value = false
+      isUpdating.value = false
       error.value = null
       lastFetchTime = 0
       stopRealtime()
@@ -841,7 +980,8 @@ export const usePropertiesStore = defineStore(
     return {
       // State
       properties,
-      loading,
+      loading, // Réservé pour fetchProperties
+      isUpdating, // Pour les opérations d'écriture (add, update, delete)
       error,
       // Actions
       fetchProperties,

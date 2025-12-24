@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 space-y-6 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -9,11 +9,36 @@
       />
 
       <!-- Header avec statistiques -->
-      <TenantsHeader
-        :stats="stats"
-        v-model:searchQuery="searchQuery"
-        @add-tenant="isModalOpen = true"
-      />
+      <PageHeader
+        :title="$t('tenants.title')"
+        :subtitle="$t('tenants.subtitle')"
+      >
+        <template #actions>
+          <button
+            @click="isModalOpen = true"
+            class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg shadow-white/5 hover:opacity-90"
+          >
+            <Plus class="w-5 h-5 mr-2" />
+            {{ $t('tenants.addTenant') }}
+          </button>
+        </template>
+      </PageHeader>
+
+      <!-- Statistiques globales -->
+      <StatsGrid :stats="statsArray" />
+
+      <!-- Barre de recherche -->
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search class="h-5 w-5 text-zinc-400" />
+        </div>
+        <input
+          v-model="searchQuery"
+          type="text"
+          class="block w-full pl-10 pr-3 py-2 border border-white/10 rounded-xl leading-5 bg-white/5 text-white placeholder-zinc-400 focus:outline-none focus:bg-white/10 focus:ring-1 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all duration-200"
+          :placeholder="$t('common.search')"
+        />
+      </div>
 
       <!-- Filtres -->
       <div class="mb-6 flex flex-wrap items-center gap-4">
@@ -83,9 +108,18 @@
           :has-filters="hasActiveFilters"
           @edit-tenant="handleEditTenant"
           @delete-tenant="handleDeleteTenant"
+          @generate-lease="handleGenerateLease"
           @clear-filters="clearFilters"
         />
       </div>
+
+      <!-- Template de bail (caché, visible uniquement à l'impression) -->
+      <LeaseTemplate
+        v-if="leaseData"
+        :owner-data="leaseData.owner"
+        :tenant-data="leaseData.tenant"
+        :property-data="leaseData.property"
+      />
 
       <!-- Modal d'ajout de locataire -->
       <AddTenantModal
@@ -132,20 +166,26 @@ import { useI18n } from '@/composables/useLingui'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
-import TenantsHeader from '../components/tenants/TenantsHeader.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
 import TenantsList from '../components/tenants/TenantsList.vue'
 import AddTenantModal from '../components/tenants/AddTenantModal.vue'
 import EditTenantModal from '../components/tenants/EditTenantModal.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
-import ConfirmModal from '../components/common/ConfirmModal.vue'
+import ConfirmModal from '@/components/modals/ConfirmModal.vue'
+import LeaseTemplate from '../components/documents/LeaseTemplate.vue'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
+import { useAuthStore } from '@/stores/authStore'
 import { PAYMENT_STATUS } from '@/utils/constants'
+import { formatCurrency } from '@/utils/formatters'
+import { Users, CheckCircle, AlertCircle, Wallet, Plus, Search } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const route = useRoute()
 const tenantsStore = useTenantsStore()
 const propertiesStore = usePropertiesStore()
+const authStore = useAuthStore()
 
 const searchQuery = ref('')
 
@@ -226,6 +266,44 @@ const stats = computed(() => ({
   lateTenants: tenantsStore.lateTenants.length,
   totalRent: tenantsStore.totalTenantsRent
 }))
+
+/**
+ * Statistiques formatées pour StatsGrid
+ */
+const statsArray = computed(() => [
+  {
+    label: t('common.all'),
+    value: stats.value.totalTenants.toString(),
+    icon: Users,
+    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+    iconBgColor: 'bg-opacity-10 bg-violet-500',
+    iconColor: 'text-violet-200'
+  },
+  {
+    label: t('status.onTime'),
+    value: stats.value.onTimeTenants.toString(),
+    icon: CheckCircle,
+    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+    iconBgColor: 'bg-opacity-10 bg-emerald-500',
+    iconColor: 'text-emerald-200'
+  },
+  {
+    label: t('status.late'),
+    value: stats.value.lateTenants.toString(),
+    icon: AlertCircle,
+    glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
+    iconBgColor: 'bg-opacity-10 bg-rose-500',
+    iconColor: 'text-rose-200'
+  },
+  {
+    label: t('tenants.totalRent'),
+    value: formatCurrency(stats.value.totalRent),
+    icon: Wallet,
+    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+    iconBgColor: 'bg-opacity-10 bg-amber-500',
+    iconColor: 'text-amber-200'
+  }
+])
 
 /**
  * Filtres disponibles
@@ -359,5 +437,115 @@ const confirmDelete = async () => {
 const cancelDelete = () => {
   confirmDeleteId.value = null
   showDeleteConfirm.value = false
+}
+
+/**
+ * Données du bail à générer
+ */
+const leaseData = ref(null)
+
+/**
+ * Génère le bail pour un locataire
+ */
+const handleGenerateLease = async tenant => {
+  try {
+    // 1. Récupère les données du propriétaire (bailleur)
+    const profile = await authStore.fetchProfile(true) // force = true pour avoir les dernières données
+    
+    // Construction du nom complet depuis first_name + last_name (ou fallback sur full_name legacy)
+    const fullName = profile?.first_name && profile?.last_name
+      ? `${profile.first_name} ${profile.last_name}`
+      : profile?.full_name || authStore.user?.user_metadata?.full_name || authStore.user?.email || 'Non renseigné'
+    
+    // Construction de l'adresse structurée (ou fallback sur address legacy)
+    const addressFull = [
+      profile?.address_line,
+      profile?.postal_code && profile?.city
+        ? `${profile.postal_code} ${profile.city}`
+        : profile?.city || profile?.postal_code
+    ].filter(Boolean).join(', ') || profile?.address || ''
+    
+    const ownerData = {
+      fullName,
+      name: fullName,
+      // Adresse structurée (nouveaux champs)
+      address: addressFull,
+      addressLine: profile?.address_line || '',
+      postalCode: profile?.postal_code || '',
+      city: profile?.city || '',
+      phone: profile?.phone || '',
+      email: authStore.user?.email || '',
+      // Type de bailleur
+      landlordType: profile?.landlord_type || 'individual',
+      // Informations juridiques (si société)
+      company: profile?.landlord_type === 'company' ? (profile?.company || '') : '',
+      legalForm: profile?.landlord_type === 'company' ? (profile?.legal_form || '') : '',
+      siret: profile?.landlord_type === 'company' ? (profile?.siret || '') : '',
+      rcs: profile?.landlord_type === 'company' ? (profile?.rcs || '') : '',
+      capitalSocial: profile?.landlord_type === 'company' ? (profile?.capital_social || '') : '',
+      // Informations bancaires
+      iban: profile?.iban || '',
+      bic: profile?.bic || '',
+      bankName: profile?.bank_name || '',
+      // Signature
+      signatureUrl: profile?.signature_url || null
+    }
+
+    // 2. Récupère les données de la propriété
+    const property = propertiesStore.properties.find(p => p.id === tenant.propertyId)
+    if (!property) {
+      const toastStore = (await import('@/stores/toastStore')).useToastStore()
+      toastStore.error('Propriété introuvable pour ce locataire')
+      return
+    }
+
+    // 3. Prépare les données du locataire
+    const tenantData = {
+      name: tenant.name,
+      birthDate: tenant.birthDate || null,
+      birthPlace: tenant.birthPlace || null,
+      entryDate: tenant.entryDate,
+      email: tenant.email || ''
+    }
+
+    // 4. Prépare les données de la propriété
+    const propertyData = {
+      address: property.address || '',
+      zip: property.zip || '',
+      city: property.city || '',
+      type: property.type || 'apartment',
+      surface: property.surface || null,
+      pieces: property.pieces || null,
+      heatingType: property.heatingType || 'Individuel',
+      description: property.description || '',
+      rentAmount: property.rent || 0,
+      rent: property.rent || 0,
+      chargesAmount: property.chargesAmount || null
+    }
+
+    // 5. Stocke les données du bail
+    leaseData.value = {
+      owner: ownerData,
+      tenant: tenantData,
+      property: propertyData
+    }
+
+    // 6. Attend un tick pour que Vue rende le template
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    // 7. Lance l'impression
+    window.print()
+
+    // 8. Affiche un toast de succès
+    const toastStore = (await import('@/stores/toastStore')).useToastStore()
+    toastStore.success('Bail généré avec succès')
+
+    // 9. Nettoie après impression (optionnel, pour permettre plusieurs impressions)
+    // leaseData.value = null
+  } catch (error) {
+    console.error('Erreur lors de la génération du bail:', error)
+    const toastStore = (await import('@/stores/toastStore')).useToastStore()
+    toastStore.error('Erreur lors de la génération du bail')
+  }
 }
 </script>

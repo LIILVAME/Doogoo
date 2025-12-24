@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 space-y-6 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -9,7 +9,23 @@
       />
 
       <!-- Header avec statistiques -->
-      <PropertiesHeader :stats="stats" @add-property="isAddModalOpen = true" />
+      <PageHeader
+        :title="$t('properties.myProperties')"
+        :subtitle="$t('properties.subtitle')"
+      >
+        <template #actions>
+          <button
+            @click="isAddModalOpen = true"
+            class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg shadow-white/5 hover:opacity-90"
+          >
+            <Plus class="w-5 h-5 mr-2" />
+            {{ $t('properties.addProperty') }}
+          </button>
+        </template>
+      </PageHeader>
+
+      <!-- Statistiques globales -->
+      <StatsGrid :stats="statsArray" />
 
       <!-- Filtres et recherche -->
       <PropertiesFilters
@@ -23,7 +39,7 @@
       <!-- État de chargement avec skeletons (uniquement si aucune donnée) -->
       <div
         v-if="propertiesStore.loading && propertiesStore.properties.length === 0"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         <SkeletonCard v-for="n in 6" :key="n" />
       </div>
@@ -110,18 +126,23 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
-import PropertiesHeader from '../components/properties/PropertiesHeader.vue'
-import PropertiesFilters from '../components/properties/PropertiesFilters.vue'
-import PropertiesList from '../components/properties/PropertiesList.vue'
-import PropertyModal from '../components/properties/PropertyModal.vue'
-import ConfirmModal from '../components/common/ConfirmModal.vue'
-import SkeletonCard from '../components/common/SkeletonCard.vue'
-import InlineLoader from '../components/common/InlineLoader.vue'
-import FloatingActionButton from '../components/common/FloatingActionButton.vue'
-import PullToRefresh from '../components/common/PullToRefresh.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
+import PropertiesFilters from '@/components/properties/PropertiesFilters.vue'
+import PropertiesList from '@/components/properties/PropertiesList.vue'
+import PropertyModal from '@/components/properties/PropertyModal.vue'
+import ConfirmModal from '@/components/modals/ConfirmModal.vue'
+import SkeletonCard from '@/components/ui/SkeletonCard.vue'
+import InlineLoader from '@/components/common/InlineLoader.vue'
+import FloatingActionButton from '@/components/common/FloatingActionButton.vue'
+import PullToRefresh from '@/components/common/PullToRefresh.vue'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
+import { useI18n } from '@/composables/useLingui'
+import { formatCurrency } from '@/utils/formatters'
+import { Building2, Users, Home, Wallet, Plus } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const propertiesStore = usePropertiesStore()
 const route = useRoute()
 const router = useRouter()
@@ -210,6 +231,44 @@ const stats = computed(() => ({
   vacantProperties: propertiesStore.vacantProperties,
   totalRent: propertiesStore.totalRent
 }))
+
+/**
+ * Statistiques formatées pour StatsGrid
+ */
+const statsArray = computed(() => [
+  {
+    label: t('common.all'),
+    value: stats.value.totalProperties.toString(),
+    icon: Building2,
+    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+    iconBgColor: 'bg-opacity-10 bg-violet-500',
+    iconColor: 'text-violet-200'
+  },
+  {
+    label: t('properties.occupied'),
+    value: stats.value.occupiedProperties.toString(),
+    icon: Users,
+    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+    iconBgColor: 'bg-opacity-10 bg-emerald-500',
+    iconColor: 'text-emerald-200'
+  },
+  {
+    label: t('properties.free'),
+    value: stats.value.vacantProperties.toString(),
+    icon: Home,
+    glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
+    iconBgColor: 'bg-opacity-10 bg-zinc-500',
+    iconColor: 'text-zinc-200'
+  },
+  {
+    label: t('dashboard.rentCollected'),
+    value: formatCurrency(stats.value.totalRent),
+    icon: Wallet,
+    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+    iconBgColor: 'bg-opacity-10 bg-amber-500',
+    iconColor: 'text-amber-200'
+  }
+])
 
 /**
  * Compteurs pour les filtres
@@ -308,8 +367,16 @@ const handleUpdateProperty = async updatedData => {
     await propertiesStore.updateProperty(selectedProperty.value.id, {
       name: updatedData.name,
       address: updatedData.address,
+      zip: updatedData.zip,
       city: updatedData.city,
+      type: updatedData.type,
+      surface: updatedData.surface,
+      pieces: updatedData.pieces,
+      heatingType: updatedData.heatingType,
+      description: updatedData.description,
       rent: updatedData.rent,
+      chargesAmount: updatedData.chargesAmount,
+      image_url: updatedData.image_url,
       status: updatedData.status,
       tenant:
         updatedData.status === PROPERTY_STATUS.OCCUPIED && updatedData.tenant

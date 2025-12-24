@@ -60,10 +60,27 @@ export async function generateRentReceipt(data: RentReceiptData): Promise<void> 
   const doc = new jsPDF()
 
   // Données Propriétaire
-  const ownerName = data.ownerName || authStore.profile?.full_name || authStore.user?.email || 'Propriétaire'
+  const profile = authStore.profile
+  // Construction du nom complet depuis first_name + last_name (ou fallback sur full_name legacy)
+  const ownerName = data.ownerName || 
+    (profile?.first_name && profile?.last_name
+      ? `${profile.first_name} ${profile.last_name}`
+      : profile?.full_name) || 
+    authStore.user?.email || 
+    'Propriétaire'
   const ownerEmail = data.ownerEmail || authStore.user?.email || ''
-  const ownerPhone = data.ownerPhone || authStore.profile?.phone || ''
-  const ownerAddress = data.ownerAddress || authStore.profile?.address || ''
+  const ownerPhone = data.ownerPhone || profile?.phone || ''
+  // Construction de l'adresse structurée (ou fallback sur address legacy)
+  const ownerAddress = data.ownerAddress || 
+    (profile?.address_line || profile?.postal_code || profile?.city
+      ? [
+          profile?.address_line,
+          profile?.postal_code && profile?.city
+            ? `${profile.postal_code} ${profile.city}`
+            : profile?.city || profile?.postal_code
+        ].filter(Boolean).join(', ')
+      : profile?.address) || 
+    ''
 
   // Données Locataire
   const tenantName = tenant?.name || 'Locataire'
@@ -181,9 +198,11 @@ export async function generateRentReceipt(data: RentReceiptData): Promise<void> 
   const textHeight = legalLines.length * lineHeight
   currentY += textHeight + 15
 
-  // Signature
-  const cityMatch = ownerAddress.match(/\d{5}\s+([^,]+)/) || ownerAddress.split(',').pop()
-  const city = cityMatch ? (Array.isArray(cityMatch) ? cityMatch[1] : cityMatch).trim() : property?.city || '...'
+  // Signature - Utilise directement profile.city si disponible, sinon extrait de l'adresse
+  const city = profile?.city || 
+    (ownerAddress ? (ownerAddress.match(/\d{5}\s+([^,]+)/)?.[1] || ownerAddress.split(',').pop()?.trim()) : null) || 
+    property?.city || 
+    '...'
 
   doc.text(`Fait à ${city}, le ${new Date().toLocaleDateString('fr-FR')}`, 120, currentY)
   doc.text('Signature du propriétaire', 120, currentY + 10)

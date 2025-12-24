@@ -16,89 +16,7 @@
     </div>
 
     <!-- Statistiques globales -->
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-      <!-- Total -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div>
-            <p class="text-sm font-medium text-zinc-400 mb-1">Total</p>
-            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.totalTenants }}</p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-violet-500 text-violet-200"
-          >
-            <Users class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <!-- À jour -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div>
-            <p class="text-sm font-medium text-zinc-400 mb-1">{{ $t('status.onTime') }}</p>
-            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.onTimeTenants }}</p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-emerald-500 text-emerald-200"
-          >
-            <CheckCircle class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <!-- En retard -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl group-hover:bg-rose-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div>
-            <p class="text-sm font-medium text-zinc-400 mb-1">{{ $t('status.late') }}</p>
-            <p class="text-2xl font-bold text-white tracking-tight">{{ stats.lateTenants }}</p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-rose-500 text-rose-200"
-          >
-            <AlertCircle class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Loyers totaux -->
-      <div
-        class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
-      >
-        <div
-          class="absolute -right-10 -top-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl group-hover:bg-amber-500/20 transition-all duration-500"
-        ></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div>
-            <p class="text-sm font-medium text-zinc-400 mb-1">{{ $t('tenants.totalRent') }}</p>
-            <p class="text-2xl font-bold text-white tracking-tight">
-              {{ formatCurrency(stats.totalRent) }}
-            </p>
-          </div>
-          <div
-            class="p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg bg-opacity-10 bg-amber-500 text-amber-200"
-          >
-            <Wallet class="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <StatsGrid :stats="statsArray" />
 
     <!-- Barre de recherche -->
     <div class="mt-6 relative">
@@ -117,10 +35,13 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useI18n } from '@/composables/useLingui'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { Users, CheckCircle, AlertCircle, Wallet, Plus, Search } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   stats: {
     type: Object,
     required: true,
@@ -136,6 +57,43 @@ defineProps({
     default: ''
   }
 })
+
+const { t } = useI18n()
+
+const statsArray = computed(() => [
+  {
+    label: t('common.all'),
+    value: props.stats.totalTenants.toString(),
+    icon: Users,
+    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+    iconBgColor: 'bg-opacity-10 bg-violet-500',
+    iconColor: 'text-violet-200'
+  },
+  {
+    label: t('status.onTime'),
+    value: props.stats.onTimeTenants.toString(),
+    icon: CheckCircle,
+    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+    iconBgColor: 'bg-opacity-10 bg-emerald-500',
+    iconColor: 'text-emerald-200'
+  },
+  {
+    label: t('status.late'),
+    value: props.stats.lateTenants.toString(),
+    icon: AlertCircle,
+    glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
+    iconBgColor: 'bg-opacity-10 bg-rose-500',
+    iconColor: 'text-rose-200'
+  },
+  {
+    label: t('tenants.totalRent'),
+    value: formatCurrency(props.stats.totalRent),
+    icon: Wallet,
+    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+    iconBgColor: 'bg-opacity-10 bg-amber-500',
+    iconColor: 'text-amber-200'
+  }
+])
 
 defineEmits(['add-tenant', 'update:searchQuery'])
 </script>

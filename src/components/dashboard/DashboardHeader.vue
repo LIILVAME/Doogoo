@@ -1,43 +1,10 @@
 <template>
-  <div class="mb-8">
+  <div>
     <h2 class="text-3xl font-bold text-white mb-2">{{ $t('dashboard.title') }}</h2>
     <p class="text-zinc-400">{{ $t('dashboard.subtitle') }}</p>
 
     <!-- Statistiques globales -->
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mt-6">
-      <StatCard
-        :value="stats.totalProperties.toString()"
-        :label="$t('dashboard.totalProperties')"
-        :icon="Building2"
-        icon-bg-class="bg-violet-500"
-        icon-color-class="text-violet-200"
-        :loading="loading"
-      />
-      <StatCard
-        :value="stats.occupiedProperties.toString()"
-        :label="$t('dashboard.occupied')"
-        :icon="Users"
-        icon-bg-class="bg-emerald-500"
-        icon-color-class="text-emerald-200"
-        :loading="loading"
-      />
-      <StatCard
-        :value="stats.vacantProperties.toString()"
-        :label="$t('dashboard.vacant')"
-        :icon="Home"
-        icon-bg-class="bg-zinc-500"
-        icon-color-class="text-zinc-200"
-        :loading="loading"
-      />
-      <StatCard
-        :value="formatCurrency(stats.totalRent || 0)"
-        :label="$t('dashboard.monthlyRent')"
-        :icon="Wallet"
-        icon-bg-class="bg-amber-500"
-        icon-color-class="text-amber-200"
-        :loading="loading"
-      />
-    </div>
+    <StatsGrid :stats="statsArray" />
 
     <!-- Alerte retards -->
     <div
@@ -56,12 +23,13 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-import StatCard from '../StatCard.vue'
+import { computed } from 'vue'
+import { useI18n } from '@/composables/useLingui'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { Building2, Users, Home, Wallet, AlertCircle } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   stats: {
     type: Object,
     required: true
@@ -71,4 +39,41 @@ defineProps({
     default: false
   }
 })
+
+const { t } = useI18n()
+
+const statsArray = computed(() => [
+  {
+    label: t('dashboard.totalProperties'),
+    value: props.loading ? '...' : props.stats.totalProperties.toString(),
+    icon: Building2,
+    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+    iconBgColor: 'bg-opacity-10 bg-violet-500',
+    iconColor: 'text-violet-200'
+  },
+  {
+    label: t('dashboard.occupied'),
+    value: props.loading ? '...' : props.stats.occupiedProperties.toString(),
+    icon: Users,
+    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+    iconBgColor: 'bg-opacity-10 bg-emerald-500',
+    iconColor: 'text-emerald-200'
+  },
+  {
+    label: t('dashboard.vacant'),
+    value: props.loading ? '...' : props.stats.vacantProperties.toString(),
+    icon: Home,
+    glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
+    iconBgColor: 'bg-opacity-10 bg-zinc-500',
+    iconColor: 'text-zinc-200'
+  },
+  {
+    label: t('dashboard.monthlyRent'),
+    value: props.loading ? '...' : formatCurrency(props.stats.totalRent || 0),
+    icon: Wallet,
+    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+    iconBgColor: 'bg-opacity-10 bg-amber-500',
+    iconColor: 'text-amber-200'
+  }
+])
 </script>

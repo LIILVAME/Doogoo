@@ -12,7 +12,7 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
-            class="relative w-full max-w-lg transform overflow-hidden rounded-2xl glass-panel shadow-2xl transition-all"
+            class="relative w-full max-w-lg mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
           >
             <!-- Header -->

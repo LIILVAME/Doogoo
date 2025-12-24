@@ -1,5 +1,6 @@
 import { useToastStore } from '@/stores/toastStore'
 import { useDiagnosticStore } from '@/stores/diagnosticStore'
+import { useErrorStore } from '@/stores/errorStore'
 import { isRetryableError } from './retry'
 import { canAttempt, recordSuccess, recordFailure, getState } from './circuitBreaker'
 
@@ -79,6 +80,21 @@ export function handleApiError(error, context = '') {
     // Sentry non disponible, on continue
   }
 
+  // Déclenche le modal d'erreur réseau si c'est une erreur réseau/timeout
+  try {
+    const errorStore = useErrorStore()
+    if (errorStore.isNetworkOrTimeoutError(error)) {
+      // Message convivial pour l'utilisateur
+      const userMessage = message.includes('timeout') || message.includes("l'opération a pris plus de")
+        ? 'Le serveur semble endormi ou inaccessible. Tentative de reconnexion...'
+        : message
+      errorStore.triggerNetworkError(userMessage, context)
+    }
+  } catch (errorStoreError) {
+    // Si le errorStore n'est pas disponible, on continue
+    console.warn("Impossible d'enregistrer dans errorStore:", errorStoreError)
+  }
+
   return {
     success: false,
     message,
@@ -109,10 +125,23 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
   const circuitCheck = canAttempt(endpoint)
   if (!circuitCheck.allowed) {
     const circuitState = getState(endpoint)
+    const errorMessage = `Service temporairement indisponible. ${circuitCheck.reason || 'Réessayez plus tard.'}`
+    
+    // Déclenche le modal d'erreur réseau si le circuit breaker est ouvert
+    try {
+      const errorStore = useErrorStore()
+      errorStore.triggerNetworkError(
+        'Le serveur semble endormi ou inaccessible. Tentative de reconnexion...',
+        context
+      )
+    } catch (errorStoreError) {
+      console.warn("Impossible d'enregistrer dans errorStore:", errorStoreError)
+    }
+    
     return {
       success: false,
       error: new Error(circuitCheck.reason || 'Circuit breaker ouvert'),
-      message: `Service temporairement indisponible. ${circuitCheck.reason || 'Réessayez plus tard.'}`,
+      message: errorMessage,
       circuitBreakerOpen: true,
       nextAttemptTime: circuitState.nextAttemptTime
     }
@@ -155,6 +184,19 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
         data: result.data
       }
     } catch (error) {
+      // Si c'est un timeout, déclenche immédiatement le modal d'erreur réseau
+      if (error?.message?.includes('timeout') || error?.message?.includes("l'opération a pris plus de")) {
+        try {
+          const errorStore = useErrorStore()
+          errorStore.triggerNetworkError(
+            'Le serveur semble endormi ou inaccessible. Tentative de reconnexion...',
+            context
+          )
+        } catch (errorStoreError) {
+          console.warn("Impossible d'enregistrer dans errorStore:", errorStoreError)
+        }
+      }
+
       // Erreur non réessayable, retourne directement
       if (!isRetryableError(error)) {
         return handleApiError(error, context)
@@ -229,6 +271,17 @@ export async function withErrorHandling(apiCall, context = '', options = {}) {
     connectionStore.setOnline(true)
     diagnosticStore.recordSuccess(endpoint)
     recordSuccess(endpoint) // Enregistre le succès dans le circuit breaker
+    
+    // Réinitialise l'erreur réseau si elle était active
+    try {
+      const errorStore = useErrorStore()
+      if (errorStore.isNetworkError) {
+        errorStore.resetError()
+      }
+    } catch {
+      // Ignore si le store n'est pas disponible
+    }
+    
     if (retryToastShown && toastStore) {
       // Le toast "reconnexion" sera automatiquement remplacé par le toast de succès de l'API
     }

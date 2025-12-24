@@ -198,7 +198,7 @@ import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import ChangePasswordModal from './ChangePasswordModal.vue'
-import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import ConfirmModal from '@/components/modals/ConfirmModal.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()

@@ -1,7 +1,7 @@
 <template>
   <div class="mb-8">
     <h2 class="text-2xl font-bold text-white mb-4">Métriques Financières</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 items-stretch">
       <!-- Revenu Total du Mois -->
       <StatCard
         :value="formatCurrency(metrics.financial.totalRevenue)"
@@ -42,7 +42,7 @@
 <script setup>
 import { useDashboardMetrics } from '@/composables/useDashboardMetrics'
 import { formatCurrency } from '@/utils/formatters'
-import StatCard from '@/components/StatCard.vue'
+import StatCard from '@/components/ui/StatCard.vue'
 import { TrendingUp, Clock, BarChart3 } from 'lucide-vue-next'
 
 defineProps({

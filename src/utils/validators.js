@@ -116,6 +116,134 @@ export const changePasswordSchema = z.object({
 })
 
 /**
+ * Schéma de validation pour le profil utilisateur (bailleur)
+ * Conforme aux exigences de la Loi Alur pour les contrats de location
+ */
+export const profileSchema = z.object({
+  // Identité
+  first_name: z.string()
+    .min(1, 'Le prénom est requis')
+    .max(100, 'Le prénom ne peut pas dépasser 100 caractères')
+    .optional()
+    .nullable(),
+  last_name: z.string()
+    .min(1, 'Le nom est requis')
+    .max(100, 'Le nom ne peut pas dépasser 100 caractères')
+    .optional()
+    .nullable(),
+  full_name: z.string()
+    .min(2, 'Le nom complet doit contenir au moins 2 caractères')
+    .max(200, 'Le nom complet ne peut pas dépasser 200 caractères')
+    .optional()
+    .nullable(),
+  email: z.string()
+    .email('Format d\'email invalide')
+    .optional()
+    .nullable(),
+  phone: z.string()
+    .regex(/^[\d\s+\-()]+$/, 'Format de téléphone invalide (ex: 06 12 34 56 78 ou +33 6 12 34 56 78)')
+    .min(10, 'Le numéro de téléphone doit contenir au moins 10 caractères')
+    .max(20, 'Le numéro de téléphone ne peut pas dépasser 20 caractères')
+    .optional()
+    .nullable(),
+  company: z.string()
+    .max(200, 'Le nom de l\'entreprise ne peut pas dépasser 200 caractères')
+    .optional()
+    .nullable(),
+  
+  // Type de bailleur
+  landlord_type: z.enum(['individual', 'company'], {
+    errorMap: () => ({ message: 'Le type de bailleur doit être "Particulier" ou "Société"' })
+  }).optional().nullable(),
+  
+  // Adresse
+  address_line: z.string()
+    .max(200, 'L\'adresse ne peut pas dépasser 200 caractères')
+    .optional()
+    .nullable(),
+  postal_code: z.string()
+    .regex(/^\d{5}$/, 'Le code postal doit contenir 5 chiffres')
+    .optional()
+    .nullable(),
+  city: z.string()
+    .min(2, 'La ville doit contenir au moins 2 caractères')
+    .max(100, 'La ville ne peut pas dépasser 100 caractères')
+    .optional()
+    .nullable(),
+  
+  // Informations juridiques (optionnelles)
+  siret: z.string()
+    .regex(/^[\d\s]{9,14}$/, 'Le SIRET doit contenir entre 9 et 14 chiffres')
+    .optional()
+    .nullable(),
+  rcs: z.string()
+    .max(50, 'Le RCS ne peut pas dépasser 50 caractères')
+    .optional()
+    .nullable(),
+  capital_social: z.string()
+    .max(50, 'Le capital social ne peut pas dépasser 50 caractères')
+    .optional()
+    .nullable(),
+  legal_form: z.string()
+    .max(20, 'La forme juridique ne peut pas dépasser 20 caractères')
+    .optional()
+    .nullable(),
+  
+  // Informations bancaires (optionnelles)
+  iban: z.string()
+    .regex(/^[A-Z]{2}[\dA-Z\s]{15,34}$/i, 'Format IBAN invalide (ex: FR76 1234 5678 9012 3456 7890 123)')
+    .optional()
+    .nullable(),
+  bic: z.string()
+    .regex(/^[A-Z0-9]{8,11}$/i, 'Format BIC invalide (ex: BNPAFRPP)')
+    .optional()
+    .nullable(),
+  bank_name: z.string()
+    .max(100, 'Le nom de la banque ne peut pas dépasser 100 caractères')
+    .optional()
+    .nullable(),
+  
+  // Signature (optionnelle)
+  signature_url: z.string()
+    .url('L\'URL de la signature doit être une URL valide')
+    .optional()
+    .nullable(),
+  
+  // Avatar (optionnel)
+  avatar_url: z.string()
+    .url('L\'URL de l\'avatar doit être une URL valide')
+    .optional()
+    .nullable()
+}).refine((data) => {
+  // Si first_name ou last_name est fourni, l'autre doit aussi l'être (ou full_name)
+  if (data.first_name || data.last_name) {
+    return (data.first_name && data.last_name) || data.full_name
+  }
+  return true
+}, {
+  message: 'Si vous renseignez le prénom ou le nom, veuillez renseigner les deux ou utilisez le nom complet',
+  path: ['first_name']
+}).refine((data) => {
+  // Si IBAN est fourni, BIC devrait aussi l'être (recommandation, pas obligatoire)
+  if (data.iban && !data.bic) {
+    return false
+  }
+  return true
+}, {
+  message: 'Le BIC est recommandé lorsque l\'IBAN est renseigné',
+  path: ['bic']
+}).refine((data) => {
+  // Si company est renseigné, landlord_type devrait être 'company'
+  if (data.company && data.company.trim() && data.landlord_type && data.landlord_type !== 'company') {
+    return false
+  }
+  return true
+}, {
+  message: 'Si vous renseignez une société, le type de bailleur doit être "Société"',
+  path: ['landlord_type']
+})
+
+/**
  * Fonction helper pour valider et formater les erreurs Zod
  * @param {ZodSchema} schema - Le schéma Zod à utiliser
  * @param {Object} data - Les données à valider

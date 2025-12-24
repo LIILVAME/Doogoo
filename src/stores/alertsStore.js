@@ -11,11 +11,58 @@ export const useAlertsStore = defineStore('alerts', () => {
   const loading = ref(false)
   const error = ref(null)
   const alerts = ref([])
+  
+  // Set des alertes lues (persisté dans localStorage)
+  // Utilisé comme Set en interne, mais persisté comme Array
+  const readAlerts = ref(new Set())
 
   /**
    * Types d'alertes (réexport depuis l'API)
    */
   const ALERT_TYPES = alertsApi.ALERT_TYPES
+
+  /**
+   * Charge les alertes lues depuis localStorage
+   */
+  const loadReadAlerts = () => {
+    try {
+      const authStore = useAuthStore()
+      if (!authStore.user) return
+      
+      const key = `doogoo-read-alerts-${authStore.user.id}`
+      const stored = localStorage.getItem(key)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed)) {
+          readAlerts.value = new Set(parsed)
+        }
+      }
+    } catch (err) {
+      console.error('Error loading read alerts:', err)
+    }
+  }
+
+  /**
+   * Sauvegarde les alertes lues dans localStorage
+   */
+  const saveReadAlerts = () => {
+    try {
+      const authStore = useAuthStore()
+      if (!authStore.user) return
+      
+      const key = `doogoo-read-alerts-${authStore.user.id}`
+      localStorage.setItem(key, JSON.stringify([...readAlerts.value]))
+    } catch (err) {
+      console.error('Error saving read alerts:', err)
+    }
+  }
+
+  /**
+   * Initialise le store (charge les alertes lues)
+   */
+  const init = () => {
+    loadReadAlerts()
+  }
 
   /**
    * Récupère toutes les alertes pour l'utilisateur via l'API layer
@@ -78,11 +125,69 @@ export const useAlertsStore = defineStore('alerts', () => {
   }
 
   /**
+   * Marque une alerte comme lue
+   * @param {string} alertId - ID de l'alerte
+   */
+  const markAsRead = (alertId) => {
+    readAlerts.value.add(alertId)
+    saveReadAlerts()
+  }
+
+  /**
+   * Vérifie si une alerte est lue
+   * @param {string} alertId - ID de l'alerte
+   * @returns {boolean}
+   */
+  const isRead = (alertId) => {
+    return readAlerts.value.has(alertId)
+  }
+
+  /**
+   * Marque toutes les alertes comme lues
+   */
+  const markAllAsRead = () => {
+    alerts.value.forEach(alert => {
+      readAlerts.value.add(alert.id)
+    })
+    saveReadAlerts()
+  }
+
+  /**
    * Marque une alerte comme résolue (supprime de la liste)
    * TODO v0.3.0+ : Stocker dans Supabase pour persistance
    */
   const markAsResolved = alertId => {
     alerts.value = alerts.value.filter(a => a.id !== alertId)
+  }
+
+  /**
+   * Ajoute une alerte manuellement (pour les notifications d'automatisation)
+   * @param {Object} alertData - Données de l'alerte
+   * @param {string} alertData.title - Titre de l'alerte
+   * @param {string} alertData.message - Message de l'alerte
+   * @param {string} alertData.severity - Sévérité ('high', 'medium', 'low')
+   * @param {string} [alertData.actionUrl] - URL d'action optionnelle
+   * @param {string} [alertData.type] - Type d'alerte optionnel
+   */
+  const addAlert = (alertData) => {
+    const newAlert = {
+      id: `manual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: alertData.type || 'info',
+      severity: alertData.severity || 'low',
+      title: alertData.title,
+      message: alertData.message,
+      date: new Date().toISOString(),
+      actionUrl: alertData.actionUrl || null,
+      ...alertData.metadata
+    }
+    
+    // Ajoute l'alerte au début de la liste
+    alerts.value.unshift(newAlert)
+    
+    // Limite à 100 alertes pour éviter les problèmes de performance
+    if (alerts.value.length > 100) {
+      alerts.value = alerts.value.slice(0, 100)
+    }
   }
 
   /**
@@ -99,7 +204,12 @@ export const useAlertsStore = defineStore('alerts', () => {
     alerts.value = []
     loading.value = false
     error.value = null
+    readAlerts.value = new Set()
+    saveReadAlerts()
   }
+
+  // Initialise le store au chargement
+  init()
 
   return {
     loading,
@@ -107,10 +217,27 @@ export const useAlertsStore = defineStore('alerts', () => {
     alerts,
     ALERT_TYPES,
     fetchAlerts,
+    markAsRead,
+    markAllAsRead,
+    isRead,
     markAsResolved,
+    addAlert,
     reset,
     highSeverityAlerts,
     mediumSeverityAlerts,
     lowSeverityAlerts
+  }
+}, {
+  // Configuration de persistance avec pinia-plugin-persistedstate
+  persist: {
+    key: 'doogoo-alerts',
+    paths: [],
+    storage: localStorage,
+    // On ne persiste pas readAlerts via pinia car c'est un Set
+    // On utilise loadReadAlerts/saveReadAlerts manuellement
+    serializer: {
+      serialize: JSON.stringify,
+      deserialize: JSON.parse
+    }
   }
 })

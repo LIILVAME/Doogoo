@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 lg:p-8 xl:p-10 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -41,43 +41,7 @@
         />
 
         <!-- KPIs Section -->
-        <div v-if="reportData" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <KpiCard
-            :label="$t('reports.kpi.totalRevenue')"
-            :value="reportData.statistics.totalRevenue"
-            icon="currency"
-            icon-color="text-emerald-400"
-            icon-bg-color="bg-emerald-500/10 border border-emerald-500/20"
-            :formatter="formatCurrency"
-            :tooltip="$t('reports.kpi.totalRevenueTooltip')"
-          />
-          <KpiCard
-            :label="$t('reports.kpi.rentCollected')"
-            :value="reportData.statistics.totalRevenue"
-            icon="currency"
-            icon-color="text-blue-400"
-            icon-bg-color="bg-blue-500/10 border border-blue-500/20"
-            :formatter="formatCurrency"
-            :tooltip="$t('reports.kpi.rentCollectedTooltip')"
-          />
-          <KpiCard
-            :label="$t('reports.kpi.occupancyRate')"
-            :value="reportData.statistics.occupancyRate"
-            icon="home"
-            icon-color="text-violet-400"
-            icon-bg-color="bg-violet-500/10 border border-violet-500/20"
-            :formatter="val => `${val}%`"
-            :tooltip="$t('reports.kpi.occupancyRateTooltip')"
-          />
-          <KpiCard
-            :label="$t('reports.kpi.delayedPayments')"
-            :value="reportData.statistics.latePayments"
-            icon="clock"
-            icon-color="text-rose-400"
-            icon-bg-color="bg-rose-500/10 border border-rose-500/20"
-            :tooltip="$t('reports.kpi.delayedPaymentsTooltip')"
-          />
-        </div>
+        <StatsGrid v-if="reportData" :stats="reportStatsArray" />
 
         <!-- Loading State avec progression -->
         <div v-if="reportsStore.loading && !reportData" class="text-center py-12">
@@ -165,7 +129,7 @@ import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
 import EmptyState from '../components/common/EmptyState.vue'
 import LoadingOverlay from '../components/common/LoadingOverlay.vue'
-import KpiCard from '../components/stats/KpiCard.vue'
+import StatsGrid from '@/components/shared/StatsGrid.vue'
 import ReportFilters from '../components/reports/ReportFilters.vue'
 import ReportSummary from '../components/reports/ReportSummary.vue'
 import ReportTable from '../components/reports/ReportTable.vue'
@@ -176,7 +140,7 @@ import { useToastStore } from '@/stores/toastStore'
 import { exportToPDF } from '@/utils/exportUtils'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettingsStore } from '@/stores/settingsStore'
-import { FileText } from 'lucide-vue-next'
+import { FileText, Wallet, Home, Clock } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const reportsStore = useReportsStore()
@@ -246,6 +210,46 @@ const reportPeriod = computed(() => {
   const endDate = new Date(year, monthNum + 1, 0, 23, 59, 59)
 
   return { startDate, endDate }
+})
+
+// Stats pour StatsGrid
+const reportStatsArray = computed(() => {
+  if (!reportData.value || !reportData.value.statistics) return []
+  
+  return [
+    {
+      label: t('reports.kpi.totalRevenue'),
+      value: formatCurrency(reportData.value.statistics.totalRevenue),
+      icon: Wallet,
+      glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+      iconBgColor: 'bg-opacity-10 bg-emerald-500',
+      iconColor: 'text-emerald-400'
+    },
+    {
+      label: t('reports.kpi.rentCollected'),
+      value: formatCurrency(reportData.value.statistics.totalRevenue),
+      icon: Wallet,
+      glowColor: 'bg-blue-500/10 group-hover:bg-blue-500/20',
+      iconBgColor: 'bg-opacity-10 bg-blue-500',
+      iconColor: 'text-blue-400'
+    },
+    {
+      label: t('reports.kpi.occupancyRate'),
+      value: `${reportData.value.statistics.occupancyRate}%`,
+      icon: Home,
+      glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+      iconBgColor: 'bg-opacity-10 bg-violet-500',
+      iconColor: 'text-violet-400'
+    },
+    {
+      label: t('reports.kpi.delayedPayments'),
+      value: reportData.value.statistics.latePayments.toString(),
+      icon: Clock,
+      glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
+      iconBgColor: 'bg-opacity-10 bg-rose-500',
+      iconColor: 'text-rose-400'
+    }
+  ]
 })
 
 // Données du tableau

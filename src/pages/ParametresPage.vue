@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="p-6 lg:p-8 xl:p-10 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -52,6 +52,7 @@
 
 <script setup>
 import { ref, computed, onErrorCaptured, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
@@ -71,6 +72,7 @@ onErrorCaptured((err, instance, info) => {
 })
 
 // Pull-to-refresh
+const route = useRoute()
 const authStore = useAuthStore()
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {
@@ -114,6 +116,17 @@ const handleSectionChange = newSection => {
 
 // Persiste la section active dans sessionStorage
 onMounted(() => {
+  // Vérifie d'abord les query params pour la section
+  if (route.query.section) {
+    // route.query.section peut être une string ou un array, on prend le premier élément
+    const querySection = Array.isArray(route.query.section) ? route.query.section[0] : route.query.section
+    const validSections = ['general', 'notifications', 'security', 'language-currency']
+    if (validSections.includes(querySection)) {
+      activeSection.value = querySection
+      return
+    }
+  }
+
   const savedSection = sessionStorage.getItem('settings-active-section')
   const validSections = ['general', 'notifications', 'security', 'language-currency']
 
@@ -133,9 +146,26 @@ onMounted(() => {
     }
   )
 
+  // Watch les query params pour changer la section
+  const stopQueryWatcher = watch(
+    () => route.query.section,
+    (newSection) => {
+      if (newSection) {
+        // route.query.section peut être une string ou un array, on prend le premier élément
+        const section = Array.isArray(newSection) ? newSection[0] : newSection
+        const validSections = ['general', 'notifications', 'security', 'language-currency']
+        if (validSections.includes(section)) {
+          activeSection.value = section
+        }
+      }
+    },
+    { immediate: true }
+  )
+
   // Cleanup au démontage
   return () => {
     stopWatcher()
+    stopQueryWatcher()
   }
 })
 </script>

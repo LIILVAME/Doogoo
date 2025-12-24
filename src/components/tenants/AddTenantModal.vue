@@ -12,7 +12,7 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
-            class="relative w-full max-w-md transform overflow-hidden rounded-2xl glass-panel shadow-2xl transition-all"
+            class="relative w-full max-w-md mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
           >
             <!-- Header -->
@@ -110,6 +110,41 @@
                     v-model="form.exitDate"
                     type="date"
                     class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                  />
+                </div>
+
+                <!-- Date de naissance -->
+                <div>
+                  <label
+                    for="tenant-birth-date"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
+                  >
+                    {{ $t('common.birthDate') }} <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="tenant-birth-date"
+                    v-model="form.birthDate"
+                    type="date"
+                    required
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  />
+                </div>
+
+                <!-- Lieu de naissance -->
+                <div>
+                  <label
+                    for="tenant-birth-place"
+                    class="block text-sm font-medium text-zinc-300 mb-2"
+                  >
+                    {{ $t('common.birthPlace') }} <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="tenant-birth-place"
+                    v-model.trim="form.birthPlace"
+                    type="text"
+                    required
+                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                    :placeholder="$t('common.placeholders.birthPlace')"
                   />
                 </div>
 
@@ -252,7 +287,9 @@ const form = ref({
   entryDate: '',
   exitDate: '',
   rent: null,
-  status: 'on_time'
+  status: 'on_time',
+  birthDate: '',
+  birthPlace: ''
 })
 
 const validationErrors = ref({})
@@ -282,7 +319,9 @@ const resetForm = () => {
     entryDate: '',
     exitDate: '',
     rent: null,
-    status: 'on_time'
+    status: 'on_time',
+    birthDate: '',
+    birthPlace: ''
   }
 }
 
@@ -359,13 +398,25 @@ const prepareTenantData = () => {
     throw new Error('Le loyer est requis et doit être un montant positif')
   }
 
+  // Validation : birthDate doit être présent
+  if (!form.value.birthDate || form.value.birthDate.trim() === '') {
+    throw new Error('La date de naissance est requise')
+  }
+
+  // Validation : birthPlace doit être présent
+  if (!form.value.birthPlace || form.value.birthPlace.trim() === '') {
+    throw new Error('Le lieu de naissance est requis')
+  }
+
   // Prépare les données en convertissant tous les champs numériques
   const submitData = {
     name: form.value.name.trim(),
     propertyId: form.value.propertyId.trim(),
     entryDate: form.value.entryDate.trim(),
     rent: rentValue, // Toujours un number valide à ce stade
-    status: form.value.status || 'on_time'
+    status: form.value.status || 'on_time',
+    birthDate: form.value.birthDate.trim(),
+    birthPlace: form.value.birthPlace.trim()
   }
 
   // Date de sortie : incluse seulement si renseignée

@@ -172,18 +172,11 @@ export const usePaymentsStore = defineStore(
       error.value = null
 
       try {
-        // Timeout explicite de 10 secondes pour éviter blocage
-        const timeoutPromise = new Promise<never>((_, reject) => {
-          setTimeout(
-            () => reject(new Error('Timeout: La requête a pris plus de 10 secondes')),
-            10000
-          )
-        })
-
-        const apiPromise = paymentsApi.getPayments(
+        // Le timeout est géré par withErrorHandling dans l'API (10s)
+        // Pas besoin de double timeout ici
+        const result = await paymentsApi.getPayments(
           authStore.user.id
         ) as Promise<PaymentsApiResponse>
-        const result = await Promise.race([apiPromise, timeoutPromise])
 
         if (result.success && result.data) {
           lastFetchTime = Date.now()
@@ -613,17 +606,52 @@ export const usePaymentsStore = defineStore(
             if (import.meta.env.DEV) {
               console.debug('✅ Realtime subscribed to payments')
             }
+            isRealtimeActive = true
           } else if (status === 'CHANNEL_ERROR') {
             console.error('❌ Realtime error for payments')
             isRealtimeInitialized = false
             isRealtimeActive = false
+            
+            // Tentative de reconnexion après 5 secondes
+            if (realtimeChannel) {
+              try {
+                supabase.removeChannel(realtimeChannel)
+              } catch {
+                // Ignore les erreurs de nettoyage
+              }
             realtimeChannel = null
+              
+              // Reconnexion automatique après délai
+              setTimeout(() => {
+                const authStore = useAuthStore()
+                if (authStore.user && !isRealtimeInitialized) {
+                  if (import.meta.env.DEV) {
+                    console.debug('🔄 Tentative de reconnexion Realtime payments...')
+                  }
+                  initRealtime()
+                }
+              }, 5000)
+            }
           } else if (status === 'CLOSED') {
             if (import.meta.env.DEV) {
               console.debug('🔌 Realtime channel closed for payments')
             }
             isRealtimeInitialized = false
             isRealtimeActive = false
+            
+            // Reconnexion automatique si fermeture inattendue
+            const authStore = useAuthStore()
+            if (authStore.user) {
+              setTimeout(() => {
+                if (!isRealtimeInitialized && authStore.user) {
+                  if (import.meta.env.DEV) {
+                    console.debug('🔄 Reconnexion Realtime payments après fermeture...')
+                  }
+                  initRealtime()
+                }
+              }, 3000)
+            }
+            
             realtimeChannel = null
           }
         })
@@ -654,6 +682,104 @@ export const usePaymentsStore = defineStore(
     }
 
     /**
+     * Génère automatiquement les paiements mensuels pour tous les locataires actifs
+     * @param {Object} options - Options optionnelles (month, year)
+     * @returns {Promise<Object>} Résultat de la génération avec statistiques
+     */
+    const generateMonthlyRents = async (options = {}): Promise<{
+      success: boolean
+      generated: number
+      skipped: number
+      generatedPayments?: any[]
+      skippedPayments?: any[]
+      message?: string
+    }> => {
+      loading.value = true
+      error.value = null
+
+      try {
+        const authStore = useAuthStore()
+        const toastStore = useToastStore()
+        if (!authStore.user) {
+          throw new Error('User not authenticated')
+        }
+
+        const result = (await paymentsApi.generateMonthlyRents(
+          authStore.user.id,
+          options
+        )) as PaymentsApiResponse & {
+          data?: {
+            generated: number
+            skipped: number
+            generated_payments?: any[]
+            skipped_payments?: any[]
+            message?: string
+          }
+        }
+
+        if (!result.success) {
+          error.value = result.message || 'Erreur lors de la génération des loyers'
+          loading.value = false
+          throw new Error(result.message || 'Erreur lors de la génération des loyers')
+        }
+
+        const stats = result.data || {}
+        const generatedCount = stats.generated || 0
+        const skippedCount = stats.skipped || 0
+
+        // Recharge les paiements pour afficher les nouveaux
+        await fetchPayments(true)
+
+        // Formate le mois actuel pour les messages
+        const now = new Date()
+        const monthNames = [
+          'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+          'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+        ]
+        const currentMonth = monthNames[now.getMonth()]
+
+        if (toastStore) {
+          if (generatedCount > 0) {
+            toastStore.success(
+              `${generatedCount} loyer${generatedCount > 1 ? 's' : ''} ${generatedCount > 1 ? 'ont été générés' : 'a été généré'} pour le mois de ${currentMonth}`
+            )
+          } else {
+            toastStore.info(`Aucun nouveau paiement à générer pour ${currentMonth} (tous les loyers du mois sont déjà créés)`)
+          }
+        }
+
+        // Ajoute une alerte dans le centre de notifications si des loyers ont été générés
+        if (generatedCount > 0) {
+          const { useAlertsStore } = await import('@/stores/alertsStore')
+          const alertsStore = useAlertsStore()
+          
+          alertsStore.addAlert({
+            title: 'Génération automatique des loyers',
+            message: `Génération automatique : ${generatedCount} loyer${generatedCount > 1 ? 's' : ''} créé${generatedCount > 1 ? 's' : ''} pour le mois de ${currentMonth}`,
+            severity: 'low',
+            type: 'info',
+            actionUrl: '/paiements'
+          })
+        }
+
+        loading.value = false
+        return {
+          success: true,
+          generated: generatedCount,
+          skipped: skippedCount,
+          generatedPayments: stats.generated_payments || [],
+          skippedPayments: stats.skipped_payments || [],
+          message: stats.message
+        }
+      } catch (err) {
+        const errorObj = err as Error
+        error.value = errorObj.message
+        loading.value = false
+        throw err
+      }
+    }
+
+    /**
      * Réinitialise le store
      */
     const reset = (): void => {
@@ -674,6 +800,7 @@ export const usePaymentsStore = defineStore(
       addPayment,
       updatePayment,
       removePayment,
+      generateMonthlyRents,
       initRealtime,
       stopRealtime,
       reset,
