@@ -1,13 +1,12 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="isOpen"
-        class="fixed inset-0 z-50 overflow-y-auto"
-        @click.self="handleClose"
-      >
+      <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="handleClose"></div>
+        <div
+          class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+          @click="handleClose"
+        ></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
@@ -17,14 +16,21 @@
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-900">{{ $t('security.password.modalTitle') }}</h2>
+              <h2 class="text-xl font-semibold text-gray-900">
+                {{ $t('security.password.modalTitle') }}
+              </h2>
               <button
                 @click="handleClose"
                 class="text-gray-400 hover:text-gray-600 transition-colors"
                 aria-label="Fermer"
               >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -72,7 +78,9 @@
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
                     :placeholder="$t('security.password.newPasswordPlaceholder')"
                   />
-                  <p class="text-xs text-gray-500 mt-1">{{ $t('security.password.passwordHint') }}</p>
+                  <p class="text-xs text-gray-500 mt-1">
+                    {{ $t('security.password.passwordHint') }}
+                  </p>
                 </div>
 
                 <!-- Confirmation -->
@@ -86,11 +94,20 @@
                     required
                     minlength="6"
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
-                    :class="{ 'border-red-300': form.newPassword && form.confirmPassword && form.newPassword !== form.confirmPassword }"
+                    :class="{
+                      'border-red-300':
+                        form.newPassword &&
+                        form.confirmPassword &&
+                        form.newPassword !== form.confirmPassword
+                    }"
                     :placeholder="$t('security.password.confirmPasswordPlaceholder')"
                   />
                   <p
-                    v-if="form.newPassword && form.confirmPassword && form.newPassword !== form.confirmPassword"
+                    v-if="
+                      form.newPassword &&
+                      form.confirmPassword &&
+                      form.newPassword !== form.confirmPassword
+                    "
                     class="text-xs text-red-600 mt-1"
                   >
                     {{ $t('security.password.passwordMismatch') }}
@@ -101,8 +118,18 @@
               <!-- Message d'erreur visible (si nécessaire) -->
               <div v-if="errorMessage" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div class="flex items-start">
-                  <svg class="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    class="w-5 h-5 text-red-600 mr-2 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   <p class="text-sm text-red-700">{{ errorMessage }}</p>
                 </div>
@@ -120,14 +147,39 @@
                 </button>
                 <button
                   type="submit"
-                  :disabled="isSubmitting || (form.newPassword && form.confirmPassword && form.newPassword !== form.confirmPassword)"
+                  :disabled="
+                    isSubmitting ||
+                    (form.newPassword &&
+                      form.confirmPassword &&
+                      form.newPassword !== form.confirmPassword)
+                  "
                   class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
-                  <svg v-if="isSubmitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    v-if="isSubmitting"
+                    class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
-                  {{ isSubmitting ? $t('security.password.updating') : $t('security.password.updateButton') }}
+                  {{
+                    isSubmitting
+                      ? $t('security.password.updating')
+                      : $t('security.password.updateButton')
+                  }}
                 </button>
               </div>
             </form>
@@ -141,9 +193,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useI18n } from '@/composables/useLingui'
-import { supabase } from '@/lib/supabaseClient'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
+import { authApi } from '@/api'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -209,20 +261,16 @@ const handleSubmit = async () => {
   errorMessage.value = ''
 
   try {
-    // Vérifie d'abord que l'ancien mot de passe est correct
-    // en tentant une reconnexion
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: authStore.user?.email || '',
-      password: form.value.currentPassword
-    })
+    // Utilise l'API layer pour changer le mot de passe
+    const result = await authApi.changePassword(
+      authStore.user?.email || '',
+      form.value.currentPassword,
+      form.value.newPassword
+    )
 
-    if (signInError) {
-      // L'ancien mot de passe est incorrect
-      throw new Error(t('security.password.currentPasswordIncorrect'))
+    if (!result.success) {
+      throw new Error(result.message || t('security.password.changeError'))
     }
-
-    // Si la vérification réussit, met à jour le mot de passe via authStore
-    await authStore.updatePassword(form.value.newPassword)
 
     // Succès : réinitialise le formulaire et ferme le modal
     form.value = {
@@ -238,7 +286,7 @@ const handleSubmit = async () => {
     toastStore.success(t('security.password.changedSuccess'), {
       timeout: 5000 // 5 secondes pour que l'utilisateur le voie bien
     })
-    
+
     // Note: Supabase envoie automatiquement un email de confirmation
     // si le template "Password Changed Notification" est activé dans le dashboard
 
@@ -246,19 +294,18 @@ const handleSubmit = async () => {
     setTimeout(() => {
       handleClose()
     }, 100)
-
   } catch (error) {
     console.error('Erreur lors du changement de mot de passe:', error)
-    
+
     // Gestion des erreurs spécifiques
     let message = error.message || t('security.password.changeError')
-    
+
     if (error.message?.includes('same')) {
       message = t('security.password.samePassword')
     } else if (error.message?.includes('weak') || error.message?.includes('strength')) {
       message = t('security.password.passwordTooWeak')
     }
-    
+
     // Affiche le message d'erreur dans le formulaire et dans un toast
     errorMessage.value = message
     toastStore.error(message, {
@@ -281,4 +328,3 @@ const handleSubmit = async () => {
   opacity: 0;
 }
 </style>
-

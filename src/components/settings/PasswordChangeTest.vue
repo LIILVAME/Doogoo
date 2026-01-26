@@ -692,10 +692,19 @@ const runAllTests = async () => {
 
 <style scoped>
 .test-item {
-  @apply p-3 bg-white rounded-lg border border-gray-200;
+  padding: 0.75rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
 }
 
 .test-icon {
-  @apply w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 </style>

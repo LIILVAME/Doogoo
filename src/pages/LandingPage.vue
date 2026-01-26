@@ -1535,7 +1535,15 @@ button,
 }
 
 /* Propal-style Hero Headlines */
-/* Britti Sans Font - Add font files to /public/fonts/ or use CDN */
+/* Britti Sans Font - Commenté car les fichiers ne sont pas présents
+   Utilise Space Grotesk comme fallback (déjà chargée via Google Fonts)
+   
+   Pour activer Britti Sans, ajoutez les fichiers dans /public/fonts/ :
+   - BrittiSans-Regular.woff2
+   - BrittiSans-Regular.woff
+   - BrittiSans-Bold.woff2
+   - BrittiSans-Bold.woff
+   
 @font-face {
   font-family: 'Britti Sans';
   src:
@@ -1555,8 +1563,9 @@ button,
   font-style: normal;
   font-display: swap;
 }
+*/
 
-/* Apply Britti Sans to all headings */
+/* Apply Space Grotesk to all headings (Britti Sans non disponible) */
 h1,
 h2,
 h3,
@@ -1564,7 +1573,6 @@ h4,
 h5,
 h6 {
   font-family:
-    'Britti Sans',
     'Space Grotesk',
     -apple-system,
     BlinkMacSystemFont,
@@ -1585,7 +1593,6 @@ h6 {
   justify-content: center;
   gap: 0.25em;
   font-family:
-    'Britti Sans',
     'Space Grotesk',
     -apple-system,
     BlinkMacSystemFont,

@@ -136,6 +136,7 @@ src/
 **Rôle** : Gestion centralisée des erreurs API
 
 **Utilisation** :
+
 ```javascript
 import { withErrorHandling } from '@/utils/apiErrorHandler'
 
@@ -152,6 +153,7 @@ export async function getProperties(userId) {
 ```
 
 **Fonctionnalités** :
+
 - ✅ Timeout automatique (8s par défaut)
 - ✅ Retry logic pour erreurs réseau
 - ✅ Circuit breaker intégré
@@ -168,16 +170,19 @@ export async function getProperties(userId) {
 **Rôle** : Circuit breaker UX - Modal affiché lors d'erreurs réseau/timeout
 
 **Déclenchement** :
+
 - Automatique via `apiErrorHandler.js` (ligne 86-96)
 - Via `errorStore.triggerNetworkError(message, context)`
 
 **Comportement** :
+
 - ✅ Affichage automatique en cas d'erreur réseau
 - ✅ Bouton "Réessayer" qui recharge la page
 - ✅ Vérification de connexion avant retry
 - ✅ Auto-dismiss si connexion rétablie
 
 **Intégration** :
+
 ```vue
 <!-- Dans App.vue ou layout principal -->
 <NetworkErrorModal />
@@ -190,6 +195,7 @@ export async function getProperties(userId) {
 **Rôle** : ⚠️ **COMPOSANT OBLIGATOIRE** pour afficher des KPI/cartes statistiques
 
 **Utilisation** :
+
 ```vue
 <template>
   <StatsGrid :stats="stats" />
@@ -206,19 +212,21 @@ const stats = [
     glowColor: 'bg-violet-500/10',
     iconBgColor: 'bg-violet-500/10',
     iconColor: 'text-violet-200'
-  },
+  }
   // ...
 ]
 </script>
 ```
 
 **⚠️ RÈGLE D'OR** : Ne jamais créer de carte KPI sans utiliser `StatsGrid`. Cela garantit :
+
 - ✅ Cohérence visuelle
 - ✅ Responsive design
 - ✅ Accessibilité
 - ✅ Animations standardisées
 
 **Fichiers utilisant StatsGrid** :
+
 - `src/pages/DashboardPage.vue`
 - `src/pages/BiensPage.vue`
 
@@ -231,6 +239,7 @@ const stats = [
 **Solution** : Conversion automatique dans `src/api/properties.js`
 
 **Exemples de mappings** :
+
 ```javascript
 // Backend → Frontend (dans propertiesStore.ts, transformPropertyData)
 DB: surface_m2      → Frontend: surface
@@ -247,11 +256,13 @@ Frontend: chargesAmount → DB: charges_amount
 ```
 
 **⚠️ NE JAMAIS** :
+
 - ❌ Importer `supabaseClient` directement dans un `.vue`
 - ❌ Faire le mapping manuellement dans un composant
 - ❌ Utiliser les noms de colonnes DB dans les composants
 
 **✅ TOUJOURS** :
+
 - ✅ Utiliser les fonctions de l'API layer (`src/api/`)
 - ✅ Laisser le store gérer les transformations
 - ✅ Utiliser les types TypeScript (`PropertyData`, `CreatePropertyData`)
@@ -260,34 +271,62 @@ Frontend: chargesAmount → DB: charges_amount
 
 ### 5. Realtime Subscriptions (Supabase Realtime)
 
+**⚠️ EXCEPTION ARCHITECTURALE** : Les stores importent directement `supabaseClient` pour les subscriptions Realtime.
+
+**Justification** :
+
+- Les subscriptions Realtime nécessitent le client Supabase directement
+- L'API layer standard ne peut pas gérer les subscriptions en temps réel
+- Les stores sont la couche autorisée à utiliser l'API layer, donc cette exception est acceptable
+
+**Fichiers concernés** :
+
+- `src/stores/propertiesStore.ts` (ligne 3, 818)
+- `src/stores/paymentsStore.ts` (ligne 3, 527)
+- `src/stores/tenantsStore.ts` (probablement)
+
 **Implémentation** : `src/stores/propertiesStore.ts` (lignes 788-940)
 
 **Pattern** :
+
 ```typescript
+// ⚠️ Exception : Import direct de supabaseClient pour Realtime
+import { supabase } from '@/lib/supabaseClient'
+
 const initRealtime = () => {
   const channel = supabase
     .channel('public:properties')
-    .on('postgres_changes', {
-      event: '*',  // INSERT, UPDATE, DELETE
-      schema: 'public',
-      table: 'properties',
-      filter: `user_id=eq.${userId}`
-    }, async (payload) => {
-      // Handle INSERT/UPDATE/DELETE
-      // Recharger via API pour avoir les relations (tenants)
-    })
+    .on(
+      'postgres_changes',
+      {
+        event: '*', // INSERT, UPDATE, DELETE
+        schema: 'public',
+        table: 'properties',
+        filter: `user_id=eq.${userId}`
+      },
+      async payload => {
+        // Handle INSERT/UPDATE/DELETE
+        // Recharger via API pour avoir les relations (tenants)
+        const result = await propertiesApi.getPropertyById(payload.new.id, userId)
+        // ...
+      }
+    )
     .subscribe()
 }
 ```
 
 **Avantages** :
+
 - ✅ Synchronisation automatique entre onglets
 - ✅ Pas de polling nécessaire
 - ✅ Updates en temps réel
 
 **Gestion d'erreurs** :
+
 - Reconnexion automatique après 5s si erreur
 - Cleanup automatique si utilisateur déconnecté
+
+**⚠️ RÈGLE** : Cette exception est **UNIQUEMENT** autorisée pour les subscriptions Realtime dans les stores. Toutes les autres opérations (CRUD) doivent passer par l'API layer.
 
 ---
 
@@ -296,21 +335,23 @@ const initRealtime = () => {
 **Implémentation** : `src/stores/propertiesStore.ts` (addProperty, updateProperty, removeProperty)
 
 **Pattern** :
+
 ```typescript
-const addProperty = async (data) => {
+const addProperty = async data => {
   // 1. Optimistic update (ajoute immédiatement à la liste)
   const optimistic = { id: 'temp-xxx', ...data }
   properties.value.unshift(optimistic)
-  
+
   // 2. Appel API
   const result = await propertiesApi.createProperty(data, userId)
-  
+
   // 3. Si succès : remplace le temp par le vrai
   // Si échec : revert l'optimistic update
 }
 ```
 
 **Avantages** :
+
 - ✅ UX fluide (pas d'attente)
 - ✅ Revert automatique en cas d'erreur
 
@@ -320,28 +361,28 @@ const addProperty = async (data) => {
 
 ### Dependencies principales (package.json)
 
-| Package | Version | Usage |
-|---------|---------|-------|
-| `vue` | `^3.4.21` | Framework principal |
-| `pinia` | `^3.0.3` | State management |
-| `@supabase/supabase-js` | `^2.78.0` | Backend (DB, Auth, Realtime) |
-| `vue-router` | `^4.3.0` | Routing |
-| `tailwindcss` | `^3.4.3` | Styling (utility-first) |
-| `@vueuse/core` | `^14.0.0` | Composables utilitaires |
-| `zod` | `^4.1.12` | Validation de schémas |
-| `pinia-plugin-persistedstate` | `^4.5.0` | Persistance localStorage |
-| `lucide-vue-next` | `^0.554.0` | Icônes |
-| `apexcharts` | `^5.3.5` | Graphiques |
+| Package                       | Version    | Usage                        |
+| ----------------------------- | ---------- | ---------------------------- |
+| `vue`                         | `^3.4.21`  | Framework principal          |
+| `pinia`                       | `^3.0.3`   | State management             |
+| `@supabase/supabase-js`       | `^2.78.0`  | Backend (DB, Auth, Realtime) |
+| `vue-router`                  | `^4.3.0`   | Routing                      |
+| `tailwindcss`                 | `^3.4.3`   | Styling (utility-first)      |
+| `@vueuse/core`                | `^14.0.0`  | Composables utilitaires      |
+| `zod`                         | `^4.1.12`  | Validation de schémas        |
+| `pinia-plugin-persistedstate` | `^4.5.0`   | Persistance localStorage     |
+| `lucide-vue-next`             | `^0.554.0` | Icônes                       |
+| `apexcharts`                  | `^5.3.5`   | Graphiques                   |
 
 ### DevDependencies principales
 
-| Package | Version | Usage |
-|---------|---------|-------|
-| `vite` | `^7.2.4` | Build tool |
-| `typescript` | `^5.9.3` | Type checking (cible refactor) |
-| `vitest` | `^4.0.6` | Testing |
-| `@vue/test-utils` | `^2.4.6` | Testing Vue components |
-| `eslint` | `^9.39.0` | Linting |
+| Package           | Version   | Usage                          |
+| ----------------- | --------- | ------------------------------ |
+| `vite`            | `^7.2.4`  | Build tool                     |
+| `typescript`      | `^5.9.3`  | Type checking (cible refactor) |
+| `vitest`          | `^4.0.6`  | Testing                        |
+| `@vue/test-utils` | `^2.4.6`  | Testing Vue components         |
+| `eslint`          | `^9.39.0` | Linting                        |
 
 ---
 
@@ -352,6 +393,7 @@ const addProperty = async (data) => {
 **Règle** : Ne jamais logger de données utilisateur brutes (adresses, noms, emails, etc.)
 
 **Utilisation** :
+
 ```javascript
 import { sanitizeObject } from '@/utils/sanitizeLogs'
 
@@ -361,6 +403,7 @@ console.error('Erreur:', sanitizeObject(errorObj, ['message']))
 ### Row Level Security (RLS)
 
 Toutes les tables (sauf `currency`) ont RLS activé. Les politiques garantissent :
+
 - ✅ Accès uniquement aux données de l'utilisateur connecté
 - ✅ Filtrage automatique par `user_id`
 - ✅ Protection contre les accès non autorisés
@@ -371,12 +414,12 @@ Toutes les tables (sauf `currency`) ont RLS activé. Les politiques garantissent
 
 ### Palette de couleurs (Tailwind)
 
-| Couleur | Usage | Classes |
-|---------|-------|---------|
-| Primary | Actions principales | `indigo-500` (#6366f1) |
+| Couleur | Usage                 | Classes                 |
+| ------- | --------------------- | ----------------------- |
+| Primary | Actions principales   | `indigo-500` (#6366f1)  |
 | Success | Succès, confirmations | `emerald-500` (#10b981) |
-| Warning | Avertissements | `amber-500` (#f59e0b) |
-| Danger | Erreurs, suppressions | `red-500` (#ef4444) |
+| Warning | Avertissements        | `amber-500` (#f59e0b)   |
+| Danger  | Erreurs, suppressions | `red-500` (#ef4444)     |
 
 ### Composants UI réutilisables
 

@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { propertySchema, tenantSchema, paymentSchema, loginSchema, signupSchema, changePasswordSchema, validate } from '@/utils/validators'
+import {
+  propertySchema,
+  tenantSchema,
+  paymentSchema,
+  loginSchema,
+  signupSchema,
+  changePasswordSchema,
+  validate
+} from '@/utils/validators'
 
 describe('Validators', () => {
   describe('propertySchema', () => {
@@ -58,7 +66,9 @@ describe('Validators', () => {
         propertyId: '123e4567-e89b-12d3-a456-426614174000',
         entryDate: '2024-01-01',
         rent: 1200,
-        status: 'on_time'
+        status: 'on_time',
+        birthDate: '1990-01-01',
+        birthPlace: 'Paris'
       }
       const result = validate(tenantSchema, data)
       expect(result.success).toBe(true)
@@ -183,4 +193,3 @@ describe('Validators', () => {
     })
   })
 })
-

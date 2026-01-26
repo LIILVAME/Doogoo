@@ -3,13 +3,20 @@
     <Transition name="modal">
       <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto" @click.self="$emit('close')">
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="$emit('close')"></div>
+        <div
+          class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+          @click="$emit('close')"
+        ></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
           <div
+            ref="modalRef"
             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg max-h-[90vh] overflow-y-auto mx-4 md:mx-auto"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="'modal-title'"
           >
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
@@ -67,7 +74,10 @@
 </template>
 
 <script setup>
-defineProps({
+import { toRef } from 'vue'
+import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
+
+const props = defineProps({
   show: {
     type: Boolean,
     required: true
@@ -91,6 +101,9 @@ defineProps({
 })
 
 defineEmits(['close', 'confirm'])
+
+// Focus trap pour accessibilité
+const { modalRef } = useModalFocusTrap(toRef(() => props.show))
 </script>
 
 <style scoped>

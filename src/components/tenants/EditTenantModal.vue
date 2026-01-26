@@ -12,8 +12,12 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
+            ref="modalRef"
             class="relative w-full max-w-md mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="'edit-tenant-modal-title'"
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
@@ -35,7 +39,9 @@
                     />
                   </svg>
                 </div>
-                <h2 class="text-xl font-semibold text-white">{{ $t('tenants.editTenant') }}</h2>
+                <h2 id="edit-tenant-modal-title" class="text-xl font-semibold text-white">
+                  {{ $t('tenants.editTenant') }}
+                </h2>
               </div>
               <button
                 @click="handleClose"
@@ -278,11 +284,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, toRef } from 'vue'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { formatCurrency } from '@/utils/formatters'
 import { PAYMENT_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import TenantDocuments from './TenantDocuments.vue'
+import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 
 const props = defineProps({
   isOpen: {
@@ -304,6 +311,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'submit'])
+
+// Focus trap pour accessibilité
+const { modalRef } = useModalFocusTrap(toRef(() => props.isOpen))
 
 const settingsStore = useSettingsStore()
 

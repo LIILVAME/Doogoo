@@ -10,178 +10,296 @@
     <!-- Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-zinc-950/50 backdrop-blur-xl border-r border-white/5 transition-all duration-300 ease-in-out h-screen shadow-xl md:relative md:translate-x-0',
-        isOpen || isDesktop
-          ? 'translate-x-0'
-          : '-translate-x-full'
+        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-zinc-950/95 backdrop-blur-xl border-r border-white/10 transition-all duration-300 ease-in-out h-screen shadow-2xl md:relative md:translate-x-0 flex flex-col',
+        isOpen || isDesktop ? 'translate-x-0' : '-translate-x-full'
       ]"
-      style="overflow-y: hidden !important; overflow-x: visible !important;"
+      style="overflow: hidden"
     >
-      <!-- Header (fixe en haut avec position absolute) -->
-      <div class="absolute top-0 left-0 w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-white/5 bg-zinc-950/50 z-10" style="overflow-x: visible !important;">
+      <!-- Header (fixe en haut) -->
+      <div
+        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl z-10"
+      >
         <router-link
           to="/dashboard"
-          class="flex items-center gap-3 md:flex-col md:items-center"
+          class="flex items-center gap-3 md:flex-col md:items-center group/logo transition-transform duration-200 hover:scale-105"
           aria-label="Doogoo - Retour au tableau de bord"
         >
-          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
-            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <div
+            class="relative w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/30 transition-all duration-300 group-hover/logo:shadow-violet-500/50 group-hover/logo:scale-110"
+          >
+            <svg
+              class="w-5 h-5 text-white transition-transform duration-300 group-hover/logo:rotate-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
+            <!-- Glow effect -->
+            <div
+              class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md opacity-0 group-hover/logo:opacity-100 transition-opacity duration-300"
+            ></div>
           </div>
-          <h1 class="text-2xl font-bold text-white tracking-tight hidden md:hidden">Doogoo</h1>
+          <h1
+            class="text-2xl font-bold text-white tracking-tight hidden md:hidden transition-colors duration-200 group-hover/logo:text-violet-300"
+          >
+            Doogoo
+          </h1>
         </router-link>
       </div>
 
-      <!-- Menu (scrollable au milieu avec position absolute) -->
-      <nav class="absolute top-20 w-full px-4 md:px-0 py-6 md:py-6 space-y-4 md:space-y-2 flex flex-col md:items-center" style="overflow-y: hidden !important; overflow-x: visible !important; bottom: 120px;">
+      <!-- Menu (flexible, sans scroll) -->
+      <nav
+        class="flex-1 w-full px-4 md:px-0 py-4 md:py-3 space-y-4 md:space-y-2 flex flex-col md:items-center overflow-hidden min-h-0"
+      >
         <!-- Section: GESTION -->
-        <div class="w-full md:w-auto" style="overflow-x: visible !important;">
-          <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-1.5 px-4 md:hidden tracking-wide">Gestion</h2>
-          <div class="space-y-0.5 md:space-y-2">
+        <div class="w-full md:w-auto">
+          <h2
+            class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 md:hidden tracking-wide"
+          >
+            Gestion
+          </h2>
+          <div class="space-y-0.5 md:space-y-1.5">
             <router-link
               v-for="item in gestionItems"
               :key="item.name"
               :to="item.path"
-              @click="closeSidebar"
-              class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2 md:py-0 rounded-xl transition-all duration-200 overflow-visible"
+              @click="handleNavClick"
+              class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
               :class="[
                 isActive(item.path)
-                  ? 'bg-indigo-500/20 text-indigo-400 md:bg-indigo-500/20 md:text-indigo-400'
-                  : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200 md:hover:bg-white/10 md:hover:text-white'
+                  ? 'bg-gradient-to-r from-violet-500/20 to-indigo-500/20 text-violet-300 md:bg-violet-500/20 md:text-violet-300 shadow-lg shadow-violet-500/10'
+                  : 'text-zinc-400 hover:bg-white/10 hover:text-white md:hover:bg-white/10 md:hover:text-white md:hover:scale-110'
               ]"
             >
-              <!-- Indicateur actif (mobile uniquement) -->
-              <div v-if="isActive(item.path)" class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-500 rounded-r-full md:hidden"></div>
-              
-              <!-- Icône -->
-              <i :class="[item.iconClass, 'text-xl']"></i>
-              
-              <!-- Texte (mobile uniquement) -->
-              <span class="font-medium flex-1 md:hidden ml-3">{{ item.name }}</span>
+              <!-- Indicateur actif (mobile) -->
+              <div
+                v-if="isActive(item.path)"
+                class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full md:hidden shadow-lg shadow-violet-500/50"
+              ></div>
 
-              <!-- Tooltip (desktop uniquement) -->
-              <span class="absolute left-full ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-xl">
-                {{ item.name }}
-              </span>
+              <!-- Indicateur actif (desktop - glow) -->
+              <div
+                v-if="isActive(item.path)"
+                class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md md:block hidden"
+              ></div>
+
+              <!-- Icône avec animation -->
+              <i
+                :class="[
+                  item.iconClass,
+                  'text-xl relative z-10 transition-transform duration-300',
+                  isActive(item.path) ? 'scale-110' : 'group-hover:scale-110'
+                ]"
+              ></i>
+
+              <!-- Texte (mobile uniquement) -->
+              <span class="font-medium flex-1 md:hidden ml-3 relative z-10">{{ item.name }}</span>
+
+              <!-- Tooltip amélioré (desktop uniquement) -->
+              <div
+                class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-2xl border border-white/10"
+              >
+                <span>{{ item.name }}</span>
+                <!-- Flèche -->
+                <div
+                  class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
+                ></div>
+              </div>
             </router-link>
           </div>
         </div>
 
         <!-- Section: ANALYSE -->
-        <div class="border-t border-white/5 pt-4 md:pt-2 w-full md:w-auto" style="overflow-x: visible !important;">
-          <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-1.5 px-4 md:hidden tracking-wide">Analyse</h2>
-          <div class="space-y-0.5 md:space-y-2">
-            <router-link
-              v-for="item in analyseItems"
-              :key="item.name"
-              :to="item.path"
-              @click="closeSidebar"
-              class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2 md:py-0 rounded-xl transition-all duration-200 overflow-visible"
-              :class="[
-                isActive(item.path)
-                  ? 'bg-indigo-500/20 text-indigo-400 md:bg-indigo-500/20 md:text-indigo-400'
-                  : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200 md:hover:bg-white/10 md:hover:text-white'
-              ]"
+        <div class="relative w-full md:w-auto">
+          <!-- Séparateur élégant -->
+          <div
+            class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent md:hidden"
+          ></div>
+          <div class="pt-4 md:pt-2">
+            <h2
+              class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 md:hidden tracking-wide"
             >
-              <!-- Indicateur actif (mobile uniquement) -->
-              <div v-if="isActive(item.path)" class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-500 rounded-r-full md:hidden"></div>
-              
-              <!-- Icône -->
-              <i :class="[item.iconClass, 'text-xl']"></i>
-              
-              <!-- Texte (mobile uniquement) -->
-              <span class="font-medium flex-1 md:hidden ml-3">{{ item.name }}</span>
-              
-              <!-- Badge alertes (mobile) -->
-              <span
-                v-if="item.path === '/alertes' && activeAlertsCount > 0"
-                class="ml-2 md:hidden px-2.5 py-1 text-sm font-bold text-white bg-danger-500 rounded-full min-w-[28px] h-6 flex items-center justify-center shadow-sm shadow-danger-500/20 animate-pulse"
+              Analyse
+            </h2>
+            <div class="space-y-0.5 md:space-y-1.5">
+              <router-link
+                v-for="item in analyseItems"
+                :key="item.name"
+                :to="item.path"
+                @click="handleNavClick"
+                class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
+                :class="[
+                  isActive(item.path)
+                    ? 'bg-gradient-to-r from-violet-500/20 to-indigo-500/20 text-violet-300 md:bg-violet-500/20 md:text-violet-300 shadow-lg shadow-violet-500/10'
+                    : 'text-zinc-400 hover:bg-white/10 hover:text-white md:hover:bg-white/10 md:hover:text-white md:hover:scale-110'
+                ]"
               >
-                {{ activeAlertsCount > 99 ? '99+' : activeAlertsCount }}
-              </span>
-              
-              <!-- Badge alertes (desktop - position absolue) -->
-              <span
-                v-if="item.path === '/alertes' && activeAlertsCount > 0"
-                class="absolute -top-1 -right-1 md:block hidden px-1.5 py-0.5 text-xs font-bold text-white bg-danger-500 rounded-full min-w-[20px] h-5 flex items-center justify-center shadow-sm shadow-danger-500/20 animate-pulse"
-              >
-                {{ activeAlertsCount > 99 ? '99+' : activeAlertsCount }}
-              </span>
+                <!-- Indicateur actif (mobile) -->
+                <div
+                  v-if="isActive(item.path)"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full md:hidden shadow-lg shadow-violet-500/50"
+                ></div>
 
-              <!-- Tooltip simple (desktop uniquement) -->
-              <span class="absolute left-full ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-xl">
-                {{ item.name }}
-              </span>
-            </router-link>
+                <!-- Indicateur actif (desktop - glow) -->
+                <div
+                  v-if="isActive(item.path)"
+                  class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md md:block hidden"
+                ></div>
+
+                <!-- Icône avec animation -->
+                <i
+                  :class="[
+                    item.iconClass,
+                    'text-xl relative z-10 transition-transform duration-300',
+                    isActive(item.path) ? 'scale-110' : 'group-hover:scale-110'
+                  ]"
+                ></i>
+
+                <!-- Texte (mobile uniquement) -->
+                <span class="font-medium flex-1 md:hidden ml-3 relative z-10">{{ item.name }}</span>
+
+                <!-- Badge alertes amélioré (mobile) -->
+                <span
+                  v-if="item.path === '/alertes' && activeAlertsCount > 0"
+                  class="ml-2 md:hidden px-2.5 py-1 text-xs font-bold text-white bg-gradient-to-r from-danger-500 to-red-600 rounded-full min-w-[28px] h-6 flex items-center justify-center shadow-lg shadow-danger-500/30 relative z-10 animate-pulse"
+                >
+                  {{ activeAlertsCount > 99 ? '99+' : activeAlertsCount }}
+                  <!-- Glow effect -->
+                  <div class="absolute inset-0 rounded-full bg-danger-500/30 blur-sm"></div>
+                </span>
+
+                <!-- Badge alertes amélioré (desktop) -->
+                <span
+                  v-if="item.path === '/alertes' && activeAlertsCount > 0"
+                  class="absolute -top-1 -right-1 md:block hidden px-1.5 py-0.5 text-[10px] font-bold text-white bg-gradient-to-r from-danger-500 to-red-600 rounded-full min-w-[18px] h-[18px] flex items-center justify-center shadow-lg shadow-danger-500/30 relative z-10 animate-pulse"
+                >
+                  {{ activeAlertsCount > 99 ? '99+' : activeAlertsCount }}
+                  <!-- Glow effect -->
+                  <div class="absolute inset-0 rounded-full bg-danger-500/30 blur-sm"></div>
+                </span>
+
+                <!-- Tooltip amélioré (desktop uniquement) -->
+                <div
+                  class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-2xl border border-white/10"
+                >
+                  <span>{{ item.name }}</span>
+                  <!-- Flèche -->
+                  <div
+                    class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
+                  ></div>
+                </div>
+              </router-link>
+            </div>
           </div>
         </div>
 
         <!-- Section: COMPTE -->
-        <div class="border-t border-white/5 pt-4 md:pt-2 w-full md:w-auto" style="overflow-x: visible !important;">
-          <h2 class="text-xs uppercase text-zinc-500 font-semibold mb-1.5 px-4 md:hidden tracking-wide">Compte</h2>
-          <div class="space-y-0.5 md:space-y-2">
-            <router-link
-              v-for="item in compteItems"
-              :key="item.name"
-              :to="item.path"
-              @click="closeSidebar"
-              class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2 md:py-0 rounded-xl transition-all duration-200 overflow-visible"
-              :class="[
-                isActive(item.path)
-                  ? 'bg-indigo-500/20 text-indigo-400 md:bg-indigo-500/20 md:text-indigo-400'
-                  : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200 md:hover:bg-white/10 md:hover:text-white'
-              ]"
+        <div class="relative w-full md:w-auto">
+          <!-- Séparateur élégant -->
+          <div
+            class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent md:hidden"
+          ></div>
+          <div class="pt-4 md:pt-2">
+            <h2
+              class="text-xs uppercase text-zinc-500 font-semibold mb-2 px-4 md:hidden tracking-wide"
             >
-              <!-- Indicateur actif (mobile uniquement) -->
-              <div v-if="isActive(item.path)" class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-500 rounded-r-full md:hidden"></div>
-              
-              <!-- Icône -->
-              <i :class="[item.iconClass, 'text-xl']"></i>
-              
-              <!-- Texte (mobile uniquement) -->
-              <span class="font-medium flex-1 md:hidden ml-3">{{ item.name }}</span>
-
-              <!-- Menu déroulant Paramètres ou Tooltip simple -->
-              <template v-if="item.path === '/parametres'">
-                <!-- Menu déroulant Paramètres -->
+              Compte
+            </h2>
+            <div class="space-y-0.5 md:space-y-1.5">
+              <router-link
+                v-for="item in compteItems"
+                :key="item.name"
+                :to="item.path"
+                @click="handleNavClick"
+                @mouseenter="
+                  e => (item.path === '/parametres' ? handleFlyoutHover(e, 'parametres') : null)
+                "
+                @mouseleave="item.path === '/parametres' ? handleFlyoutLeave : null"
+                class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
+                :class="[
+                  isActive(item.path)
+                    ? 'bg-gradient-to-r from-violet-500/20 to-indigo-500/20 text-violet-300 md:bg-violet-500/20 md:text-violet-300 shadow-lg shadow-violet-500/10'
+                    : 'text-zinc-400 hover:bg-white/10 hover:text-white md:hover:bg-white/10 md:hover:text-white md:hover:scale-110'
+                ]"
+              >
+                <!-- Indicateur actif (mobile) -->
                 <div
-                  class="absolute left-full ml-4 z-50 bg-gray-900 rounded-lg shadow-xl py-2 min-w-[200px] opacity-0 group-hover:opacity-100 transition-all pointer-events-none group-hover:pointer-events-auto translate-x-2 group-hover:translate-x-0 hidden md:block"
+                  v-if="isActive(item.path)"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full md:hidden shadow-lg shadow-violet-500/50"
+                ></div>
+
+                <!-- Indicateur actif (desktop - glow) -->
+                <div
+                  v-if="isActive(item.path)"
+                  class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md md:block hidden"
+                ></div>
+
+                <!-- Icône avec animation -->
+                <i
+                  :class="[
+                    item.iconClass,
+                    'text-xl relative z-10 transition-transform duration-300',
+                    isActive(item.path) ? 'scale-110' : 'group-hover:scale-110'
+                  ]"
+                ></i>
+
+                <!-- Texte (mobile uniquement) -->
+                <span class="font-medium flex-1 md:hidden ml-3 relative z-10">{{ item.name }}</span>
+
+                <!-- Tooltip pour les items sans sous-menu (desktop uniquement) -->
+                <div
+                  v-if="item.path !== '/parametres'"
+                  class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-2xl border border-white/10"
                 >
-                  <router-link
-                    v-for="subPage in settingsSubPages"
-                    :key="subPage.id"
-                    :to="`/parametres?section=${subPage.id}`"
-                    @click="closeSidebar"
-                    class="block px-4 py-2.5 text-sm text-white hover:bg-gray-800 transition-colors cursor-pointer pointer-events-auto"
-                  >
-                    {{ subPage.label }}
-                  </router-link>
+                  <span>{{ item.name }}</span>
+                  <!-- Flèche -->
+                  <div
+                    class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
+                  ></div>
                 </div>
-              </template>
-              <!-- Tooltip simple pour les autres items -->
-              <span v-else class="absolute left-full ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-xl">
-                {{ item.name }}
-              </span>
-            </router-link>
+              </router-link>
+            </div>
           </div>
         </div>
       </nav>
 
+      <!-- Flyout Menu (Teleport) -->
+      <FlyoutMenu
+        :is-visible="activeFlyoutMenu !== null"
+        :items="flyoutMenuItems"
+        :icon-position="flyoutIconPosition"
+        :sidebar-width="isDesktop ? 80 : 256"
+        @close="closeFlyoutMenu"
+        @item-click="handleFlyoutItemClick"
+      />
 
-      <!-- Footer (fixe en bas avec position absolute) -->
-      <div class="absolute bottom-0 left-0 w-full border-t border-white/5 bg-zinc-950/50 z-10 flex items-center justify-center md:flex-col px-4 md:px-0" style="overflow-x: visible !important; padding-top: 1.25rem; padding-bottom: 1.5rem; min-height: 100px;">
+      <!-- Footer (fixe en bas) -->
+      <div
+        class="flex-none w-full border-t border-white/10 bg-zinc-950/80 backdrop-blur-xl z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
+      >
         <!-- Mobile: Layout complet -->
         <div class="flex items-center gap-3 w-full md:hidden">
-          <!-- Avatar utilisateur -->
-          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
+          <!-- Avatar utilisateur amélioré -->
+          <div
+            class="relative w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden ring-2 ring-violet-500/20 transition-all duration-300 hover:ring-violet-500/50 hover:scale-105"
+          >
             <img
               v-if="authStore.profile?.avatar_url"
               :src="authStore.profile.avatar_url"
               :alt="userName"
               class="w-full h-full object-cover"
             />
-            <span v-else>{{ userInitials }}</span>
+            <span v-else class="relative z-10">{{ userInitials }}</span>
+            <!-- Glow effect -->
+            <div
+              class="absolute inset-0 rounded-full bg-violet-500/20 blur-md opacity-0 hover:opacity-100 transition-opacity duration-300"
+            ></div>
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-white truncate">{{ userName }}</p>
@@ -196,9 +314,16 @@
                   <option value="fr" class="bg-zinc-900">🇫🇷 Français</option>
                   <option value="en" class="bg-zinc-900">🇺🇸 English</option>
                 </select>
-                <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
+                <div
+                  class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500"
+                >
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -216,7 +341,9 @@
                     d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                   />
                 </svg>
-                <span>{{ authStore.loading ? $t('sidebar.loggingOut') : $t('sidebar.logout') }}</span>
+                <span>{{
+                  authStore.loading ? $t('sidebar.loggingOut') : $t('sidebar.logout')
+                }}</span>
               </button>
             </div>
           </div>
@@ -228,33 +355,55 @@
           <div class="mb-2">
             <NotificationBell position="sidebar" />
           </div>
-          <!-- Avatar utilisateur -->
-          <div 
-            class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm relative group cursor-pointer overflow-hidden"
+          <!-- Avatar utilisateur amélioré -->
+          <div
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm relative group cursor-pointer overflow-hidden ring-2 ring-violet-500/20 transition-all duration-300 hover:ring-violet-500/50 hover:scale-110"
           >
             <img
               v-if="authStore.profile?.avatar_url"
               :src="authStore.profile.avatar_url"
               :alt="userName"
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover relative z-10"
             />
-            <span v-else>{{ userInitials }}</span>
-            <!-- Tooltip avec nom -->
-            <span class="absolute left-full ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 shadow-xl">
-              {{ userName }}
-            </span>
+            <span v-else class="relative z-10">{{ userInitials }}</span>
+            <!-- Glow effect -->
+            <div
+              class="absolute inset-0 rounded-full bg-violet-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            ></div>
+            <!-- Tooltip amélioré avec nom -->
+            <div
+              class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 shadow-2xl border border-white/10"
+            >
+              <span>{{ userName }}</span>
+              <!-- Flèche -->
+              <div
+                class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
+              ></div>
+            </div>
           </div>
-          <!-- Bouton Logout (icône uniquement) -->
+          <!-- Bouton Logout amélioré (icône uniquement) -->
           <button
             @click="handleLogout"
             :disabled="authStore.loading"
-            class="w-12 h-12 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed relative group"
+            class="w-12 h-12 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative group hover:scale-110"
           >
-            <i class="ri-logout-box-line text-xl"></i>
-            <!-- Tooltip -->
-            <span class="absolute left-full ml-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 shadow-xl">
-              {{ authStore.loading ? $t('sidebar.loggingOut') : $t('sidebar.logout') }}
-            </span>
+            <i
+              class="ri-logout-box-line text-xl relative z-10 transition-transform duration-300 group-hover:rotate-12"
+            ></i>
+            <!-- Glow effect -->
+            <div
+              class="absolute inset-0 rounded-xl bg-red-500/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            ></div>
+            <!-- Tooltip amélioré -->
+            <div
+              class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 shadow-2xl border border-white/10"
+            >
+              <span>{{ authStore.loading ? $t('sidebar.loggingOut') : $t('sidebar.logout') }}</span>
+              <!-- Flèche -->
+              <div
+                class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
+              ></div>
+            </div>
           </button>
         </div>
       </div>
@@ -270,6 +419,8 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useAlertsStore } from '@/stores/alertsStore'
 import NotificationBell from '@/components/common/NotificationBell.vue'
+import FlyoutMenu from '@/components/layout/FlyoutMenu.vue'
+import { hapticLight } from '@/composables/useHapticFeedback'
 
 const { t } = useI18n()
 const settingsStore = useSettingsStore()
@@ -280,6 +431,12 @@ const authStore = useAuthStore()
 const isScrollVisible = ref(true)
 const lastScrollY = ref(0)
 const isDesktop = ref(typeof window !== 'undefined' ? window.innerWidth >= 768 : false)
+
+// Flyout Menu State
+const activeFlyoutMenu = ref(null)
+const flyoutIconPosition = ref({ top: 0, left: 0 })
+let flyoutHoverTimeout = null
+let flyoutCloseTimeout = null
 
 // Les tooltips utilisent maintenant le pattern group Tailwind, plus besoin de gestion d'état JavaScript
 
@@ -314,8 +471,8 @@ const isOpenLocal = ref(false)
 
 // Computed pour unifier l'accès à l'état d'ouverture
 const isOpen = computed({
-  get: () => sidebarState ? sidebarState.isOpen.value : isOpenLocal.value,
-  set: (value) => {
+  get: () => (sidebarState ? sidebarState.isOpen.value : isOpenLocal.value),
+  set: value => {
     if (sidebarState) {
       sidebarState.setOpen(value)
     } else {
@@ -417,10 +574,18 @@ const closeSidebar = () => {
 }
 
 /**
+ * Gère le clic sur un item de navigation avec haptic feedback
+ */
+const handleNavClick = () => {
+  hapticLight()
+  closeSidebar()
+}
+
+/**
  * Gère l'événement de toggle depuis le header mobile
  * Défini en dehors de onMounted pour être accessible dans onUnmounted
  */
-const handleSidebarToggle = (event) => {
+const handleSidebarToggle = event => {
   isOpen.value = event.detail
 }
 
@@ -453,6 +618,10 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('sidebar-toggle', handleSidebarToggle)
+
+  // Nettoie les timeouts du flyout menu
+  if (flyoutHoverTimeout) clearTimeout(flyoutHoverTimeout)
+  if (flyoutCloseTimeout) clearTimeout(flyoutCloseTimeout)
 })
 
 // Section GESTION
@@ -509,25 +678,47 @@ const compteItems = computed(() => [
   }
 ])
 
-// Sous-pages des Paramètres
+// Sous-pages des Paramètres avec icônes
 const settingsSubPages = computed(() => [
   {
     id: 'general',
-    label: t('settings.sections.general')
+    label: t('settings.sections.general'),
+    icon: 'ri-user-settings-line',
+    path: '/parametres?section=general'
   },
   {
     id: 'notifications',
-    label: t('settings.sections.notifications')
+    label: t('settings.sections.notifications'),
+    icon: 'ri-notification-line',
+    path: '/parametres?section=notifications'
   },
   {
     id: 'security',
-    label: t('settings.sections.security')
+    label: t('settings.sections.security'),
+    icon: 'ri-shield-check-line',
+    path: '/parametres?section=security'
   },
   {
     id: 'language-currency',
-    label: t('settings.sections.languageCurrency')
+    label: t('settings.sections.languageCurrency'),
+    icon: 'ri-global-line',
+    path: '/parametres?section=language-currency'
+  },
+  {
+    id: 'theme',
+    label: t('settings.sections.theme'),
+    icon: 'ri-palette-line',
+    path: '/parametres?section=theme'
   }
 ])
+
+// Items du flyout menu (dynamique selon l'item survolé)
+const flyoutMenuItems = computed(() => {
+  if (activeFlyoutMenu.value === 'parametres') {
+    return settingsSubPages.value
+  }
+  return []
+})
 
 const handleLanguageChange = event => {
   settingsStore.setLanguage(event.target.value)
@@ -535,6 +726,71 @@ const handleLanguageChange = event => {
 
 const isActive = path => {
   return route.path === path || route.path.startsWith(path + '/')
+}
+
+/**
+ * Gère l'ouverture du flyout menu au hover
+ */
+const handleFlyoutHover = (event, menuId) => {
+  // Uniquement sur desktop
+  if (!isDesktop.value) return
+
+  // Annule toute fermeture programmée
+  if (flyoutCloseTimeout) {
+    clearTimeout(flyoutCloseTimeout)
+    flyoutCloseTimeout = null
+  }
+
+  // Debounce de 100ms pour éviter les clignotements
+  if (flyoutHoverTimeout) {
+    clearTimeout(flyoutHoverTimeout)
+  }
+
+  flyoutHoverTimeout = setTimeout(() => {
+    const target = event.currentTarget
+    const rect = target.getBoundingClientRect()
+
+    // Calcule la position du centre de l'icône
+    flyoutIconPosition.value = {
+      top: rect.top + rect.height / 2,
+      left: rect.left
+    }
+
+    activeFlyoutMenu.value = menuId
+  }, 100)
+}
+
+/**
+ * Gère la fermeture du flyout menu
+ */
+const handleFlyoutLeave = () => {
+  // Debounce de 150ms pour permettre le mouvement vers la modale
+  if (flyoutCloseTimeout) {
+    clearTimeout(flyoutCloseTimeout)
+  }
+
+  flyoutCloseTimeout = setTimeout(() => {
+    activeFlyoutMenu.value = null
+  }, 150)
+}
+
+/**
+ * Ferme le flyout menu
+ */
+const closeFlyoutMenu = () => {
+  if (flyoutCloseTimeout) {
+    clearTimeout(flyoutCloseTimeout)
+    flyoutCloseTimeout = null
+  }
+  activeFlyoutMenu.value = null
+}
+
+/**
+ * Gère le clic sur un item du flyout menu
+ */
+const handleFlyoutItemClick = () => {
+  closeSidebar()
+  closeFlyoutMenu()
 }
 
 /**
@@ -564,5 +820,23 @@ const handleLogout = async () => {
 </script>
 
 <style scoped>
-/* Styles pour tooltips via Tailwind group pattern - plus besoin de styles personnalisés */
+/* Animation pour les icônes au hover */
+@keyframes icon-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Respecte prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>

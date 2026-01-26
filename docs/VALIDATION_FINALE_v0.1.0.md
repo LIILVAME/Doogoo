@@ -19,12 +19,14 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 ### 1. Structure & Cohérence ✅
 
 #### Layout Uniforme
+
 - ✅ Toutes les pages utilisent le même layout flex (`Sidebar` + `main`)
 - ✅ Container centré identique : `max-w-7xl mx-auto`
 - ✅ Padding responsive cohérent : `px-6 pt-16 pb-8 md:px-10 md:pt-10 md:pb-10`
 - ✅ Sidebar fixe sur desktop (`lg:static`), overlay sur mobile
 
 #### Réutilisation des Composants
+
 - ✅ `PropertyCard` réutilisé dans Dashboard et BiensPage
 - ✅ `PaymentsSection` réutilisé dans Dashboard et PaiementsPage
 - ✅ `TenantInfo` réutilisé dans PropertyCard et LocatairesPage
@@ -32,6 +34,7 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 - ✅ `StatCard` pour les métriques
 
 #### Imports Cohérents
+
 - ✅ Alias `@/` utilisé partout (`@/utils/formatters`, `@/utils/constants`)
 - ✅ Chemins relatifs corrects pour composants
 - ✅ Aucune duplication d'import
@@ -41,6 +44,7 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 ### 2. Qualité du Code ✅
 
 #### Bonnes Pratiques Vue 3
+
 - ✅ **Aucun `v-if` avec `v-for`** (corrigé dans LocatairesPage)
 - ✅ `key` présent sur tous les `v-for`
 - ✅ Composition API (`<script setup>`) utilisée partout
@@ -48,11 +52,13 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 - ✅ Computed properties pour logique réactive
 
 #### Nettoyage Effectué
+
 - ✅ `console.log` remplacé par commentaire TODO v0.2.0
 - ✅ `alert()` gardé temporairement (TODO pour toast system)
 - ✅ Computed dans template optimisé (LocatairesPage empty state)
 
 #### Documentation
+
 - ✅ Fonctions commentées avec JSDoc
 - ✅ Logique métier expliquée
 - ✅ TODO marqués pour v0.2.0
@@ -62,22 +68,26 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 ### 3. UX / UI ✅
 
 #### Typographie Cohérente
-- ✅ Titres principaux : `text-3xl font-bold text-gray-900 mb-2`
-- ✅ Sous-titres : `text-gray-600`
+
+- ✅ Titres principaux : `text-3xl font-bold text-neutral-900 mb-2`
+- ✅ Sous-titres : `text-neutral-600`
 - ✅ Headers de sections : `text-xl font-semibold` ou `text-xl font-bold`
 
 #### Alignement et Espacements
+
 - ✅ Headers avec même structure sur toutes les pages
 - ✅ Marges verticales cohérentes (`mb-8` pour headers)
 - ✅ Grilles responsive bien gérées (1/2/3 colonnes)
 
 #### Empty States
+
 - ✅ **BiensPage** : Message clair avec icône SVG
 - ✅ **LocatairesPage** : Empty state optimisé (computed dans script)
 - ✅ **PaymentsSection** : Empty state intégré
 - ✅ Tous avec messages utiles et icônes
 
 #### Navigation Active
+
 - ✅ Sidebar : Classe active `bg-primary-50 text-primary-600`
 - ✅ Détection de route active fonctionnelle
 - ✅ Lien "Voir tout" dans PaymentsSection → `/paiements` (router-link)
@@ -87,18 +97,21 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 ### 4. Responsiveness ✅
 
 #### Mobile (< 1024px)
+
 - ✅ Sidebar en overlay avec menu hamburger
 - ✅ Contenu pleine largeur
 - ✅ Grilles 1 colonne
 - ✅ Padding adapté (`px-6 pt-16`)
 
 #### Desktop (≥ 1024px)
+
 - ✅ Sidebar statique dans flex
 - ✅ Contenu centré avec `max-w-7xl`
 - ✅ Grilles 2-3 colonnes
 - ✅ Padding confortable (`px-10 pt-10`)
 
 #### Transitions
+
 - ✅ Menu hamburger avec transition smooth
 - ✅ Overlay avec fade-in
 - ✅ Hover states sur boutons
@@ -108,16 +121,19 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 ### 5. Préparation v0.2.0 ✅
 
 #### Structure Prête pour API
+
 - ✅ Données mockées structurées et cohérentes
 - ✅ Props de composants compatibles avec données API
 - ✅ TODO marqués pour intégration API
 
 #### Compatibilité Pinia
+
 - ✅ Structure des données compatible avec stores
 - ✅ Computed properties isolables dans stores
 - ✅ Commentaires TODO pour migration Pinia
 
 #### Routes Prêtes pour Auth
+
 - ✅ Routes définies et fonctionnelles
 - ✅ Navigation protégée possible (à ajouter v0.2.0)
 - ✅ Structure compatible avec guards router
@@ -127,12 +143,15 @@ Le projet **Doogoo** est **stable, cohérent et prêt pour la montée en version
 ## 🔧 Micro-Optimisations Appliquées
 
 ### 1. ParametresPage.vue ✅
+
 **Avant** :
+
 ```javascript
 console.log('Paramètres sauvegardés:', form.value)
 ```
 
 **Après** :
+
 ```javascript
 // TODO v0.2.0 : Envoyer les données à l'API réelle
 // await apiService.updateUserSettings(form.value)
@@ -146,12 +165,15 @@ alert('Paramètres sauvegardés avec succès !')
 ---
 
 ### 2. LocatairesPage.vue ✅
+
 **Avant** :
+
 ```vue
 <div v-if="filteredProperties.filter(p => p.tenant).length === 0">
 ```
 
 **Après** :
+
 ```vue
 <div v-if="filteredProperties.length === 0">
 ```
@@ -161,12 +183,15 @@ alert('Paramètres sauvegardés avec succès !')
 ---
 
 ### 3. PaymentsSection.vue ✅
+
 **Avant** :
+
 ```vue
 <a href="#" class="...">Voir tout</a>
 ```
 
 **Après** :
+
 ```vue
 <router-link to="/paiements" class="...">Voir tout</router-link>
 ```
@@ -178,12 +203,14 @@ alert('Paramètres sauvegardés avec succès !')
 ## 📋 Checklist de Validation Finale
 
 ### Structure ✅
+
 - [x] Layout uniforme sur toutes les pages
 - [x] Sidebar responsive fonctionnelle
 - [x] Container centré cohérent
 - [x] Padding responsive adapté
 
 ### Code ✅
+
 - [x] Aucun `v-if` avec `v-for`
 - [x] Tous les `v-for` ont une `key`
 - [x] Imports propres et cohérents
@@ -192,6 +219,7 @@ alert('Paramètres sauvegardés avec succès !')
 - [x] Aucun `console.log` de production
 
 ### UX/UI ✅
+
 - [x] Typographie cohérente
 - [x] Espacements uniformes
 - [x] Empty states présents
@@ -199,12 +227,14 @@ alert('Paramètres sauvegardés avec succès !')
 - [x] Transitions fluides
 
 ### Responsive ✅
+
 - [x] Mobile : Sidebar overlay
 - [x] Desktop : Sidebar statique
 - [x] Grilles adaptatives
 - [x] Pas de débordement texte
 
 ### Préparation v0.2.0 ✅
+
 - [x] Structure prête pour API
 - [x] Compatible Pinia
 - [x] Routes prêtes pour auth
@@ -217,11 +247,13 @@ alert('Paramètres sauvegardés avec succès !')
 ### Priorité 1 : Intégration Backend
 
 #### 1. Installation et Configuration
+
 ```bash
 npm install pinia axios
 ```
 
 #### 2. Structure Recommandée
+
 ```
 src/
 ├── api/
@@ -241,6 +273,7 @@ src/
 ```
 
 #### 3. Migration Progressive
+
 1. Créer stores Pinia avec données mockées
 2. Migrer composants vers stores
 3. Remplacer mockData par appels API
@@ -252,6 +285,7 @@ src/
 ### Priorité 2 : Authentification Basique
 
 #### Option A : JWT (Backend dédié)
+
 ```javascript
 // stores/auth.js
 export const useAuthStore = defineStore('auth', {
@@ -260,7 +294,7 @@ export const useAuthStore = defineStore('auth', {
     token: localStorage.getItem('token'),
     isAuthenticated: false
   }),
-  
+
   actions: {
     async login(credentials) {
       const response = await apiService.login(credentials)
@@ -273,6 +307,7 @@ export const useAuthStore = defineStore('auth', {
 ```
 
 #### Option B : Supabase Auth
+
 ```javascript
 import { createClient } from '@supabase/supabase-js'
 
@@ -282,10 +317,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 ```
 
 #### Router Guards
+
 ```javascript
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
+
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else {
@@ -299,6 +335,7 @@ router.beforeEach((to, from, next) => {
 ### Priorité 3 : Améliorations UX
 
 #### 1. Système de Notifications Toast
+
 ```javascript
 // composables/useToast.js
 export function useToast() {
@@ -310,11 +347,13 @@ export function useToast() {
 ```
 
 #### 2. Loading States
+
 - Skeleton loaders pour données en chargement
 - Spinners sur actions asynchrones
 - Optimistic updates
 
 #### 3. Gestion d'Erreurs
+
 - Messages d'erreur utilisateur-friendly
 - Retry logic pour requêtes échouées
 - Fallback vers données mockées en dev
@@ -323,20 +362,21 @@ export function useToast() {
 
 ## 📈 Métriques de Stabilité
 
-| Critère | Score | Statut |
-|---------|-------|--------|
-| Structure & Layout | ⭐⭐⭐⭐⭐ | ✅ Parfait |
-| Qualité du Code | ⭐⭐⭐⭐⭐ | ✅ Excellent |
-| UX/UI Cohérence | ⭐⭐⭐⭐⭐ | ✅ Uniforme |
-| Responsive Design | ⭐⭐⭐⭐⭐ | ✅ Optimal |
-| Préparation v0.2.0 | ⭐⭐⭐⭐⭐ | ✅ Prêt |
-| **Moyenne** | **⭐⭐⭐⭐⭐** | **✅ STABLE** |
+| Critère            | Score          | Statut        |
+| ------------------ | -------------- | ------------- |
+| Structure & Layout | ⭐⭐⭐⭐⭐     | ✅ Parfait    |
+| Qualité du Code    | ⭐⭐⭐⭐⭐     | ✅ Excellent  |
+| UX/UI Cohérence    | ⭐⭐⭐⭐⭐     | ✅ Uniforme   |
+| Responsive Design  | ⭐⭐⭐⭐⭐     | ✅ Optimal    |
+| Préparation v0.2.0 | ⭐⭐⭐⭐⭐     | ✅ Prêt       |
+| **Moyenne**        | **⭐⭐⭐⭐⭐** | **✅ STABLE** |
 
 ---
 
 ## 🎯 Prochaines Étapes Immédiates
 
 ### Pour Développement Continu
+
 1. ✅ Commit final avec message :
    ```
    chore(audit): finalize v0.1.0 stable release — all pages validated and responsive
@@ -345,6 +385,7 @@ export function useToast() {
 3. ✅ Mettre à jour CHANGELOG.md avec version finale
 
 ### Pour v0.2.0
+
 1. Installer Pinia : `npm install pinia`
 2. Créer structure `stores/` et `api/`
 3. Migrer progressivement les données mockées
@@ -385,4 +426,3 @@ Le projet **Doogoo v0.1.0** est **stable, cohérent et prêt pour la production*
 **Document créé le** : Décembre 2024  
 **Validé par** : Audit technique complet  
 **Prochaine étape** : Migration vers v0.2.0 (Backend + Pinia)
-

@@ -1,182 +1,281 @@
 <template>
   <div class="max-w-md w-full">
-    <!-- Stepper Progress -->
-    <div class="flex justify-center mb-8">
-      <div v-for="i in 3" :key="i" class="mx-1">
-        <div 
-          :class="currentStep >= i ? 'bg-primary-500' : 'bg-zinc-700'"
-          class="w-12 h-1 rounded-full transition-colors duration-300"
+    <!-- Stepper Progress amélioré -->
+    <div class="flex justify-center mb-8 items-center gap-2">
+      <div v-for="i in 3" :key="i" class="flex items-center">
+        <div
+          :class="[
+            'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300',
+            currentStep >= i
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/30 scale-110'
+              : 'bg-zinc-700 text-zinc-400'
+          ]"
+        >
+          <svg
+            v-if="currentStep > i"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          <span v-else>{{ i }}</span>
+        </div>
+        <div
+          v-if="i < 3"
+          :class="[
+            'w-12 h-1 mx-1 rounded-full transition-all duration-300',
+            currentStep > i ? 'bg-primary-500' : 'bg-zinc-700'
+          ]"
         />
       </div>
     </div>
 
     <!-- Étape 1 : Ajouter Bien -->
-    <div v-if="currentStep === 1" class="space-y-6">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold text-white mb-2">Ajoutez votre premier bien</h2>
-        <p class="text-zinc-400">Pour commencer, renseignez simplement le nom et le loyer.</p>
-      </div>
-      
-      <form @submit.prevent="handleStep1Continue" class="space-y-4">
-        <div>
-          <label for="property-name" class="block text-sm font-medium text-zinc-300 mb-2">
-            Nom du bien <span class="text-danger-400">*</span>
-          </label>
-          <input
-            id="property-name"
-            v-model="formData.propertyName"
-            type="text"
-            :class="[
-              'w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none',
-              errors.propertyName ? 'border-danger-500' : 'border-zinc-700 focus:border-primary-500'
-            ]"
-            placeholder="Ex: Appartement Paris 15e"
-            autofocus
-          />
-          <p v-if="errors.propertyName" class="mt-1 text-sm text-danger-400">{{ errors.propertyName }}</p>
-        </div>
-        
-        <div>
-          <label for="property-rent" class="block text-sm font-medium text-zinc-300 mb-2">
-            {{ $t('properties.monthlyRent') }} ({{ CURRENCY_SYMBOLS[settingsStore?.currency] || '€' }}) <span class="text-danger-400">*</span>
-          </label>
-          <input
-            id="property-rent"
-            v-model="formData.propertyRent"
-            type="number"
-            step="0.01"
-            min="0"
-            :class="[
-              'w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none',
-              errors.propertyRent ? 'border-danger-500' : 'border-zinc-700 focus:border-primary-500'
-            ]"
-            placeholder="1200"
-          />
-          <p v-if="errors.propertyRent" class="mt-1 text-sm text-danger-400">{{ errors.propertyRent }}</p>
-          <p v-else class="mt-1 text-xs text-zinc-500">Montant hors charges</p>
+    <Transition name="step-fade" mode="out-in">
+      <div v-if="currentStep === 1" class="space-y-6">
+        <div class="text-center">
+          <div
+            class="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-primary-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white mb-2">Ajoutez votre premier bien</h2>
+          <p class="text-zinc-400">Pour commencer, renseignez simplement le nom et le loyer.</p>
         </div>
 
-        <p v-if="errors.general" class="p-4 bg-danger-500/10 border border-danger-500 rounded-xl text-danger-400 text-sm">
-          {{ errors.general }}
-        </p>
-        
-        <div class="flex gap-3">
-          <Button variant="primary" type="submit" :loading="loading" full-width>
-            Continuer
-          </Button>
-          <Button variant="ghost" @click="handleSkip" :disabled="loading">
-            Passer
-          </Button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Étape 2 : Locataire -->
-    <div v-if="currentStep === 2" class="space-y-6">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold text-white mb-2">Ce bien est-il occupé ?</h2>
-        <p class="text-zinc-400">Ajoutez un locataire si le bien est déjà loué.</p>
-      </div>
-      
-      <div class="grid grid-cols-2 gap-4">
-        <button
-          type="button"
-          @click="formData.hasTenant = false"
-          :class="[
-            'p-4 rounded-xl border-2 transition-all duration-200',
-            formData.hasTenant === false
-              ? 'border-primary-500 bg-primary-500/10 text-white shadow-lg shadow-primary-500/20' 
-              : 'border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-900/50'
-          ]"
-        >
-          <div class="text-4xl mb-2">🏠</div>
-          <div class="font-medium text-sm">Bien libre</div>
-        </button>
-        
-        <button
-          type="button"
-          @click="formData.hasTenant = true"
-          :class="[
-            'p-4 rounded-xl border-2 transition-all duration-200',
-            formData.hasTenant === true
-              ? 'border-primary-500 bg-primary-500/10 text-white shadow-lg shadow-primary-500/20' 
-              : 'border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-900/50'
-          ]"
-        >
-          <div class="text-4xl mb-2">👤</div>
-          <div class="font-medium text-sm">J'ai un locataire</div>
-        </button>
-      </div>
-
-      <transition name="slide-fade">
-        <form v-if="formData.hasTenant === true" @submit.prevent="handleStep2Continue" class="space-y-4">
+        <form @submit.prevent="handleStep1Continue" class="space-y-4">
           <div>
-            <label for="tenant-name" class="block text-sm font-medium text-zinc-300 mb-2">
-              Nom du locataire
+            <label for="property-name" class="block text-sm font-medium text-zinc-300 mb-2">
+              Nom du bien <span class="text-danger-400">*</span>
             </label>
             <input
-              id="tenant-name"
-              v-model="formData.tenantName"
+              id="property-name"
+              v-model="formData.propertyName"
               type="text"
               :class="[
                 'w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none',
-                errors.tenantName ? 'border-danger-500' : 'border-zinc-700 focus:border-primary-500'
+                errors.propertyName
+                  ? 'border-danger-500'
+                  : 'border-zinc-700 focus:border-primary-500'
               ]"
-              placeholder="Ex: Jean Dupont"
+              placeholder="Ex: Appartement Paris 15e"
+              autofocus
             />
-            <p v-if="errors.tenantName" class="mt-1 text-sm text-danger-400">{{ errors.tenantName }}</p>
+            <p v-if="errors.propertyName" class="mt-1 text-sm text-danger-400">
+              {{ errors.propertyName }}
+            </p>
           </div>
-          
+
           <div>
-            <label for="tenant-start-date" class="block text-sm font-medium text-zinc-300 mb-2">
-              Date d'entrée
+            <label for="property-rent" class="block text-sm font-medium text-zinc-300 mb-2">
+              {{ $t('properties.monthlyRent') }} ({{
+                CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
+              }}) <span class="text-danger-400">*</span>
             </label>
             <input
-              id="tenant-start-date"
-              v-model="formData.tenantStartDate"
-              type="date"
-              class="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none focus:border-primary-500"
+              id="property-rent"
+              v-model="formData.propertyRent"
+              type="number"
+              step="0.01"
+              min="0"
+              :class="[
+                'w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none',
+                errors.propertyRent
+                  ? 'border-danger-500'
+                  : 'border-zinc-700 focus:border-primary-500'
+              ]"
+              placeholder="1200"
             />
-            <p class="mt-1 text-xs text-zinc-500">Optionnel</p>
+            <p v-if="errors.propertyRent" class="mt-1 text-sm text-danger-400">
+              {{ errors.propertyRent }}
+            </p>
+            <p v-else class="mt-1 text-xs text-zinc-500">Montant hors charges</p>
+          </div>
+
+          <p
+            v-if="errors.general"
+            class="p-4 bg-danger-500/10 border border-danger-500 rounded-xl text-danger-400 text-sm"
+          >
+            {{ errors.general }}
+          </p>
+
+          <div class="flex gap-3">
+            <Button variant="primary" type="submit" :loading="loading" full-width>
+              Continuer
+            </Button>
+            <Button variant="ghost" @click="handleSkip" :disabled="loading"> Passer </Button>
           </div>
         </form>
-      </transition>
-      
-      <div class="flex gap-3">
-        <Button variant="primary" @click="handleStep2Continue" :loading="loading" full-width>
-          Continuer
-        </Button>
-        <Button variant="ghost" @click="handleSkip" :disabled="loading">
-          Passer
-        </Button>
       </div>
-    </div>
+    </Transition>
+
+    <!-- Étape 2 : Locataire -->
+    <Transition name="step-fade" mode="out-in">
+      <div v-if="currentStep === 2" class="space-y-6">
+        <div class="text-center">
+          <div
+            class="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-primary-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-white mb-2">Ce bien est-il occupé ?</h2>
+          <p class="text-zinc-400">Ajoutez un locataire si le bien est déjà loué.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <button
+            type="button"
+            @click="formData.hasTenant = false"
+            :class="[
+              'p-4 rounded-xl border-2 transition-all duration-200',
+              formData.hasTenant === false
+                ? 'border-primary-500 bg-primary-500/10 text-white shadow-lg shadow-primary-500/20'
+                : 'border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-900/50'
+            ]"
+          >
+            <div class="text-4xl mb-2">🏠</div>
+            <div class="font-medium text-sm">Bien libre</div>
+          </button>
+
+          <button
+            type="button"
+            @click="formData.hasTenant = true"
+            :class="[
+              'p-4 rounded-xl border-2 transition-all duration-200',
+              formData.hasTenant === true
+                ? 'border-primary-500 bg-primary-500/10 text-white shadow-lg shadow-primary-500/20'
+                : 'border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:bg-zinc-900/50'
+            ]"
+          >
+            <div class="text-4xl mb-2">👤</div>
+            <div class="font-medium text-sm">J'ai un locataire</div>
+          </button>
+        </div>
+
+        <transition name="slide-fade">
+          <form
+            v-if="formData.hasTenant === true"
+            @submit.prevent="handleStep2Continue"
+            class="space-y-4"
+          >
+            <div>
+              <label for="tenant-name" class="block text-sm font-medium text-zinc-300 mb-2">
+                Nom du locataire
+              </label>
+              <input
+                id="tenant-name"
+                v-model="formData.tenantName"
+                type="text"
+                :class="[
+                  'w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none',
+                  errors.tenantName
+                    ? 'border-danger-500'
+                    : 'border-zinc-700 focus:border-primary-500'
+                ]"
+                placeholder="Ex: Jean Dupont"
+              />
+              <p v-if="errors.tenantName" class="mt-1 text-sm text-danger-400">
+                {{ errors.tenantName }}
+              </p>
+            </div>
+
+            <div>
+              <label for="tenant-start-date" class="block text-sm font-medium text-zinc-300 mb-2">
+                Date d'entrée
+              </label>
+              <input
+                id="tenant-start-date"
+                v-model="formData.tenantStartDate"
+                type="date"
+                class="w-full px-4 py-3 bg-zinc-900 border border-zinc-700 rounded-xl text-white placeholder-zinc-500 transition-colors focus:outline-none focus:border-primary-500"
+              />
+              <p class="mt-1 text-xs text-zinc-500">Optionnel</p>
+            </div>
+          </form>
+        </transition>
+
+        <div class="flex gap-3">
+          <Button variant="primary" @click="handleStep2Continue" :loading="loading" full-width>
+            Continuer
+          </Button>
+          <Button variant="ghost" @click="handleSkip" :disabled="loading"> Passer </Button>
+        </div>
+      </div>
+    </Transition>
 
     <!-- Étape 3 : Confirmation -->
-    <div v-if="currentStep === 3" class="text-center space-y-6">
-      <div class="w-16 h-16 bg-success-500/10 rounded-full flex items-center justify-center mx-auto animate-bounce-once">
-        <svg class="w-8 h-8 text-success-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
+    <Transition name="step-fade" mode="out-in">
+      <div v-if="currentStep === 3" class="text-center space-y-6">
+        <div
+          class="w-16 h-16 bg-success-500/10 rounded-full flex items-center justify-center mx-auto animate-bounce-once"
+        >
+          <svg
+            class="w-8 h-8 text-success-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <h2 class="text-2xl font-bold text-white mb-2">Votre dashboard est prêt ! 🎉</h2>
+          <p class="text-zinc-400">
+            Vous avez configuré votre premier bien. Accédez au tableau de bord pour suivre vos
+            revenus.
+          </p>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-left">
+          <p class="text-white font-medium text-lg">{{ formData.propertyName }}</p>
+          <p class="text-zinc-400 mt-1">Loyer : {{ formattedRent }}</p>
+          <p v-if="formData.hasTenant && formData.tenantName" class="text-zinc-400 mt-1">
+            Locataire : {{ formData.tenantName }}
+          </p>
+        </div>
+
+        <Button variant="primary" @click="goToDashboard" full-width>
+          Accéder au dashboard →
+        </Button>
       </div>
-      
-      <div>
-        <h2 class="text-2xl font-bold text-white mb-2">Votre dashboard est prêt ! 🎉</h2>
-        <p class="text-zinc-400">Vous avez configuré votre premier bien. Accédez au tableau de bord pour suivre vos revenus.</p>
-      </div>
-      
-      <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-left">
-        <p class="text-white font-medium text-lg">{{ formData.propertyName }}</p>
-        <p class="text-zinc-400 mt-1">Loyer : {{ formattedRent }}</p>
-        <p v-if="formData.hasTenant && formData.tenantName" class="text-zinc-400 mt-1">
-          Locataire : {{ formData.tenantName }}
-        </p>
-      </div>
-      
-      <Button variant="primary" @click="goToDashboard" full-width>
-        Accéder au dashboard →
-      </Button>
-    </div>
+    </Transition>
   </div>
 </template>
 
@@ -223,18 +322,18 @@ const formattedRent = computed(() => {
  */
 const validateStep1 = () => {
   errors.value = {}
-  
+
   if (!formData.value.propertyName.trim()) {
     errors.value.propertyName = 'Le nom du bien est obligatoire'
     return false
   }
-  
+
   const rent = parseFloat(formData.value.propertyRent)
   if (isNaN(rent) || rent <= 0) {
     errors.value.propertyRent = 'Le loyer doit être un nombre positif'
     return false
   }
-  
+
   return true
 }
 
@@ -243,12 +342,12 @@ const validateStep1 = () => {
  */
 const validateStep2 = () => {
   errors.value = {}
-  
+
   if (formData.value.hasTenant === true && !formData.value.tenantName.trim()) {
     errors.value.tenantName = 'Le nom du locataire est obligatoire'
     return false
   }
-  
+
   return true
 }
 
@@ -257,33 +356,35 @@ const validateStep2 = () => {
  */
 const handleStep1Continue = async () => {
   if (!validateStep1()) return
-  
+
   loading.value = true
   errors.value = {}
-  
+
   try {
     const property = await propertiesStore.addProperty({
       name: formData.value.propertyName,
       rent: parseFloat(formData.value.propertyRent),
       user_id: authStore.user.id
     })
-    
+
     if (!property) {
       throw new Error('Échec création bien')
     }
-    
+
     formData.value.createdPropertyId = property.id
-    
+
     // Analytics
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-      import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-        trackDoogooEvent('onboarding_step1_completed', {
-          property_name: formData.value.propertyName,
-          rent: formData.value.propertyRent
+      import('@/utils/analytics')
+        .then(({ trackDoogooEvent }) => {
+          trackDoogooEvent('onboarding_step1_completed', {
+            property_name: formData.value.propertyName,
+            rent: formData.value.propertyRent
+          })
         })
-      }).catch(() => {})
+        .catch(() => {})
     }
-    
+
     currentStep.value = 2
     toastStore.success('Bien créé avec succès !')
   } catch (error) {
@@ -300,10 +401,10 @@ const handleStep1Continue = async () => {
  */
 const handleStep2Continue = async () => {
   if (!validateStep2()) return
-  
+
   loading.value = true
   errors.value = {}
-  
+
   try {
     if (formData.value.hasTenant === true && formData.value.tenantName.trim()) {
       await tenantsStore.addTenant({
@@ -312,32 +413,36 @@ const handleStep2Continue = async () => {
         start_date: formData.value.tenantStartDate || new Date().toISOString().split('T')[0],
         user_id: authStore.user.id
       })
-      
+
       // Analytics
       if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-        import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-          trackDoogooEvent('onboarding_step2_completed', {
-            has_tenant: true,
-            tenant_name: formData.value.tenantName
+        import('@/utils/analytics')
+          .then(({ trackDoogooEvent }) => {
+            trackDoogooEvent('onboarding_step2_completed', {
+              has_tenant: true,
+              tenant_name: formData.value.tenantName
+            })
           })
-        }).catch(() => {})
+          .catch(() => {})
       }
     }
-    
+
     currentStep.value = 3
-    
+
     // Analytics onboarding completed
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-      import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-        trackDoogooEvent('onboarding_completed', {
-          property_id: formData.value.createdPropertyId,
-          has_tenant: formData.value.hasTenant
+      import('@/utils/analytics')
+        .then(({ trackDoogooEvent }) => {
+          trackDoogooEvent('onboarding_completed', {
+            property_id: formData.value.createdPropertyId,
+            has_tenant: formData.value.hasTenant
+          })
         })
-      }).catch(() => {})
+        .catch(() => {})
     }
   } catch (error) {
     console.error('Erreur création locataire:', error)
-    toastStore.error('Échec création du locataire. Vous pourrez l\'ajouter plus tard.')
+    toastStore.error("Échec création du locataire. Vous pourrez l'ajouter plus tard.")
     errors.value.general = error.message
   } finally {
     loading.value = false
@@ -357,13 +462,15 @@ const goToDashboard = () => {
 const handleSkip = () => {
   // Analytics
   if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-    import('@/utils/analytics').then(({ trackDoogooEvent }) => {
-      trackDoogooEvent('onboarding_skipped', {
-        current_step: currentStep.value
+    import('@/utils/analytics')
+      .then(({ trackDoogooEvent }) => {
+        trackDoogooEvent('onboarding_skipped', {
+          current_step: currentStep.value
+        })
       })
-    }).catch(() => {})
+      .catch(() => {})
   }
-  
+
   router.push('/dashboard')
 }
 </script>
@@ -387,8 +494,28 @@ const handleSkip = () => {
   opacity: 0;
 }
 
+/* Transitions améliorées pour les étapes */
+.step-fade-enter-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.step-fade-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.step-fade-enter-from {
+  transform: translateX(20px) scale(0.95);
+  opacity: 0;
+}
+
+.step-fade-leave-to {
+  transform: translateX(-20px) scale(0.95);
+  opacity: 0;
+}
+
 @keyframes bounce-once {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -398,5 +525,22 @@ const handleSkip = () => {
 
 .animate-bounce-once {
   animation: bounce-once 0.6s ease-in-out;
+}
+
+/* Respecte prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .step-fade-enter-active,
+  .step-fade-leave-active,
+  .slide-fade-enter-active,
+  .slide-fade-leave-active {
+    transition: none;
+  }
+
+  .step-fade-enter-from,
+  .step-fade-leave-to,
+  .slide-fade-enter-from,
+  .slide-fade-leave-to {
+    transform: none;
+  }
 }
 </style>

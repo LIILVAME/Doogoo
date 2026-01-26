@@ -138,9 +138,10 @@ git push origin v0.1.0
 **⚠️ Important** : Remplacez `/vylo/` par le nom exact de votre repository :
 
 ```javascript
-const base = process.env.NODE_ENV === 'production' 
-  ? '/nom-de-votre-repo/'  // ⚠️ À modifier
-  : '/'
+const base =
+  process.env.NODE_ENV === 'production'
+    ? '/nom-de-votre-repo/' // ⚠️ À modifier
+    : '/'
 ```
 
 ### 404.html
@@ -148,7 +149,7 @@ const base = process.env.NODE_ENV === 'production'
 **⚠️ Important** : Mettez à jour le chemin dans `public/404.html` :
 
 ```javascript
-const base = '/nom-de-votre-repo/'; // ⚠️ À modifier
+const base = '/nom-de-votre-repo/' // ⚠️ À modifier
 ```
 
 ---
@@ -184,4 +185,3 @@ const base = '/nom-de-votre-repo/'; // ⚠️ À modifier
 ---
 
 **Une fois toutes les cases cochées, vous êtes prêt pour la release !** 🎉
-

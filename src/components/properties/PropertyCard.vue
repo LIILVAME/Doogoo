@@ -64,7 +64,9 @@
         <p class="text-sm text-zinc-300 mb-2 truncate drop-shadow-sm">{{ property.city }}</p>
 
         <div class="flex flex-wrap gap-2 mb-4">
-          <span class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center">
+          <span
+            class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center"
+          >
             <i class="ri-building-line mr-1"></i>
             {{ getTypeName(property.type) }}
           </span>
@@ -88,7 +90,9 @@
       <!-- Informations locatives -->
       <div class="flex-1 flex flex-col">
         <div class="flex items-end justify-between mb-4">
-          <span class="text-sm text-gray-500 uppercase font-semibold">{{ $t('properties.monthlyRent') }}</span>
+          <span class="text-sm text-gray-500 uppercase font-semibold">{{
+            $t('properties.monthlyRent')
+          }}</span>
           <span class="text-2xl font-bold text-white">{{ formatCurrency(property.rent) }}</span>
         </div>
 
@@ -115,12 +119,19 @@
     </div>
 
     <!-- Actions -->
-    <div class="px-4 sm:px-5 py-3 border-t border-white/5 flex items-center gap-2 sm:gap-3 bg-black/20">
+    <div
+      class="px-4 sm:px-5 py-3 border-t border-white/5 flex items-center gap-2 sm:gap-3 bg-black/20"
+    >
       <button
-        @click.stop="$emit('edit', property)"
+        @click.stop="handleEdit"
         class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
       >
-        <svg class="w-4 h-4 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-4 h-4 sm:mr-2 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -131,10 +142,15 @@
         <span class="hidden sm:inline whitespace-nowrap">{{ $t('common.edit') }}</span>
       </button>
       <button
-        @click.stop="$emit('delete', property.id)"
+        @click.stop="handleDelete"
         class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
       >
-        <svg class="w-4 h-4 sm:mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          class="w-4 h-4 sm:mr-2 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -155,6 +171,7 @@ import { useI18n } from '@/composables/useLingui'
 import TenantInfo from '@/components/tenants/TenantInfo.vue'
 import { formatCurrency } from '@/utils/formatters'
 import { PROPERTY_STATUS, STATUS_CLASSES } from '@/utils/constants'
+import { hapticLight, hapticMedium } from '@/composables/useHapticFeedback'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -166,7 +183,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete'])
 
 /**
  * Classe CSS selon le statut d'occupation
@@ -186,11 +203,23 @@ const statusText = computed(() => {
 
 const navigateToDetails = () => {
   // Pas de page détail dédiée : on ouvre la modale d'édition via query param
+  hapticLight()
   router.push({ path: '/biens', query: { mode: 'edit', id: props.property.id } })
 }
 
 const handleTenantClick = tenant => {
+  hapticLight()
   router.push({ path: '/locataires', query: { search: tenant.name } })
+}
+
+const handleEdit = () => {
+  hapticMedium()
+  emit('edit', props.property)
+}
+
+const handleDelete = () => {
+  hapticMedium()
+  emit('delete', props.property.id)
 }
 
 const getTypeName = type => {

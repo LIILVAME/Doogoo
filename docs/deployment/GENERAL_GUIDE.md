@@ -25,6 +25,7 @@ Le projet est configuré pour se déployer automatiquement via GitHub Actions.
 #### 2. Déclenchement du déploiement
 
 Le déploiement se déclenche automatiquement sur :
+
 - ✅ Push sur `main` ou `master`
 - ✅ Création d'un tag `v*` (ex: `v0.1.0`)
 - ✅ Action manuelle via **Actions** → **Workflow dispatch**
@@ -32,6 +33,7 @@ Le déploiement se déclenche automatiquement sur :
 #### 3. URL de déploiement
 
 Votre application sera disponible sur :
+
 ```
 https://votre-username.github.io/vylo/
 ```
@@ -56,9 +58,10 @@ Le fichier `vite.config.js` doit être configuré avec la base correcte :
 
 ```javascript
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' 
-    ? '/vylo/'  // Remplacez 'vylo' par votre nom de repo
-    : '/',
+  base:
+    process.env.NODE_ENV === 'production'
+      ? '/vylo/' // Remplacez 'vylo' par votre nom de repo
+      : '/'
   // ... reste de la config
 })
 ```
@@ -232,11 +235,11 @@ Configuration `firebase.json` :
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Doogoo</title>
     <script>
-      sessionStorage.redirect = location.href;
-      location.replace(location.href.replace(/\/vylo\/.*/, '/vylo/'));
+      sessionStorage.redirect = location.href
+      location.replace(location.href.replace(/\/vylo\/.*/, '/vylo/'))
     </script>
   </head>
   <body></body>
@@ -250,6 +253,7 @@ Configuration `firebase.json` :
 ### GitHub Actions
 
 Consultez l'onglet **Actions** pour voir :
+
 - ✅ Statut des builds
 - ⏱️ Temps d'exécution
 - 📋 Logs détaillés
@@ -258,6 +262,7 @@ Consultez l'onglet **Actions** pour voir :
 ### Badges de statut
 
 Les badges dans le README affichent automatiquement le statut :
+
 - 🟢 Vert : Build réussi
 - 🔴 Rouge : Build échoué
 - 🟡 Jaune : Build en cours
@@ -292,4 +297,3 @@ const apiUrl = import.meta.env.VITE_API_URL
 ---
 
 **Dernière mise à jour** : 2024-12-04
-

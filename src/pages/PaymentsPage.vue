@@ -7,7 +7,7 @@
         :is-refreshing="isRefreshing"
         :threshold="80"
       />
-      
+
       <!-- Header -->
       <div class="mb-8">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -21,12 +21,7 @@
               :disabled="paymentsStore.loading || isGenerating"
               class="flex items-center justify-center shrink-0 bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 hover:border-violet-500/40 px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <RefreshCw
-                :class="[
-                  'w-5 h-5 mr-2',
-                  isGenerating ? 'animate-spin' : ''
-                ]"
-              />
+              <RefreshCw :class="['w-5 h-5 mr-2', isGenerating ? 'animate-spin' : '']" />
               {{ isGenerating ? 'Génération...' : '🔄 Générer les loyers' }}
             </button>
             <button

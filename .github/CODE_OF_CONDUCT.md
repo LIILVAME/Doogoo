@@ -52,4 +52,3 @@ https://www.contributor-covenant.org/faq
 
 **Version** : 2.1  
 **Dernière mise à jour** : 2024-12-04
-

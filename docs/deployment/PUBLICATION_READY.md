@@ -99,13 +99,15 @@ Suivez la checklist **RELEASE_CHECKLIST.md** :
 ### À modifier avant publication
 
 1. **`vite.config.js`** ligne 7 :
+
    ```javascript
    ? '/mon-nom-de-repo/'  // Remplacez par votre nom de repo
    ```
 
 2. **`public/404.html`** ligne 8 :
+
    ```javascript
-   const base = '/mon-nom-de-repo/'; // Remplacez par votre nom de repo
+   const base = '/mon-nom-de-repo/' // Remplacez par votre nom de repo
    ```
 
 3. **`README.md`** :
@@ -155,6 +157,7 @@ Vylo/
 ### Déploiement automatique
 
 Le workflow `.github/workflows/deploy.yml` :
+
 - ✅ Se déclenche sur push vers `main`/`master`
 - ✅ Se déclenche sur création de tag `v*`
 - ✅ Build le projet avec `npm run build`
@@ -164,6 +167,7 @@ Le workflow `.github/workflows/deploy.yml` :
 ### Tests automatiques
 
 Le workflow `.github/workflows/ci.yml` :
+
 - ✅ Vérifie que le build fonctionne
 - ✅ S'exécute sur chaque PR
 - ✅ Prêt pour ajouter des tests unitaires
@@ -237,4 +241,3 @@ Le projet est **100% prêt** pour publication avec :
 **Date de préparation** : 2024-12-04  
 **Version** : 0.1.0  
 **Statut** : ✅ PRÊT POUR PUBLICATION
-

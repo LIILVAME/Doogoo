@@ -198,7 +198,9 @@
                 @blur="validateField('phone')"
               />
               <p v-if="errors.phone" class="text-xs text-red-400 mt-1">{{ errors.phone }}</p>
-              <p v-else class="text-xs text-zinc-500 mt-1">Format: 06 12 34 56 78 ou +33 6 12 34 56 78</p>
+              <p v-else class="text-xs text-zinc-500 mt-1">
+                Format: 06 12 34 56 78 ou +33 6 12 34 56 78
+              </p>
             </div>
           </div>
         </ProfileSection>
@@ -325,9 +327,7 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2">
-                Capital social
-              </label>
+              <label class="block text-sm font-medium text-zinc-300 mb-2"> Capital social </label>
               <input
                 v-model="profile.capital_social"
                 type="text"
@@ -378,7 +378,9 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2"> Nom de la banque </label>
+                <label class="block text-sm font-medium text-zinc-300 mb-2">
+                  Nom de la banque
+                </label>
                 <input
                   v-model="profile.bank_name"
                   type="text"
@@ -431,7 +433,13 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              <svg v-else class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                v-else
+                class="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -439,7 +447,13 @@
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              {{ isUploadingSignature ? 'Upload en cours...' : profile.signature_url ? 'Changer la signature' : 'Uploader une signature' }}
+              {{
+                isUploadingSignature
+                  ? 'Upload en cours...'
+                  : profile.signature_url
+                    ? 'Changer la signature'
+                    : 'Uploader une signature'
+              }}
             </label>
             <input
               id="signature-upload"
@@ -510,7 +524,7 @@ import ProfileSection from './ProfileSection.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { profileSchema, validate } from '@/utils/validators'
-import { supabase } from '@/lib/supabaseClient'
+import { authApi } from '@/api'
 
 const authStore = useAuthStore()
 const toastStore = useToastStore()
@@ -576,7 +590,8 @@ onMounted(async () => {
       profile.last_name = profileData.last_name || ''
       profile.email = authStore.user?.email || ''
       profile.phone = profileData.phone || ''
-      profile.landlord_type = profileData.landlord_type || (profileData.company ? 'company' : 'individual')
+      profile.landlord_type =
+        profileData.landlord_type || (profileData.company ? 'company' : 'individual')
       profile.company = profileData.company || ''
       profile.legal_form = profileData.legal_form || ''
       profile.capital_social = profileData.capital_social || ''
@@ -680,7 +695,8 @@ const validateField = fieldName => {
 
   const result = validate(profileSchema, {
     ...profile,
-    full_name: profile.first_name && profile.last_name ? `${profile.first_name} ${profile.last_name}` : null
+    full_name:
+      profile.first_name && profile.last_name ? `${profile.first_name} ${profile.last_name}` : null
   })
 
   if (!result.success && result.errors) {
@@ -692,28 +708,30 @@ const validateField = fieldName => {
 }
 
 /**
- * Upload une image vers Supabase Storage
+ * Upload une image vers Supabase Storage via l'API layer
  */
 const uploadImage = async (file, bucket, prefix = '') => {
   if (!authStore.user) {
     throw new Error('User not authenticated')
   }
 
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${prefix}${authStore.user.id}-${Date.now()}.${fileExt}`
-  const filePath = fileName
-
-  const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file, {
-    cacheControl: '3600',
-    upsert: false
-  })
-
-  if (uploadError) {
-    throw new Error(uploadError.message || `Erreur lors de l'upload vers ${bucket}`)
+  // Utilise l'API layer selon le type d'upload
+  if (bucket === 'avatars') {
+    const result = await authApi.uploadAvatar(authStore.user.id, file)
+    if (!result.success) {
+      throw new Error(result.message || "Erreur lors de l'upload de l'avatar")
+    }
+    return result.data
+  } else if (bucket === 'signatures' || prefix === 'signature-') {
+    const result = await authApi.uploadSignature(authStore.user.id, file)
+    if (!result.success) {
+      throw new Error(result.message || "Erreur lors de l'upload de la signature")
+    }
+    return result.data
   }
 
-  const { data } = supabase.storage.from(bucket).getPublicUrl(filePath)
-  return data.publicUrl
+  // Fallback pour autres buckets (ne devrait pas arriver)
+  throw new Error(`Bucket non supporté: ${bucket}`)
 }
 
 /**
@@ -749,7 +767,9 @@ const onFileChange = async e => {
     avatarFile.value = null
     toastStore.success('Photo de profil mise à jour avec succès')
   } catch (error) {
-    console.error('Erreur upload avatar:', error)
+    // Log sécurisé : ne pas exposer les détails sensibles
+    const { sanitizeObject } = await import('@/utils/sanitizeLogs')
+    console.error('Erreur upload avatar:', sanitizeObject(error, ['message']))
     toastStore.error(error.message || "Erreur lors de l'upload de l'avatar")
   } finally {
     isUploading.value = false
@@ -790,7 +810,9 @@ const onSignatureChange = async e => {
     signatureFile.value = null
     toastStore.success('Signature uploadée avec succès')
   } catch (error) {
-    console.error('Erreur upload signature:', error)
+    // Log sécurisé : ne pas exposer les détails sensibles
+    const { sanitizeObject } = await import('@/utils/sanitizeLogs')
+    console.error('Erreur upload signature:', sanitizeObject(error, ['message']))
     toastStore.error(error.message || "Erreur lors de l'upload de la signature")
   } finally {
     isUploadingSignature.value = false
@@ -815,9 +837,8 @@ const saveProfile = async () => {
 
   try {
     // Validation complète avec Zod
-    const fullName = profile.first_name && profile.last_name
-      ? `${profile.first_name} ${profile.last_name}`
-      : null
+    const fullName =
+      profile.first_name && profile.last_name ? `${profile.first_name} ${profile.last_name}` : null
 
     const validationData = {
       ...profile,
@@ -870,14 +891,18 @@ const saveProfile = async () => {
       full_name: fullName,
       phone: profile.phone?.trim() || null,
       landlord_type: profile.landlord_type || 'individual',
-      company: profile.landlord_type === 'company' ? (profile.company?.trim() || null) : null,
-      legal_form: profile.landlord_type === 'company' ? (profile.legal_form?.trim() || null) : null,
-      capital_social: profile.landlord_type === 'company' ? (profile.capital_social?.trim() || null) : null,
+      company: profile.landlord_type === 'company' ? profile.company?.trim() || null : null,
+      legal_form: profile.landlord_type === 'company' ? profile.legal_form?.trim() || null : null,
+      capital_social:
+        profile.landlord_type === 'company' ? profile.capital_social?.trim() || null : null,
       address_line: profile.address_line?.trim() || null,
       postal_code: profile.postal_code?.trim() || null,
       city: profile.city?.trim() || null,
-      siret: profile.landlord_type === 'company' ? (profile.siret?.trim()?.replace(/\s/g, '') || null) : null,
-      rcs: profile.landlord_type === 'company' ? (profile.rcs?.trim() || null) : null,
+      siret:
+        profile.landlord_type === 'company'
+          ? profile.siret?.trim()?.replace(/\s/g, '') || null
+          : null,
+      rcs: profile.landlord_type === 'company' ? profile.rcs?.trim() || null : null,
       iban: profile.iban?.trim()?.replace(/\s/g, '').toUpperCase() || null,
       bic: profile.bic?.trim()?.toUpperCase() || null,
       bank_name: profile.bank_name?.trim() || null,
@@ -901,7 +926,9 @@ const saveProfile = async () => {
 
     toastStore.success('Profil mis à jour avec succès')
   } catch (err) {
-    console.error('Error saving profile:', err)
+    // Log sécurisé : ne pas exposer les détails sensibles
+    const { sanitizeObject } = await import('@/utils/sanitizeLogs')
+    console.error('Error saving profile:', sanitizeObject(err, ['message']))
     globalError.value = err.message || 'Erreur lors de la sauvegarde du profil'
   } finally {
     isSaving.value = false

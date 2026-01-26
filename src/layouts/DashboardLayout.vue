@@ -2,24 +2,33 @@
   <div>
     <!-- Skip Link pour navigation clavier -->
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-    
-    <div class="flex bg-zinc-950 text-zinc-50 font-sans selection:bg-violet-500/30" style="overflow-y: hidden !important; overflow-x: visible !important; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh;">
+
+    <div class="flex bg-zinc-950 text-zinc-50 font-sans selection:bg-violet-500/30 min-h-screen">
       <!-- Note: Sidebar width is md:w-20 (80px) for compact mini sidebar -->
       <!-- Sidebar -->
       <Sidebar />
 
       <!-- Main Content -->
-      <main id="main-content" class="flex-1 w-full relative" style="overflow: hidden !important;">
+      <main id="main-content" class="flex-1 w-full relative overflow-y-auto">
         <!-- Header Mobile (visible uniquement sur mobile) -->
-        <header class="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between">
+        <header
+          class="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between"
+        >
           <router-link
             to="/dashboard"
             class="flex items-center gap-3"
             aria-label="Doogoo - Retour au tableau de bord"
           >
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+            <div
+              class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20"
+            >
               <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
             </div>
             <h1 class="text-xl font-bold text-white tracking-tight">Doogoo</h1>
@@ -56,9 +65,11 @@
             </button>
           </div>
         </header>
-        
+
         <!-- Header Desktop (visible uniquement sur desktop) -->
-        <header class="hidden md:flex sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-b border-white/5 px-6 py-4 items-center justify-end">
+        <header
+          class="hidden md:flex sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-b border-white/5 px-6 py-4 items-center justify-end"
+        >
           <NotificationBell />
         </header>
         <!-- Glow effect background -->
@@ -75,6 +86,15 @@
           <slot />
         </div>
       </main>
+
+      <!-- Bottom Navigation (Mobile only) -->
+      <BottomNavigation />
+
+      <!-- Command Palette -->
+      <CommandPalette
+        :is-open="isCommandPaletteOpen"
+        @update:is-open="isCommandPaletteOpen = $event"
+      />
     </div>
   </div>
 </template>
@@ -82,10 +102,15 @@
 <script setup>
 import { ref, provide } from 'vue'
 import Sidebar from '@/components/layout/Sidebar.vue'
+import BottomNavigation from '@/components/layout/BottomNavigation.vue'
 import NotificationBell from '@/components/common/NotificationBell.vue'
+import CommandPalette from '@/components/common/CommandPalette.vue'
 
 // État de la sidebar pour le header mobile
 const isSidebarOpen = ref(false)
+
+// État de la command palette
+const isCommandPaletteOpen = ref(false)
 
 // Fonction pour basculer la sidebar (sera utilisée par le header mobile)
 const toggleSidebar = () => {
@@ -97,7 +122,7 @@ const toggleSidebar = () => {
 // Provide pour que la Sidebar puisse mettre à jour l'état
 provide('sidebarState', {
   isOpen: isSidebarOpen,
-  setOpen: (value) => {
+  setOpen: value => {
     isSidebarOpen.value = value
   }
 })

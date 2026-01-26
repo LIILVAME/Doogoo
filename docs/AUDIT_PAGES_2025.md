@@ -53,7 +53,7 @@
 
 #### Dark Mode
 
-- ❌ **Aucun support dark mode** : Classes Tailwind hardcodées en `bg-gray-50`, `text-gray-900`, etc.
+- ❌ **Aucun support dark mode** : Classes Tailwind hardcodées en `bg-neutral-50`, `text-neutral-900`, etc.
 
 #### Accessibilité
 

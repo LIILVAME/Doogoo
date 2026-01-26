@@ -1,8 +1,11 @@
 <template>
   <!-- Skip Link pour navigation clavier -->
   <a href="#onboarding-content" class="skip-link">Aller au formulaire</a>
-  
-  <div id="onboarding-content" class="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
+
+  <div
+    id="onboarding-content"
+    class="min-h-screen bg-zinc-950 flex items-center justify-center p-6"
+  >
     <OnboardingWizard />
   </div>
 </template>
@@ -11,7 +14,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import { supabase } from '@/lib/supabaseClient'
+import { authApi } from '@/api'
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard.vue'
 
 const router = useRouter()
@@ -28,19 +31,16 @@ onMounted(async () => {
       return
     }
 
-    // Vérifier si l'utilisateur a déjà des biens
-    const { count, error } = await supabase
-      .from('properties')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', authStore.user.id)
+    // Vérifier si l'utilisateur a déjà des biens via l'API layer
+    const result = await authApi.checkUserHasProperties(authStore.user.id)
 
-    if (error) {
-      console.warn('Erreur vérification onboarding:', error)
+    if (!result.success) {
+      console.warn('Erreur vérification onboarding:', result.message)
       return
     }
 
     // Si au moins 1 bien → Utilisateur déjà activé → Dashboard
-    if (count > 0) {
+    if (result.data.count > 0) {
       router.replace('/dashboard')
     }
   } catch (err) {

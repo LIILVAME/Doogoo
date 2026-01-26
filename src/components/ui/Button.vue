@@ -36,6 +36,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { hapticMedium } from '@/composables/useHapticFeedback'
 
 const props = defineProps({
   variant: {
@@ -143,10 +144,12 @@ const buttonClasses = computed(() => [
 ])
 
 /**
- * Handle click event
+ * Handle click event avec haptic feedback
  */
 const handleClick = event => {
   if (props.type !== 'submit' && !props.disabled && !props.loading) {
+    // Haptic feedback sur mobile
+    hapticMedium()
     emit('click', event)
   }
 }

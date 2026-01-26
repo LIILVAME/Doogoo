@@ -100,6 +100,15 @@ const statusText = computed(() => {
 
 <style scoped>
 .tenant-info {
-  @apply mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-gray-100;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+@media (min-width: 640px) {
+  .tenant-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
 }
 </style>

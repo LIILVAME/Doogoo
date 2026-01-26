@@ -9,10 +9,7 @@
       />
 
       <!-- Header avec statistiques -->
-      <PageHeader
-        :title="$t('tenants.title')"
-        :subtitle="$t('tenants.subtitle')"
-      >
+      <PageHeader :title="$t('tenants.title')" :subtitle="$t('tenants.subtitle')">
         <template #actions>
           <button
             @click="isModalOpen = true"
@@ -451,20 +448,29 @@ const handleGenerateLease = async tenant => {
   try {
     // 1. Récupère les données du propriétaire (bailleur)
     const profile = await authStore.fetchProfile(true) // force = true pour avoir les dernières données
-    
+
     // Construction du nom complet depuis first_name + last_name (ou fallback sur full_name legacy)
-    const fullName = profile?.first_name && profile?.last_name
-      ? `${profile.first_name} ${profile.last_name}`
-      : profile?.full_name || authStore.user?.user_metadata?.full_name || authStore.user?.email || 'Non renseigné'
-    
+    const fullName =
+      profile?.first_name && profile?.last_name
+        ? `${profile.first_name} ${profile.last_name}`
+        : profile?.full_name ||
+          authStore.user?.user_metadata?.full_name ||
+          authStore.user?.email ||
+          'Non renseigné'
+
     // Construction de l'adresse structurée (ou fallback sur address legacy)
-    const addressFull = [
-      profile?.address_line,
-      profile?.postal_code && profile?.city
-        ? `${profile.postal_code} ${profile.city}`
-        : profile?.city || profile?.postal_code
-    ].filter(Boolean).join(', ') || profile?.address || ''
-    
+    const addressFull =
+      [
+        profile?.address_line,
+        profile?.postal_code && profile?.city
+          ? `${profile.postal_code} ${profile.city}`
+          : profile?.city || profile?.postal_code
+      ]
+        .filter(Boolean)
+        .join(', ') ||
+      profile?.address ||
+      ''
+
     const ownerData = {
       fullName,
       name: fullName,
@@ -478,11 +484,11 @@ const handleGenerateLease = async tenant => {
       // Type de bailleur
       landlordType: profile?.landlord_type || 'individual',
       // Informations juridiques (si société)
-      company: profile?.landlord_type === 'company' ? (profile?.company || '') : '',
-      legalForm: profile?.landlord_type === 'company' ? (profile?.legal_form || '') : '',
-      siret: profile?.landlord_type === 'company' ? (profile?.siret || '') : '',
-      rcs: profile?.landlord_type === 'company' ? (profile?.rcs || '') : '',
-      capitalSocial: profile?.landlord_type === 'company' ? (profile?.capital_social || '') : '',
+      company: profile?.landlord_type === 'company' ? profile?.company || '' : '',
+      legalForm: profile?.landlord_type === 'company' ? profile?.legal_form || '' : '',
+      siret: profile?.landlord_type === 'company' ? profile?.siret || '' : '',
+      rcs: profile?.landlord_type === 'company' ? profile?.rcs || '' : '',
+      capitalSocial: profile?.landlord_type === 'company' ? profile?.capital_social || '' : '',
       // Informations bancaires
       iban: profile?.iban || '',
       bic: profile?.bic || '',

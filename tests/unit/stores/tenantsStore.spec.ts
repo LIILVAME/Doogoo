@@ -427,7 +427,9 @@ describe('TenantsStore Unit Tests', () => {
         entryDate: '2024-12-01',
         exitDate: null,
         rent: 1500,
-        status: PAYMENT_STATUS.ON_TIME as const
+        status: PAYMENT_STATUS.ON_TIME as const,
+        birthDate: '1990-01-01',
+        birthPlace: 'Paris'
       }
       mockTenantsApi.createTenant.mockResolvedValue({
         success: true,
@@ -455,7 +457,9 @@ describe('TenantsStore Unit Tests', () => {
           entryDate: '2024-12-01',
           exitDate: null,
           rent: 1500,
-          status: PAYMENT_STATUS.ON_TIME
+          status: PAYMENT_STATUS.ON_TIME,
+          birthDate: '1990-01-01',
+          birthPlace: 'Paris'
         },
         'user-1'
       )

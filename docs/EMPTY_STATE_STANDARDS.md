@@ -16,7 +16,7 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 ### **Titre**
 
 ```vue
-<h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-50 mb-2 tracking-tight">
+<h3 class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-50 mb-2 tracking-tight">
   {{ title }}
 </h3>
 ```
@@ -26,8 +26,8 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 - **Taille** : `text-xl` (mobile) → `text-2xl` (desktop)
 - **Poids** : `font-bold` (700)
 - **Couleur** :
-  - Mode clair : `text-gray-900` (très foncé, contraste maximum)
-  - Mode sombre : `text-gray-50` (très clair)
+  - Mode clair : `text-neutral-900` (très foncé, contraste maximum)
+  - Mode sombre : `text-neutral-50` (très clair)
 - **Espacement** : `mb-2` (8px sous le titre)
 - **Lettrage** : `tracking-tight` pour un rendu plus compact
 
@@ -35,7 +35,7 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 
 ```vue
 <p
-  class="text-sm sm:text-base text-gray-700 dark:text-gray-300 mb-6 max-w-md mx-auto leading-relaxed"
+  class="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 mb-6 max-w-md mx-auto leading-relaxed"
 >
   {{ description }}
 </p>
@@ -45,8 +45,8 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 
 - **Taille** : `text-sm` (mobile) → `text-base` (desktop)
 - **Couleur** :
-  - Mode clair : `text-gray-700` (bon contraste)
-  - Mode sombre : `text-gray-300` (bon contraste)
+  - Mode clair : `text-neutral-700` (bon contraste)
+  - Mode sombre : `text-neutral-300` (bon contraste)
 - **Largeur max** : `max-w-md` (28rem) pour la lisibilité
 - **Hauteur de ligne** : `leading-relaxed` pour un confort de lecture
 
@@ -56,9 +56,9 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 
 ```vue
 <div
-  class="w-24 h-24 mx-auto bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center"
+  class="w-24 h-24 mx-auto bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center"
 >
-  <svg class="w-12 h-12 text-gray-500 dark:text-gray-400" stroke-width="1.5">
+  <svg class="w-12 h-12 text-neutral-500 dark:text-neutral-400" stroke-width="1.5">
     <!-- Icon -->
   </svg>
 </div>
@@ -70,8 +70,8 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 
 1. **Taille minimale** : `w-20 h-20` (80px) minimum
 2. **Couleur** :
-   - Mode clair : `text-gray-600` minimum (bon contraste)
-   - Mode sombre : `text-gray-400` (bon contraste)
+   - Mode clair : `text-neutral-600` minimum (bon contraste)
+   - Mode sombre : `text-neutral-400` (bon contraste)
 3. **Stroke width** : `1.5` minimum pour la visibilité
 4. **Wrapper** : Toujours wrapper dans un `div` avec `w-20 h-20` pour centrage
 
@@ -81,7 +81,7 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 <template #illustration>
   <div class="w-20 h-20 mx-auto flex items-center justify-center">
     <svg
-      class="w-20 h-20 text-gray-600 dark:text-gray-400"
+      class="w-20 h-20 text-neutral-600 dark:text-neutral-400"
       fill="none"
       stroke="currentColor"
       stroke-width="1.5"
@@ -104,15 +104,15 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 
 ### Ratio de contraste minimal (WCAG AA)
 
-- **Titre** : `text-gray-900` sur blanc = 15.8:1 ✅ (WCAG AAA)
-- **Description** : `text-gray-700` sur blanc = 10.7:1 ✅ (WCAG AAA)
-- **Icônes** : `text-gray-600` sur blanc = 7:1 ✅ (WCAG AA)
+- **Titre** : `text-neutral-900` sur blanc = 15.8:1 ✅ (WCAG AAA)
+- **Description** : `text-neutral-700` sur blanc = 10.7:1 ✅ (WCAG AAA)
+- **Icônes** : `text-neutral-600` sur blanc = 7:1 ✅ (WCAG AA)
 
 ### Mode sombre
 
-- **Titre** : `text-gray-50` sur `gray-800` = 14.6:1 ✅ (WCAG AAA)
-- **Description** : `text-gray-300` sur `gray-800` = 9.2:1 ✅ (WCAG AAA)
-- **Icônes** : `text-gray-400` sur `gray-800` = 6.2:1 ✅ (WCAG AA)
+- **Titre** : `text-neutral-50` sur `neutral-800` = 14.6:1 ✅ (WCAG AAA)
+- **Description** : `text-neutral-300` sur `neutral-800` = 9.2:1 ✅ (WCAG AAA)
+- **Icônes** : `text-neutral-400` sur `neutral-800` = 6.2:1 ✅ (WCAG AA)
 
 ---
 
@@ -120,9 +120,9 @@ Assurer une visibilité optimale et une cohérence visuelle pour tous les états
 
 Lors de l'ajout d'un EmptyState :
 
-- [ ] Titre avec `text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-50`
-- [ ] Description avec `text-gray-700 dark:text-gray-300`
-- [ ] Illustration custom minimum `w-20 h-20` avec `text-gray-600 dark:text-gray-400`
+- [ ] Titre avec `text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-50`
+- [ ] Description avec `text-neutral-700 dark:text-neutral-300`
+- [ ] Illustration custom minimum `w-20 h-20` avec `text-neutral-600 dark:text-neutral-400`
 - [ ] Stroke width minimum `1.5` pour les SVG
 - [ ] Espacement `mb-4` entre illustration et titre
 - [ ] Test en mode clair ET sombre
@@ -138,7 +138,7 @@ Lors de l'ajout d'un EmptyState :
 <EmptyState :title="$t('payments.noPayments')" illustration="none">
   <template #illustration>
     <div class="w-20 h-20 mx-auto flex items-center justify-center">
-      <svg class="w-20 h-20 text-gray-600 dark:text-gray-400" 
+      <svg class="w-20 h-20 text-neutral-600 dark:text-neutral-400" 
             stroke-width="1.5">
         <!-- Money icon -->
       </svg>
@@ -157,7 +157,7 @@ Lors de l'ajout d'un EmptyState :
 >
   <template #illustration>
     <div class="w-20 h-20 mx-auto flex items-center justify-center">
-      <svg class="w-20 h-20 text-gray-600 dark:text-gray-400" 
+      <svg class="w-20 h-20 text-neutral-600 dark:text-neutral-400" 
             stroke-width="1.5">
         <!-- Document icon -->
       </svg>

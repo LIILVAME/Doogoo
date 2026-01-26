@@ -13,7 +13,7 @@
 
 **Smart Property Monitoring & Analytics Platform**
 
-[🚀 Démo Live](https://doogoo.app/) • [📖 Documentation](docs/project_overview.md) • [🤝 Contribuer](CONTRIBUTING.md) • [📝 Changelog](CHANGELOG.md)
+[🚀 Démo Live](https://doogoo.app/) • [📖 Documentation](docs/project_overview.md) • [🤝 Contribuer](.github/CONTRIBUTING.md) • [📝 Changelog](CHANGELOG.md)
 
 </div>
 
@@ -348,12 +348,12 @@ Doogoo/
 
 ### Palette de couleurs
 
-| Couleur        | Code                  | Usage                                |
-| -------------- | --------------------- | ------------------------------------ |
-| **Primary**    | `#22c55e` (green-500) | Boutons, liens, éléments interactifs |
-| **Background** | `#f9fafb` (gray-50)   | Fond principal de l'application      |
-| **Text**       | `#111827` (gray-900)  | Texte principal                      |
-| **Border**     | `#e5e7eb` (gray-200)  | Bordures et séparateurs              |
+| Couleur        | Code                    | Usage                                |
+| -------------- | ----------------------- | ------------------------------------ |
+| **Primary**    | `#22c55e` (green-500)   | Boutons, liens, éléments interactifs |
+| **Background** | `#fafafa` (neutral-50)  | Fond principal de l'application      |
+| **Text**       | `#18181b` (neutral-900) | Texte principal                      |
+| **Border**     | `#e4e4e7` (neutral-200) | Bordures et séparateurs              |
 
 ### Typographie
 
@@ -460,7 +460,7 @@ npm run preview  # Prévisualiser le build de production
 - **[SUPABASE_INTEGRATION.md](docs/SUPABASE_INTEGRATION.md)** : Guide d'intégration Supabase
 - **[SPRINT_3_REALTIME_UX.md](docs/SPRINT_3_REALTIME_UX.md)** : Documentation temps réel
 - **[SPRINT_4_ANALYTICS.md](docs/SPRINT_4_ANALYTICS.md)** : Documentation analytics
-- **[CHECKLIST_PRODUCTION.md](docs/CHECKLIST_PRODUCTION.md)** : Checklist de production
+- **[CHECKLIST_PRODUCTION.md](docs/release/CHECKLIST.md)** : Checklist de production
 
 ### Documentation utilisateur
 
@@ -537,7 +537,7 @@ npm run preview  # Prévisualiser le build de production
 
 Les contributions sont les bienvenues ! Pour contribuer au projet :
 
-> 📖 **Pour plus de détails**, consultez le [Guide de contribution complet](CONTRIBUTING.md)
+> 📖 **Pour plus de détails**, consultez le [Guide de contribution complet](.github/CONTRIBUTING.md)
 
 ### 1. Fork le projet
 

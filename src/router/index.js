@@ -18,10 +18,10 @@ import PropertyDetailsPage from '@/pages/PropertyDetailsPage.vue'
 const ConfirmEmailPage = () => import('../pages/ConfirmEmailPage.vue')
 const OnboardingPage = () => import('../pages/OnboardingPage.vue')
 const DashboardPage = () => import('../pages/DashboardPage.vue')
-const BiensPage = () => import('../pages/BiensPage.vue')
-const PaiementsPage = () => import('../pages/PaiementsPage.vue')
-const LocatairesPage = () => import('../pages/LocatairesPage.vue')
-const ParametresPage = () => import('../pages/ParametresPage.vue')
+const PropertiesPage = () => import('../pages/PropertiesPage.vue')
+const PaymentsPage = () => import('../pages/PaymentsPage.vue')
+const TenantsPage = () => import('../pages/TenantsPage.vue')
+const SettingsPage = () => import('../pages/SettingsPage.vue')
 const ReportsPage = () => import('../pages/ReportsPage.vue')
 const AlertsPage = () => import('../pages/AlertsPage.vue')
 
@@ -227,7 +227,7 @@ const routes = [
   {
     path: '/biens',
     name: 'Properties',
-    component: BiensPage,
+    component: PropertiesPage,
     meta: { requiresAuth: true }
   },
   {
@@ -248,7 +248,7 @@ const routes = [
   {
     path: '/paiements',
     name: 'Paiements',
-    component: PaiementsPage,
+    component: PaymentsPage,
     meta: {
       requiresAuth: true,
       seo: {
@@ -263,7 +263,7 @@ const routes = [
   {
     path: '/locataires',
     name: 'Locataires',
-    component: LocatairesPage,
+    component: TenantsPage,
     meta: {
       requiresAuth: true,
       seo: {
@@ -316,7 +316,7 @@ const routes = [
   {
     path: '/parametres',
     name: 'Parametres',
-    component: ParametresPage,
+    component: SettingsPage,
     meta: {
       requiresAuth: true,
       seo: {

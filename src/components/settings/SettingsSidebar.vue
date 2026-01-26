@@ -13,7 +13,11 @@
               : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
           ]"
         >
-          <span class="mr-3" :class="activeSection === section.id ? 'text-violet-400' : 'text-zinc-500'" aria-hidden="true">
+          <span
+            class="mr-3"
+            :class="activeSection === section.id ? 'text-violet-400' : 'text-zinc-500'"
+            aria-hidden="true"
+          >
             <svg
               v-if="iconConfigs[section.icon]"
               class="w-5 h-5"
@@ -110,6 +114,11 @@ const sections = computed(() => [
     id: 'language-currency',
     label: t('settings.sections.languageCurrency'),
     icon: 'globe'
+  },
+  {
+    id: 'theme',
+    label: t('settings.sections.theme'),
+    icon: 'palette'
   }
 ])
 </script>

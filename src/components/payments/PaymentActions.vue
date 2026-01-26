@@ -278,7 +278,7 @@ const generateRentReceipt = async () => {
 
     // Récupère les données du locataire
     let tenant = null
-    
+
     // Priorité 1 : Le tenant est dans la propriété
     if (property?.tenant) {
       tenant = {
@@ -310,22 +310,26 @@ const generateRentReceipt = async () => {
     let ownerAddress = null
 
     const profile = authStore.profile || (await authStore.fetchProfile().catch(() => null))
-    
+
     if (profile) {
       // Construction du nom complet depuis first_name + last_name (ou fallback sur full_name legacy)
-      ownerName = (profile.first_name && profile.last_name)
-        ? `${profile.first_name} ${profile.last_name}`
-        : profile.full_name || profile.name || null
+      ownerName =
+        profile.first_name && profile.last_name
+          ? `${profile.first_name} ${profile.last_name}`
+          : profile.full_name || profile.name || null
       ownerPhone = profile.phone || null
       // Construction de l'adresse structurée (ou fallback sur address legacy)
-      ownerAddress = (profile.address_line || profile.postal_code || profile.city)
-        ? [
-            profile.address_line,
-            profile.postal_code && profile.city
-              ? `${profile.postal_code} ${profile.city}`
-              : profile.city || profile.postal_code
-          ].filter(Boolean).join(', ')
-        : profile.address || null
+      ownerAddress =
+        profile.address_line || profile.postal_code || profile.city
+          ? [
+              profile.address_line,
+              profile.postal_code && profile.city
+                ? `${profile.postal_code} ${profile.city}`
+                : profile.city || profile.postal_code
+            ]
+              .filter(Boolean)
+              .join(', ')
+          : profile.address || null
     }
 
     if (authStore.user?.email) {
@@ -377,7 +381,7 @@ const generatePDF = async () => {
 
     // Couleurs
     const primaryColor = [34, 197, 94] // Vert (primary-500)
-    const grayColor = [107, 114, 128] // Gray-500
+    const neutralColor = [113, 113, 122] // gray-500
 
     // En-tête avec fond coloré
     doc.setFillColor(...primaryColor)
@@ -396,7 +400,7 @@ const generatePDF = async () => {
     yPosition = 50
 
     // Informations de l'émetteur (propriétaire)
-    doc.setTextColor(...grayColor)
+    doc.setTextColor(...neutralColor)
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.text('ÉMETTEUR', margin, yPosition)
@@ -428,7 +432,7 @@ const generatePDF = async () => {
     const tenantName = props.payment.tenant || 'Locataire'
     const propertyName = props.payment.property || 'Bien inconnu'
 
-    doc.setTextColor(...grayColor)
+    doc.setTextColor(...neutralColor)
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.text('DESTINATAIRE', pageWidth - margin - 60, 50)
@@ -454,7 +458,7 @@ const generatePDF = async () => {
     const today = new Date()
     const emissionDate = formatDate(today, { day: 'numeric', month: 'long', year: 'numeric' })
     doc.setFontSize(9)
-    doc.setTextColor(...grayColor)
+    doc.setTextColor(...neutralColor)
     doc.text("Date d'émission:", margin, yPosition)
     doc.setTextColor(0, 0, 0)
     doc.text(emissionDate, margin + 35, yPosition)
@@ -462,7 +466,7 @@ const generatePDF = async () => {
 
     // Référence facture
     const invoiceRef = `FAC-${props.payment.id.slice(0, 8).toUpperCase()}-${today.getFullYear()}`
-    doc.setTextColor(...grayColor)
+    doc.setTextColor(...neutralColor)
     doc.text('Référence:', margin, yPosition)
     doc.setTextColor(0, 0, 0)
     doc.setFont('helvetica', 'bold')
@@ -471,7 +475,7 @@ const generatePDF = async () => {
     yPosition += 10
 
     // Tableau des détails
-    doc.setFillColor(249, 250, 251) // Gray-50
+    doc.setFillColor(250, 250, 250) // gray-50
     doc.rect(margin, yPosition, pageWidth - 2 * margin, 8, 'F')
 
     yPosition += 6
@@ -481,7 +485,7 @@ const generatePDF = async () => {
     doc.text('Montant', pageWidth - margin - 30, yPosition, { align: 'right' })
 
     yPosition += 10
-    doc.setDrawColor(229, 231, 235) // Gray-200
+    doc.setDrawColor(228, 228, 231) // gray-200
     doc.line(margin, yPosition, pageWidth - margin, yPosition)
     yPosition += 8
 
@@ -497,7 +501,7 @@ const generatePDF = async () => {
     yPosition += 15
 
     // Ligne de séparation
-    doc.setDrawColor(229, 231, 235)
+    doc.setDrawColor(228, 228, 231)
     doc.line(pageWidth - margin - 50, yPosition, pageWidth - margin, yPosition)
     yPosition += 8
 
@@ -536,12 +540,12 @@ const generatePDF = async () => {
     yPosition += 20
 
     // Pied de page
-    doc.setDrawColor(229, 231, 235)
+    doc.setDrawColor(228, 228, 231)
     doc.line(margin, yPosition, pageWidth - margin, yPosition)
     yPosition += 10
 
     doc.setFontSize(8)
-    doc.setTextColor(...grayColor)
+    doc.setTextColor(...neutralColor)
     doc.text('Merci de votre confiance.', margin, yPosition)
     yPosition += 5
     doc.text('Cette facture a été générée automatiquement par Doogoo.', margin, yPosition)

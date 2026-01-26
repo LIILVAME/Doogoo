@@ -11,6 +11,7 @@
 L'audit complet du projet Doogoo révèle une application **stable et fonctionnelle** prête pour la publication du MVP (v0.2.0). L'application utilise Vue 3, Pinia, Tailwind CSS et Supabase pour la gestion immobilière en temps réel.
 
 ### ✅ Points Forts
+
 - Architecture propre et modulaire
 - Backend Supabase fonctionnel avec RLS
 - Stores Pinia bien structurés
@@ -19,6 +20,7 @@ L'audit complet du projet Doogoo révèle une application **stable et fonctionne
 - Documentation complète
 
 ### ⚠️ Points d'Attention
+
 - Version package.json à mettre à jour (1.0.0 → 0.2.0)
 - README.md nécessite une mise à jour pour refléter Supabase
 - Supabase CLI non lié localement (mais fonctionne via MCP)
@@ -29,6 +31,7 @@ L'audit complet du projet Doogoo révèle une application **stable et fonctionne
 ## 1️⃣ Structure & Cohérence
 
 ### ✅ Organisation du Projet
+
 ```
 Doogoo/
 ├── src/
@@ -48,14 +51,14 @@ Doogoo/
 
 ### ✅ Fichiers de Configuration
 
-| Fichier | Statut | Notes |
-|---------|--------|-------|
-| `package.json` | ⚠️ | Version `1.0.0` au lieu de `0.2.0` |
-| `vite.config.js` | ✅ | Base path `/Doogoo/` pour GitHub Pages, minify: `esbuild` |
-| `tailwind.config.js` | ✅ | Palette verte configurée |
-| `.env.example` | ✅ | Variables Supabase documentées |
-| `.gitignore` | ✅ | `.env` exclu, `dist/` exclu, `.supabase/` exclu |
-| `README.md` | ⚠️ | À mettre à jour pour refléter Supabase (mentionne encore mockData) |
+| Fichier              | Statut | Notes                                                              |
+| -------------------- | ------ | ------------------------------------------------------------------ |
+| `package.json`       | ⚠️     | Version `1.0.0` au lieu de `0.2.0`                                 |
+| `vite.config.js`     | ✅     | Base path `/Doogoo/` pour GitHub Pages, minify: `esbuild`          |
+| `tailwind.config.js` | ✅     | Palette verte configurée                                           |
+| `.env.example`       | ✅     | Variables Supabase documentées                                     |
+| `.gitignore`         | ✅     | `.env` exclu, `dist/` exclu, `.supabase/` exclu                    |
+| `README.md`          | ⚠️     | À mettre à jour pour refléter Supabase (mentionne encore mockData) |
 
 ### ✅ Utilisation de mockData.js
 
@@ -69,18 +72,18 @@ Doogoo/
 
 ### ✅ Pages Validées
 
-| Page | Statut | Fonctionnalités |
-|------|--------|-----------------|
-| **LandingPage.vue** | ✅ | Hero, features, témoignages, CTA |
-| **LoginPage.vue** | ✅ | Login + Signup, Supabase Auth, toasts |
-| **DashboardPage.vue** | ✅ | Stats, liste biens, paiements, temps réel |
-| **BiensPage.vue** | ✅ | CRUD complet, filtres, recherche, empty states |
-| **PaiementsPage.vue** | ✅ | CRUD, filtres par statut, empty states |
-| **LocatairesPage.vue** | ✅ | CRUD, filtres, synchro avec biens |
-| **StatsPage.vue** | ✅ | Graphiques ApexCharts, analytics |
-| **RapportsPage.vue** | ✅ | Export PDF/Excel, rapports mensuels |
-| **AlertesPage.vue** | ✅ | Alertes paiements en retard, départs |
-| **ParametresPage.vue** | ✅ | Profil utilisateur (Supabase), préférences |
+| Page                   | Statut | Fonctionnalités                                |
+| ---------------------- | ------ | ---------------------------------------------- |
+| **LandingPage.vue**    | ✅     | Hero, features, témoignages, CTA               |
+| **LoginPage.vue**      | ✅     | Login + Signup, Supabase Auth, toasts          |
+| **DashboardPage.vue**  | ✅     | Stats, liste biens, paiements, temps réel      |
+| **BiensPage.vue**      | ✅     | CRUD complet, filtres, recherche, empty states |
+| **PaiementsPage.vue**  | ✅     | CRUD, filtres par statut, empty states         |
+| **LocatairesPage.vue** | ✅     | CRUD, filtres, synchro avec biens              |
+| **StatsPage.vue**      | ✅     | Graphiques ApexCharts, analytics               |
+| **RapportsPage.vue**   | ✅     | Export PDF/Excel, rapports mensuels            |
+| **AlertesPage.vue**    | ✅     | Alertes paiements en retard, départs           |
+| **ParametresPage.vue** | ✅     | Profil utilisateur (Supabase), préférences     |
 
 ### ✅ Composants Réutilisables
 
@@ -102,12 +105,12 @@ Doogoo/
 
 ### ✅ Tables Supabase
 
-| Table | RLS | Colonnes | Statut |
-|-------|-----|----------|--------|
-| `properties` | ✅ | id, user_id, name, address, city, rent, status, created_at, updated_at | ✅ |
-| `tenants` | ✅ | id, property_id, name, entry_date, exit_date, rent, status | ✅ |
-| `payments` | ✅ | id, user_id, property_id, tenant_id, amount, date, status | ✅ |
-| `profiles` | ✅ | id, user_id, full_name, phone, company, avatar_url | ✅ |
+| Table        | RLS | Colonnes                                                               | Statut |
+| ------------ | --- | ---------------------------------------------------------------------- | ------ |
+| `properties` | ✅  | id, user_id, name, address, city, rent, status, created_at, updated_at | ✅     |
+| `tenants`    | ✅  | id, property_id, name, entry_date, exit_date, rent, status             | ✅     |
+| `payments`   | ✅  | id, user_id, property_id, tenant_id, amount, date, status              | ✅     |
+| `profiles`   | ✅  | id, user_id, full_name, phone, company, avatar_url                     | ✅     |
 
 ### ✅ Vues Supabase
 
@@ -116,6 +119,7 @@ Doogoo/
 ### ✅ RLS Policies
 
 Toutes les tables ont des politiques RLS actives :
+
 - SELECT : Utilisateurs voient uniquement leurs données (`auth.uid() = user_id`)
 - INSERT/UPDATE/DELETE : Utilisateurs modifient uniquement leurs données
 
@@ -152,16 +156,16 @@ VITE_SUPABASE_ANON_KEY=*** (présente dans .env, documentée dans .env.example)
 
 ### ✅ Stores Validés
 
-| Store | State | Actions | Realtime | Erreurs | Statut |
-|-------|-------|---------|----------|---------|--------|
-| `authStore` | ✅ | login, signUp, logout, fetchUser, fetchProfile, updateProfile | ✅ | ✅ | ✅ |
-| `propertiesStore` | ✅ | fetchProperties, addProperty, updateProperty, deleteProperty | ✅ | ✅ | ✅ |
-| `paymentsStore` | ✅ | fetchPayments, addPayment, updatePayment, deletePayment | ✅ | ✅ | ✅ |
-| `tenantsStore` | ✅ | fetchTenants, addTenant, updateTenant, deleteTenant | ✅ | ✅ | ✅ |
-| `toastStore` | ✅ | success, error, info, warning | N/A | ✅ | ✅ |
-| `analyticsStore` | ✅ | fetchAnalytics | N/A | ✅ | ✅ |
-| `alertsStore` | ✅ | fetchAlerts | N/A | ✅ | ✅ |
-| `reportsStore` | ✅ | generateMonthlyReport | N/A | ✅ | ✅ |
+| Store             | State | Actions                                                       | Realtime | Erreurs | Statut |
+| ----------------- | ----- | ------------------------------------------------------------- | -------- | ------- | ------ |
+| `authStore`       | ✅    | login, signUp, logout, fetchUser, fetchProfile, updateProfile | ✅       | ✅      | ✅     |
+| `propertiesStore` | ✅    | fetchProperties, addProperty, updateProperty, deleteProperty  | ✅       | ✅      | ✅     |
+| `paymentsStore`   | ✅    | fetchPayments, addPayment, updatePayment, deletePayment       | ✅       | ✅      | ✅     |
+| `tenantsStore`    | ✅    | fetchTenants, addTenant, updateTenant, deleteTenant           | ✅       | ✅      | ✅     |
+| `toastStore`      | ✅    | success, error, info, warning                                 | N/A      | ✅      | ✅     |
+| `analyticsStore`  | ✅    | fetchAnalytics                                                | N/A      | ✅      | ✅     |
+| `alertsStore`     | ✅    | fetchAlerts                                                   | N/A      | ✅      | ✅     |
+| `reportsStore`    | ✅    | generateMonthlyReport                                         | N/A      | ✅      | ✅     |
 
 ### ✅ Gestion des Erreurs
 
@@ -181,11 +185,11 @@ VITE_SUPABASE_ANON_KEY=*** (présente dans .env, documentée dans .env.example)
 
 ### ✅ Responsive Design
 
-| Breakpoint | Comportement | Statut |
-|------------|--------------|--------|
-| **Mobile** (< 640px) | Sidebar overlay, grilles 1 colonne | ✅ |
-| **Tablet** (640px - 1024px) | Grilles 2 colonnes, sidebar optionnelle | ✅ |
-| **Desktop** (≥ 1024px) | Sidebar fixe, grilles 3 colonnes | ✅ |
+| Breakpoint                  | Comportement                            | Statut |
+| --------------------------- | --------------------------------------- | ------ |
+| **Mobile** (< 640px)        | Sidebar overlay, grilles 1 colonne      | ✅     |
+| **Tablet** (640px - 1024px) | Grilles 2 colonnes, sidebar optionnelle | ✅     |
+| **Desktop** (≥ 1024px)      | Sidebar fixe, grilles 3 colonnes        | ✅     |
 
 ### ✅ Composants UI
 
@@ -198,8 +202,8 @@ VITE_SUPABASE_ANON_KEY=*** (présente dans .env, documentée dans .env.example)
 ### ✅ Palette de Couleurs
 
 - **Primary** : Vert (`#22c55e` - green-500)
-- **Background** : Gris clair (`#f9fafb` - gray-50)
-- **Text** : Gris foncé (`#111827` - gray-900)
+- **Background** : Gris clair (`#fafafa` - neutral-50)
+- **Text** : Gris foncé (`#18181b` - neutral-900)
 - **Cohérence** : ✅ Uniforme sur toutes les pages
 
 ### ✅ Accessibilité (A11y)
@@ -235,6 +239,7 @@ npm run build
 ```
 
 **Résultat** :
+
 - ✅ Build réussi (3.73s)
 - ⚠️ Chunk ApexCharts volumineux : `index-DiMxag2p.js` (1.6 MB / 477.71 KB gzip)
 - ✅ Code splitting : `vue-vendor` séparé (102.50 KB)
@@ -257,16 +262,16 @@ npm run preview
 
 ### ✅ Fichiers Présents
 
-| Fichier | Statut | Notes |
-|---------|--------|-------|
-| `README.md` | ⚠️ | À mettre à jour (mentionne encore mockData, v0.1.0) |
-| `CHANGELOG.md` | ✅ | Présent |
-| `docs/AUDIT_360_PRE_RELEASE_v0.2.0.md` | ✅ | Ce rapport |
-| `docs/CHECKLIST_PRODUCTION.md` | ✅ | Checklist v0.1.0 (à mettre à jour) |
-| `docs/SUPABASE_INTEGRATION.md` | ✅ | Documentation Supabase |
-| `docs/VALIDATION_FINALE_v0.1.0.md` | ✅ | Validation v0.1.0 |
-| `docs/SPRINT_3_REALTIME_UX.md` | ✅ | Documentation temps réel |
-| `docs/SPRINT_4_ANALYTICS.md` | ✅ | Documentation analytics |
+| Fichier                                | Statut | Notes                                               |
+| -------------------------------------- | ------ | --------------------------------------------------- |
+| `README.md`                            | ⚠️     | À mettre à jour (mentionne encore mockData, v0.1.0) |
+| `CHANGELOG.md`                         | ✅     | Présent                                             |
+| `docs/AUDIT_360_PRE_RELEASE_v0.2.0.md` | ✅     | Ce rapport                                          |
+| `docs/CHECKLIST_PRODUCTION.md`         | ✅     | Checklist v0.1.0 (à mettre à jour)                  |
+| `docs/SUPABASE_INTEGRATION.md`         | ✅     | Documentation Supabase                              |
+| `docs/VALIDATION_FINALE_v0.1.0.md`     | ✅     | Validation v0.1.0                                   |
+| `docs/SPRINT_3_REALTIME_UX.md`         | ✅     | Documentation temps réel                            |
+| `docs/SPRINT_4_ANALYTICS.md`           | ✅     | Documentation analytics                             |
 
 ### ⚠️ Mises à Jour Requises
 
@@ -386,4 +391,3 @@ Le projet **Doogoo v0.2.0** est **stable et prêt pour publication** après les 
 **Date de l'audit** : 31 janvier 2025  
 **Auditeur** : Cursor AI Assistant  
 **Version audité** : v0.2.0 MVP
-
