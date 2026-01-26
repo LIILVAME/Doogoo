@@ -5,58 +5,55 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary (Violet) — Actions principales, CTA, focus
+        // Primary (Indigo Deep) — Actions principales, Brand
         primary: {
-          50: '#f0f4ff',
-          100: '#e0e8ff',
-          200: '#c7d5fe',
-          300: '#a5b4fc', // Ajouté pour compatibilité UI existante
-          400: '#818cf8', // Ajouté pour compatibilité UI existante
-          500: '#6366f1', // Couleur principale
-          600: '#4f46e5', // Hover
-          700: '#4338ca'  // Active/Pressed
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1', // Keeping 500 equivalent to old 600-ish but let's shift to new target
+          600: '#4f46e5', // New Primary Target
+          700: '#4338ca',
+          800: '#3730a3',
+          900: '#312e81',
+          950: '#1e1b4b'
         },
 
-        // Success (Vert) — Confirmations, états positifs
+        // Semantic Aliases
         success: {
-          100: '#d1fae5',
-          500: '#10b981',
-          700: '#047857'
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d'
         },
 
-        // Warning (Orange) — Alertes d'attention
         warning: {
-          100: '#fed7aa',
+          50: '#fffbeb',
+          100: '#fef3c7',
           500: '#f59e0b',
           700: '#b45309'
         },
 
-        // Danger (Rouge) — Erreurs, suppressions
         danger: {
+          50: '#fef2f2',
           100: '#fee2e2',
           500: '#ef4444',
           600: '#dc2626',
           700: '#b91c1c'
         },
 
-        // Neutral (Gris) — Textes, bordures, backgrounds
-        neutral: {
-          50: '#fafafa',
-          100: '#f4f4f5',
-          200: '#e4e4e7',
-          500: '#71717a',
-          700: '#3f3f46',
-          900: '#18181b'
-        },
+        // Removed custom 'neutral' to use default Tailwind 'zinc' or 'gray'
+        // Added 'surface' for semantic usage if needed, or we just use 'white' class.
 
-        // Alias temporaire pour migration douce (sera retiré en Phase 2)
-        // Permet aux composants existants utilisant "green-" de continuer à fonctionner
+        // Alias Legacy (Migration)
         green: {
-          50: '#d1fae5',   // = success-100
-          100: '#d1fae5',
-          500: '#10b981',  // = success-500
-          600: '#059669',
-          700: '#047857'   // = success-700
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d'
         }
       },
       fontFamily: {
@@ -66,4 +63,3 @@ export default {
   },
   plugins: []
 }
-

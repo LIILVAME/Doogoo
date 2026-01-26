@@ -1,17 +1,17 @@
 <template>
   <div
-    class="min-h-screen bg-zinc-950 text-zinc-50 antialiased selection:bg-violet-500/30 selection:text-violet-200 font-sans scroll-smooth"
+    class="min-h-screen bg-white text-zinc-900 antialiased selection:bg-primary-500/30 selection:text-primary-800 font-sans scroll-smooth"
     style="scroll-padding-top: 80px"
   >
     <!-- Navigation -->
     <nav
       ref="navRef"
-      class="fixed top-0 w-full z-50 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md transition-all duration-300"
-      :class="{ 'bg-zinc-950/95 shadow-lg': scrolled }"
+      class="fixed top-0 w-full z-50 border-b border-zinc-100 bg-white/80 backdrop-blur-md transition-all duration-300"
+      :class="{ 'bg-white/95 shadow-lg': scrolled }"
     >
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-lg font-semibold tracking-tighter text-white">doogoo</span>
+          <span class="text-lg font-semibold tracking-tighter text-zinc-900">doogoo</span>
         </div>
 
         <!-- Navigation Sections -->
@@ -22,12 +22,16 @@
             :href="`#${section.id}`"
             @click.prevent="scrollToSection(section.id)"
             class="transition-colors relative"
-            :class="activeSection === section.id ? 'text-white' : 'text-zinc-400 hover:text-white'"
+            :class="
+              activeSection === section.id
+                ? 'text-primary-600'
+                : 'text-zinc-500 hover:text-zinc-900'
+            "
           >
             {{ section.label }}
             <span
               v-if="activeSection === section.id"
-              class="absolute -bottom-1 left-0 right-0 h-0.5 bg-violet-500 rounded-full"
+              class="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary-600 rounded-full"
             ></span>
           </a>
         </div>
@@ -35,7 +39,7 @@
         <div class="flex items-center gap-4">
           <router-link
             to="/login"
-            class="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block"
+            class="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block"
           >
             Se connecter
           </router-link>
@@ -50,10 +54,10 @@
     <main id="hero" class="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
       <!-- Background Effects -->
       <div
-        class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[900px] glow-bg pointer-events-none z-0"
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[900px] glow-bg-light pointer-events-none z-0"
       ></div>
       <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-500/5 rounded-full blur-3xl pointer-events-none z-0"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-100 rounded-full blur-3xl pointer-events-none z-0"
       ></div>
 
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -79,7 +83,7 @@
 
           <!-- Subheadline -->
           <p
-            class="text-lg md:text-xl text-zinc-300 max-w-3xl mx-auto mb-8 font-normal leading-relaxed"
+            class="text-lg md:text-xl text-zinc-600 max-w-3xl mx-auto mb-8 font-normal leading-relaxed"
           >
             Gagnez plus de clients avec une gestion locative moderne. Travaillez plus
             intelligemment, optimisez plus rapidement.
@@ -161,18 +165,18 @@
     </main>
 
     <!-- Stats Section: Pourquoi Doogoo -->
-    <section id="pourquoi" class="py-24 border-t border-white/5 bg-zinc-950">
+    <section id="pourquoi" class="py-24 border-t border-zinc-100 bg-white">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2
             ref="pourquoiH2"
             words-slide-from-right
             text-split
-            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white"
+            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900"
           >
             Vous perdez 18% de vos revenus
           </h2>
-          <p class="text-zinc-400 font-light text-lg">
+          <p class="text-zinc-500 font-light text-lg">
             La gestion manuelle vous coûte du temps, de l'argent et des locataires. Doogoo résout
             ces 3 problèmes.
           </p>
@@ -180,66 +184,66 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div class="text-center">
-            <div class="text-4xl md:text-5xl font-bold text-violet-400 mb-2">+134</div>
-            <p class="text-zinc-400">Biens gérés</p>
+            <div class="text-4xl md:text-5xl font-bold text-primary-600 mb-2">+134</div>
+            <p class="text-zinc-500">Biens gérés</p>
           </div>
           <div class="text-center">
-            <div class="text-4xl md:text-5xl font-bold text-emerald-400 mb-2">+134</div>
-            <p class="text-zinc-400">Valeur des revenus</p>
+            <div class="text-4xl md:text-5xl font-bold text-success-600 mb-2">+134</div>
+            <p class="text-zinc-500">Valeur des revenus</p>
           </div>
           <div class="text-center">
-            <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2">+134</div>
-            <p class="text-zinc-400">Locataires satisfaits</p>
+            <div class="text-4xl md:text-5xl font-bold text-blue-500 mb-2">+134</div>
+            <p class="text-zinc-500">Locataires satisfaits</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="glass-panel rounded-2xl p-8">
-            <h3 class="text-xl font-semibold text-white mb-4">Avant Doogoo...</h3>
-            <ul class="space-y-3 text-zinc-400">
+          <div class="glass-panel-light rounded-2xl p-8">
+            <h3 class="text-xl font-semibold text-zinc-900 mb-4">Avant Doogoo...</h3>
+            <ul class="space-y-3 text-zinc-600">
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
                 <span>Feuilles de calcul dispersées</span>
               </li>
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
                 <span>Retards de paiement non détectés</span>
               </li>
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
                 <span>Export comptable manuel et chronophage</span>
               </li>
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
+                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
                 <span>Pas de visibilité sur la rentabilité</span>
               </li>
             </ul>
           </div>
 
-          <div class="glass-panel rounded-2xl p-8 border-violet-500/20">
+          <div class="glass-panel-light rounded-2xl p-8 border-primary-200">
             <h3
               ref="avecH3"
               words-slide-from-right
               text-split
-              class="text-xl font-semibold text-white mb-4"
+              class="text-xl font-semibold text-zinc-900 mb-4"
             >
               Avec Doogoo
             </h3>
-            <ul class="space-y-3 text-zinc-400">
+            <ul class="space-y-3 text-zinc-600">
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
                 <span>Tout centralisé dans une interface unique</span>
               </li>
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
                 <span>Alertes automatiques en cas de retard</span>
               </li>
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
                 <span>Export comptable en un clic (CSV, PDF, XLS)</span>
               </li>
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
                 <span>Tableaux de bord en temps réel</span>
               </li>
             </ul>
@@ -249,18 +253,18 @@
     </section>
 
     <!-- How it Works Section -->
-    <section id="comment" class="py-24 border-t border-white/5 bg-zinc-950">
+    <section id="comment" class="py-24 border-t border-zinc-100 bg-zinc-50">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2
             ref="commentH2"
             words-slide-from-right
             text-split
-            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white"
+            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900"
           >
             Vous êtes à 5 étapes de gérer votre patrimoine
           </h2>
-          <p class="text-zinc-400 font-light">
+          <p class="text-zinc-500 font-light">
             Créez, configurez et gérez vos biens immobiliers — en quelques minutes.
           </p>
         </div>
@@ -270,7 +274,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <div
-                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-violet-500/20 text-violet-400 font-bold text-xl mb-4"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 text-primary-600 font-bold text-xl mb-4"
               >
                 1
               </div>
@@ -278,18 +282,18 @@
                 ref="step1H3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-3"
+                class="text-2xl font-semibold text-zinc-900 mb-3"
               >
                 Créer votre compte
               </h3>
-              <p class="text-zinc-400 leading-relaxed">
+              <p class="text-zinc-500 leading-relaxed">
                 Inscrivez-vous en quelques secondes. Aucune carte bancaire requise pour commencer.
               </p>
             </div>
-            <div class="glass-panel rounded-2xl p-8 h-64 flex items-center justify-center">
+            <div class="glass-panel-light rounded-2xl p-8 h-64 flex items-center justify-center">
               <div class="text-center">
-                <UserPlus class="w-16 h-16 text-violet-400 mx-auto mb-4" />
-                <p class="text-zinc-400 text-sm">Création de compte</p>
+                <UserPlus class="w-16 h-16 text-primary-500 mx-auto mb-4" />
+                <p class="text-zinc-500 text-sm">Création de compte</p>
               </div>
             </div>
           </div>
@@ -297,16 +301,16 @@
           <!-- Step 2 -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div
-              class="glass-panel rounded-2xl p-8 h-64 flex items-center justify-center order-2 md:order-1"
+              class="glass-panel-light rounded-2xl p-8 h-64 flex items-center justify-center order-2 md:order-1"
             >
               <div class="text-center">
-                <Building2 class="w-16 h-16 text-emerald-400 mx-auto mb-4" />
-                <p class="text-zinc-400 text-sm">Ajout de biens</p>
+                <Building2 class="w-16 h-16 text-success-500 mx-auto mb-4" />
+                <p class="text-zinc-500 text-sm">Ajout de biens</p>
               </div>
             </div>
             <div class="order-1 md:order-2">
               <div
-                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl mb-4"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-success-100 text-success-600 font-bold text-xl mb-4"
               >
                 2
               </div>
@@ -314,11 +318,11 @@
                 ref="step2H3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-3"
+                class="text-2xl font-semibold text-zinc-900 mb-3"
               >
                 Ajouter vos biens
               </h3>
-              <p class="text-zinc-400 leading-relaxed">
+              <p class="text-zinc-500 leading-relaxed">
                 Ajoutez vos propriétés : appartements, maisons, parkings ou locaux commerciaux.
                 Configurez les détails en quelques clics.
               </p>
@@ -329,7 +333,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <div
-                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl mb-4"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-bold text-xl mb-4"
               >
                 3
               </div>
@@ -337,19 +341,19 @@
                 ref="step3H3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-3"
+                class="text-2xl font-semibold text-zinc-900 mb-3"
               >
                 Enregistrer vos locataires
               </h3>
-              <p class="text-zinc-400 leading-relaxed">
+              <p class="text-zinc-500 leading-relaxed">
                 Créez les profils de vos locataires, liez-les à vos biens et configurez les baux.
                 Tout est centralisé.
               </p>
             </div>
-            <div class="glass-panel rounded-2xl p-8 h-64 flex items-center justify-center">
+            <div class="glass-panel-light rounded-2xl p-8 h-64 flex items-center justify-center">
               <div class="text-center">
-                <Users class="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                <p class="text-zinc-400 text-sm">Gestion locataires</p>
+                <Users class="w-16 h-16 text-blue-500 mx-auto mb-4" />
+                <p class="text-zinc-500 text-sm">Gestion locataires</p>
               </div>
             </div>
           </div>
@@ -357,16 +361,16 @@
           <!-- Step 4 -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div
-              class="glass-panel rounded-2xl p-8 h-64 flex items-center justify-center order-2 md:order-1"
+              class="glass-panel-light rounded-2xl p-8 h-64 flex items-center justify-center order-2 md:order-1"
             >
               <div class="text-center">
-                <Wallet class="w-16 h-16 text-amber-400 mx-auto mb-4" />
-                <p class="text-zinc-400 text-sm">Suivi paiements</p>
+                <Wallet class="w-16 h-16 text-amber-500 mx-auto mb-4" />
+                <p class="text-zinc-500 text-sm">Suivi paiements</p>
               </div>
             </div>
             <div class="order-1 md:order-2">
               <div
-                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl mb-4"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600 font-bold text-xl mb-4"
               >
                 4
               </div>
@@ -374,11 +378,11 @@
                 ref="step4H3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-3"
+                class="text-2xl font-semibold text-zinc-900 mb-3"
               >
                 Suivre les paiements
               </h3>
-              <p class="text-zinc-400 leading-relaxed">
+              <p class="text-zinc-500 leading-relaxed">
                 Enregistrez les paiements, recevez des alertes automatiques en cas de retard et
                 générez des rapports en temps réel.
               </p>
@@ -389,20 +393,20 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
               <div
-                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl mb-4"
+                class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-danger-100 text-danger-600 font-bold text-xl mb-4"
               >
                 5
               </div>
-              <h3 class="text-2xl font-semibold text-white mb-3">Analyser et exporter</h3>
-              <p class="text-zinc-400 leading-relaxed">
+              <h3 class="text-2xl font-semibold text-zinc-900 mb-3">Analyser et exporter</h3>
+              <p class="text-zinc-500 leading-relaxed">
                 Visualisez vos métriques, analysez votre rentabilité et exportez vos données pour
                 votre comptable en un clic.
               </p>
             </div>
-            <div class="glass-panel rounded-2xl p-8 h-64 flex items-center justify-center">
+            <div class="glass-panel-light rounded-2xl p-8 h-64 flex items-center justify-center">
               <div class="text-center">
-                <BarChart3 class="w-16 h-16 text-rose-400 mx-auto mb-4" />
-                <p class="text-zinc-400 text-sm">Analytics & Export</p>
+                <BarChart3 class="w-16 h-16 text-danger-500 mx-auto mb-4" />
+                <p class="text-zinc-500 text-sm">Analytics &amp; Export</p>
               </div>
             </div>
           </div>
@@ -417,18 +421,18 @@
     </section>
 
     <!-- Features Section -->
-    <section id="fonctionnalites" class="py-24 border-t border-white/5 bg-zinc-950">
+    <section id="fonctionnalites" class="py-24 border-t border-zinc-100 bg-white">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2
             ref="fonctionnalitesH2"
             words-slide-from-right
             text-split
-            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white"
+            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900"
           >
             Fonctionnalités intelligentes.
           </h2>
-          <p class="text-zinc-400 font-light">
+          <p class="text-zinc-500 font-light">
             Conçues pour simplifier. Tout ce dont vous avez besoin pour gérer, suivre et optimiser
             sans friction.
           </p>
@@ -436,15 +440,17 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Feature 1 -->
-          <div class="md:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group">
+          <div
+            class="md:col-span-2 glass-panel-light rounded-2xl p-8 relative overflow-hidden group"
+          >
             <div class="relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/10 mb-4 text-violet-400"
+                class="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center border border-primary-100 mb-4 text-primary-600"
               >
                 <Home class="w-5 h-5" />
               </div>
-              <h3 class="text-xl font-medium text-white mb-2">Gestion Multi-biens</h3>
-              <p class="text-zinc-400 text-sm max-w-sm leading-relaxed">
+              <h3 class="text-xl font-medium text-zinc-900 mb-2">Gestion Multi-biens</h3>
+              <p class="text-zinc-500 text-sm max-w-sm leading-relaxed">
                 Appartements, maisons, parkings ou locaux commerciaux. Ajoutez et configurez vos
                 propriétés en quelques clics avec des profils détaillés.
               </p>
@@ -453,22 +459,22 @@
               class="absolute right-0 bottom-0 w-1/2 h-3/4 opacity-30 group-hover:opacity-50 transition-opacity"
             >
               <div
-                class="w-full h-full border-t border-l border-white/10 bg-zinc-900/50 rounded-tl-xl p-4"
+                class="w-full h-full border-t border-l border-zinc-200 bg-zinc-50 rounded-tl-xl p-4"
               >
                 <div class="space-y-2">
-                  <div class="h-2 w-1/2 bg-zinc-700 rounded-full"></div>
-                  <div class="h-2 w-3/4 bg-zinc-800 rounded-full"></div>
-                  <div class="h-20 w-full bg-zinc-800/50 rounded mt-4 border border-white/5"></div>
+                  <div class="h-2 w-1/2 bg-zinc-200 rounded-full"></div>
+                  <div class="h-2 w-3/4 bg-zinc-100 rounded-full"></div>
+                  <div class="h-20 w-full bg-zinc-100 rounded mt-4 border border-zinc-200"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Feature 2 -->
-          <div class="glass-panel rounded-2xl p-8 relative overflow-hidden group">
+          <div class="glass-panel-light rounded-2xl p-8 relative overflow-hidden group">
             <div class="relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/10 mb-4 text-emerald-400"
+                class="w-10 h-10 rounded-lg bg-success-50 flex items-center justify-center border border-success-100 mb-4 text-success-600"
               >
                 <UsersRound class="w-5 h-5" />
               </div>
@@ -476,21 +482,21 @@
                 ref="feature2H3"
                 words-slide-from-right
                 text-split
-                class="text-xl font-medium text-white mb-2"
+                class="text-xl font-medium text-zinc-900 mb-2"
               >
                 Suivi Locataires
               </h3>
-              <p class="text-zinc-400 text-sm leading-relaxed">
+              <p class="text-zinc-500 text-sm leading-relaxed">
                 Centralisez les baux, les contacts et l'historique de chaque locataire.
               </p>
             </div>
           </div>
 
           <!-- Feature 3 -->
-          <div class="glass-panel rounded-2xl p-8 relative overflow-hidden group">
+          <div class="glass-panel-light rounded-2xl p-8 relative overflow-hidden group">
             <div class="relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/10 mb-4 text-rose-400"
+                class="w-10 h-10 rounded-lg bg-danger-50 flex items-center justify-center border border-danger-100 mb-4 text-danger-500"
               >
                 <AlertCircle class="w-5 h-5" />
               </div>
@@ -498,11 +504,11 @@
                 ref="feature3H3"
                 words-slide-from-right
                 text-split
-                class="text-xl font-medium text-white mb-2"
+                class="text-xl font-medium text-zinc-900 mb-2"
               >
                 Alertes Retards
               </h3>
-              <p class="text-zinc-400 text-sm leading-relaxed">
+              <p class="text-zinc-500 text-sm leading-relaxed">
                 Soyez notifié immédiatement en cas de retard de paiement. Relancez en un clic.
               </p>
             </div>
@@ -510,11 +516,11 @@
 
           <!-- Feature 4 -->
           <div
-            class="md:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group flex flex-col md:flex-row items-center gap-8"
+            class="md:col-span-2 glass-panel-light rounded-2xl p-8 relative overflow-hidden group flex flex-col md:flex-row items-center gap-8"
           >
             <div class="flex-1 relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center border border-white/10 mb-4 text-blue-400"
+                class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center border border-blue-100 mb-4 text-blue-500"
               >
                 <BarChart3 class="w-5 h-5" />
               </div>
@@ -522,25 +528,25 @@
                 ref="feature4H3"
                 words-slide-from-right
                 text-split
-                class="text-xl font-medium text-white mb-2"
+                class="text-xl font-medium text-zinc-900 mb-2"
               >
                 Vue Métrique &amp; Export
               </h3>
-              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              <p class="text-zinc-500 text-sm leading-relaxed mb-6">
                 Analysez votre rentabilité en temps réel. Besoin de transmettre à votre comptable ?
                 Exportez toutes les données en CSV ou PDF instantanément.
               </p>
               <div class="flex gap-3">
                 <span
-                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
+                  class="text-xs border border-zinc-200 px-2 py-1 rounded text-zinc-500 bg-zinc-50"
                   >.CSV</span
                 >
                 <span
-                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
+                  class="text-xs border border-zinc-200 px-2 py-1 rounded text-zinc-500 bg-zinc-50"
                   >.PDF</span
                 >
                 <span
-                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
+                  class="text-xs border border-zinc-200 px-2 py-1 rounded text-zinc-500 bg-zinc-50"
                   >.XLS</span
                 >
               </div>
@@ -570,25 +576,25 @@
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="py-24 border-t border-white/5 bg-zinc-950">
+    <section id="pricing" class="py-24 border-t border-zinc-100 bg-zinc-50">
       <div class="max-w-7xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2
             ref="pricingH2"
             words-slide-from-right
             text-split
-            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white"
+            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900"
           >
             Des tarifs simples, transparents et justes
           </h2>
-          <p class="text-zinc-400 font-light text-lg">
+          <p class="text-zinc-500 font-light text-lg">
             Choisissez le plan qui correspond à vos besoins. Changez ou annulez à tout moment.
           </p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
           <!-- Free Plan -->
-          <div class="glass-panel rounded-2xl p-8 relative flex flex-col h-full">
+          <div class="glass-panel-light rounded-2xl p-8 relative flex flex-col h-full">
             <!-- Badge placeholder for alignment -->
             <div class="h-6 mb-2"></div>
             <div class="mb-6 h-[60px]">
@@ -596,15 +602,15 @@
                 ref="freePlanH3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-2"
+                class="text-2xl font-semibold text-zinc-900 mb-2"
               >
                 Gratuit
               </h3>
-              <p class="text-zinc-400 text-sm">Pour découvrir Doogoo</p>
+              <p class="text-zinc-500 text-sm">Pour découvrir Doogoo</p>
             </div>
             <div class="mb-8 h-[72px] flex items-end">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-semibold text-white">0€</span>
+                <span class="text-5xl font-semibold text-zinc-900">0€</span>
                 <span class="text-zinc-500 text-sm">/mois</span>
               </div>
             </div>
@@ -618,35 +624,35 @@
                 Inclus :
               </p>
               <ul class="space-y-3">
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Jusqu'à <strong class="text-white">2 biens</strong></span>
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
+                  <span>Jusqu'à <strong class="text-zinc-900">2 biens</strong></span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Gestion des locataires</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Suivi des paiements</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Alertes de retard</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Export PDF basique</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-500 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
-                  <span>Export CSV & Excel</span>
+                  <span>Export CSV &amp; Excel</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-500 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
                   <span>Rapports avancés</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-500 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
                   <span>Support prioritaire</span>
                 </li>
@@ -656,10 +662,10 @@
 
           <!-- Essentiel Plan (Popular) -->
           <div
-            class="glass-panel rounded-2xl p-8 relative border-2 border-violet-500/50 shadow-2xl shadow-violet-500/20 flex flex-col h-full"
+            class="glass-panel-light rounded-2xl p-8 relative border-2 border-primary-500/50 shadow-2xl shadow-primary-500/20 flex flex-col h-full"
           >
             <div
-              class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs font-medium"
+              class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-white text-xs font-medium"
             >
               Le plus populaire
             </div>
@@ -670,15 +676,15 @@
                 ref="essentielPlanH3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-2"
+                class="text-2xl font-semibold text-zinc-900 mb-2"
               >
                 Essentiel
               </h3>
-              <p class="text-zinc-400 text-sm">Parfait pour 3-10 biens</p>
+              <p class="text-zinc-500 text-sm">Parfait pour 3-10 biens</p>
             </div>
             <div class="mb-8 h-[72px] flex items-end">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-semibold text-white">12€</span>
+                <span class="text-5xl font-semibold text-zinc-900">12€</span>
                 <span class="text-zinc-500 text-sm">/mois</span>
               </div>
             </div>
@@ -694,31 +700,31 @@
                 Tout du plan Gratuit, plus :
               </p>
               <ul class="space-y-3">
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Jusqu'à <strong class="text-white">10 biens</strong></span>
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
+                  <span>Jusqu'à <strong class="text-zinc-900">10 biens</strong></span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Export CSV & Excel</span>
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
+                  <span>Export CSV &amp; Excel</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Rapports mensuels simples</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Support email (48h)</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-500 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
                   <span>Graphiques d'analyse</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-500 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
                   <span>Stockage documents illimité</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-500 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
                   <span>Support prioritaire</span>
                 </li>
@@ -727,7 +733,7 @@
           </div>
 
           <!-- Premium Plan -->
-          <div class="glass-panel rounded-2xl p-8 relative flex flex-col h-full">
+          <div class="glass-panel-light rounded-2xl p-8 relative flex flex-col h-full">
             <!-- Badge placeholder for alignment -->
             <div class="h-6 mb-2"></div>
             <div class="mb-6 h-[60px]">
@@ -735,15 +741,15 @@
                 ref="premiumPlanH3"
                 words-slide-from-right
                 text-split
-                class="text-2xl font-semibold text-white mb-2"
+                class="text-2xl font-semibold text-zinc-900 mb-2"
               >
                 Premium
               </h3>
-              <p class="text-zinc-400 text-sm">Pour les portefeuilles importants</p>
+              <p class="text-zinc-500 text-sm">Pour les portefeuilles importants</p>
             </div>
             <div class="mb-8 h-[72px] flex items-end">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-semibold text-white">24€</span>
+                <span class="text-5xl font-semibold text-zinc-900">24€</span>
                 <span class="text-zinc-500 text-sm">/mois</span>
               </div>
             </div>
@@ -759,32 +765,32 @@
                 Tout du plan Essentiel, plus :
               </p>
               <ul class="space-y-3">
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong class="text-white">Biens illimités</strong></span>
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
+                  <span><strong class="text-zinc-900">Biens illimités</strong></span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Rapports avancés & graphiques</span>
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
+                  <span>Rapports avancés &amp; graphiques</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Stockage documents illimité</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Support prioritaire (24h)</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Notifications personnalisées</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Analytics prédictives</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-300 min-h-[24px]">
-                  <Check class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                  <Check class="w-5 h-5 text-success-500 shrink-0 mt-0.5" />
                   <span>Export comptable avancé</span>
                 </li>
               </ul>
@@ -795,18 +801,18 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section id="temoignages" class="py-24 border-t border-white/5 bg-zinc-950">
+    <section id="temoignages" class="py-24 border-t border-zinc-100 bg-white">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2
             ref="temoignagesH2"
             words-slide-from-right
             text-split
-            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white"
+            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900"
           >
             Utilisé par 100+ propriétaires
           </h2>
-          <p class="text-zinc-400 font-light">
+          <p class="text-zinc-500 font-light">
             Ils gèrent mieux. Gagnent plus. Passent moins de temps.
           </p>
         </div>
@@ -819,14 +825,14 @@
               <div
                 v-for="testimonial in allTestimonials"
                 :key="`first-${testimonial.id}`"
-                class="testimonial-card glass-panel rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
+                class="testimonial-card glass-panel-light rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
               >
                 <div class="flex flex-col flex-1">
                   <div class="text-2xl font-bold mb-2" :class="testimonial.colorClass">
                     {{ testimonial.metric }}
                   </div>
-                  <p class="text-sm text-zinc-400 mb-4">{{ testimonial.metricLabel }}</p>
-                  <p class="text-zinc-300 text-sm leading-relaxed mb-6 flex-1">
+                  <p class="text-sm text-zinc-500 mb-4">{{ testimonial.metricLabel }}</p>
+                  <p class="text-zinc-600 text-sm leading-relaxed mb-6 flex-1">
                     "{{ testimonial.quote }}"
                   </p>
                 </div>
@@ -838,7 +844,7 @@
                     {{ testimonial.initials }}
                   </div>
                   <div class="min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{ testimonial.name }}</p>
+                    <p class="text-sm font-medium text-zinc-900 truncate">{{ testimonial.name }}</p>
                     <p class="text-xs text-zinc-500 truncate">{{ testimonial.role }}</p>
                   </div>
                 </div>
@@ -848,14 +854,14 @@
               <div
                 v-for="testimonial in allTestimonials"
                 :key="`second-${testimonial.id}`"
-                class="testimonial-card glass-panel rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
+                class="testimonial-card glass-panel-light rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
               >
                 <div class="flex flex-col flex-1">
                   <div class="text-2xl font-bold mb-2" :class="testimonial.colorClass">
                     {{ testimonial.metric }}
                   </div>
-                  <p class="text-sm text-zinc-400 mb-4">{{ testimonial.metricLabel }}</p>
-                  <p class="text-zinc-300 text-sm leading-relaxed mb-6 flex-1">
+                  <p class="text-sm text-zinc-500 mb-4">{{ testimonial.metricLabel }}</p>
+                  <p class="text-zinc-600 text-sm leading-relaxed mb-6 flex-1">
                     "{{ testimonial.quote }}"
                   </p>
                 </div>
@@ -867,7 +873,7 @@
                     {{ testimonial.initials }}
                   </div>
                   <div class="min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{ testimonial.name }}</p>
+                    <p class="text-sm font-medium text-zinc-900 truncate">{{ testimonial.name }}</p>
                     <p class="text-xs text-zinc-500 truncate">{{ testimonial.role }}</p>
                   </div>
                 </div>
@@ -879,79 +885,79 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-24 border-t border-white/5 bg-zinc-950">
+    <section class="py-24 border-t border-zinc-100 bg-zinc-50">
       <div class="max-w-3xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2
             ref="faqH2"
             words-slide-from-right
             text-split
-            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white"
+            class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900"
           >
             Questions fréquentes
           </h2>
-          <p class="text-zinc-400 font-light">
+          <p class="text-zinc-500 font-light">
             Voici ce que la plupart des gens demandent avant de commencer.
           </p>
         </div>
 
         <div class="space-y-4">
-          <details class="glass-panel rounded-2xl p-6 group">
+          <details class="glass-panel-light rounded-2xl p-6 group">
             <summary
-              class="cursor-pointer flex items-center justify-between text-white font-medium"
+              class="cursor-pointer flex items-center justify-between text-zinc-900 font-medium"
             >
               <span>Y a-t-il un essai gratuit ?</span>
               <ChevronDown
                 class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform"
               />
             </summary>
-            <p class="text-zinc-400 mt-4 leading-relaxed">
+            <p class="text-zinc-600 mt-4 leading-relaxed">
               Oui, nous proposons un essai gratuit de 7 jours. Aucune carte bancaire requise pour
               commencer.
             </p>
           </details>
 
-          <details class="glass-panel rounded-2xl p-6 group">
+          <details class="glass-panel-light rounded-2xl p-6 group">
             <summary
-              class="cursor-pointer flex items-center justify-between text-white font-medium"
+              class="cursor-pointer flex items-center justify-between text-zinc-900 font-medium"
             >
               <span>Puis-je exporter mes données ?</span>
               <ChevronDown
                 class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform"
               />
             </summary>
-            <p class="text-zinc-400 mt-4 leading-relaxed">
+            <p class="text-zinc-600 mt-4 leading-relaxed">
               Absolument. Vous pouvez exporter toutes vos données en CSV, PDF ou XLS en un clic. Vos
               données vous appartiennent.
             </p>
           </details>
 
-          <details class="glass-panel rounded-2xl p-6 group">
+          <details class="glass-panel-light rounded-2xl p-6 group">
             <summary
-              class="cursor-pointer flex items-center justify-between text-white font-medium"
+              class="cursor-pointer flex items-center justify-between text-zinc-900 font-medium"
             >
               <span>Qu'est-ce qui différencie Doogoo d'Excel ou d'autres outils ?</span>
               <ChevronDown
                 class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform"
               />
             </summary>
-            <p class="text-zinc-400 mt-4 leading-relaxed">
+            <p class="text-zinc-600 mt-4 leading-relaxed">
               Doogoo est conçu spécifiquement pour la gestion locative : alertes automatiques,
               exports comptables, suivi en temps réel, et interface mobile. Vous gérez tout depuis
               une seule plateforme, sans workflows fragmentés.
             </p>
           </details>
 
-          <details class="glass-panel rounded-2xl p-6 group">
+          <details class="glass-panel-light rounded-2xl p-6 group">
             <summary
-              class="cursor-pointer flex items-center justify-between text-white font-medium"
+              class="cursor-pointer flex items-center justify-between text-zinc-900 font-medium"
             >
               <span>Doogoo est-il pour les particuliers ou les professionnels ?</span>
               <ChevronDown
                 class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform"
               />
             </summary>
-            <p class="text-zinc-400 mt-4 leading-relaxed">
+            <p class="text-zinc-600 mt-4 leading-relaxed">
               Les deux. Que vous gériez 2 biens ou 200, Doogoo vous donne les mêmes outils de
               gestion que les professionnels utilisent.
             </p>
@@ -961,9 +967,9 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-32 relative overflow-hidden">
+    <section class="py-32 relative overflow-hidden bg-white">
       <div
-        class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(124,58,237,0.15),transparent_50%)]"
+        class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(79,70,229,0.1),transparent_50%)]"
       ></div>
 
       <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
@@ -971,13 +977,13 @@
           ref="ctaH2"
           words-slide-from-right
           text-split
-          class="text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6"
+          class="text-4xl md:text-5xl font-semibold tracking-tight text-zinc-900 mb-6"
         >
           Augmentez votre rentabilité de 20% — instantanément
         </h2>
-        <p class="text-zinc-400 text-lg mb-10 font-light">
+        <p class="text-zinc-500 text-lg mb-10 font-light">
           Gagnez plus de temps avec une gestion locative moderne. Gérez mieux, optimisez plus vite.
-          <strong class="text-white">Essayez gratuitement aujourd'hui.</strong>
+          <strong class="text-zinc-900">Essayez gratuitement aujourd'hui.</strong>
         </p>
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
           <router-link to="/signup" class="w-full sm:w-auto">
@@ -993,65 +999,65 @@
     </section>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 bg-zinc-950 pt-16 pb-8">
+    <footer class="border-t border-zinc-100 bg-zinc-50 pt-16 pb-8">
       <div class="max-w-6xl mx-auto px-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div class="col-span-2 md:col-span-1">
-            <span class="text-lg font-semibold tracking-tighter text-white">doogoo</span>
+            <span class="text-lg font-semibold tracking-tighter text-zinc-900">doogoo</span>
             <p class="text-zinc-500 text-sm mt-4 font-light">
               L'outil de gestion locative nouvelle génération pour les propriétaires exigeants.
             </p>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Produit</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Produit</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/features" class="hover:text-white transition-colors"
+                <router-link to="/features" class="hover:text-zinc-900 transition-colors"
                   >Fonctionnalités</router-link
                 >
               </li>
               <li>
-                <router-link to="/pricing" class="hover:text-white transition-colors"
+                <router-link to="/pricing" class="hover:text-zinc-900 transition-colors"
                   >Tarifs</router-link
                 >
               </li>
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Mises à jour</router-link
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Ressources</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Ressources</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Blog</router-link
                 >
               </li>
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Guide du bailleur</router-link
                 >
               </li>
               <li>
-                <router-link to="/resources" class="hover:text-white transition-colors"
+                <router-link to="/resources" class="hover:text-zinc-900 transition-colors"
                   >Centre d'aide</router-link
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Légal</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Légal</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/privacy" class="hover:text-white transition-colors"
+                <router-link to="/privacy" class="hover:text-zinc-900 transition-colors"
                   >Confidentialité</router-link
                 >
               </li>
               <li>
-                <router-link to="/terms" class="hover:text-white transition-colors"
+                <router-link to="/terms" class="hover:text-zinc-900 transition-colors"
                   >CGU</router-link
                 >
               </li>
@@ -1059,18 +1065,18 @@
           </div>
         </div>
         <div
-          class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+          class="border-t border-zinc-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
         >
-          <p class="text-xs text-zinc-600">© 2024 Doogoo Inc. Tous droits réservés.</p>
+          <p class="text-xs text-zinc-500">© 2024 Doogoo Inc. Tous droits réservés.</p>
           <div class="flex gap-4">
             <Twitter
-              class="w-4 h-4 text-zinc-600 hover:text-white cursor-pointer transition-colors"
+              class="w-4 h-4 text-zinc-400 hover:text-zinc-900 cursor-pointer transition-colors"
             />
             <Linkedin
-              class="w-4 h-4 text-zinc-600 hover:text-white cursor-pointer transition-colors"
+              class="w-4 h-4 text-zinc-400 hover:text-zinc-900 cursor-pointer transition-colors"
             />
             <Github
-              class="w-4 h-4 text-zinc-600 hover:text-white cursor-pointer transition-colors"
+              class="w-4 h-4 text-zinc-400 hover:text-zinc-900 cursor-pointer transition-colors"
             />
           </div>
         </div>

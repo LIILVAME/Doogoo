@@ -10,14 +10,14 @@
     <!-- Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-zinc-950/95 backdrop-blur-xl border-r border-white/10 transition-all duration-300 ease-in-out h-screen shadow-2xl md:relative md:translate-x-0 flex flex-col',
+        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-white border-r border-zinc-100 transition-all duration-300 ease-in-out h-screen shadow-xl md:shadow-none md:relative md:translate-x-0 flex flex-col',
         isOpen || isDesktop ? 'translate-x-0' : '-translate-x-full'
       ]"
       style="overflow: hidden"
     >
       <!-- Header (fixe en haut) -->
       <div
-        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl z-10"
+        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-zinc-100 bg-white z-10"
       >
         <router-link
           to="/dashboard"
@@ -46,7 +46,7 @@
             ></div>
           </div>
           <h1
-            class="text-2xl font-bold text-white tracking-tight hidden md:hidden transition-colors duration-200 group-hover/logo:text-violet-300"
+            class="text-2xl font-bold text-zinc-900 tracking-tight hidden md:hidden transition-colors duration-200 group-hover/logo:text-primary-600"
           >
             Doogoo
           </h1>
@@ -73,20 +73,20 @@
               class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
               :class="[
                 isActive(item.path)
-                  ? 'bg-gradient-to-r from-violet-500/20 to-indigo-500/20 text-violet-300 md:bg-violet-500/20 md:text-violet-300 shadow-lg shadow-violet-500/10'
-                  : 'text-zinc-400 hover:bg-white/10 hover:text-white md:hover:bg-white/10 md:hover:text-white md:hover:scale-110'
+                  ? 'bg-primary-50 text-primary-700'
+                  : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 md:hover:scale-105'
               ]"
             >
               <!-- Indicateur actif (mobile) -->
               <div
                 v-if="isActive(item.path)"
-                class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full md:hidden shadow-lg shadow-violet-500/50"
+                class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-primary-600 rounded-r-full md:hidden"
               ></div>
 
               <!-- Indicateur actif (desktop - glow) -->
               <div
                 v-if="isActive(item.path)"
-                class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md md:block hidden"
+                class="absolute inset-0 rounded-xl bg-primary-100/50 -z-10 md:block hidden"
               ></div>
 
               <!-- Icône avec animation -->
@@ -136,20 +136,20 @@
                 class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
                 :class="[
                   isActive(item.path)
-                    ? 'bg-gradient-to-r from-violet-500/20 to-indigo-500/20 text-violet-300 md:bg-violet-500/20 md:text-violet-300 shadow-lg shadow-violet-500/10'
-                    : 'text-zinc-400 hover:bg-white/10 hover:text-white md:hover:bg-white/10 md:hover:text-white md:hover:scale-110'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 md:hover:scale-105'
                 ]"
               >
                 <!-- Indicateur actif (mobile) -->
                 <div
                   v-if="isActive(item.path)"
-                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full md:hidden shadow-lg shadow-violet-500/50"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-primary-600 rounded-r-full md:hidden"
                 ></div>
 
                 <!-- Indicateur actif (desktop - glow) -->
                 <div
                   v-if="isActive(item.path)"
-                  class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md md:block hidden"
+                  class="absolute inset-0 rounded-xl bg-primary-100/50 -z-10 md:block hidden"
                 ></div>
 
                 <!-- Icône avec animation -->
@@ -224,20 +224,20 @@
                 class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
                 :class="[
                   isActive(item.path)
-                    ? 'bg-gradient-to-r from-violet-500/20 to-indigo-500/20 text-violet-300 md:bg-violet-500/20 md:text-violet-300 shadow-lg shadow-violet-500/10'
-                    : 'text-zinc-400 hover:bg-white/10 hover:text-white md:hover:bg-white/10 md:hover:text-white md:hover:scale-110'
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 md:hover:scale-105'
                 ]"
               >
                 <!-- Indicateur actif (mobile) -->
                 <div
                   v-if="isActive(item.path)"
-                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full md:hidden shadow-lg shadow-violet-500/50"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-primary-600 rounded-r-full md:hidden"
                 ></div>
 
                 <!-- Indicateur actif (desktop - glow) -->
                 <div
                   v-if="isActive(item.path)"
-                  class="absolute inset-0 rounded-xl bg-violet-500/20 blur-md md:block hidden"
+                  class="absolute inset-0 rounded-xl bg-primary-100/50 -z-10 md:block hidden"
                 ></div>
 
                 <!-- Icône avec animation -->
@@ -281,7 +281,7 @@
 
       <!-- Footer (fixe en bas) -->
       <div
-        class="flex-none w-full border-t border-white/10 bg-zinc-950/80 backdrop-blur-xl z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
+        class="flex-none w-full border-t border-zinc-100 bg-white z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
       >
         <!-- Mobile: Layout complet -->
         <div class="flex items-center gap-3 w-full md:hidden">
@@ -302,14 +302,14 @@
             ></div>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-white truncate">{{ userName }}</p>
+            <p class="text-sm font-medium text-zinc-900 truncate">{{ userName }}</p>
             <div class="flex items-center gap-3 mt-1">
               <!-- Sélecteur de langue -->
               <div class="relative flex-1">
                 <select
                   :value="settingsStore.language"
                   @change="handleLanguageChange"
-                  class="w-full appearance-none bg-white/5 border border-white/10 text-zinc-300 text-xs rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all hover:bg-white/10 cursor-pointer"
+                  class="w-full appearance-none bg-zinc-50 border border-zinc-200 text-zinc-900 text-xs rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none transition-all hover:bg-zinc-100 cursor-pointer"
                 >
                   <option value="fr" class="bg-zinc-900">🇫🇷 Français</option>
                   <option value="en" class="bg-zinc-900">🇺🇸 English</option>
@@ -331,7 +331,7 @@
               <button
                 @click="handleLogout"
                 :disabled="authStore.loading"
-                class="text-xs text-zinc-400 hover:text-white flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                class="text-xs text-zinc-500 hover:text-zinc-900 flex items-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -385,7 +385,7 @@
           <button
             @click="handleLogout"
             :disabled="authStore.loading"
-            class="w-12 h-12 flex items-center justify-center rounded-xl text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative group hover:scale-110"
+            class="w-12 h-12 flex items-center justify-center rounded-xl text-danger-500 hover:bg-danger-50 hover:text-danger-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative group hover:scale-110"
           >
             <i
               class="ri-logout-box-line text-xl relative z-10 transition-transform duration-300 group-hover:rotate-12"

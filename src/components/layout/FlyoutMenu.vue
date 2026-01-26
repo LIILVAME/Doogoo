@@ -26,14 +26,14 @@
 
         <!-- Modale flottante -->
         <div
-          class="bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 min-w-[220px] py-2 overflow-hidden"
+          class="bg-white rounded-xl shadow-xl border border-zinc-100 min-w-[220px] py-2 overflow-hidden"
         >
           <router-link
             v-for="item in items"
             :key="item.id"
             :to="item.path"
             @click="handleItemClick"
-            class="block px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-all duration-200 cursor-pointer rounded-lg mx-1 relative group/item"
+            class="block px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-all duration-200 cursor-pointer rounded-lg mx-1 relative group/item"
           >
             <div class="flex items-center gap-3">
               <!-- Icône (si disponible) -->
@@ -41,20 +41,18 @@
                 v-if="item.icon"
                 :class="[
                   item.icon,
-                  'text-base text-zinc-300 group-hover/item:text-violet-300 transition-colors duration-200'
+                  'text-base text-zinc-400 group-hover/item:text-primary-600 transition-colors duration-200'
                 ]"
               ></i>
               <!-- Texte -->
-              <span
-                class="text-white group-hover/item:text-violet-200 transition-colors duration-200 flex-1"
-              >
+              <span class="group-hover/item:text-primary-700 transition-colors duration-200 flex-1">
                 {{ item.label }}
               </span>
             </div>
 
             <!-- Indicateur hover (barre verticale à gauche) -->
             <div
-              class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-200"
+              class="absolute left-0 top-0 bottom-0 w-1 bg-primary-600 rounded-r-full opacity-0 group-hover/item:opacity-100 transition-opacity duration-200"
             ></div>
           </router-link>
         </div>

@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-xl border-t border-white/5 safe-bottom"
+    class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-zinc-100 safe-bottom shadow-lg shadow-zinc-200/50"
     aria-label="Navigation principale"
   >
     <div class="flex items-center justify-around h-16 px-2">
@@ -11,40 +11,33 @@
         :aria-label="item.label"
         :class="[
           'flex flex-col items-center justify-center gap-1 flex-1 h-full rounded-lg transition-all duration-200',
-          'text-zinc-400 hover:text-white',
-          isActive(item.path) ? 'text-violet-400' : ''
+          isActive(item.path) ? 'text-primary-600' : 'text-zinc-400 hover:text-zinc-600'
         ]"
         @click="handleClick"
       >
         <!-- Icône -->
-        <div
-          :class="[
-            'relative flex items-center justify-center',
-            isActive(item.path) ? 'text-violet-400' : 'text-zinc-400'
-          ]"
-        >
-          <component :is="item.icon" class="w-5 h-5" />
+        <div class="relative flex items-center justify-center">
+          <component
+            :is="item.icon"
+            class="w-6 h-6 transition-transform duration-200"
+            :class="isActive(item.path) ? 'scale-110' : ''"
+          />
           <!-- Badge de notification -->
           <span
             v-if="item.badge && item.badge > 0"
-            class="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-rose-500 text-white text-[10px] font-semibold rounded-full"
+            class="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-rose-500 text-white text-[10px] font-semibold rounded-full ring-2 ring-white"
           >
             {{ item.badge > 9 ? '9+' : item.badge }}
           </span>
         </div>
         <!-- Label -->
-        <span
-          :class="[
-            'text-[10px] font-medium truncate max-w-[60px]',
-            isActive(item.path) ? 'text-violet-400' : 'text-zinc-400'
-          ]"
-        >
+        <span class="text-[10px] font-medium truncate max-w-[60px]">
           {{ item.label }}
         </span>
-        <!-- Indicateur actif -->
+        <!-- Indicateur actif (optionnel, peut-être redondant avec la couleur) -->
         <div
           v-if="isActive(item.path)"
-          class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-violet-400 rounded-full"
+          class="absolute bottom-1 w-1 h-1 bg-primary-600 rounded-full"
         ></div>
       </router-link>
     </div>
