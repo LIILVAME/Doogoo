@@ -20,7 +20,7 @@
             :aria-labelledby="'property-modal-title'"
           >
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
+            <div class="flex items-center justify-between border-b border-zinc-200 px-6 py-5">
               <div class="flex items-center gap-3">
                 <div
                   class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20"
@@ -39,13 +39,13 @@
                     />
                   </svg>
                 </div>
-                <h2 id="property-modal-title" class="text-xl font-semibold text-white">
+                <h2 id="property-modal-title" class="text-xl font-semibold text-zinc-900">
                   {{ property ? $t('properties.editProperty') : $t('properties.addProperty') }}
                 </h2>
               </div>
               <button
                 @click="handleClose"
-                class="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
+                class="text-zinc-500 hover:text-zinc-900 transition-colors p-2 hover:bg-zinc-100 rounded-lg"
                 :aria-label="$t('common.close')"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,19 +64,19 @@
               <div class="space-y-5">
                 <!-- Upload d'image -->
                 <div>
-                  <label class="block text-sm font-medium text-zinc-300 mb-2">
+                  <label class="block text-sm font-medium text-zinc-600 mb-2">
                     {{ $t('properties.modal.image') || 'Image du bien' }}
                   </label>
                   <div class="flex items-center gap-4">
                     <div
                       v-if="imagePreview"
-                      class="relative w-24 h-24 rounded-xl overflow-hidden border border-white/10"
+                      class="relative w-24 h-24 rounded-xl overflow-hidden border border-zinc-200"
                     >
                       <img :src="imagePreview" alt="Preview" class="w-full h-full object-cover" />
                       <button
                         type="button"
                         @click="removeImage"
-                        class="absolute top-1 right-1 p-1 bg-rose-500/80 hover:bg-rose-500 rounded-full text-white transition-colors"
+                        class="absolute top-1 right-1 p-1 bg-rose-500/80 hover:bg-rose-500 rounded-full text-zinc-900 transition-colors"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
@@ -91,7 +91,7 @@
                     <div class="flex-1">
                       <label
                         for="property-image-upload"
-                        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-zinc-300 hover:bg-white/10 cursor-pointer transition-colors"
+                        class="flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-zinc-600 hover:bg-zinc-200 cursor-pointer transition-colors"
                         :class="{ 'opacity-50 cursor-not-allowed': isUploadingImage }"
                       >
                         <svg
@@ -155,7 +155,7 @@
                 <div>
                   <label
                     for="edit-property-name"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('properties.name') }} <span class="text-rose-400">*</span>
                   </label>
@@ -164,7 +164,7 @@
                     v-model="form.name"
                     type="text"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                     :placeholder="$t('properties.placeholders.name')"
                   />
                 </div>
@@ -172,27 +172,27 @@
                 <div class="grid grid-cols-2 gap-4">
                   <!-- Type de bien -->
                   <div>
-                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                    <label class="block text-sm font-medium text-zinc-600 mb-2">
                       {{ $t('properties.modal.type') }} <span class="text-rose-400">*</span>
                     </label>
                     <select
                       v-model="form.type"
                       required
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                     >
-                      <option value="apartment" class="bg-zinc-900">
+                      <option value="apartment" class="bg-white">
                         {{ $t('properties.types.apartment') }}
                       </option>
-                      <option value="house" class="bg-zinc-900">
+                      <option value="house" class="bg-white">
                         {{ $t('properties.types.house') }}
                       </option>
-                      <option value="parking" class="bg-zinc-900">
+                      <option value="parking" class="bg-white">
                         {{ $t('properties.types.parking') }}
                       </option>
-                      <option value="commercial" class="bg-zinc-900">
+                      <option value="commercial" class="bg-white">
                         {{ $t('properties.types.commercial') }}
                       </option>
-                      <option value="other" class="bg-zinc-900">
+                      <option value="other" class="bg-white">
                         {{ $t('properties.types.other') }}
                       </option>
                     </select>
@@ -200,14 +200,14 @@
 
                   <!-- Surface -->
                   <div>
-                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                    <label class="block text-sm font-medium text-zinc-600 mb-2">
                       {{ $t('properties.modal.surface') }}
                     </label>
                     <input
                       v-model.number="form.surface"
                       type="number"
                       min="0"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       placeholder="Ex: 45"
                     />
                   </div>
@@ -216,46 +216,46 @@
                 <div class="grid grid-cols-2 gap-4">
                   <!-- Pièces -->
                   <div>
-                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                    <label class="block text-sm font-medium text-zinc-600 mb-2">
                       {{ $t('properties.modal.pieces') }}
                     </label>
                     <input
                       v-model.number="form.pieces"
                       type="number"
                       min="0"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       placeholder="Ex: 2"
                     />
                   </div>
 
                   <!-- Type de chauffage -->
                   <div>
-                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                    <label class="block text-sm font-medium text-zinc-600 mb-2">
                       {{ $t('properties.modal.heatingType') }}
                     </label>
                     <select
                       v-model="form.heatingType"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                     >
-                      <option value="Individuel" class="bg-zinc-900">Individuel</option>
-                      <option value="Collectif" class="bg-zinc-900">Collectif</option>
-                      <option value="Électrique" class="bg-zinc-900">Électrique</option>
-                      <option value="Gaz" class="bg-zinc-900">Gaz</option>
-                      <option value="Fioul" class="bg-zinc-900">Fioul</option>
-                      <option value="Autre" class="bg-zinc-900">Autre</option>
+                      <option value="Individuel" class="bg-white">Individuel</option>
+                      <option value="Collectif" class="bg-white">Collectif</option>
+                      <option value="Électrique" class="bg-white">Électrique</option>
+                      <option value="Gaz" class="bg-white">Gaz</option>
+                      <option value="Fioul" class="bg-white">Fioul</option>
+                      <option value="Autre" class="bg-white">Autre</option>
                     </select>
                   </div>
                 </div>
 
                 <!-- Description -->
                 <div>
-                  <label class="block text-sm font-medium text-zinc-300 mb-2">
+                  <label class="block text-sm font-medium text-zinc-600 mb-2">
                     {{ $t('properties.modal.description') }}
                   </label>
                   <textarea
                     v-model="form.description"
                     rows="3"
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500 resize-none"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500 resize-none"
                     :placeholder="$t('properties.modal.description') + '...'"
                   ></textarea>
                 </div>
@@ -264,7 +264,7 @@
                 <div>
                   <label
                     for="edit-property-address"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('properties.address') }} <span class="text-rose-400">*</span>
                   </label>
@@ -273,7 +273,7 @@
                     v-model="form.address"
                     type="text"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                     :placeholder="$t('properties.placeholders.address')"
                   />
                 </div>
@@ -283,7 +283,7 @@
                   <div>
                     <label
                       for="edit-property-zip"
-                      class="block text-sm font-medium text-zinc-300 mb-2"
+                      class="block text-sm font-medium text-zinc-600 mb-2"
                     >
                       {{ $t('properties.zip') }}
                     </label>
@@ -292,14 +292,14 @@
                       v-model="form.zip"
                       type="text"
                       maxlength="10"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       placeholder="75001"
                     />
                   </div>
                   <div>
                     <label
                       for="edit-property-city"
-                      class="block text-sm font-medium text-zinc-300 mb-2"
+                      class="block text-sm font-medium text-zinc-600 mb-2"
                     >
                       {{ $t('properties.city') }} <span class="text-rose-400">*</span>
                     </label>
@@ -308,7 +308,7 @@
                       v-model="form.city"
                       type="text"
                       required
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       :placeholder="$t('properties.placeholders.city')"
                     />
                   </div>
@@ -319,12 +319,12 @@
                   <div>
                     <label
                       for="edit-property-rent"
-                      class="block text-sm font-medium text-zinc-300 mb-2"
+                      class="block text-sm font-medium text-zinc-600 mb-2"
                     >
                       {{ $t('properties.monthlyRent') }} <span class="text-rose-400">*</span>
                     </label>
                     <div class="relative">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">{{
                         CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
                       }}</span>
                       <input
@@ -334,7 +334,7 @@
                         required
                         min="0"
                         step="10"
-                        class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                        class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                         :placeholder="$t('payments.placeholders.amount')"
                       />
                     </div>
@@ -342,12 +342,12 @@
                   <div>
                     <label
                       for="edit-property-charges"
-                      class="block text-sm font-medium text-zinc-300 mb-2"
+                      class="block text-sm font-medium text-zinc-600 mb-2"
                     >
                       {{ $t('properties.chargesAmount') }}
                     </label>
                     <div class="relative">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">{{
                         CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
                       }}</span>
                       <input
@@ -356,7 +356,7 @@
                         type="number"
                         min="0"
                         step="10"
-                        class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                        class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                         placeholder="0"
                       />
                     </div>
@@ -367,7 +367,7 @@
                 <div>
                   <label
                     for="edit-property-status"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('properties.status') }} <span class="text-rose-400">*</span>
                   </label>
@@ -375,13 +375,13 @@
                     id="edit-property-status"
                     v-model="form.status"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   >
-                    <option value="" class="bg-zinc-900">
+                    <option value="" class="bg-white">
                       {{ $t('properties.selectStatus') }}
                     </option>
-                    <option value="vacant" class="bg-zinc-900">{{ $t('properties.free') }}</option>
-                    <option value="occupied" class="bg-zinc-900">
+                    <option value="vacant" class="bg-white">{{ $t('properties.free') }}</option>
+                    <option value="occupied" class="bg-white">
                       {{ $t('properties.occupied') }}
                     </option>
                   </select>
@@ -390,7 +390,7 @@
                 <!-- Informations du locataire (affiché uniquement si bien occupé) -->
                 <div
                   v-if="form.status === PROPERTY_STATUS.OCCUPIED"
-                  class="border-t border-white/10 pt-5 mt-2"
+                  class="border-t border-zinc-200 pt-5 mt-2"
                 >
                   <div class="flex items-center gap-2 mb-4">
                     <div
@@ -410,7 +410,7 @@
                         />
                       </svg>
                     </div>
-                    <h3 class="text-sm font-semibold text-white">
+                    <h3 class="text-sm font-semibold text-zinc-900">
                       {{ $t('properties.tenantInfo') }}
                     </h3>
                   </div>
@@ -420,7 +420,7 @@
                     <div>
                       <label
                         for="edit-tenant-name"
-                        class="block text-sm font-medium text-zinc-300 mb-2"
+                        class="block text-sm font-medium text-zinc-600 mb-2"
                       >
                         {{ $t('properties.tenantName') }} <span class="text-rose-400">*</span>
                       </label>
@@ -429,7 +429,7 @@
                         v-model="form.tenant.name"
                         type="text"
                         required
-                        class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                        class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                         :placeholder="$t('payments.placeholders.tenant')"
                       />
                     </div>
@@ -438,7 +438,7 @@
                     <div>
                       <label
                         for="edit-tenant-entry-date"
-                        class="block text-sm font-medium text-zinc-300 mb-2"
+                        class="block text-sm font-medium text-zinc-600 mb-2"
                       >
                         {{ $t('tenants.entryDate') }} <span class="text-rose-400">*</span>
                       </label>
@@ -447,7 +447,7 @@
                         v-model="form.tenant.entryDate"
                         type="date"
                         required
-                        class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                        class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                       />
                     </div>
 
@@ -455,7 +455,7 @@
                     <div>
                       <label
                         for="edit-tenant-status"
-                        class="block text-sm font-medium text-zinc-300 mb-2"
+                        class="block text-sm font-medium text-zinc-600 mb-2"
                       >
                         {{ $t('tenants.paymentStatus') }} <span class="text-rose-400">*</span>
                       </label>
@@ -463,12 +463,12 @@
                         id="edit-tenant-status"
                         v-model="form.tenant.status"
                         required
-                        class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                        class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                       >
-                        <option value="on_time" class="bg-zinc-900">
+                        <option value="on_time" class="bg-white">
                           {{ $t('status.onTime') }}
                         </option>
-                        <option value="late" class="bg-zinc-900">{{ $t('status.late') }}</option>
+                        <option value="late" class="bg-white">{{ $t('status.late') }}</option>
                       </select>
                     </div>
                   </div>
@@ -476,12 +476,12 @@
               </div>
 
               <!-- Actions -->
-              <div class="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
+              <div class="mt-6 flex items-center justify-end gap-3 border-t border-zinc-200 pt-5">
                 <button
                   type="button"
                   @click="handleClose"
                   :disabled="isLoading"
-                  class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-zinc-300 font-medium hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-5 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-zinc-600 font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ $t('common.cancel') }}
                 </button>
