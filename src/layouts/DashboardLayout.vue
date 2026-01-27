@@ -3,7 +3,7 @@
     <!-- Skip Link pour navigation clavier -->
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
-    <div class="flex bg-zinc-950 text-zinc-50 font-sans selection:bg-violet-500/30 min-h-screen">
+    <div class="flex bg-zinc-50 text-zinc-900 font-sans selection:bg-primary-500/30 min-h-screen">
       <!-- Note: Sidebar width is md:w-20 (80px) for compact mini sidebar -->
       <!-- Sidebar -->
       <Sidebar />
@@ -12,7 +12,7 @@
       <main id="main-content" class="flex-1 w-full relative overflow-y-auto">
         <!-- Header Mobile (visible uniquement sur mobile) -->
         <header
-          class="md:hidden sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between"
+          class="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-zinc-100 px-4 py-3 flex items-center justify-between"
         >
           <router-link
             to="/dashboard"
@@ -31,13 +31,13 @@
                 />
               </svg>
             </div>
-            <h1 class="text-xl font-bold text-white tracking-tight">Doogoo</h1>
+            <h1 class="text-xl font-bold text-zinc-900 tracking-tight">Doogoo</h1>
           </router-link>
           <div class="flex items-center gap-2">
             <NotificationBell />
             <button
               @click="toggleSidebar"
-              class="p-2 bg-zinc-900/90 backdrop-blur-md rounded-xl shadow-lg border border-white/10 transition-transform duration-300 ease-in-out"
+              class="p-2 bg-white/90 backdrop-blur-md rounded-xl shadow-sm border border-zinc-200 transition-transform duration-300 ease-in-out"
               :aria-label="isSidebarOpen ? 'Fermer le menu' : 'Ouvrir le menu'"
               :aria-expanded="isSidebarOpen"
             >
@@ -68,17 +68,17 @@
 
         <!-- Header Desktop (visible uniquement sur desktop) -->
         <header
-          class="hidden md:flex sticky top-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-b border-white/5 px-6 py-4 items-center justify-end"
+          class="hidden md:flex sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-zinc-100 px-6 py-4 items-center justify-end"
         >
           <NotificationBell />
         </header>
         <!-- Glow effect background -->
         <div class="fixed inset-0 pointer-events-none z-0">
           <div
-            class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px]"
+            class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary-600/5 rounded-full blur-[120px]"
           ></div>
           <div
-            class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]"
+            class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[120px]"
           ></div>
         </div>
 

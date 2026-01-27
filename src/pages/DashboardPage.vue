@@ -3,8 +3,10 @@
     <div class="p-6 space-y-6 w-full">
       <!-- Welcome Message -->
       <div class="mb-8">
-        <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2">Hey {{ userFirstName }} 👋</h1>
-        <p class="text-zinc-400 text-lg">
+        <h1 class="text-3xl lg:text-4xl font-bold text-zinc-900 mb-2">
+          Hey {{ userFirstName }} 👋
+        </h1>
+        <p class="text-zinc-600 text-lg">
           {{ welcomeMessage }}
         </p>
       </div>
@@ -16,11 +18,11 @@
       >
         <div
           v-if="metrics.alerts.latePaymentsCount > 0"
-          class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-center justify-between"
+          class="bg-danger-50 border border-danger-100 rounded-xl p-4 flex items-center justify-between"
         >
           <div class="flex items-center">
             <svg
-              class="w-6 h-6 text-rose-400 mr-3"
+              class="w-6 h-6 text-danger-600 mr-3"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -33,7 +35,7 @@
               />
             </svg>
             <div>
-              <p class="font-semibold text-rose-200">
+              <p class="font-semibold text-danger-900">
                 {{ metrics.alerts.latePaymentsCount }}
                 {{
                   metrics.alerts.latePaymentsCount > 1
@@ -41,14 +43,14 @@
                     : 'paiement en retard'
                 }}
               </p>
-              <p class="text-sm text-rose-300/80">
+              <p class="text-sm text-danger-600">
                 Total à récupérer : {{ formatCurrency(metrics.financial.pendingRevenue) }}
               </p>
             </div>
           </div>
           <router-link
             to="/paiements"
-            class="text-rose-400 hover:text-rose-300 text-sm font-medium underline"
+            class="text-danger-600 hover:text-danger-700 text-sm font-medium underline"
           >
             Voir les paiements →
           </router-link>
@@ -56,11 +58,11 @@
 
         <div
           v-if="metrics.alerts.expiringLeasesCount > 0"
-          class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-center justify-between"
+          class="bg-warning-50 border border-warning-100 rounded-xl p-4 flex items-center justify-between"
         >
           <div class="flex items-center">
             <svg
-              class="w-6 h-6 text-amber-400 mr-3"
+              class="w-6 h-6 text-warning-600 mr-3"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -73,17 +75,17 @@
               />
             </svg>
             <div>
-              <p class="font-semibold text-amber-200">
+              <p class="font-semibold text-warning-900">
                 {{ metrics.alerts.expiringLeasesCount }}
                 {{ metrics.alerts.expiringLeasesCount > 1 ? 'baux expirant' : 'bail expirant' }}
                 dans moins de 30 jours
               </p>
-              <p class="text-sm text-amber-300/80">Action requise : renouvellement ou libération</p>
+              <p class="text-sm text-warning-600">Action requise : renouvellement ou libération</p>
             </div>
           </div>
           <router-link
             to="/locataires"
-            class="text-amber-400 hover:text-amber-300 text-sm font-medium underline"
+            class="text-warning-600 hover:text-warning-700 text-sm font-medium underline"
           >
             Voir les locataires →
           </router-link>
@@ -249,33 +251,33 @@ const dashboardStatsArray = computed(() => {
       label: 'Total de biens',
       value: isLoading ? '...' : stats.value.totalProperties.toString(),
       icon: Building2,
-      glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
-      iconBgColor: 'bg-opacity-10 bg-violet-500',
-      iconColor: 'text-violet-200'
+      glowColor: 'bg-primary-500/5 group-hover:bg-primary-500/10',
+      iconBgColor: 'bg-primary-50',
+      iconColor: 'text-primary-600'
     },
     {
       label: 'Biens occupés',
       value: isLoading ? '...' : stats.value.occupiedProperties.toString(),
       icon: Users,
-      glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
-      iconBgColor: 'bg-opacity-10 bg-emerald-500',
-      iconColor: 'text-emerald-200'
+      glowColor: 'bg-success-500/5 group-hover:bg-success-500/10',
+      iconBgColor: 'bg-success-50',
+      iconColor: 'text-success-600'
     },
     {
       label: 'Biens libres',
       value: isLoading ? '...' : stats.value.vacantProperties.toString(),
       icon: Home,
-      glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
-      iconBgColor: 'bg-opacity-10 bg-zinc-500',
-      iconColor: 'text-zinc-200'
+      glowColor: 'bg-zinc-500/5 group-hover:bg-zinc-500/10',
+      iconBgColor: 'bg-zinc-50',
+      iconColor: 'text-zinc-600'
     },
     {
       label: 'Loyers mensuels',
       value: isLoading ? '...' : formatCurrency(stats.value.totalRent || 0),
       icon: Wallet,
-      glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
-      iconBgColor: 'bg-opacity-10 bg-amber-500',
-      iconColor: 'text-amber-200'
+      glowColor: 'bg-warning-500/5 group-hover:bg-warning-500/10',
+      iconBgColor: 'bg-warning-50',
+      iconColor: 'text-warning-600'
     }
   ]
 })

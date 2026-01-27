@@ -3,26 +3,26 @@
     <div
       v-for="(stat, index) in stats"
       :key="index"
-      class="glass-panel rounded-2xl p-6 transition-all duration-300 hover:bg-white/5 group relative overflow-hidden"
+      class="stat-card rounded-2xl p-6 transition-all duration-300 group relative overflow-hidden"
     >
       <!-- Glow effect background -->
       <div
         :class="[
           'absolute -right-10 -top-10 w-32 h-32 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500',
-          stat.glowColor || 'bg-violet-500/10 group-hover:bg-violet-500/20'
+          stat.glowColor || 'bg-primary-500/5 group-hover:bg-primary-500/10'
         ]"
       ></div>
 
       <div class="flex items-center justify-between relative z-10 min-h-[60px]">
         <div class="min-w-0 flex-1 pr-3">
-          <p class="text-sm font-medium text-zinc-400 mb-1 truncate">{{ stat.label }}</p>
-          <p class="text-2xl font-bold text-white tracking-tight truncate">{{ stat.value }}</p>
+          <p class="text-sm font-medium text-zinc-500 mb-1 truncate">{{ stat.label }}</p>
+          <p class="text-2xl font-bold text-zinc-900 tracking-tight truncate">{{ stat.value }}</p>
         </div>
         <div
           :class="[
             'p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-lg flex-shrink-0 flex items-center justify-center',
-            stat.iconBgColor || 'bg-violet-500/10',
-            stat.iconColor || 'text-violet-200'
+            stat.iconBgColor || 'bg-primary-50',
+            stat.iconColor || 'text-primary-600'
           ]"
         >
           <component :is="stat.icon" class="w-6 h-6" />
@@ -37,12 +37,9 @@ defineProps({
   stats: {
     type: Array,
     required: true,
-    validator: (stats) => {
+    validator: stats => {
       return stats.every(
-        stat =>
-          stat.label &&
-          (stat.value !== undefined && stat.value !== null) &&
-          stat.icon
+        stat => stat.label && stat.value !== undefined && stat.value !== null && stat.icon
       )
     }
   }
