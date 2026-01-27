@@ -1,17 +1,17 @@
 <template>
   <div
-    class="min-h-screen bg-zinc-950 text-zinc-50 antialiased selection:bg-violet-500/30 selection:text-violet-200 font-sans scroll-smooth"
+    class="min-h-screen bg-white text-zinc-900 antialiased selection:bg-violet-500/30 selection:text-violet-700 font-sans scroll-smooth"
     style="scroll-padding-top: 80px"
   >
     <!-- Navigation -->
     <nav
       ref="navRef"
-      class="fixed top-0 w-full z-50 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md transition-all duration-300"
-      :class="{ 'bg-zinc-950/95 shadow-lg shadow-black/5': scrolled }"
+      class="fixed top-0 w-full z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md transition-all duration-300"
+      :class="{ 'bg-white/95 shadow-lg shadow-zinc-100': scrolled }"
     >
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <router-link to="/" class="text-lg font-semibold tracking-tighter text-white"
+          <router-link to="/" class="text-lg font-semibold tracking-tighter text-zinc-900"
             >doogoo</router-link
           >
         </div>
@@ -24,7 +24,9 @@
             :href="`#${section.id}`"
             @click.prevent="scrollToSection(section.id)"
             class="transition-colors relative"
-            :class="activeSection === section.id ? 'text-white' : 'text-zinc-400 hover:text-white'"
+            :class="
+              activeSection === section.id ? 'text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'
+            "
           >
             {{ section.label }}
             <span
@@ -37,7 +39,7 @@
         <div class="flex items-center gap-4">
           <router-link
             to="/login"
-            class="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block"
+            class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block"
           >
             Se connecter
           </router-link>
@@ -49,7 +51,7 @@
                 class="absolute inset-0 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-full animate-gradient"
               ></div>
               <div
-                class="relative bg-zinc-950 hover:bg-zinc-900 transition-colors rounded-full px-5 py-2"
+                class="relative bg-violet-600 hover:bg-violet-700 transition-colors rounded-full px-5 py-2"
               >
                 <span
                   class="text-sm font-medium text-white group-hover:text-violet-200 transition-colors"
@@ -67,19 +69,19 @@
     <main id="hero" class="relative pt-24 pb-12 md:pt-36 md:pb-24 overflow-hidden">
       <!-- Background Effects -->
       <div
-        class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[900px] bg-[radial-gradient(ellipse_at_top,rgba(124,58,237,0.15),transparent_60%)] pointer-events-none z-0"
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[900px] bg-[radial-gradient(ellipse_at_top,rgba(124,58,237,0.08),transparent_60%)] pointer-events-none z-0"
       ></div>
       <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-500/5 rounded-full blur-[120px] pointer-events-none z-0"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-500/3 rounded-full blur-[120px] pointer-events-none z-0"
       ></div>
 
       <div class="relative z-10 max-w-6xl mx-auto px-6">
         <div class="flex flex-col items-center text-center">
           <!-- Headline -->
           <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
-            <span class="block text-white mb-2">Gérez votre patrimoine</span>
+            <span class="block text-zinc-900 mb-2">Gérez votre patrimoine</span>
             <span
-              class="block text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400"
+              class="block text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600"
             >
               en toute sérénité
             </span>
@@ -87,7 +89,7 @@
 
           <!-- Subheadline -->
           <p
-            class="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 font-light leading-relaxed"
+            class="text-lg md:text-xl text-zinc-600 max-w-2xl mx-auto mb-10 font-light leading-relaxed"
           >
             Gagnez plus de clients avec une gestion locative moderne. Travaillez plus
             intelligemment, optimisez plus rapidement.
@@ -97,7 +99,7 @@
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <router-link
               to="/signup"
-              class="h-12 px-8 rounded-full bg-white text-zinc-950 font-semibold hover:bg-zinc-200 transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:scale-105 transform duration-200"
+              class="h-12 px-8 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700 transition-colors flex items-center gap-2 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105 transform duration-200"
             >
               <span>Commencer maintenant</span>
               <ArrowRight class="w-4 h-4" />
@@ -105,7 +107,7 @@
 
             <button
               @click="handleVideoModal"
-              class="h-12 px-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-colors flex items-center gap-2 backdrop-blur-sm"
+              class="h-12 px-8 rounded-full border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-900 font-medium transition-colors flex items-center gap-2"
             >
               <Play class="w-4 h-4 fill-current" />
               <span>Voir la démo</span>
@@ -114,7 +116,7 @@
 
           <!-- Trust Indicators -->
           <div
-            class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-zinc-500"
+            class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-zinc-600"
           >
             <div class="flex items-center gap-2">
               <Check class="w-4 h-4 text-emerald-400" />
@@ -134,55 +136,51 @@
     </main>
 
     <!-- Stats Section -->
-    <section id="pourquoi" class="py-24 border-t border-white/5 relative">
+    <section id="pourquoi" class="py-24 border-t border-zinc-200 relative bg-zinc-50">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-16">
-          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900">
             Vous perdez 18% de vos revenus
           </h2>
-          <p class="text-zinc-400 font-light text-lg">
+          <p class="text-zinc-600 font-light text-lg">
             La gestion manuelle vous coûte du temps et de l'argent. Doogoo change la donne.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div
-            class="text-center p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm"
-          >
-            <div class="text-4xl md:text-5xl font-bold text-violet-400 mb-2">+134</div>
-            <p class="text-zinc-500">Biens gérés</p>
+          <div class="text-center p-6 rounded-2xl bg-white border border-zinc-200 shadow-sm">
+            <div class="text-4xl md:text-5xl font-bold text-violet-600 mb-2">+134</div>
+            <p class="text-zinc-600">Biens gérés</p>
           </div>
-          <div
-            class="text-center p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm"
-          >
-            <div class="text-4xl md:text-5xl font-bold text-emerald-400 mb-2">+18%</div>
-            <p class="text-zinc-500">Revenus optimisés</p>
+          <div class="text-center p-6 rounded-2xl bg-white border border-zinc-200 shadow-sm">
+            <div class="text-4xl md:text-5xl font-bold text-emerald-600 mb-2">+18%</div>
+            <p class="text-zinc-600">Revenus optimisés</p>
           </div>
-          <div
-            class="text-center p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm"
-          >
-            <div class="text-4xl md:text-5xl font-bold text-blue-400 mb-2">24/7</div>
-            <p class="text-zinc-500">Disponibilité</p>
+          <div class="text-center p-6 rounded-2xl bg-white border border-zinc-200 shadow-sm">
+            <div class="text-4xl md:text-5xl font-bold text-blue-600 mb-2">24/7</div>
+            <p class="text-zinc-600">Disponibilité</p>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <!-- Problem -->
-          <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group">
+          <div
+            class="bg-white border border-zinc-200 shadow-sm p-8 rounded-2xl relative overflow-hidden group"
+          >
             <div
               class="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             ></div>
-            <h3 class="text-xl font-semibold text-white mb-6 relative z-10">Avant Doogoo...</h3>
+            <h3 class="text-xl font-semibold text-zinc-900 mb-6 relative z-10">Avant Doogoo...</h3>
             <ul class="space-y-4 relative z-10">
-              <li class="flex items-start gap-3 text-zinc-400">
+              <li class="flex items-start gap-3 text-zinc-600">
                 <X class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
                 <span>Feuilles de calcul dispersées et erreurs</span>
               </li>
-              <li class="flex items-start gap-3 text-zinc-400">
+              <li class="flex items-start gap-3 text-zinc-600">
                 <X class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
                 <span>Retards de paiement non détectés</span>
               </li>
-              <li class="flex items-start gap-3 text-zinc-400">
+              <li class="flex items-start gap-3 text-zinc-600">
                 <X class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
                 <span>Stress administratif constant</span>
               </li>
@@ -191,22 +189,22 @@
 
           <!-- Solution -->
           <div
-            class="glass-panel p-8 rounded-2xl border-emerald-500/20 relative overflow-hidden group"
+            class="bg-white border border-zinc-200 shadow-sm p-8 rounded-2xl border-emerald-500/20 relative overflow-hidden group"
           >
             <div
               class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             ></div>
-            <h3 class="text-xl font-semibold text-white mb-6 relative z-10">Avec Doogoo</h3>
+            <h3 class="text-xl font-semibold text-zinc-900 mb-6 relative z-10">Avec Doogoo</h3>
             <ul class="space-y-4 relative z-10">
-              <li class="flex items-start gap-3 text-zinc-300">
+              <li class="flex items-start gap-3 text-zinc-700">
                 <Check class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                 <span>Tout centralisé, accessible partout</span>
               </li>
-              <li class="flex items-start gap-3 text-zinc-300">
+              <li class="flex items-start gap-3 text-zinc-700">
                 <Check class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                 <span>Alertes automatiques et relances</span>
               </li>
-              <li class="flex items-start gap-3 text-zinc-300">
+              <li class="flex items-start gap-3 text-zinc-700">
                 <Check class="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                 <span>Sérénité et gain de temps</span>
               </li>
@@ -217,19 +215,19 @@
     </section>
 
     <!-- How it Works Section -->
-    <section id="comment" class="py-24 relative overflow-hidden">
+    <section id="comment" class="py-24 relative overflow-hidden bg-white">
       <!-- Background elements -->
-      <div class="absolute inset-0 bg-zinc-950"></div>
+      <div class="absolute inset-0 bg-white"></div>
       <div
-        class="absolute top-1/2 left-0 w-full h-[500px] bg-violet-500/5 blur-[100px] -translate-y-1/2 pointer-events-none"
+        class="absolute top-1/2 left-0 w-full h-[500px] bg-violet-500/3 blur-[100px] -translate-y-1/2 pointer-events-none"
       ></div>
 
       <div class="relative z-10 max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-20">
-          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900">
             Comment ça marche ?
           </h2>
-          <p class="text-zinc-400 font-light text-lg">
+          <p class="text-zinc-600 font-light text-lg">
             Une mise en place simple et rapide. Importez vos données ou commencez de zéro en
             quelques minutes.
           </p>
@@ -238,28 +236,28 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
           <!-- Connecting Line (Desktop) -->
           <div
-            class="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-violet-500/0 via-violet-500/30 to-violet-500/0"
+            class="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-violet-500/0 via-violet-500/20 to-violet-500/0"
           ></div>
 
           <!-- Step 1 -->
           <div class="relative flex flex-col items-center text-center group">
             <div
-              class="w-24 h-24 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-8 relative z-10 shadow-lg shadow-black/20 group-hover:border-violet-500/30 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300"
+              class="w-24 h-24 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-8 relative z-10 shadow-lg shadow-zinc-100 group-hover:border-violet-500/30 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.10)] transition-all duration-300"
             >
               <div
-                class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"
+                class="absolute inset-0 bg-gradient-to-br from-zinc-100/50 to-transparent rounded-2xl"
               ></div>
               <Building2
-                class="w-10 h-10 text-white group-hover:scale-110 transition-transform duration-300"
+                class="w-10 h-10 text-zinc-700 group-hover:scale-110 transition-transform duration-300"
               />
               <div
-                class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm border-4 border-zinc-950"
+                class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm border-4 border-white"
               >
                 1
               </div>
             </div>
-            <h3 class="text-xl font-medium text-white mb-3">Ajoutez vos biens</h3>
-            <p class="text-zinc-400 leading-relaxed px-4">
+            <h3 class="text-xl font-medium text-zinc-900 mb-3">Ajoutez vos biens</h3>
+            <p class="text-zinc-600 leading-relaxed px-4">
               Enregistrez vos appartements, maisons ou locaux. Importez vos photos et documents.
             </p>
           </div>
@@ -267,22 +265,22 @@
           <!-- Step 2 -->
           <div class="relative flex flex-col items-center text-center group">
             <div
-              class="w-24 h-24 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-8 relative z-10 shadow-lg shadow-black/20 group-hover:border-violet-500/30 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300"
+              class="w-24 h-24 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-8 relative z-10 shadow-lg shadow-zinc-100 group-hover:border-violet-500/30 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.10)] transition-all duration-300"
             >
               <div
-                class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"
+                class="absolute inset-0 bg-gradient-to-br from-zinc-100/50 to-transparent rounded-2xl"
               ></div>
               <Users
-                class="w-10 h-10 text-white group-hover:scale-110 transition-transform duration-300"
+                class="w-10 h-10 text-zinc-700 group-hover:scale-110 transition-transform duration-300"
               />
               <div
-                class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm border-4 border-zinc-950"
+                class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm border-4 border-white"
               >
                 2
               </div>
             </div>
-            <h3 class="text-xl font-medium text-white mb-3">Assignez les locataires</h3>
-            <p class="text-zinc-400 leading-relaxed px-4">
+            <h3 class="text-xl font-medium text-zinc-900 mb-3">Assignez les locataires</h3>
+            <p class="text-zinc-600 leading-relaxed px-4">
               Créez les baux, enregistrez les locataires et configurez les loyers récurrents.
             </p>
           </div>
@@ -290,22 +288,22 @@
           <!-- Step 3 -->
           <div class="relative flex flex-col items-center text-center group">
             <div
-              class="w-24 h-24 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-8 relative z-10 shadow-lg shadow-black/20 group-hover:border-violet-500/30 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300"
+              class="w-24 h-24 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-8 relative z-10 shadow-lg shadow-zinc-100 group-hover:border-violet-500/30 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.10)] transition-all duration-300"
             >
               <div
-                class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"
+                class="absolute inset-0 bg-gradient-to-br from-zinc-100/50 to-transparent rounded-2xl"
               ></div>
               <TrendingUp
-                class="w-10 h-10 text-white group-hover:scale-110 transition-transform duration-300"
+                class="w-10 h-10 text-zinc-700 group-hover:scale-110 transition-transform duration-300"
               />
               <div
-                class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm border-4 border-zinc-950"
+                class="absolute -bottom-3 -right-3 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm border-4 border-white"
               >
                 3
               </div>
             </div>
-            <h3 class="text-xl font-medium text-white mb-3">Pilotez et encaissez</h3>
-            <p class="text-zinc-400 leading-relaxed px-4">
+            <h3 class="text-xl font-medium text-zinc-900 mb-3">Pilotez et encaissez</h3>
+            <p class="text-zinc-600 leading-relaxed px-4">
               Suivez les paiements, recevez des alertes et générez vos quittances automatiquement.
             </p>
           </div>
@@ -314,14 +312,17 @@
     </section>
 
     <!-- Features Section -->
-    <section id="fonctionnalites" class="py-32 relative overflow-hidden border-t border-white/5">
-      <div class="absolute inset-0 bg-zinc-950"></div>
+    <section
+      id="fonctionnalites"
+      class="py-32 relative overflow-hidden border-t border-zinc-200 bg-zinc-50"
+    >
+      <div class="absolute inset-0 bg-zinc-50"></div>
       <div class="relative z-10 max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-20">
-          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900">
             Fonctionnalités intelligentes
           </h2>
-          <p class="text-zinc-400 font-light text-lg">
+          <p class="text-zinc-600 font-light text-lg">
             Conçues pour simplifier. Tout ce dont vous avez besoin pour gérer, suivre et optimiser
             sans friction.
           </p>
@@ -329,59 +330,65 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Feature 1 -->
-          <div class="md:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group">
+          <div
+            class="md:col-span-2 bg-white border border-zinc-200 shadow-sm rounded-2xl p-8 relative overflow-hidden group"
+          >
             <div class="relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center border border-violet-500/20 mb-6 text-violet-400"
+                class="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center border border-violet-500/20 mb-6 text-violet-600"
               >
                 <Home class="w-5 h-5" />
               </div>
-              <h3 class="text-xl font-medium text-white mb-3">Gestion Multi-biens</h3>
-              <p class="text-zinc-400 text-sm max-w-sm leading-relaxed">
+              <h3 class="text-xl font-medium text-zinc-900 mb-3">Gestion Multi-biens</h3>
+              <p class="text-zinc-600 text-sm max-w-sm leading-relaxed">
                 Appartements, maisons, parkings ou locaux commerciaux. Ajoutez et configurez vos
                 propriétés en quelques clics avec des profils détaillés.
               </p>
             </div>
             <div
-              class="absolute right-0 bottom-0 w-1/2 h-3/4 opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+              class="absolute right-0 bottom-0 w-1/2 h-3/4 opacity-10 group-hover:opacity-30 transition-opacity duration-500"
             >
               <div
-                class="w-full h-full border-t border-l border-white/10 bg-white/5 rounded-tl-xl p-4 backdrop-blur-sm"
+                class="w-full h-full border-t border-l border-zinc-300 bg-zinc-100 rounded-tl-xl p-4"
               >
                 <div class="space-y-3">
-                  <div class="h-2 w-1/2 bg-white/10 rounded-full"></div>
-                  <div class="h-2 w-3/4 bg-white/5 rounded-full"></div>
-                  <div class="h-20 w-full bg-white/5 rounded mt-4 border border-white/5"></div>
+                  <div class="h-2 w-1/2 bg-zinc-300 rounded-full"></div>
+                  <div class="h-2 w-3/4 bg-zinc-200 rounded-full"></div>
+                  <div class="h-20 w-full bg-zinc-200 rounded mt-4 border border-zinc-300"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Feature 2 -->
-          <div class="glass-panel rounded-2xl p-8 relative overflow-hidden group">
+          <div
+            class="bg-white border border-zinc-200 shadow-sm rounded-2xl p-8 relative overflow-hidden group"
+          >
             <div class="relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 mb-6 text-emerald-400"
+                class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 mb-6 text-emerald-600"
               >
                 <UsersRound class="w-5 h-5" />
               </div>
-              <h3 class="text-xl font-medium text-white mb-3">Suivi Locataires</h3>
-              <p class="text-zinc-400 text-sm leading-relaxed">
+              <h3 class="text-xl font-medium text-zinc-900 mb-3">Suivi Locataires</h3>
+              <p class="text-zinc-600 text-sm leading-relaxed">
                 Centralisez les baux, les contacts et l'historique de chaque locataire.
               </p>
             </div>
           </div>
 
           <!-- Feature 3 -->
-          <div class="glass-panel rounded-2xl p-8 relative overflow-hidden group">
+          <div
+            class="bg-white border border-zinc-200 shadow-sm rounded-2xl p-8 relative overflow-hidden group"
+          >
             <div class="relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center border border-rose-500/20 mb-6 text-rose-400"
+                class="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center border border-rose-500/20 mb-6 text-rose-600"
               >
                 <AlertCircle class="w-5 h-5" />
               </div>
-              <h3 class="text-xl font-medium text-white mb-3">Alertes Retards</h3>
-              <p class="text-zinc-400 text-sm leading-relaxed">
+              <h3 class="text-xl font-medium text-zinc-900 mb-3">Alertes Retards</h3>
+              <p class="text-zinc-600 text-sm leading-relaxed">
                 Soyez notifié immédiatement en cas de retard de paiement. Relancez en un clic.
               </p>
             </div>
@@ -389,30 +396,30 @@
 
           <!-- Feature 4 -->
           <div
-            class="md:col-span-2 glass-panel rounded-2xl p-8 relative overflow-hidden group flex flex-col md:flex-row items-center gap-8"
+            class="md:col-span-2 bg-white border border-zinc-200 shadow-sm rounded-2xl p-8 relative overflow-hidden group flex flex-col md:flex-row items-center gap-8"
           >
             <div class="flex-1 relative z-10">
               <div
-                class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-6 text-blue-400"
+                class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20 mb-6 text-blue-600"
               >
                 <BarChart3 class="w-5 h-5" />
               </div>
-              <h3 class="text-xl font-medium text-white mb-3">Vue Métrique &amp; Export</h3>
-              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              <h3 class="text-xl font-medium text-zinc-900 mb-3">Vue Métrique &amp; Export</h3>
+              <p class="text-zinc-600 text-sm leading-relaxed mb-6">
                 Analysez votre rentabilité en temps réel. Besoin de transmettre à votre comptable ?
                 Exportez toutes les données en CSV ou PDF instantanément.
               </p>
               <div class="flex gap-3">
                 <span
-                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
+                  class="text-xs border border-zinc-300 px-2 py-1 rounded text-zinc-600 bg-zinc-100"
                   >.CSV</span
                 >
                 <span
-                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
+                  class="text-xs border border-zinc-300 px-2 py-1 rounded text-zinc-600 bg-zinc-100"
                   >.PDF</span
                 >
                 <span
-                  class="text-xs border border-white/10 px-2 py-1 rounded text-zinc-400 bg-white/5"
+                  class="text-xs border border-zinc-300 px-2 py-1 rounded text-zinc-600 bg-zinc-100"
                   >.XLS</span
                 >
               </div>
@@ -442,16 +449,13 @@
     </section>
 
     <!-- Pricing Section -->
-    <section
-      id="pricing"
-      class="py-32 relative overflow-hidden bg-zinc-950 border-t border-white/5"
-    >
+    <section id="pricing" class="py-32 relative overflow-hidden bg-white border-t border-zinc-200">
       <div class="max-w-7xl mx-auto px-6 relative z-10">
         <div class="text-center max-w-2xl mx-auto mb-20">
-          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900">
             Des tarifs simples et justes
           </h2>
-          <p class="text-zinc-400 font-light text-lg">
+          <p class="text-zinc-600 font-light text-lg">
             Choisissez le plan qui correspond à vos besoins. Changez ou annulez à tout moment.
           </p>
         </div>
@@ -459,23 +463,23 @@
         <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
           <!-- Free Plan -->
           <div
-            class="glass-panel rounded-2xl p-8 relative flex flex-col h-full hover:border-white/20 transition-colors duration-300"
+            class="bg-white border border-zinc-200 shadow-sm rounded-2xl p-8 relative flex flex-col h-full hover:border-zinc-300 transition-colors duration-300"
           >
             <div class="h-6 mb-2"></div>
             <div class="mb-6 h-[60px]">
-              <h3 class="text-2xl font-semibold text-white mb-2">Gratuit</h3>
+              <h3 class="text-2xl font-semibold text-zinc-900 mb-2">Gratuit</h3>
               <p class="text-zinc-500 text-sm">Pour découvrir Doogoo</p>
             </div>
             <div class="mb-8 h-[72px] flex items-end">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-semibold text-white">0€</span>
+                <span class="text-5xl font-semibold text-zinc-900">0€</span>
                 <span class="text-zinc-500 text-sm">/mois</span>
               </div>
             </div>
             <div class="mb-8 h-[40px]">
               <router-link to="/signup" class="block">
                 <button
-                  class="w-full h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors"
+                  class="w-full h-10 rounded-full border border-zinc-300 bg-zinc-50 hover:bg-zinc-100 text-zinc-900 font-medium text-sm transition-colors"
                 >
                   Commencer gratuitement
                 </button>
@@ -486,19 +490,19 @@
                 Inclus :
               </p>
               <ul class="space-y-3">
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Jusqu'à <strong class="text-white">2 biens</strong></span>
+                  <span>Jusqu'à <strong class="text-zinc-900">2 biens</strong></span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Gestion des locataires</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Suivi des paiements</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
                   <X class="w-5 h-5 shrink-0 mt-0.5" />
                   <span>Export CSV &amp; Excel</span>
                 </li>
@@ -508,7 +512,7 @@
 
           <!-- Essentiel Plan -->
           <div
-            class="glass-panel rounded-2xl p-8 relative border-2 border-violet-500/50 shadow-2xl shadow-violet-500/20 flex flex-col h-full transform hover:-translate-y-1 transition-transform duration-300 z-10"
+            class="bg-white rounded-2xl p-8 relative border-2 border-violet-500/50 shadow-2xl shadow-violet-500/10 flex flex-col h-full transform hover:-translate-y-1 transition-transform duration-300 z-10"
           >
             <div
               class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-medium shadow-lg shadow-violet-500/40"
@@ -517,19 +521,19 @@
             </div>
             <div class="h-6 mb-2"></div>
             <div class="mb-6 h-[60px]">
-              <h3 class="text-2xl font-semibold text-white mb-2">Essentiel</h3>
-              <p class="text-zinc-400 text-sm">Parfait pour 3-10 biens</p>
+              <h3 class="text-2xl font-semibold text-zinc-900 mb-2">Essentiel</h3>
+              <p class="text-zinc-500 text-sm">Parfait pour 3-10 biens</p>
             </div>
             <div class="mb-8 h-[72px] flex items-end">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-semibold text-white">12€</span>
+                <span class="text-5xl font-semibold text-zinc-900">12€</span>
                 <span class="text-zinc-500 text-sm">/mois</span>
               </div>
             </div>
             <div class="mb-8 h-[40px]">
               <router-link to="/signup" class="block">
                 <button
-                  class="w-full h-10 rounded-full bg-white text-zinc-950 hover:bg-zinc-200 font-semibold text-sm transition-colors"
+                  class="w-full h-10 rounded-full bg-violet-600 text-white hover:bg-violet-700 font-semibold text-sm transition-colors"
                 >
                   Commencer l'essai gratuit
                 </button>
@@ -540,15 +544,15 @@
                 Tout du plan Gratuit, plus :
               </p>
               <ul class="space-y-3">
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                  <span>Jusqu'à <strong class="text-white">10 biens</strong></span>
+                  <span>Jusqu'à <strong class="text-zinc-900">10 biens</strong></span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Export CSV &amp; Excel</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Support email (48h)</span>
                 </li>
@@ -558,23 +562,23 @@
 
           <!-- Premium Plan -->
           <div
-            class="glass-panel rounded-2xl p-8 relative flex flex-col h-full hover:border-white/20 transition-colors duration-300"
+            class="bg-white border border-zinc-200 shadow-sm rounded-2xl p-8 relative flex flex-col h-full hover:border-zinc-300 transition-colors duration-300"
           >
             <div class="h-6 mb-2"></div>
             <div class="mb-6 h-[60px]">
-              <h3 class="text-2xl font-semibold text-white mb-2">Premium</h3>
+              <h3 class="text-2xl font-semibold text-zinc-900 mb-2">Premium</h3>
               <p class="text-zinc-500 text-sm">Pour les portefeuilles importants</p>
             </div>
             <div class="mb-8 h-[72px] flex items-end">
               <div class="flex items-baseline gap-2">
-                <span class="text-5xl font-semibold text-white">24€</span>
+                <span class="text-5xl font-semibold text-zinc-900">24€</span>
                 <span class="text-zinc-500 text-sm">/mois</span>
               </div>
             </div>
             <div class="mb-8 h-[40px]">
               <router-link to="/signup" class="block">
                 <button
-                  class="w-full h-10 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors"
+                  class="w-full h-10 rounded-full border border-zinc-300 bg-zinc-50 hover:bg-zinc-100 text-zinc-900 font-medium text-sm transition-colors"
                 >
                   Commencer l'essai gratuit
                 </button>
@@ -585,15 +589,15 @@
                 Tout du plan Essentiel, plus :
               </p>
               <ul class="space-y-3">
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                  <span><strong class="text-white">Biens illimités</strong></span>
+                  <span><strong class="text-zinc-900">Biens illimités</strong></span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Rapports avancés</span>
                 </li>
-                <li class="flex items-start gap-3 text-sm text-zinc-400 min-h-[24px]">
+                <li class="flex items-start gap-3 text-sm text-zinc-600 min-h-[24px]">
                   <Check class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                   <span>Support prioritaire (24h)</span>
                 </li>
@@ -605,13 +609,13 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section id="temoignages" class="py-32 border-t border-white/5 bg-zinc-950">
+    <section id="temoignages" class="py-32 border-t border-zinc-200 bg-zinc-50">
       <div class="max-w-6xl mx-auto px-6">
         <div class="text-center max-w-2xl mx-auto mb-20">
-          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-white">
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-zinc-900">
             Utilisé par 100+ propriétaires
           </h2>
-          <p class="text-zinc-400 font-light">
+          <p class="text-zinc-600 font-light">
             Ils gèrent mieux. Gagnent plus. Passent moins de temps.
           </p>
         </div>
@@ -623,14 +627,14 @@
               <div
                 v-for="testimonial in allTestimonials"
                 :key="`first-${testimonial.id}`"
-                class="testimonial-card glass-panel rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
+                class="testimonial-card bg-white border border-zinc-200 shadow-sm rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
               >
                 <div class="flex flex-col flex-1">
                   <div class="text-2xl font-bold mb-2" :class="testimonial.colorClass">
                     {{ testimonial.metric }}
                   </div>
                   <p class="text-sm text-zinc-500 mb-4">{{ testimonial.metricLabel }}</p>
-                  <p class="text-zinc-300 text-sm leading-relaxed mb-6 flex-1 italic">
+                  <p class="text-zinc-700 text-sm leading-relaxed mb-6 flex-1 italic">
                     "{{ testimonial.quote }}"
                   </p>
                 </div>
@@ -642,7 +646,7 @@
                     {{ testimonial.initials }}
                   </div>
                   <div class="min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{ testimonial.name }}</p>
+                    <p class="text-sm font-medium text-zinc-900 truncate">{{ testimonial.name }}</p>
                     <p class="text-xs text-zinc-500 truncate">{{ testimonial.role }}</p>
                   </div>
                 </div>
@@ -652,14 +656,14 @@
               <div
                 v-for="testimonial in allTestimonials"
                 :key="`second-${testimonial.id}`"
-                class="testimonial-card glass-panel rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
+                class="testimonial-card bg-white border border-zinc-200 shadow-sm rounded-2xl p-6 flex-shrink-0 flex flex-col h-full"
               >
                 <div class="flex flex-col flex-1">
                   <div class="text-2xl font-bold mb-2" :class="testimonial.colorClass">
                     {{ testimonial.metric }}
                   </div>
                   <p class="text-sm text-zinc-500 mb-4">{{ testimonial.metricLabel }}</p>
-                  <p class="text-zinc-300 text-sm leading-relaxed mb-6 flex-1 italic">
+                  <p class="text-zinc-700 text-sm leading-relaxed mb-6 flex-1 italic">
                     "{{ testimonial.quote }}"
                   </p>
                 </div>
@@ -671,7 +675,7 @@
                     {{ testimonial.initials }}
                   </div>
                   <div class="min-w-0">
-                    <p class="text-sm font-medium text-white truncate">{{ testimonial.name }}</p>
+                    <p class="text-sm font-medium text-zinc-900 truncate">{{ testimonial.name }}</p>
                     <p class="text-xs text-zinc-500 truncate">{{ testimonial.role }}</p>
                   </div>
                 </div>
@@ -683,28 +687,30 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-32 relative overflow-hidden border-t border-white/5">
+    <section
+      class="py-32 relative overflow-hidden border-t border-zinc-200 bg-gradient-to-b from-white to-zinc-50"
+    >
       <div
-        class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.15),transparent_60%)]"
+        class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.05),transparent_60%)]"
       ></div>
       <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white mb-6">
+        <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-zinc-900 mb-6">
           Prêt à simplifier votre gestion ?
         </h2>
-        <p class="text-zinc-400 text-lg mb-10 font-light">
+        <p class="text-zinc-600 text-lg mb-10 font-light">
           Rejoignez les propriétaires qui ont choisi Doogoo pour gérer leurs biens.
         </p>
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
           <router-link
             to="/signup"
-            class="h-12 px-8 rounded-full bg-white text-zinc-950 font-medium hover:bg-zinc-200 transition-colors w-full sm:w-auto flex items-center justify-center gap-2"
+            class="h-12 px-8 rounded-full bg-violet-600 text-white font-medium hover:bg-violet-700 transition-colors w-full sm:w-auto flex items-center justify-center gap-2 shadow-lg shadow-violet-500/25"
           >
             Commencer gratuitement
             <ArrowRight class="w-4 h-4" />
           </router-link>
           <router-link
             to="/pricing"
-            class="h-12 px-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium transition-colors w-full sm:w-auto"
+            class="h-12 px-8 rounded-full border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-900 font-medium transition-colors w-full sm:w-auto"
           >
             Voir les tarifs
           </router-link>
@@ -713,49 +719,51 @@
     </section>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 bg-zinc-950 pt-16 pb-8">
+    <footer class="border-t border-zinc-200 bg-white pt-16 pb-8">
       <div class="max-w-6xl mx-auto px-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div class="col-span-2 md:col-span-1">
-            <span class="text-lg font-semibold tracking-tighter text-white">doogoo</span>
+            <span class="text-lg font-semibold tracking-tighter text-zinc-900">doogoo</span>
             <p class="text-zinc-500 text-sm mt-4 font-light">
               L'outil de gestion locative nouvelle génération pour les propriétaires exigeants.
             </p>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Produit</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Produit</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/features" class="hover:text-white transition-colors"
+                <router-link to="/features" class="hover:text-zinc-900 transition-colors"
                   >Fonctionnalités</router-link
                 >
               </li>
               <li>
-                <router-link to="/pricing" class="hover:text-white transition-colors"
+                <router-link to="/pricing" class="hover:text-zinc-900 transition-colors"
                   >Tarifs</router-link
                 >
               </li>
-              <li><a href="#" class="hover:text-white transition-colors">Mises à jour</a></li>
+              <li><a href="#" class="hover:text-zinc-900 transition-colors">Mises à jour</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Ressources</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Ressources</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
-              <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Guide du bailleur</a></li>
-              <li><a href="#" class="hover:text-white transition-colors">Centre d'aide</a></li>
+              <li><a href="#" class="hover:text-zinc-900 transition-colors">Blog</a></li>
+              <li>
+                <a href="#" class="hover:text-zinc-900 transition-colors">Guide du bailleur</a>
+              </li>
+              <li><a href="#" class="hover:text-zinc-900 transition-colors">Centre d'aide</a></li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Légal</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Légal</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/privacy" class="hover:text-white transition-colors"
+                <router-link to="/privacy" class="hover:text-zinc-900 transition-colors"
                   >Confidentialité</router-link
                 >
               </li>
               <li>
-                <router-link to="/terms" class="hover:text-white transition-colors"
+                <router-link to="/terms" class="hover:text-zinc-900 transition-colors"
                   >CGU</router-link
                 >
               </li>
@@ -763,9 +771,9 @@
           </div>
         </div>
         <div
-          class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+          class="border-t border-zinc-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
         >
-          <p class="text-xs text-zinc-600">© 2024 Doogoo Inc. Tous droits réservés.</p>
+          <p class="text-xs text-zinc-500">© 2024 Doogoo Inc. Tous droits réservés.</p>
         </div>
       </div>
     </footer>
@@ -773,11 +781,11 @@
     <!-- Video Modal Placeholder -->
     <div
       v-if="showVideoModal"
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       @click="showVideoModal = false"
     >
       <div
-        class="bg-zinc-900 p-1 rounded-2xl max-w-4xl w-full aspect-video relative shadow-2xl"
+        class="bg-white p-1 rounded-2xl max-w-4xl w-full aspect-video relative shadow-2xl"
         @click.stop
       >
         <button
@@ -787,7 +795,7 @@
           Fermer
         </button>
         <div
-          class="w-full h-full bg-black rounded-xl flex items-center justify-center text-zinc-500"
+          class="w-full h-full bg-zinc-100 rounded-xl flex items-center justify-center text-zinc-500"
         >
           <p>Vidéo de démonstration à intégrer ici</p>
         </div>
@@ -917,9 +925,9 @@ onUnmounted(() => {
 
 <style scoped>
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .animate-gradient {
