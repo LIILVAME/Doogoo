@@ -42,7 +42,7 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: v => ['primary', 'secondary', 'ghost', 'danger'].includes(v)
+    validator: v => ['primary', 'secondary', 'ghost', 'danger', 'outline'].includes(v)
   },
   size: {
     type: String,
@@ -78,7 +78,7 @@ const emit = defineEmits(['click'])
  */
 const baseClasses = [
   'inline-flex items-center justify-center',
-  'font-medium rounded-full',
+  'font-medium rounded-xl',
   'transition-all duration-200',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none'
@@ -89,29 +89,36 @@ const baseClasses = [
  */
 const variantClasses = {
   primary: [
-    'bg-primary-500 hover:bg-primary-600 active:bg-primary-700',
+    'bg-brand hover:bg-brand-hover active:bg-violet-800',
     'text-white',
     'shadow-sm hover:shadow-md',
     'hover:scale-[1.02]',
-    'focus-visible:ring-primary-500'
+    'focus-visible:ring-brand'
   ],
   secondary: [
-    'border-2 border-primary-500',
-    'bg-transparent hover:bg-primary-50',
-    'text-primary-600 hover:text-primary-700',
-    'focus-visible:ring-primary-500'
+    'border-2 border-brand',
+    'bg-transparent hover:bg-brand-50',
+    'text-brand hover:text-brand-hover',
+    'focus-visible:ring-brand'
+  ],
+  outline: [
+    'border border-border-default',
+    'bg-bg-page hover:bg-bg-subtle',
+    'text-text-primary hover:text-brand',
+    'shadow-sm hover:shadow-md',
+    'focus-visible:ring-brand'
   ],
   ghost: [
-    'bg-transparent hover:bg-primary-50',
-    'text-primary-600 hover:text-primary-700',
-    'focus-visible:ring-primary-500'
+    'bg-transparent hover:bg-brand-50',
+    'text-brand hover:text-brand-hover',
+    'focus-visible:ring-brand'
   ],
   danger: [
-    'bg-danger-500 hover:bg-danger-600 active:bg-danger-700',
+    'bg-danger hover:bg-danger-600 active:bg-danger-700',
     'text-white',
     'shadow-sm hover:shadow-md',
     'hover:scale-[1.02]',
-    'focus-visible:ring-danger-500'
+    'focus-visible:ring-danger'
   ]
 }
 

@@ -23,10 +23,7 @@
   <div v-else class="min-h-screen">
     <router-view v-slot="{ Component, route }">
       <transition name="page" mode="out-in">
-        <component 
-          :is="Component" 
-          :key="route.fullPath + '-' + settingsStore.language" 
-        />
+        <component :is="Component" :key="route.fullPath + '-' + settingsStore.language" />
       </transition>
     </router-view>
   </div>
@@ -34,7 +31,7 @@
   <NetworkErrorModal />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabaseClient'
@@ -179,7 +176,7 @@ onMounted(async () => {
     if (authStore.user) {
       // Charge le profil pour récupérer les préférences
       const profile = await authStore.fetchProfile()
-      
+
       // Charge les préférences depuis Supabase si disponibles
       if (profile?.preferences) {
         settingsStore.loadPreferencesFromSupabase(profile.preferences)
@@ -203,7 +200,7 @@ onMounted(async () => {
           // Charge le profil après connexion
           try {
             const profile = await authStore.fetchProfile()
-            
+
             // Charge les préférences depuis Supabase si disponibles
             if (profile?.preferences) {
               settingsStore.loadPreferencesFromSupabase(profile.preferences)
@@ -261,8 +258,11 @@ onMounted(async () => {
           // Réinitialise tous les stores (déjà fait dans logout(), mais on s'assure ici aussi)
           try {
             const { useTenantsStore } = await import('@/stores/tenantsStore')
+
             const { useAlertsStore } = await import('@/stores/alertsStore')
+
             const { useAnalyticsStore } = await import('@/stores/analyticsStore')
+
             const { useReportsStore } = await import('@/stores/reportsStore')
 
             const tenantsStore = useTenantsStore()
@@ -321,7 +321,9 @@ onMounted(async () => {
 /* Transition de Page : Fade + Slide Up */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .page-enter-from {

@@ -10,14 +10,14 @@
     <!-- Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-white border-r border-zinc-100 transition-all duration-300 ease-in-out h-screen shadow-xl md:shadow-none md:relative md:translate-x-0 flex flex-col',
+        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 max-w-full bg-zinc-100 border-r border-zinc-300 transition-all duration-300 ease-in-out h-screen shadow-xl md:shadow-none md:relative md:translate-x-0 flex flex-col',
         isOpen || isDesktop ? 'translate-x-0' : '-translate-x-full'
       ]"
-      style="overflow: hidden"
+      style="overflow: hidden; contain: layout"
     >
       <!-- Header (fixe en haut) -->
       <div
-        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-zinc-100 bg-white z-10"
+        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-zinc-300 bg-zinc-100 z-10"
       >
         <router-link
           to="/dashboard"
@@ -55,7 +55,7 @@
 
       <!-- Menu (flexible, sans scroll) -->
       <nav
-        class="flex-1 w-full px-4 md:px-0 py-4 md:py-3 space-y-4 md:space-y-2 flex flex-col md:items-center overflow-hidden min-h-0"
+        class="flex-1 w-full px-4 md:px-0 py-4 md:py-3 space-y-4 md:space-y-2 flex flex-col md:items-center overflow-y-auto scrollbar-none min-h-0"
       >
         <!-- Section: GESTION -->
         <div class="w-full md:w-auto">
@@ -69,12 +69,13 @@
               v-for="item in gestionItems"
               :key="item.name"
               :to="item.path"
+              :title="item.name"
               @click="handleNavClick"
               class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
               :class="[
                 isActive(item.path)
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 md:hover:scale-105'
+                  ? 'bg-primary-100 text-primary-700'
+                  : 'text-zinc-900 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
               ]"
             >
               <!-- Indicateur actif (mobile) -->
@@ -100,17 +101,6 @@
 
               <!-- Texte (mobile uniquement) -->
               <span class="font-medium flex-1 md:hidden ml-3 relative z-10">{{ item.name }}</span>
-
-              <!-- Tooltip amélioré (desktop uniquement) -->
-              <div
-                class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-2xl border border-white/10"
-              >
-                <span>{{ item.name }}</span>
-                <!-- Flèche -->
-                <div
-                  class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
-                ></div>
-              </div>
             </router-link>
           </div>
         </div>
@@ -132,12 +122,13 @@
                 v-for="item in analyseItems"
                 :key="item.name"
                 :to="item.path"
+                :title="item.name"
                 @click="handleNavClick"
                 class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
                 :class="[
                   isActive(item.path)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 md:hover:scale-105'
+                    ? 'bg-primary-100 text-primary-700'
+                    : 'text-zinc-900 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
                 ]"
               >
                 <!-- Indicateur actif (mobile) -->
@@ -183,17 +174,6 @@
                   <!-- Glow effect -->
                   <div class="absolute inset-0 rounded-full bg-danger-500/30 blur-sm"></div>
                 </span>
-
-                <!-- Tooltip amélioré (desktop uniquement) -->
-                <div
-                  class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-2xl border border-white/10"
-                >
-                  <span>{{ item.name }}</span>
-                  <!-- Flèche -->
-                  <div
-                    class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
-                  ></div>
-                </div>
               </router-link>
             </div>
           </div>
@@ -216,6 +196,7 @@
                 v-for="item in compteItems"
                 :key="item.name"
                 :to="item.path"
+                :title="item.name"
                 @click="handleNavClick"
                 @mouseenter="
                   e => (item.path === '/parametres' ? handleFlyoutHover(e, 'parametres') : null)
@@ -224,8 +205,8 @@
                 class="relative group w-full md:w-12 md:h-12 flex items-center md:justify-center px-4 md:px-0 py-2.5 md:py-0 rounded-xl transition-all duration-300 overflow-visible"
                 :class="[
                   isActive(item.path)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 md:hover:scale-105'
+                    ? 'bg-primary-100 text-primary-700'
+                    : 'text-zinc-900 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
                 ]"
               >
                 <!-- Indicateur actif (mobile) -->
@@ -251,18 +232,6 @@
 
                 <!-- Texte (mobile uniquement) -->
                 <span class="font-medium flex-1 md:hidden ml-3 relative z-10">{{ item.name }}</span>
-
-                <!-- Tooltip pour les items sans sous-menu (desktop uniquement) -->
-                <div
-                  v-if="item.path !== '/parametres'"
-                  class="absolute left-full ml-4 px-3 py-2 bg-zinc-900/95 backdrop-blur-md text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap z-50 translate-x-2 group-hover:translate-x-0 hidden md:block shadow-2xl border border-white/10"
-                >
-                  <span>{{ item.name }}</span>
-                  <!-- Flèche -->
-                  <div
-                    class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-t-transparent border-b-4 border-b-transparent border-r-4 border-r-zinc-900/95"
-                  ></div>
-                </div>
               </router-link>
             </div>
           </div>
@@ -281,7 +250,7 @@
 
       <!-- Footer (fixe en bas) -->
       <div
-        class="flex-none w-full border-t border-zinc-100 bg-white z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
+        class="flex-none w-full border-t border-zinc-300 bg-zinc-100 z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
       >
         <!-- Mobile: Layout complet -->
         <div class="flex items-center gap-3 w-full md:hidden">
@@ -639,16 +608,16 @@ const gestionItems = computed(() => [
     iconClass: iconMap.building
   },
   {
-    name: t('sidebar.payments'),
-    path: '/paiements',
-    icon: 'currency',
-    iconClass: iconMap.currency
-  },
-  {
     name: t('sidebar.tenants'),
     path: '/locataires',
     icon: 'users',
     iconClass: iconMap.users
+  },
+  {
+    name: t('sidebar.payments'),
+    path: '/paiements',
+    icon: 'currency',
+    iconClass: iconMap.currency
   }
 ])
 
@@ -746,8 +715,10 @@ const handleFlyoutHover = (event, menuId) => {
     clearTimeout(flyoutHoverTimeout)
   }
 
+  const target = event.currentTarget
+
   flyoutHoverTimeout = setTimeout(() => {
-    const target = event.currentTarget
+    if (!target) return
     const rect = target.getBoundingClientRect()
 
     // Calcule la position du centre de l'icône

@@ -157,7 +157,7 @@
                 >
                   <svg
                     v-if="isSubmitting"
-                    class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    class="animate-spin -ml-1 mr-2 h-4 w-4 text-zinc-900"
                     fill="none"
                     viewBox="0 0 24 24"
                   >

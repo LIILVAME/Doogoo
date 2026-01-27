@@ -3,13 +3,18 @@
     <!-- Skip Link pour navigation clavier -->
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
-    <div class="flex bg-zinc-50 text-zinc-900 font-sans selection:bg-primary-500/30 min-h-screen">
+    <div
+      class="flex bg-zinc-50 text-zinc-900 font-sans selection:bg-primary-500/30 h-screen overflow-hidden overflow-x-hidden"
+    >
       <!-- Note: Sidebar width is md:w-20 (80px) for compact mini sidebar -->
       <!-- Sidebar -->
       <Sidebar />
 
       <!-- Main Content -->
-      <main id="main-content" class="flex-1 w-full relative overflow-y-auto">
+      <main
+        id="main-content"
+        class="flex-1 w-full min-w-0 relative overflow-y-auto overflow-x-hidden"
+      >
         <!-- Header Mobile (visible uniquement sur mobile) -->
         <header
           class="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-zinc-100 px-4 py-3 flex items-center justify-between"
@@ -42,7 +47,7 @@
               :aria-expanded="isSidebarOpen"
             >
               <svg
-                class="w-6 h-6 text-zinc-300"
+                class="w-6 h-6 text-zinc-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

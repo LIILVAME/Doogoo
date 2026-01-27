@@ -5,7 +5,9 @@ import { useAuthStore } from './authStore'
 import { useToastStore } from './toastStore'
 import { PROPERTY_STATUS, PAYMENT_STATUS } from '@/utils/constants'
 import { sanitizeObject } from '@/utils/sanitizeLogs'
-import { tenantsApi, documentsApi } from '@/api'
+import { tenantsApi } from '@/api'
+import * as documentsApi from '@/api/documents'
+import type { RetryResult } from '@/utils/retry'
 import type { PropertyData } from './propertiesStore'
 
 /**
@@ -360,7 +362,11 @@ export const useTenantsStore = defineStore('tenants', () => {
         return []
       }
 
-      const result = await documentsApi.uploadDocument(tenantId, file, authStore.user.id)
+      const result = await (documentsApi.uploadDocument(
+        tenantId,
+        file,
+        authStore.user.id
+      ) as Promise<RetryResult<any>>)
 
       if (result.success) {
         toast.success('Document uploadé avec succès')
@@ -389,7 +395,9 @@ export const useTenantsStore = defineStore('tenants', () => {
         return []
       }
 
-      const result = await documentsApi.listDocuments(tenantId, authStore.user.id)
+      const result = await (documentsApi.listDocuments(tenantId, authStore.user.id) as Promise<
+        RetryResult<any>
+      >)
 
       if (result.success && result.data) {
         return result.data
@@ -418,7 +426,12 @@ export const useTenantsStore = defineStore('tenants', () => {
         return null
       }
 
-      const result = await documentsApi.getDocumentUrl(tenantId, fileName, authStore.user.id, 3600)
+      const result = await (documentsApi.getDocumentUrl(
+        tenantId,
+        fileName,
+        authStore.user.id,
+        3600
+      ) as Promise<RetryResult<{ signedUrl: string }>>)
 
       if (result.success && result.data?.signedUrl) {
         return result.data.signedUrl
@@ -447,7 +460,11 @@ export const useTenantsStore = defineStore('tenants', () => {
         return []
       }
 
-      const result = await documentsApi.deleteDocument(tenantId, fileName, authStore.user.id)
+      const result = await (documentsApi.deleteDocument(
+        tenantId,
+        fileName,
+        authStore.user.id
+      ) as Promise<RetryResult<any>>)
 
       if (result.success) {
         toast.success('Document supprimé avec succès')

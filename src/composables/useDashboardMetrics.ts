@@ -1,4 +1,4 @@
-import { computed, type ComputedRef } from 'vue'
+import { computed } from 'vue'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { usePaymentsStore } from '@/stores/paymentsStore'
 import { useTenantsStore } from '@/stores/tenantsStore'
@@ -65,122 +65,215 @@ export function useDashboardMetrics() {
   const tenantsStore = useTenantsStore()
 
   /**
-   * Calcule la date de début et de fin du mois courant
+   * Calcule les périodes pour les comparaisons (mois courant vs mois précédent)
    */
-  const currentMonthRange = computed(() => {
+  const dateRanges = computed(() => {
     const now = new Date()
-    const startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
-    return { startDate, endDate }
+
+    // Mois courant
+    const startCurrent = new Date(now.getFullYear(), now.getMonth(), 1)
+    const endCurrent = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+
+    // Mois précédent
+    const startPrevious = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const endPrevious = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59)
+
+    return { startCurrent, endCurrent, startPrevious, endPrevious }
   })
 
   /**
-   * Filtre les paiements du mois courant
+   * Paiements groupés par période
    */
-  const currentMonthPayments = computed(() => {
-    const { startDate, endDate } = currentMonthRange.value
-    return paymentsStore.payments.filter(payment => {
-      if (!payment.dueDate) return false
-      const paymentDate = new Date(payment.dueDate)
-      return paymentDate >= startDate && paymentDate <= endDate
+  const paymentsByPeriod = computed(() => {
+    const { startCurrent, endCurrent, startPrevious, endPrevious } = dateRanges.value
+
+    const current = (paymentsStore.payments || []).filter(p => {
+      if (!p.dueDate) return false
+      const d = new Date(p.dueDate)
+      return d >= startCurrent && d <= endCurrent
     })
+
+    const previous = (paymentsStore.payments || []).filter(p => {
+      if (!p.dueDate) return false
+      const d = new Date(p.dueDate)
+      return d >= startPrevious && d <= endPrevious
+    })
+
+    return { current, previous }
   })
 
   /**
-   * KPIs Financiers
+   * Calcule le pourcentage de croissance
    */
-  const financial: ComputedRef<FinancialMetrics> = computed(() => {
-    // Revenu total du mois courant (paiements 'paid')
-    const paidPayments = currentMonthPayments.value.filter(
-      p => p.status === TRANSACTION_STATUS.PAID
-    )
-    const totalRevenue = paidPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+  const calculateGrowth = (current: number, previous: number): string | null => {
+    if (previous === 0) return current > 0 ? '+100%' : null
+    const growth = ((current - previous) / previous) * 100
+    if (growth === 0) return null
+    return `${growth > 0 ? '+' : ''}${Math.round(growth)}%`
+  }
 
-    // Revenu en attente (paiements 'pending' + 'late')
-    const pendingPayments = currentMonthPayments.value.filter(
+  /**
+   * KPIs Financiers avec tendances
+   */
+  const financial = computed<FinancialMetrics & { revenueTrend: string | null }>(() => {
+    const { current, previous } = paymentsByPeriod.value
+
+    // Revenu mois courant
+    const currentPaid = current.filter(p => p.status === TRANSACTION_STATUS.PAID)
+    const currentRevenue = currentPaid.reduce((sum, p) => sum + (p.amount || 0), 0)
+
+    // Revenu mois précédent (pour tendance)
+    const previousPaid = previous.filter(p => p.status === TRANSACTION_STATUS.PAID)
+    const previousRevenue = previousPaid.reduce((sum, p) => sum + (p.amount || 0), 0)
+
+    // Revenu en attente (tout ce qui n'est pas payé)
+    const allPending = (paymentsStore.payments || []).filter(
       p => p.status === TRANSACTION_STATUS.PENDING || p.status === TRANSACTION_STATUS.LATE
     )
-    const pendingRevenue = pendingPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+    const totalPendingAmount = allPending.reduce((sum, p) => sum + (p.amount || 0), 0)
 
-    // Total des montants en attente (tous les paiements non payés)
-    const allPendingPayments = paymentsStore.payments.filter(
+    // Calcul du revenu en attente du mois courant (pendingRevenue) pour compatibilité
+    const currentPending = current.filter(
       p => p.status === TRANSACTION_STATUS.PENDING || p.status === TRANSACTION_STATUS.LATE
     )
-    const totalPendingAmount = allPendingPayments.reduce((sum, p) => sum + (p.amount || 0), 0)
+    const pendingRevenue = currentPending.reduce((sum, p) => sum + (p.amount || 0), 0)
 
     return {
-      totalRevenue: totalRevenue || 0, // Protection contre NaN
+      totalRevenue: currentRevenue || 0,
       pendingRevenue: pendingRevenue || 0,
-      totalPendingAmount: totalPendingAmount || 0
+      totalPendingAmount: totalPendingAmount || 0,
+      revenueTrend: calculateGrowth(currentRevenue, previousRevenue)
     }
   })
 
   /**
-   * KPIs Immobiliers
+   * KPIs Immobiliers avec tendances
    */
-  const property: ComputedRef<PropertyMetrics> = computed(() => {
+  const property = computed<
+    PropertyMetrics & { newPropertiesCount: number; propertyTrend: string | null }
+  >(() => {
     const allProperties = propertiesStore.properties || []
-    const totalProperties = allProperties.length
+    const totalCount = allProperties.length
 
-    // Liste des biens vacants
     const vacantProperties = allProperties.filter(p => p.status === 'vacant')
+    const occupiedCount = totalCount - vacantProperties.length
+    const occupancyRate = totalCount > 0 ? Math.round((occupiedCount / totalCount) * 100) : 0
 
-    // Calcul du taux d'occupation (évite la division par zéro)
-    const occupiedCount = totalProperties - vacantProperties.length
-    const occupancyRate =
-      totalProperties > 0 ? Math.round((occupiedCount / totalProperties) * 100) : 0
+    // Tendance (nouveau biens ce mois-ci)
+    const { startCurrent } = dateRanges.value
+    const newThisMonth = allProperties.filter(p => {
+      if (!p.createdAt) return false
+      return new Date(p.createdAt) >= startCurrent
+    }).length
+
+    // Trend for occupied properties (proxy using new tenants this month)
+    const newTenantsCount = (tenantsStore.tenants || []).filter(t => {
+      if (!t.entryDate) return false
+      return new Date(t.entryDate) >= startCurrent
+    }).length
 
     return {
-      occupancyRate: occupancyRate || 0, // Protection contre NaN
+      occupancyRate,
+      occupiedCount,
+      occupiedTrend: newTenantsCount > 0 ? `+${newTenantsCount}` : null,
       vacantProperties,
-      vacantPropertiesCount: vacantProperties.length
+      vacantPropertiesCount: vacantProperties.length,
+      newPropertiesCount: newThisMonth,
+      propertyTrend: newThisMonth > 0 ? `+${newThisMonth}` : null
     }
   })
 
   /**
-   * Alertes (Actions requises)
+   * Alertes
    */
-  const alerts: ComputedRef<DashboardAlerts> = computed(() => {
-    // Paiements en retard
+  const alerts = computed<DashboardAlerts>(() => {
     const latePayments = paymentsStore.latePayments || []
-
-    // Locataires dont le bail expire dans < 30 jours
     const now = new Date()
     const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
-    const expiringLeases = tenantsStore.tenants.filter(tenant => {
-      if (!tenant.exitDate) return false // Pas de date de sortie = bail non terminé
+    const expiringLeases = (tenantsStore.tenants || []).filter(tenant => {
+      if (!tenant.exitDate) return false
       const exitDate = new Date(tenant.exitDate)
       return exitDate >= now && exitDate <= thirtyDaysFromNow
     })
-
-    const hasAlerts = latePayments.length > 0 || expiringLeases.length > 0
 
     return {
       latePayments,
       latePaymentsCount: latePayments.length,
       expiringLeases,
       expiringLeasesCount: expiringLeases.length,
-      hasAlerts
+      hasAlerts: latePayments.length > 0 || expiringLeases.length > 0
+    }
+  })
+  /**
+   * KPIs Locataires avec tendances
+   */
+  const tenant = computed(() => {
+    const allTenants = tenantsStore.tenants || []
+    const totalCount = allTenants.length
+
+    // Tendance (nouveaux locataires ce mois-ci basés sur entryDate)
+    const { startCurrent } = dateRanges.value
+    const newThisMonth = allTenants.filter(t => {
+      if (!t.entryDate) return false
+      return new Date(t.entryDate) >= startCurrent
+    }).length
+
+    return {
+      totalCount,
+      newTenantsCount: newThisMonth,
+      tenantTrend: newThisMonth > 0 ? `+${newThisMonth}` : null
     }
   })
 
   /**
-   * Métriques complètes du Dashboard
+   * Activité des paiements (pour PaymentsPage)
    */
-  const metrics: ComputedRef<DashboardMetrics> = computed(() => {
+  const paymentActivity = computed(() => {
+    const { current, previous } = paymentsByPeriod.value
+
+    const countStatus = (list: PaymentData[], status: string) =>
+      list.filter(p => p.status === status).length
+
+    const currentPending = countStatus(current, TRANSACTION_STATUS.PENDING)
+    const previousPending = countStatus(previous, TRANSACTION_STATUS.PENDING)
+
+    const currentLate = countStatus(current, TRANSACTION_STATUS.LATE)
+    const previousLate = countStatus(previous, TRANSACTION_STATUS.LATE)
+
+    const currentPaid = countStatus(current, TRANSACTION_STATUS.PAID)
+    const previousPaid = countStatus(previous, TRANSACTION_STATUS.PAID)
+
     return {
-      financial: financial.value,
-      property: property.value,
-      alerts: alerts.value
+      pending: {
+        count: currentPending,
+        trend: calculateGrowth(currentPending, previousPending)
+      },
+      late: {
+        count: currentLate,
+        trend: calculateGrowth(currentLate, previousLate)
+      },
+      paid: {
+        count: currentPaid,
+        trend: calculateGrowth(currentPaid, previousPaid)
+      }
     }
   })
+
+  const metrics = computed<DashboardMetrics & { tenant: any; paymentActivity: any }>(() => ({
+    financial: financial.value,
+    property: property.value,
+    alerts: alerts.value,
+    tenant: tenant.value,
+    paymentActivity: paymentActivity.value
+  }))
 
   return {
     metrics,
     financial,
     property,
     alerts,
-    currentMonthPayments
+    tenant,
+    paymentActivity
   }
 }

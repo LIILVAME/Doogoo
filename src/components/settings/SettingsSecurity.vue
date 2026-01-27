@@ -3,18 +3,20 @@
     <div class="space-y-6">
       <!-- En-tête -->
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-white mb-2">{{ $t('security.title') }}</h2>
-        <p class="text-zinc-400">{{ $t('security.subtitle') }}</p>
+        <h2 class="text-2xl font-bold text-zinc-900 mb-2">{{ $t('security.title') }}</h2>
+        <p class="text-zinc-600">{{ $t('security.subtitle') }}</p>
       </div>
 
       <!-- Carte 1: Mot de passe -->
-      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow">
+      <div
+        class="bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-lg transition-shadow shadow-sm"
+      >
         <div class="flex items-start">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mr-4 border border-emerald-500/20"
+            class="flex-shrink-0 w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mr-4 border border-emerald-200"
           >
             <svg
-              class="w-6 h-6 text-emerald-400"
+              class="w-6 h-6 text-emerald-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -28,13 +30,13 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-white mb-1">
+            <h3 class="text-lg font-semibold text-zinc-900 mb-1">
               {{ $t('security.password.title') }}
             </h3>
-            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.password.description') }}</p>
+            <p class="text-sm text-zinc-600 mb-4">{{ $t('security.password.description') }}</p>
             <button
               @click="isPasswordModalOpen = true"
-              class="btn-primary inline-flex items-center"
+              class="px-4 py-2 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors inline-flex items-center"
             >
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -51,13 +53,15 @@
       </div>
 
       <!-- Carte 2: Authentification à deux facteurs (V1 - Désactivé) -->
-      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow opacity-75">
+      <div
+        class="bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-lg transition-shadow opacity-75 shadow-sm"
+      >
         <div class="flex items-start">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mr-4 border border-blue-500/20"
+            class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4 border border-blue-200"
           >
             <svg
-              class="w-6 h-6 text-blue-400"
+              class="w-6 h-6 text-blue-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -72,20 +76,22 @@
           </div>
           <div class="flex-1">
             <div class="flex items-center justify-between mb-1">
-              <h3 class="text-lg font-semibold text-white">
+              <h3 class="text-lg font-semibold text-zinc-900">
                 {{ $t('security.twoFactor.title') }}
               </h3>
               <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-amber-500/10 text-amber-400 border-amber-500/20"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border bg-amber-100 text-amber-700 border-amber-200"
               >
                 <span class="w-2 h-2 rounded-full mr-2 bg-amber-500"></span>
                 {{ $t('security.twoFactor.comingSoon') }}
               </span>
             </div>
-            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.twoFactor.comingSoonDescription') }}</p>
+            <p class="text-sm text-zinc-600 mb-4">
+              {{ $t('security.twoFactor.comingSoonDescription') }}
+            </p>
             <button
               disabled
-              class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors bg-white/5 text-zinc-400 border border-white/10 cursor-not-allowed opacity-50"
+              class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed opacity-50"
             >
               {{ $t('security.twoFactor.enable') }}
             </button>
@@ -93,16 +99,16 @@
         </div>
       </div>
 
-
-
       <!-- Carte 4: Sessions actives -->
-      <div class="glass-panel rounded-2xl p-6 hover:shadow-lg transition-shadow">
+      <div
+        class="bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-lg transition-shadow shadow-sm"
+      >
         <div class="flex items-start">
           <div
-            class="flex-shrink-0 w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mr-4 border border-purple-500/20"
+            class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mr-4 border border-purple-200"
           >
             <svg
-              class="w-6 h-6 text-purple-400"
+              class="w-6 h-6 text-purple-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -116,14 +122,14 @@
             </svg>
           </div>
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-white mb-1">
+            <h3 class="text-lg font-semibold text-zinc-900 mb-1">
               {{ $t('security.sessions.title') }}
             </h3>
-            <p class="text-sm text-zinc-300 mb-4">{{ $t('security.sessions.description') }}</p>
+            <p class="text-sm text-zinc-600 mb-4">{{ $t('security.sessions.description') }}</p>
             <button
               @click="handleSignOutAllDevices"
               :disabled="isSigningOut"
-              class="btn-secondary inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 bg-zinc-100 text-zinc-700 border border-zinc-300 rounded-xl font-medium hover:bg-zinc-200 transition-colors inline-flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg
                 v-if="isSigningOut"

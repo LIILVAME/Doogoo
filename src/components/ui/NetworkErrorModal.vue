@@ -37,22 +37,21 @@
               </div>
 
               <!-- Titre -->
-              <h2 class="text-2xl font-bold text-white mb-3">
+              <h2 class="text-2xl font-bold text-zinc-900 mb-3">
                 Connexion au serveur interrompue
               </h2>
 
               <!-- Message -->
-              <p class="text-zinc-300 mb-6 leading-relaxed">
-                {{ errorStore.errorMessage || 'Le serveur semble endormi ou inaccessible. Tentative de reconnexion...' }}
+              <p class="text-zinc-600 mb-6 leading-relaxed">
+                {{
+                  errorStore.errorMessage ||
+                  'Le serveur semble endormi ou inaccessible. Tentative de reconnexion...'
+                }}
               </p>
 
               <!-- Indicateur de reconnexion -->
-              <div class="mb-6 flex items-center justify-center gap-2 text-sm text-zinc-400">
-                <svg
-                  class="w-4 h-4 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
+              <div class="mb-6 flex items-center justify-center gap-2 text-sm text-zinc-500">
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle
                     class="opacity-25"
                     cx="12"
@@ -74,11 +73,11 @@
               <button
                 @click="handleRetry"
                 :disabled="isRetrying"
-                class="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium bg-violet-500 hover:bg-violet-600 active:bg-violet-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium bg-violet-500 hover:bg-violet-600 active:bg-violet-700 text-zinc-900 shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg
                   v-if="isRetrying"
-                  class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                  class="animate-spin -ml-1 mr-2 h-5 w-5 text-zinc-900"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
@@ -98,7 +97,7 @@
                 </svg>
                 <svg
                   v-else
-                  class="-ml-1 mr-2 h-5 w-5 text-white"
+                  class="-ml-1 mr-2 h-5 w-5 text-zinc-900"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -115,7 +114,8 @@
 
               <!-- Message d'aide -->
               <p class="mt-4 text-xs text-zinc-500">
-                Si le problème persiste, vérifiez votre connexion internet ou réessayez dans quelques instants.
+                Si le problème persiste, vérifiez votre connexion internet ou réessayez dans
+                quelques instants.
               </p>
             </div>
           </div>
@@ -189,7 +189,9 @@ const handleRetry = async () => {
 
 .modal-enter-active .glass-panel,
 .modal-leave-active .glass-panel {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .modal-enter-from .glass-panel,

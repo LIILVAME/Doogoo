@@ -1,26 +1,30 @@
 <template>
   <div>
-      <!-- Liste des biens en grille responsive avec transition -->
-      <TransitionGroup
-        v-if="properties.length > 0"
-        name="list"
-        tag="div"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        <PropertyCard
-          v-for="property in properties"
-          :key="property.id"
-          :property="property"
-          @edit="$emit('edit-property', property)"
-          @delete="$emit('delete-property', property.id)"
-        />
-      </TransitionGroup>
+    <!-- Liste des biens en grille responsive avec transition -->
+    <TransitionGroup
+      v-if="properties.length > 0"
+      name="list"
+      tag="div"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
+      <PropertyCard
+        v-for="property in properties"
+        :key="property.id"
+        :property="property"
+        @edit="$emit('edit-property', property)"
+        @delete="$emit('delete-property', property.id)"
+      />
+    </TransitionGroup>
 
     <!-- Empty state -->
     <EmptyState
       v-else
       :title="$t('properties.noPropertiesFound')"
-      :description="hasFilters ? $t('properties.noPropertiesFoundWithFilters') : $t('properties.noPropertiesDescription')"
+      :description="
+        hasFilters
+          ? $t('properties.noPropertiesFoundWithFilters')
+          : $t('properties.noPropertiesDescription')
+      "
       icon="ri-building-line"
     >
       <template v-if="hasFilters" #action>
@@ -59,5 +63,5 @@ defineProps({
   }
 })
 
-defineEmits(['edit-property', 'delete-property', 'clear-filters'])
+defineEmits(['edit-property', 'delete-property', 'clear-filters', 'add-property'])
 </script>

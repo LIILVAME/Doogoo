@@ -20,7 +20,7 @@
             :aria-labelledby="'edit-tenant-modal-title'"
           >
             <!-- Header -->
-            <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
+            <div class="flex items-center justify-between border-b border-zinc-200 px-6 py-5">
               <div class="flex items-center gap-3">
                 <div
                   class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20"
@@ -39,13 +39,13 @@
                     />
                   </svg>
                 </div>
-                <h2 id="edit-tenant-modal-title" class="text-xl font-semibold text-white">
+                <h2 id="edit-tenant-modal-title" class="text-xl font-semibold text-zinc-900">
                   {{ $t('tenants.editTenant') }}
                 </h2>
               </div>
               <button
                 @click="handleClose"
-                class="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
+                class="text-zinc-500 hover:text-zinc-900 transition-colors p-2 hover:bg-zinc-100 rounded-lg"
                 :aria-label="$t('common.close')"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@
                 <div>
                   <label
                     for="edit-tenant-name"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('tenants.tenantName') }} <span class="text-rose-400">*</span>
                   </label>
@@ -75,22 +75,22 @@
                     v-model.trim="form.name"
                     type="text"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                     :placeholder="$t('tenants.placeholders.name')"
                   />
                 </div>
 
                 <!-- Bien associé (lecture seule) -->
                 <div>
-                  <label class="block text-sm font-medium text-zinc-300 mb-2">
+                  <label class="block text-sm font-medium text-zinc-600 mb-2">
                     {{ $t('tenants.associatedProperty') }}
                   </label>
                   <div
-                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-zinc-300"
+                    class="w-full bg-zinc-100 border border-zinc-200 rounded-xl px-4 py-2.5 text-zinc-600"
                   >
                     {{ propertyName }}
                   </div>
-                  <p class="text-xs text-zinc-400 mt-1">
+                  <p class="text-xs text-zinc-500 mt-1">
                     {{ $t('properties.propertyRent') }} : {{ formatCurrency(form.rent) }}
                   </p>
                 </div>
@@ -99,7 +99,7 @@
                 <div>
                   <label
                     for="edit-tenant-entry-date"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('tenants.entryDate') }} <span class="text-rose-400">*</span>
                   </label>
@@ -108,7 +108,7 @@
                     v-model="form.entryDate"
                     type="date"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   />
                 </div>
 
@@ -116,16 +116,16 @@
                 <div>
                   <label
                     for="edit-tenant-exit-date"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('tenants.exitDateOptional') }}
-                    <span class="text-zinc-400 text-xs">({{ $t('common.optional') }})</span>
+                    <span class="text-zinc-500 text-xs">({{ $t('common.optional') }})</span>
                   </label>
                   <input
                     id="edit-tenant-exit-date"
                     v-model="form.exitDate"
                     type="date"
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   />
                 </div>
 
@@ -133,7 +133,7 @@
                 <div>
                   <label
                     for="edit-tenant-birth-date"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('common.birthDate') }} <span class="text-rose-400">*</span>
                   </label>
@@ -142,7 +142,7 @@
                     v-model="form.birthDate"
                     type="date"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   />
                 </div>
 
@@ -150,7 +150,7 @@
                 <div>
                   <label
                     for="edit-tenant-birth-place"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('common.birthPlace') }} <span class="text-rose-400">*</span>
                   </label>
@@ -159,7 +159,7 @@
                     v-model.trim="form.birthPlace"
                     type="text"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                     :placeholder="$t('common.placeholders.birthPlace')"
                   />
                 </div>
@@ -168,12 +168,12 @@
                 <div>
                   <label
                     for="edit-tenant-rent"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('tenants.monthlyRent') }} <span class="text-rose-400">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">{{
                       CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
                     }}</span>
                     <input
@@ -183,7 +183,7 @@
                       required
                       min="0"
                       step="10"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
                       :placeholder="$t('tenants.placeholders.rent')"
                     />
                   </div>
@@ -193,7 +193,7 @@
                 <div>
                   <label
                     for="edit-tenant-status"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
+                    class="block text-sm font-medium text-zinc-600 mb-2"
                   >
                     {{ $t('tenants.paymentStatus') }} <span class="text-rose-400">*</span>
                   </label>
@@ -201,13 +201,13 @@
                     id="edit-tenant-status"
                     v-model="form.status"
                     required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                    class="w-full bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   >
-                    <option value="" class="bg-zinc-900">{{ $t('tenants.selectStatus') }}</option>
-                    <option :value="PAYMENT_STATUS.ON_TIME" class="bg-zinc-900">
+                    <option value="" class="bg-white">{{ $t('tenants.selectStatus') }}</option>
+                    <option :value="PAYMENT_STATUS.ON_TIME" class="bg-white">
                       {{ $t('status.onTime') }}
                     </option>
-                    <option :value="PAYMENT_STATUS.LATE" class="bg-zinc-900">
+                    <option :value="PAYMENT_STATUS.LATE" class="bg-white">
                       {{ $t('status.late') }}
                     </option>
                   </select>
@@ -215,17 +215,17 @@
               </div>
 
               <!-- Section Documents -->
-              <div class="mt-6 pt-5 border-t border-white/10">
+              <div class="mt-6 pt-5 border-t border-zinc-200">
                 <TenantDocuments v-if="tenant?.id" :tenant-id="tenant.id" />
               </div>
 
               <!-- Actions -->
-              <div class="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-5">
+              <div class="mt-6 flex items-center justify-end gap-3 border-t border-zinc-200 pt-5">
                 <button
                   type="button"
                   @click="handleClose"
                   :disabled="isLoading"
-                  class="px-5 py-2.5 bg-white/5 border border-white/10 rounded-xl text-zinc-300 font-medium hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-5 py-2.5 bg-zinc-100 border border-zinc-200 rounded-xl text-zinc-600 font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {{ $t('common.cancel') }}
                 </button>
