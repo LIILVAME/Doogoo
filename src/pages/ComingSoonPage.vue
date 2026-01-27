@@ -1,20 +1,22 @@
 <template>
   <div
-    class="min-h-screen bg-zinc-950 text-zinc-50 antialiased selection:bg-violet-500/30 selection:text-violet-200 flex flex-col"
+    class="min-h-screen bg-white text-zinc-50 antialiased selection:bg-violet-500/30 selection:text-violet-200 flex flex-col"
   >
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md">
+    <nav class="fixed top-0 w-full z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <router-link to="/" class="flex items-center gap-2">
-          <span class="text-lg font-semibold tracking-tighter text-white">doogoo</span>
+          <span class="text-lg font-semibold tracking-tighter text-zinc-900">doogoo</span>
         </router-link>
 
-        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-          <router-link to="/features" class="hover:text-white transition-colors"
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-600">
+          <router-link to="/features" class="hover:text-zinc-900 transition-colors"
             >Fonctionnalités</router-link
           >
-          <router-link to="/pricing" class="hover:text-white transition-colors">Tarifs</router-link>
-          <router-link to="/resources" class="hover:text-white transition-colors"
+          <router-link to="/pricing" class="hover:text-zinc-900 transition-colors"
+            >Tarifs</router-link
+          >
+          <router-link to="/resources" class="hover:text-zinc-900 transition-colors"
             >Ressources</router-link
           >
         </div>
@@ -22,7 +24,7 @@
         <div class="flex items-center gap-4">
           <router-link
             to="/login"
-            class="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block"
+            class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block"
           >
             Se connecter
           </router-link>
@@ -59,7 +61,7 @@
         </h1>
 
         <!-- Subtitle -->
-        <p class="relative z-10 text-lg md:text-xl text-zinc-400 mb-10 font-light leading-relaxed">
+        <p class="relative z-10 text-lg md:text-xl text-zinc-600 mb-10 font-light leading-relaxed">
           Nous travaillons dessus. Revenez prochainement pour découvrir cette nouvelle
           fonctionnalité.
         </p>
@@ -76,11 +78,11 @@
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 bg-zinc-950 pt-16 pb-8">
+    <footer class="border-t border-zinc-200 bg-white pt-16 pb-8">
       <div class="max-w-6xl mx-auto px-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div class="col-span-2 md:col-span-1">
-            <router-link to="/" class="text-lg font-semibold tracking-tighter text-white"
+            <router-link to="/" class="text-lg font-semibold tracking-tighter text-zinc-900"
               >doogoo</router-link
             >
             <p class="text-zinc-500 text-sm mt-4 font-light">
@@ -88,55 +90,55 @@
             </p>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Produit</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Produit</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/features" class="hover:text-white transition-colors"
+                <router-link to="/features" class="hover:text-zinc-900 transition-colors"
                   >Fonctionnalités</router-link
                 >
               </li>
               <li>
-                <router-link to="/pricing" class="hover:text-white transition-colors"
+                <router-link to="/pricing" class="hover:text-zinc-900 transition-colors"
                   >Tarifs</router-link
                 >
               </li>
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Mises à jour</router-link
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Ressources</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Ressources</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Blog</router-link
                 >
               </li>
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Guide du bailleur</router-link
                 >
               </li>
               <li>
-                <router-link to="/resources" class="hover:text-white transition-colors"
+                <router-link to="/resources" class="hover:text-zinc-900 transition-colors"
                   >Centre d'aide</router-link
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Légal</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Légal</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/privacy" class="hover:text-white transition-colors"
+                <router-link to="/privacy" class="hover:text-zinc-900 transition-colors"
                   >Confidentialité</router-link
                 >
               </li>
               <li>
-                <router-link to="/terms" class="hover:text-white transition-colors"
+                <router-link to="/terms" class="hover:text-zinc-900 transition-colors"
                   >CGU</router-link
                 >
               </li>
@@ -144,7 +146,7 @@
           </div>
         </div>
         <div
-          class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+          class="border-t border-zinc-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
         >
           <p class="text-xs text-zinc-600">© 2024 Doogoo Inc. Tous droits réservés.</p>
         </div>
@@ -159,13 +161,14 @@ import { Clock, ArrowLeft } from 'lucide-vue-next'
 
 <style scoped>
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(228, 228, 231, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #ffffff, #a1a1aa);
+  background: linear-gradient(to right, #18181b, #52525b);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -1,20 +1,22 @@
 <template>
   <div
-    class="min-h-screen bg-zinc-950 text-zinc-50 antialiased selection:bg-violet-500/30 selection:text-violet-200"
+    class="min-h-screen bg-white text-zinc-50 antialiased selection:bg-violet-500/30 selection:text-violet-200"
   >
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md">
+    <nav class="fixed top-0 w-full z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md">
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <router-link to="/" class="flex items-center gap-2">
-          <span class="text-lg font-semibold tracking-tighter text-white">doogoo</span>
+          <span class="text-lg font-semibold tracking-tighter text-zinc-900">doogoo</span>
         </router-link>
 
-        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-          <router-link to="/features" class="hover:text-white transition-colors"
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-600">
+          <router-link to="/features" class="hover:text-zinc-900 transition-colors"
             >Fonctionnalités</router-link
           >
-          <router-link to="/pricing" class="hover:text-white transition-colors">Tarifs</router-link>
-          <router-link to="/resources" class="hover:text-white transition-colors"
+          <router-link to="/pricing" class="hover:text-zinc-900 transition-colors"
+            >Tarifs</router-link
+          >
+          <router-link to="/resources" class="hover:text-zinc-900 transition-colors"
             >Ressources</router-link
           >
         </div>
@@ -22,7 +24,7 @@
         <div class="flex items-center gap-4">
           <router-link
             to="/login"
-            class="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block"
+            class="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block"
           >
             Se connecter
           </router-link>
@@ -40,55 +42,59 @@
     <div class="pt-24 pb-16 max-w-4xl mx-auto px-6">
       <!-- Header -->
       <div class="mb-12">
-        <h1 class="text-4xl md:text-5xl font-semibold text-white mb-4">
+        <h1 class="text-4xl md:text-5xl font-semibold text-zinc-900 mb-4">
           Politique de confidentialité
         </h1>
-        <p class="text-zinc-400">Dernière mise à jour : 25 novembre 2024</p>
+        <p class="text-zinc-600">Dernière mise à jour : 25 novembre 2024</p>
       </div>
 
       <!-- Table of Contents -->
       <div class="glass-panel rounded-xl p-6 mb-12">
-        <h2 class="text-lg font-medium text-white mb-4">Sommaire</h2>
+        <h2 class="text-lg font-medium text-zinc-900 mb-4">Sommaire</h2>
         <nav class="space-y-2 text-sm">
-          <a href="#introduction" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#introduction" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >1. Introduction</a
           >
-          <a href="#data-collected" class="block text-zinc-400 hover:text-white transition-colors"
+          <a
+            href="#data-collected"
+            class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >2. Données collectées</a
           >
-          <a href="#data-usage" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#data-usage" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >3. Utilisation des données</a
           >
-          <a href="#legal-basis" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#legal-basis" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >4. Base légale du traitement</a
           >
-          <a href="#data-sharing" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#data-sharing" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >5. Partage des données</a
           >
-          <a href="#data-retention" class="block text-zinc-400 hover:text-white transition-colors"
+          <a
+            href="#data-retention"
+            class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >6. Conservation des données</a
           >
-          <a href="#your-rights" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#your-rights" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >7. Vos droits</a
           >
-          <a href="#security" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#security" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >8. Sécurité</a
           >
           <a
             href="#international-transfers"
-            class="block text-zinc-400 hover:text-white transition-colors"
+            class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >9. Transferts internationaux</a
           >
-          <a href="#cookies" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#cookies" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >10. Cookies</a
           >
-          <a href="#children" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#children" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >11. Protection des mineurs</a
           >
-          <a href="#changes" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#changes" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >12. Modifications</a
           >
-          <a href="#contact" class="block text-zinc-400 hover:text-white transition-colors"
+          <a href="#contact" class="block text-zinc-600 hover:text-zinc-900 transition-colors"
             >13. Contact</a
           >
         </nav>
@@ -98,7 +104,7 @@
       <div class="prose prose-invert max-w-none space-y-12">
         <!-- Introduction -->
         <section id="introduction">
-          <h2 class="text-2xl font-semibold text-white mb-4">1. Introduction</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">1. Introduction</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>
               Doogoo Inc. ("nous", "notre", "nos") s'engage à protéger et respecter votre vie
@@ -111,7 +117,7 @@
               informations conformément à cette politique. Si vous n'acceptez pas cette politique,
               veuillez ne pas utiliser notre Service.
             </p>
-            <p class="font-medium text-white">
+            <p class="font-medium text-zinc-900">
               Responsable du traitement des données :<br />
               Doogoo Inc.<br />
               Email : privacy@doogoo.app
@@ -121,45 +127,45 @@
 
         <!-- Data Collected -->
         <section id="data-collected">
-          <h2 class="text-2xl font-semibold text-white mb-4">2. Données collectées</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">2. Données collectées</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
-            <h3 class="text-xl font-medium text-white mt-6 mb-3">
+            <h3 class="text-xl font-medium text-zinc-900 mt-6 mb-3">
               2.1 Données que vous nous fournissez
             </h3>
             <ul class="list-disc list-inside space-y-2 ml-4">
               <li>
-                <strong class="text-white">Informations de compte :</strong> nom, prénom, adresse
+                <strong class="text-zinc-900">Informations de compte :</strong> nom, prénom, adresse
                 email, mot de passe (chiffré)
               </li>
               <li>
-                <strong class="text-white">Informations de profil :</strong> photo de profil,
+                <strong class="text-zinc-900">Informations de profil :</strong> photo de profil,
                 préférences de langue et devise
               </li>
               <li>
-                <strong class="text-white">Données immobilières :</strong> informations sur vos
+                <strong class="text-zinc-900">Données immobilières :</strong> informations sur vos
                 biens (adresse, loyer, photos), locataires (nom, coordonnées, dates de bail),
                 paiements
               </li>
               <li>
-                <strong class="text-white">Communications :</strong> messages envoyés via notre
+                <strong class="text-zinc-900">Communications :</strong> messages envoyés via notre
                 support client
               </li>
             </ul>
 
-            <h3 class="text-xl font-medium text-white mt-6 mb-3">
+            <h3 class="text-xl font-medium text-zinc-900 mt-6 mb-3">
               2.2 Données collectées automatiquement
             </h3>
             <ul class="list-disc list-inside space-y-2 ml-4">
               <li>
-                <strong class="text-white">Données techniques :</strong> adresse IP, type de
+                <strong class="text-zinc-900">Données techniques :</strong> adresse IP, type de
                 navigateur, système d'exploitation, identifiant de l'appareil
               </li>
               <li>
-                <strong class="text-white">Données d'utilisation :</strong> pages visitées,
+                <strong class="text-zinc-900">Données d'utilisation :</strong> pages visitées,
                 fonctionnalités utilisées, durée des sessions
               </li>
               <li>
-                <strong class="text-white">Cookies et technologies similaires :</strong> voir
+                <strong class="text-zinc-900">Cookies et technologies similaires :</strong> voir
                 section 10
               </li>
             </ul>
@@ -168,7 +174,7 @@
 
         <!-- Data Usage -->
         <section id="data-usage">
-          <h2 class="text-2xl font-semibold text-white mb-4">3. Utilisation des données</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">3. Utilisation des données</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>Nous utilisons vos données personnelles pour :</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
@@ -189,7 +195,7 @@
 
         <!-- Legal Basis -->
         <section id="legal-basis">
-          <h2 class="text-2xl font-semibold text-white mb-4">
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">
             4. Base légale du traitement (RGPD)
           </h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
@@ -199,19 +205,19 @@
             </p>
             <ul class="list-disc list-inside space-y-2 ml-4">
               <li>
-                <strong class="text-white">Exécution du contrat :</strong> pour fournir le Service
-                que vous avez demandé
+                <strong class="text-zinc-900">Exécution du contrat :</strong> pour fournir le
+                Service que vous avez demandé
               </li>
               <li>
-                <strong class="text-white">Intérêt légitime :</strong> pour améliorer notre Service,
-                assurer la sécurité, et prévenir la fraude
+                <strong class="text-zinc-900">Intérêt légitime :</strong> pour améliorer notre
+                Service, assurer la sécurité, et prévenir la fraude
               </li>
               <li>
-                <strong class="text-white">Consentement :</strong> pour les communications marketing
-                et certains cookies
+                <strong class="text-zinc-900">Consentement :</strong> pour les communications
+                marketing et certains cookies
               </li>
               <li>
-                <strong class="text-white">Obligation légale :</strong> pour respecter les lois
+                <strong class="text-zinc-900">Obligation légale :</strong> pour respecter les lois
                 applicables (comptabilité, fiscalité)
               </li>
             </ul>
@@ -220,7 +226,7 @@
 
         <!-- Data Sharing -->
         <section id="data-sharing">
-          <h2 class="text-2xl font-semibold text-white mb-4">5. Partage des données</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">5. Partage des données</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>
               Nous ne vendons jamais vos données personnelles. Nous pouvons partager vos données
@@ -228,15 +234,15 @@
             </p>
             <ul class="list-disc list-inside space-y-2 ml-4">
               <li>
-                <strong class="text-white">Prestataires de services :</strong> Supabase (hébergement
-                et base de données), Vercel (hébergement web), fournisseurs d'analytics
+                <strong class="text-zinc-900">Prestataires de services :</strong> Supabase
+                (hébergement et base de données), Vercel (hébergement web), fournisseurs d'analytics
               </li>
               <li>
-                <strong class="text-white">Autorités légales :</strong> si requis par la loi ou pour
-                protéger nos droits
+                <strong class="text-zinc-900">Autorités légales :</strong> si requis par la loi ou
+                pour protéger nos droits
               </li>
               <li>
-                <strong class="text-white">En cas de fusion ou acquisition :</strong> vos données
+                <strong class="text-zinc-900">En cas de fusion ou acquisition :</strong> vos données
                 peuvent être transférées au nouvel propriétaire
               </li>
             </ul>
@@ -249,7 +255,7 @@
 
         <!-- Data Retention -->
         <section id="data-retention">
-          <h2 class="text-2xl font-semibold text-white mb-4">6. Conservation des données</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">6. Conservation des données</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>Nous conservons vos données personnelles aussi longtemps que nécessaire pour :</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
@@ -266,36 +272,36 @@
 
         <!-- Your Rights -->
         <section id="your-rights">
-          <h2 class="text-2xl font-semibold text-white mb-4">7. Vos droits (RGPD)</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">7. Vos droits (RGPD)</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>Conformément au RGPD, vous disposez des droits suivants :</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
               <li>
-                <strong class="text-white">Droit d'accès :</strong> obtenir une copie de vos données
-                personnelles
+                <strong class="text-zinc-900">Droit d'accès :</strong> obtenir une copie de vos
+                données personnelles
               </li>
               <li>
-                <strong class="text-white">Droit de rectification :</strong> corriger des données
+                <strong class="text-zinc-900">Droit de rectification :</strong> corriger des données
                 inexactes ou incomplètes
               </li>
               <li>
-                <strong class="text-white">Droit à l'effacement :</strong> demander la suppression
-                de vos données
+                <strong class="text-zinc-900">Droit à l'effacement :</strong> demander la
+                suppression de vos données
               </li>
               <li>
-                <strong class="text-white">Droit à la limitation :</strong> restreindre le
+                <strong class="text-zinc-900">Droit à la limitation :</strong> restreindre le
                 traitement de vos données
               </li>
               <li>
-                <strong class="text-white">Droit à la portabilité :</strong> recevoir vos données
+                <strong class="text-zinc-900">Droit à la portabilité :</strong> recevoir vos données
                 dans un format structuré
               </li>
               <li>
-                <strong class="text-white">Droit d'opposition :</strong> vous opposer au traitement
-                de vos données
+                <strong class="text-zinc-900">Droit d'opposition :</strong> vous opposer au
+                traitement de vos données
               </li>
               <li>
-                <strong class="text-white">Droit de retirer votre consentement :</strong> à tout
+                <strong class="text-zinc-900">Droit de retirer votre consentement :</strong> à tout
                 moment
               </li>
             </ul>
@@ -315,7 +321,7 @@
 
         <!-- Security -->
         <section id="security">
-          <h2 class="text-2xl font-semibold text-white mb-4">8. Sécurité</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">8. Sécurité</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>
               Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles
@@ -338,7 +344,7 @@
 
         <!-- International Transfers -->
         <section id="international-transfers">
-          <h2 class="text-2xl font-semibold text-white mb-4">9. Transferts internationaux</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">9. Transferts internationaux</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>
               Vos données sont principalement stockées sur des serveurs situés dans l'Union
@@ -355,22 +361,22 @@
 
         <!-- Cookies -->
         <section id="cookies">
-          <h2 class="text-2xl font-semibold text-white mb-4">
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">
             10. Cookies et technologies similaires
           </h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>Nous utilisons des cookies et technologies similaires pour :</p>
             <ul class="list-disc list-inside space-y-2 ml-4">
               <li>
-                <strong class="text-white">Cookies essentiels :</strong> nécessaires au
+                <strong class="text-zinc-900">Cookies essentiels :</strong> nécessaires au
                 fonctionnement du Service (session, authentification)
               </li>
               <li>
-                <strong class="text-white">Cookies de performance :</strong> pour analyser
+                <strong class="text-zinc-900">Cookies de performance :</strong> pour analyser
                 l'utilisation et améliorer le Service
               </li>
               <li>
-                <strong class="text-white">Cookies de préférences :</strong> pour mémoriser vos
+                <strong class="text-zinc-900">Cookies de préférences :</strong> pour mémoriser vos
                 choix (langue, devise)
               </li>
             </ul>
@@ -383,7 +389,7 @@
 
         <!-- Children -->
         <section id="children">
-          <h2 class="text-2xl font-semibold text-white mb-4">11. Protection des mineurs</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">11. Protection des mineurs</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>
               Notre Service n'est pas destiné aux personnes de moins de 18 ans. Nous ne collectons
@@ -396,7 +402,7 @@
 
         <!-- Changes -->
         <section id="changes">
-          <h2 class="text-2xl font-semibold text-white mb-4">
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">
             12. Modifications de cette politique
           </h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
@@ -415,14 +421,14 @@
 
         <!-- Contact -->
         <section id="contact">
-          <h2 class="text-2xl font-semibold text-white mb-4">13. Nous contacter</h2>
+          <h2 class="text-2xl font-semibold text-zinc-900 mb-4">13. Nous contacter</h2>
           <div class="text-zinc-300 leading-relaxed space-y-4">
             <p>
               Pour toute question concernant cette politique de confidentialité ou vos données
               personnelles, contactez-nous :
             </p>
             <div class="glass-panel rounded-xl p-6 mt-4">
-              <p class="font-medium text-white mb-2">Doogoo Inc.</p>
+              <p class="font-medium text-zinc-900 mb-2">Doogoo Inc.</p>
               <p>
                 Email :
                 <a href="mailto:privacy@doogoo.app" class="text-violet-400 hover:text-violet-300"
@@ -444,7 +450,7 @@
       <div class="mt-16 text-center">
         <a
           href="#"
-          class="text-sm text-zinc-400 hover:text-white transition-colors inline-flex items-center gap-2"
+          class="text-sm text-zinc-600 hover:text-zinc-900 transition-colors inline-flex items-center gap-2"
         >
           <ArrowUp class="w-4 h-4" />
           Retour en haut
@@ -453,11 +459,11 @@
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-white/5 bg-zinc-950 pt-16 pb-8">
+    <footer class="border-t border-zinc-200 bg-white pt-16 pb-8">
       <div class="max-w-6xl mx-auto px-6">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div class="col-span-2 md:col-span-1">
-            <router-link to="/" class="text-lg font-semibold tracking-tighter text-white"
+            <router-link to="/" class="text-lg font-semibold tracking-tighter text-zinc-900"
               >doogoo</router-link
             >
             <p class="text-zinc-500 text-sm mt-4 font-light">
@@ -465,55 +471,55 @@
             </p>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Produit</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Produit</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/features" class="hover:text-white transition-colors"
+                <router-link to="/features" class="hover:text-zinc-900 transition-colors"
                   >Fonctionnalités</router-link
                 >
               </li>
               <li>
-                <router-link to="/pricing" class="hover:text-white transition-colors"
+                <router-link to="/pricing" class="hover:text-zinc-900 transition-colors"
                   >Tarifs</router-link
                 >
               </li>
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Mises à jour</router-link
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Ressources</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Ressources</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Blog</router-link
                 >
               </li>
               <li>
-                <router-link to="/coming-soon" class="hover:text-white transition-colors"
+                <router-link to="/coming-soon" class="hover:text-zinc-900 transition-colors"
                   >Guide du bailleur</router-link
                 >
               </li>
               <li>
-                <router-link to="/resources" class="hover:text-white transition-colors"
+                <router-link to="/resources" class="hover:text-zinc-900 transition-colors"
                   >Centre d'aide</router-link
                 >
               </li>
             </ul>
           </div>
           <div>
-            <h4 class="text-white text-sm font-medium mb-4">Légal</h4>
+            <h4 class="text-zinc-900 text-sm font-medium mb-4">Légal</h4>
             <ul class="space-y-2 text-sm text-zinc-500">
               <li>
-                <router-link to="/privacy" class="hover:text-white transition-colors"
+                <router-link to="/privacy" class="hover:text-zinc-900 transition-colors"
                   >Confidentialité</router-link
                 >
               </li>
               <li>
-                <router-link to="/terms" class="hover:text-white transition-colors"
+                <router-link to="/terms" class="hover:text-zinc-900 transition-colors"
                   >CGU</router-link
                 >
               </li>
@@ -521,7 +527,7 @@
           </div>
         </div>
         <div
-          class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+          class="border-t border-zinc-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
         >
           <p class="text-xs text-zinc-600">© 2024 Doogoo Inc. Tous droits réservés.</p>
         </div>
@@ -536,9 +542,10 @@ import { ArrowUp } from 'lucide-vue-next'
 
 <style scoped>
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(228, 228, 231, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .prose {
