@@ -33,6 +33,7 @@ export interface Property {
   city: string
   status: 'occupied' | 'vacant'
   rent: number
+  currency: 'EUR' | 'USD' | 'GBP' | 'XOF' // ISO 4217 currency code
   tenant?: Tenant | null
   image?: string | null
   created_at?: string
@@ -68,6 +69,19 @@ export interface Payment {
 }
 
 /**
+ * Taux de change historique
+ */
+export interface ExchangeRate {
+  id: string
+  base_currency: 'EUR' | 'USD' | 'GBP' | 'XOF'
+  target_currency: 'EUR' | 'USD' | 'GBP' | 'XOF'
+  rate: number
+  month_year: string // ISO date string (YYYY-MM-01)
+  created_at?: string
+  updated_at?: string
+}
+
+/**
  * Profil utilisateur
  */
 export interface UserProfile {
@@ -95,4 +109,19 @@ export interface UserSettings {
     reminders: boolean
     maintenance: boolean
   }
+}
+
+/**
+ * Type helper pour les devises supportées
+ */
+export type SupportedCurrency = 'EUR' | 'USD' | 'GBP' | 'XOF'
+
+/**
+ * Métadonnées de devise avec symbole et locale
+ */
+export interface CurrencyMetadata {
+  code: SupportedCurrency
+  symbol: string
+  name: string
+  locale: string
 }
