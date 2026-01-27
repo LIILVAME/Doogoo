@@ -11,114 +11,114 @@
       <!-- Header -->
       <div class="mb-8 flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-white mb-2">{{ $t('reports.title') }}</h1>
-          <p class="text-zinc-400">{{ $t('reports.subtitle') }}</p>
+          <h1 class="text-3xl font-bold text-zinc-900 mb-2">{{ $t('reports.title') }}</h1>
+          <p class="text-zinc-500">{{ $t('reports.subtitle') }}</p>
         </div>
 
         <!-- Bouton d'action principal -->
         <button
           @click="handleExportPDF"
           :disabled="reportsStore.loading || !reportData"
-          class="px-6 py-3 bg-white text-zinc-950 hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium transition-colors shadow-lg shadow-white/5 flex items-center gap-2"
+          class="px-6 py-3 bg-white text-zinc-950 hover:bg-zinc-50 border border-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2"
         >
-          <FileText class="w-5 h-5" />
+          <FileText class="w-5 h-5 text-zinc-500" />
           {{ $t('reports.actions.exportPDF') }}
         </button>
       </div>
 
-        <!-- Filtres -->
-        <ReportFilters
-          :selected-month="selectedMonth"
-          :report-type="reportType"
-          :selected-property="selectedProperty"
-          :properties="propertiesStore.properties"
-          :available-months="availableMonths"
-          :loading="reportsStore.loading"
-          @update:period="selectedMonth = $event"
-          @update:reportType="reportType = $event"
-          @update:property="selectedProperty = $event"
-          @refresh="loadReport"
-        />
+      <!-- Filtres -->
+      <ReportFilters
+        :selected-month="selectedMonth"
+        :report-type="reportType"
+        :selected-property="selectedProperty"
+        :properties="propertiesStore.properties"
+        :available-months="availableMonths"
+        :loading="reportsStore.loading"
+        @update:period="selectedMonth = $event"
+        @update:reportType="reportType = $event"
+        @update:property="selectedProperty = $event"
+        @refresh="loadReport"
+      />
 
-        <!-- KPIs Section -->
-        <StatsGrid v-if="reportData" :stats="reportStatsArray" />
+      <!-- KPIs Section -->
+      <StatsGrid v-if="reportData" :stats="reportStatsArray" />
 
-        <!-- Loading State avec progression -->
-        <div v-if="reportsStore.loading && !reportData" class="text-center py-12">
-          <InlineLoader />
-          <p class="mt-4 text-zinc-400 mb-4">{{ $t('reports.loading') }}</p>
-          <!-- Barre de progression -->
-          <div class="max-w-md mx-auto">
-            <div class="w-full bg-zinc-800 rounded-full h-2 mb-2">
-              <div
-                class="bg-indigo-500 h-2 rounded-full transition-all duration-300"
-                :style="{ width: `${progress}%` }"
-              ></div>
-            </div>
-            <p class="text-sm text-zinc-500">{{ progress }}%</p>
+      <!-- Loading State avec progression -->
+      <div v-if="reportsStore.loading && !reportData" class="text-center py-12">
+        <InlineLoader />
+        <p class="mt-4 text-zinc-400 mb-4">{{ $t('reports.loading') }}</p>
+        <!-- Barre de progression -->
+        <div class="max-w-md mx-auto">
+          <div class="w-full bg-zinc-200 rounded-full h-2 mb-2">
+            <div
+              class="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+              :style="{ width: `${progress}%` }"
+            ></div>
           </div>
+          <p class="text-sm text-zinc-500">{{ progress }}%</p>
         </div>
-
-        <!-- Chart and Table Section -->
-        <div v-if="reportData" class="space-y-6">
-          <!-- Chart -->
-          <ReportChart
-            :title="$t('reports.chart.revenue.title')"
-            :description="$t('reports.chart.revenue.description')"
-            chart-type="bar"
-            :series="chartSeries"
-            :chart-options="chartOptions"
-          />
-
-          <!-- Table -->
-          <ReportTable :table-data="tableData" />
-        </div>
-
-        <!-- Empty State -->
-        <EmptyState
-          v-if="!reportsStore.loading && !reportData"
-          :title="$t('reports.noData.title')"
-          :description="$t('reports.noData.message')"
-          illustration="default"
-        >
-          <template #illustration>
-            <div class="w-20 h-20 mx-auto flex items-center justify-center">
-              <svg
-                class="w-20 h-20 text-gray-600 dark:text-gray-200"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-          </template>
-        </EmptyState>
-
-        <!-- Summary Section -->
-        <ReportSummary
-          v-if="reportData"
-          :statistics="reportData.statistics"
-          :period="reportPeriod"
-          :loading="reportsStore.loading"
-          @export-pdf="handleExportPDF"
-          @send-email="handleSendEmail"
-        />
       </div>
 
-      <!-- Loading Overlay pour les exports -->
-      <LoadingOverlay
-        :isVisible="isExporting"
-        :message="$t('reports.export.loading') || 'Export en cours...'"
-        :description="$t('reports.export.loadingDescription') || 'Génération du fichier PDF'"
+      <!-- Chart and Table Section -->
+      <div v-if="reportData" class="space-y-6">
+        <!-- Chart -->
+        <ReportChart
+          :title="$t('reports.chart.revenue.title')"
+          :description="$t('reports.chart.revenue.description')"
+          chart-type="bar"
+          :series="chartSeries"
+          :chart-options="chartOptions"
+        />
+
+        <!-- Table -->
+        <ReportTable :table-data="tableData" />
+      </div>
+
+      <!-- Empty State -->
+      <EmptyState
+        v-if="!reportsStore.loading && !reportData"
+        :title="$t('reports.noData.title')"
+        :description="$t('reports.noData.message')"
+        illustration="default"
+      >
+        <template #illustration>
+          <div class="w-20 h-20 mx-auto flex items-center justify-center">
+            <svg
+              class="w-20 h-20 text-zinc-300"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </div>
+        </template>
+      </EmptyState>
+
+      <!-- Summary Section -->
+      <ReportSummary
+        v-if="reportData"
+        :statistics="reportData.statistics"
+        :period="reportPeriod"
+        :loading="reportsStore.loading"
+        @export-pdf="handleExportPDF"
+        @send-email="handleSendEmail"
       />
-    </DashboardLayout>
-  </template>
+    </div>
+
+    <!-- Loading Overlay pour les exports -->
+    <LoadingOverlay
+      :isVisible="isExporting"
+      :message="$t('reports.export.loading') || 'Export en cours...'"
+      :description="$t('reports.export.loadingDescription') || 'Génération du fichier PDF'"
+    />
+  </DashboardLayout>
+</template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
@@ -215,39 +215,39 @@ const reportPeriod = computed(() => {
 // Stats pour StatsGrid
 const reportStatsArray = computed(() => {
   if (!reportData.value || !reportData.value.statistics) return []
-  
+
   return [
     {
       label: t('reports.kpi.totalRevenue'),
       value: formatCurrency(reportData.value.statistics.totalRevenue),
       icon: Wallet,
-      glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
-      iconBgColor: 'bg-opacity-10 bg-emerald-500',
-      iconColor: 'text-emerald-400'
+      glowColor: 'bg-emerald-50 group-hover:bg-emerald-100',
+      iconBgColor: 'bg-emerald-50',
+      iconColor: 'text-emerald-600'
     },
     {
       label: t('reports.kpi.rentCollected'),
       value: formatCurrency(reportData.value.statistics.totalRevenue),
       icon: Wallet,
-      glowColor: 'bg-blue-500/10 group-hover:bg-blue-500/20',
-      iconBgColor: 'bg-opacity-10 bg-blue-500',
-      iconColor: 'text-blue-400'
+      glowColor: 'bg-blue-50 group-hover:bg-blue-100',
+      iconBgColor: 'bg-blue-50',
+      iconColor: 'text-blue-600'
     },
     {
       label: t('reports.kpi.occupancyRate'),
       value: `${reportData.value.statistics.occupancyRate}%`,
       icon: Home,
-      glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
-      iconBgColor: 'bg-opacity-10 bg-violet-500',
-      iconColor: 'text-violet-400'
+      glowColor: 'bg-violet-50 group-hover:bg-violet-100',
+      iconBgColor: 'bg-violet-50',
+      iconColor: 'text-violet-600'
     },
     {
       label: t('reports.kpi.delayedPayments'),
       value: reportData.value.statistics.latePayments.toString(),
       icon: Clock,
-      glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
-      iconBgColor: 'bg-opacity-10 bg-rose-500',
-      iconColor: 'text-rose-400'
+      glowColor: 'bg-rose-50 group-hover:bg-rose-100',
+      iconBgColor: 'bg-rose-50',
+      iconColor: 'text-rose-600'
     }
   ]
 })
@@ -482,15 +482,15 @@ const loadReport = async () => {
     }, 200)
 
     const data = await reportsStore.generateMonthlyReport(selectedMonth.value)
-    
+
     clearInterval(progressInterval)
     progress.value = 100
-    
+
     // Petit délai pour afficher 100% avant de masquer
     setTimeout(() => {
       progress.value = 0
     }, 300)
-    
+
     reportData.value = data
   } catch (error) {
     progress.value = 0

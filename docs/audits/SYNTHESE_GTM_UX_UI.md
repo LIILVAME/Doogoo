@@ -280,8 +280,8 @@
 
 1. **Palette de couleurs**
    - Primary : `#22c55e` (green-500)
-   - Background : `#f9fafb` (gray-50)
-   - Text : `#111827` (gray-900)
+   - Background : `#fafafa` (neutral-50)
+   - Text : `#18181b` (neutral-900)
    - **Contrainte** : Cohérence à maintenir, accessibilité contrastes
 
 2. **Typographie**

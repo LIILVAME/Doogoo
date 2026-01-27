@@ -4,17 +4,26 @@
     <Transition name="modal">
       <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto" @click.self="handleClose">
         <!-- Overlay backdrop -->
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="handleClose"></div>
+        <div
+          class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+          @click="handleClose"
+        ></div>
 
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
+            ref="modalRef"
             class="relative w-full max-w-md mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-xl bg-white shadow-xl transition-all"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="'edit-payment-modal-title'"
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h2 class="text-xl font-semibold text-gray-900">{{ $t('payments.editPayment') }}</h2>
+              <h2 id="edit-payment-modal-title" class="text-xl font-semibold text-gray-900">
+                {{ $t('payments.editPayment') }}
+              </h2>
               <button
                 @click="handleClose"
                 class="text-gray-400 hover:text-gray-600 transition-colors"
@@ -69,7 +78,9 @@
                     {{ $t('payments.amountEuro') }} <span class="text-red-500">*</span>
                   </label>
                   <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{ CURRENCY_SYMBOLS[settingsStore?.currency] || '€' }}</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">{{
+                      CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
+                    }}</span>
                     <input
                       id="edit-payment-amount"
                       v-model.number="form.amount"
@@ -182,12 +193,13 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, toRef } from 'vue'
 import { useI18n } from '@/composables/useLingui'
 import { TRANSACTION_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { paymentSchema, validate } from '@/utils/validators'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 
 const { t } = useI18n()
 
@@ -207,6 +219,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'submit'])
+
+// Focus trap pour accessibilité
+const { modalRef } = useModalFocusTrap(toRef(() => props.isOpen))
 
 const toastStore = useToastStore()
 const settingsStore = useSettingsStore()

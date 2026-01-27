@@ -12,8 +12,12 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
+            ref="modalRef"
             class="relative w-full max-w-lg mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="'property-modal-title'"
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
@@ -35,7 +39,7 @@
                     />
                   </svg>
                 </div>
-                <h2 class="text-xl font-semibold text-white">
+                <h2 id="property-modal-title" class="text-xl font-semibold text-white">
                   {{ property ? $t('properties.editProperty') : $t('properties.addProperty') }}
                 </h2>
               </div>
@@ -64,7 +68,10 @@
                     {{ $t('properties.modal.image') || 'Image du bien' }}
                   </label>
                   <div class="flex items-center gap-4">
-                    <div v-if="imagePreview" class="relative w-24 h-24 rounded-xl overflow-hidden border border-white/10">
+                    <div
+                      v-if="imagePreview"
+                      class="relative w-24 h-24 rounded-xl overflow-hidden border border-white/10"
+                    >
                       <img :src="imagePreview" alt="Preview" class="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -72,7 +79,12 @@
                         class="absolute top-1 right-1 p-1 bg-rose-500/80 hover:bg-rose-500 rounded-full text-white transition-colors"
                       >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -88,7 +100,14 @@
                           fill="none"
                           viewBox="0 0 24 24"
                         >
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                          <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                          />
                           <path
                             class="opacity-75"
                             fill="currentColor"
@@ -110,7 +129,11 @@
                           />
                         </svg>
                         <span class="text-sm">
-                          {{ isUploadingImage ? ($t('common.uploading') || 'Upload...') : ($t('properties.modal.uploadImage') || 'Choisir une image') }}
+                          {{
+                            isUploadingImage
+                              ? $t('common.uploading') || 'Upload...'
+                              : $t('properties.modal.uploadImage') || 'Choisir une image'
+                          }}
                         </span>
                       </label>
                       <input
@@ -157,11 +180,21 @@
                       required
                       class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                     >
-                      <option value="apartment" class="bg-zinc-900">{{ $t('properties.types.apartment') }}</option>
-                      <option value="house" class="bg-zinc-900">{{ $t('properties.types.house') }}</option>
-                      <option value="parking" class="bg-zinc-900">{{ $t('properties.types.parking') }}</option>
-                      <option value="commercial" class="bg-zinc-900">{{ $t('properties.types.commercial') }}</option>
-                      <option value="other" class="bg-zinc-900">{{ $t('properties.types.other') }}</option>
+                      <option value="apartment" class="bg-zinc-900">
+                        {{ $t('properties.types.apartment') }}
+                      </option>
+                      <option value="house" class="bg-zinc-900">
+                        {{ $t('properties.types.house') }}
+                      </option>
+                      <option value="parking" class="bg-zinc-900">
+                        {{ $t('properties.types.parking') }}
+                      </option>
+                      <option value="commercial" class="bg-zinc-900">
+                        {{ $t('properties.types.commercial') }}
+                      </option>
+                      <option value="other" class="bg-zinc-900">
+                        {{ $t('properties.types.other') }}
+                      </option>
                     </select>
                   </div>
 
@@ -245,7 +278,7 @@
                   />
                 </div>
 
-                  <!-- Code postal et Ville -->
+                <!-- Code postal et Ville -->
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label
@@ -263,47 +296,47 @@
                       placeholder="75001"
                     />
                   </div>
-                <div>
-                  <label
-                    for="edit-property-city"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
-                  >
-                    {{ $t('properties.city') }} <span class="text-rose-400">*</span>
-                  </label>
-                  <input
-                    id="edit-property-city"
-                    v-model="form.city"
-                    type="text"
-                    required
-                    class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
-                    :placeholder="$t('properties.placeholders.city')"
-                  />
+                  <div>
+                    <label
+                      for="edit-property-city"
+                      class="block text-sm font-medium text-zinc-300 mb-2"
+                    >
+                      {{ $t('properties.city') }} <span class="text-rose-400">*</span>
+                    </label>
+                    <input
+                      id="edit-property-city"
+                      v-model="form.city"
+                      type="text"
+                      required
+                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                      :placeholder="$t('properties.placeholders.city')"
+                    />
                   </div>
                 </div>
 
                 <!-- Loyer et Charges -->
                 <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label
-                    for="edit-property-rent"
-                    class="block text-sm font-medium text-zinc-300 mb-2"
-                  >
-                    {{ $t('properties.monthlyRent') }} <span class="text-rose-400">*</span>
-                  </label>
-                  <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
-                      CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
-                    }}</span>
-                    <input
-                      id="edit-property-rent"
-                      v-model.number="form.rent"
-                      type="number"
-                      required
-                      min="0"
-                      step="10"
-                      class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
-                      :placeholder="$t('payments.placeholders.amount')"
-                    />
+                  <div>
+                    <label
+                      for="edit-property-rent"
+                      class="block text-sm font-medium text-zinc-300 mb-2"
+                    >
+                      {{ $t('properties.monthlyRent') }} <span class="text-rose-400">*</span>
+                    </label>
+                    <div class="relative">
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">{{
+                        CURRENCY_SYMBOLS[settingsStore?.currency] || '€'
+                      }}</span>
+                      <input
+                        id="edit-property-rent"
+                        v-model.number="form.rent"
+                        type="number"
+                        required
+                        min="0"
+                        step="10"
+                        class="w-full bg-white/5 border border-white/10 text-white rounded-xl pl-14 pr-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
+                        :placeholder="$t('payments.placeholders.amount')"
+                      />
                     </div>
                   </div>
                   <div>
@@ -507,14 +540,15 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, toRef } from 'vue'
 import { PROPERTY_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { toNumber } from '@/utils/formDataConverters'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useToastStore } from '@/stores/toastStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useAuthStore } from '@/stores/authStore'
-import { supabase } from '@/lib/supabaseClient'
+import { authApi } from '@/api'
+import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 
 const settingsStore = useSettingsStore()
 const toastStore = useToastStore()
@@ -538,6 +572,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'saved'])
+
+// Focus trap pour accessibilité
+const { modalRef } = useModalFocusTrap(toRef(() => props.isOpen))
 
 const isSubmitting = ref(false)
 const isUploadingImage = ref(false)
@@ -666,54 +703,38 @@ const handleImageUpload = async e => {
   imagePreview.value = URL.createObjectURL(file)
   imageFile.value = file
 
-  // Upload vers Supabase Storage
+  // Upload vers Supabase Storage via l'API layer
   isUploadingImage.value = true
   try {
     if (!authStore.user) {
       throw new Error('User not authenticated')
     }
 
-    // Génère un nom de fichier unique
-    const fileExt = file.name.split('.').pop()
-    const fileName = `properties/${authStore.user.id}/${Date.now()}.${fileExt}`
-    const filePath = fileName
+    const result = await authApi.uploadPropertyImage(
+      props.property?.id || null,
+      file,
+      authStore.user.id
+    )
 
-    // Upload vers le bucket 'properties' (doit être créé dans Supabase Dashboard)
-    const { error: uploadError } = await supabase.storage
-      .from('properties')
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
-      })
-
-    if (uploadError) {
-      let errorMessage = uploadError.message || "Erreur lors de l'upload de l'image"
-      
-      if (uploadError.message?.includes('Bucket not found')) {
-        errorMessage = "Le bucket 'properties' n'existe pas. Veuillez le créer dans Supabase Dashboard → Storage."
-      } else if (uploadError.message?.includes('row-level security') || uploadError.message?.includes('RLS')) {
-        errorMessage = "Erreur de sécurité : Vérifiez que les politiques RLS du bucket 'properties' sont correctement configurées."
-      }
-      
-      throw new Error(errorMessage)
+    if (!result.success) {
+      throw new Error(result.message || "Erreur lors de l'upload de l'image")
     }
 
-    // Récupère l'URL publique
-    const { data } = supabase.storage.from('properties').getPublicUrl(filePath)
-    
     // Nettoie la prévisualisation blob
     if (imagePreview.value && imagePreview.value.startsWith('blob:')) {
       URL.revokeObjectURL(imagePreview.value)
     }
-    
+
     // Met à jour avec l'URL publique
-    imagePreview.value = data.publicUrl
-    form.value.image_url = data.publicUrl
+    imagePreview.value = result.data
+    form.value.image_url = result.data
     imageFile.value = null
 
     toastStore.success('Image uploadée avec succès')
   } catch (error) {
-    console.error('Erreur upload image:', error)
+    // Log sécurisé : ne pas exposer les détails sensibles
+    const { sanitizeObject } = await import('@/utils/sanitizeLogs')
+    console.error('Erreur upload image:', sanitizeObject(error, ['message']))
     toastStore.error(error.message || "Erreur lors de l'upload de l'image")
     // Garde la prévisualisation locale en cas d'erreur
   } finally {
@@ -939,7 +960,7 @@ watch(
   ([isOpen, property]) => {
     if (isOpen) {
       if (property) {
-      initializeForm()
+        initializeForm()
       } else {
         resetForm()
       }

@@ -9,6 +9,7 @@
 ## 🎯 Objectif de la Vérification
 
 Confirmer que **toute la couche front-end** du projet Doogoo est :
+
 - ✅ Propre, cohérente et prête pour la production
 - ✅ Parfaitement alignée pour accueillir l'intégration backend (API, Pinia, Auth)
 
@@ -25,12 +26,14 @@ Le projet **Doogoo v0.1.0** a été vérifié de manière exhaustive. **Tous les
 ## ✅ 1. Structure & Cohérence
 
 ### Layout Uniforme ✅
+
 - ✅ **5/5 pages** utilisent le même layout flex (`Sidebar` + `main`)
 - ✅ Container identique : `max-w-7xl mx-auto` (sauf ParametresPage : `max-w-4xl` pour formulaire)
 - ✅ Padding responsive cohérent : `px-6 pt-16 pb-8 md:px-10 md:pt-10 md:pb-10`
 - ✅ Sidebar responsive : fixe sur desktop (`lg:static`), overlay sur mobile
 
 **Pages vérifiées** :
+
 - `DashboardPage.vue` ✅
 - `BiensPage.vue` ✅
 - `PaiementsPage.vue` ✅
@@ -38,6 +41,7 @@ Le projet **Doogoo v0.1.0** a été vérifié de manière exhaustive. **Tous les
 - `ParametresPage.vue` ✅
 
 ### Réutilisation des Composants ✅
+
 - ✅ `PropertyCard` → DashboardPage + BiensPage
 - ✅ `PaymentsSection` → DashboardPage + PaiementsPage
 - ✅ `TenantInfo` → PropertyCard + LocatairesPage
@@ -46,6 +50,7 @@ Le projet **Doogoo v0.1.0** a été vérifié de manière exhaustive. **Tous les
 - ✅ `Sidebar` → Toutes les pages
 
 ### Nomenclature Uniforme ✅
+
 - ✅ Classes Tailwind cohérentes
 - ✅ Noms de composants PascalCase
 - ✅ Imports organisés (alias `@/` pour utils, relatifs pour composants)
@@ -55,11 +60,13 @@ Le projet **Doogoo v0.1.0** a été vérifié de manière exhaustive. **Tous les
 ## ✅ 2. Qualité du Code
 
 ### Linting ✅
+
 - ✅ **Aucune erreur de linting détectée**
 - ⚠️ Pas de script lint configuré (normal pour projet Vue simple)
 - ✅ Code conforme aux conventions Vue 3
 
 ### Bonnes Pratiques Vue 3 ✅
+
 - ✅ **Aucun `v-if` avec `v-for`** (vérifié sur tout le codebase)
 - ✅ **Tous les `v-for` ont une `key` unique** (5/5 vérifiés)
 - ✅ Composition API (`<script setup>`) utilisée partout
@@ -67,23 +74,27 @@ Le projet **Doogoo v0.1.0** a été vérifié de manière exhaustive. **Tous les
 - ✅ Computed properties pour logique réactive
 
 ### Console & Debug ✅
+
 - ✅ **Aucun `console.log()` de production**
 - ✅ **Un seul `console.warn()` dans `formatters.js`** (acceptable pour dates invalides)
 - ✅ `alert()` temporaire marqué TODO v0.2.0
 
 **Détail** :
+
 ```javascript
 // src/utils/formatters.js (ligne 41)
 console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 ```
 
 ### Imports & Exports ✅
+
 - ✅ Imports cohérents : `@/utils/...` pour utilitaires, `../` pour composants
 - ✅ Aucune duplication d'import
 - ✅ Chemins relatifs corrects
 - ✅ Exports nommés utilisés partout
 
 ### Documentation ✅
+
 - ✅ Fonctions commentées avec JSDoc
 - ✅ Logique métier expliquée
 - ✅ TODO marqués clairement pour v0.2.0
@@ -93,12 +104,14 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 ## ✅ 3. UX / UI
 
 ### Typographie Cohérente ✅
-- ✅ **Titres principaux** : `text-3xl font-bold text-gray-900 mb-2` (4/5 pages)
-- ✅ **Sous-titres** : `text-gray-600` (toutes les pages)
+
+- ✅ **Titres principaux** : `text-3xl font-bold text-neutral-900 mb-2` (4/5 pages)
+- ✅ **Sous-titres** : `text-neutral-600` (toutes les pages)
 - ✅ **Headers de sections** : `text-xl font-semibold` ou `text-xl font-bold`
 - ✅ **Sidebar titre** : `text-2xl font-bold text-primary-600`
 
 **Pages vérifiées** :
+
 - DashboardPage : Utilise `DashboardHeader` (pas de h1 direct)
 - BiensPage : `text-3xl font-bold` ✅
 - PaiementsPage : `text-3xl font-bold` ✅
@@ -106,12 +119,14 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 - ParametresPage : `text-3xl font-bold` ✅
 
 ### Alignement et Espacements ✅
+
 - ✅ Headers uniformes : `mb-8` (5/5 pages)
-- ✅ Descriptions : `text-gray-600 mb-2` ou `mb-4`
+- ✅ Descriptions : `text-neutral-600 mb-2` ou `mb-4`
 - ✅ Grilles responsive : `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
 - ✅ Cards avec padding cohérent (via classe `.card`)
 
 ### Empty States ✅
+
 - ✅ **BiensPage** : Message clair + icône SVG + suggestion
 - ✅ **LocatairesPage** : Message clair + icône SVG + suggestion (optimisé)
 - ✅ **PaymentsSection** : Message clair + icône SVG intégré
@@ -119,12 +134,14 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 - ✅ Messages utiles : "Aucun [item] trouvé" + "Essayez de modifier vos filtres"
 
 ### Navigation Active ✅
+
 - ✅ Sidebar : Classe active `bg-primary-50 text-primary-600`
 - ✅ Détection de route active fonctionnelle : `route.path === path || route.path.startsWith(path + '/')`
 - ✅ Lien "Voir tout" : `router-link` avec masquage automatique sur page paiements
 - ✅ Transitions fluides : `transition-colors` sur hover
 
 ### Accessibilité (A11y) ⚠️
+
 - ✅ **ARIA label présent** : Bouton hamburger (`aria-label="Toggle menu"`)
 - ⚠️ **ARIA manquant** : Certains boutons/filtres sans `aria-label` (amélioration v0.2.0)
 - ✅ Labels présents sur formulaires
@@ -138,6 +155,7 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 ## ✅ 4. Responsiveness
 
 ### Mobile (< 1024px) ✅
+
 - ✅ Sidebar en overlay avec menu hamburger
 - ✅ Bouton hamburger : `fixed top-4 left-4 z-50`
 - ✅ Overlay : `bg-black bg-opacity-50 z-40`
@@ -146,6 +164,7 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 - ✅ Padding adapté : `px-6 pt-16`
 
 ### Desktop (≥ 1024px) ✅
+
 - ✅ Sidebar statique : `lg:static`
 - ✅ Sidebar largeur fixe : `w-64 shrink-0`
 - ✅ Contenu centré : `max-w-7xl mx-auto`
@@ -153,12 +172,14 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 - ✅ Padding confortable : `px-10 pt-10`
 
 ### Transitions ✅
+
 - ✅ Menu hamburger : transition smooth
 - ✅ Sidebar : `transition-transform duration-300`
 - ✅ Overlay : `transition-opacity`
 - ✅ Hover states : `transition-colors`
 
 ### Pas de Débordement ✅
+
 - ✅ Textes avec `truncate` ou wrapping
 - ✅ Grilles avec `gap-6` cohérent
 - ✅ Cards avec padding interne suffisant
@@ -168,22 +189,26 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 ## ✅ 5. Performance & Maintenance
 
 ### Code Factorisé ✅
+
 - ✅ **Utilitaires centralisés** : `@/utils/formatters.js` et `@/utils/constants.js`
 - ✅ **0 duplication** de fonctions de formatage
 - ✅ **0 duplication** de logique de statuts
 - ✅ Tous les composants utilisent les utilitaires
 
 **Statistiques** :
+
 - Avant refactoring : ~95 lignes dupliquées
 - Après refactoring : 0 ligne dupliquée ✅
 
 ### Composants Légers ✅
+
 - ✅ Composants autonomes et réutilisables
 - ✅ Props bien définies avec valeurs par défaut
 - ✅ Pas de dépendances circulaires
 - ✅ Logique métier isolée dans computed
 
 ### Pas de Re-render Inutile ✅
+
 - ✅ Computed properties utilisées pour filtrage
 - ✅ `key` unique sur tous les `v-for`
 - ✅ Pas de mutations directes dans templates
@@ -196,6 +221,7 @@ console.warn('Invalid date:', dateString) // ✅ Acceptable - aide au debug
 ### Structure Prête ✅
 
 **Organisation actuelle** :
+
 ```
 src/
 ├── data/
@@ -208,6 +234,7 @@ src/
 ```
 
 **À créer pour v0.2.0** :
+
 ```
 src/
 ├── api/                   📋 Prêt à créer
@@ -225,12 +252,14 @@ src/
 ```
 
 ### Données Mockées Alignées ✅
+
 - ✅ Structure JSON compatible REST/GraphQL
 - ✅ Champs bien nommés (`id`, `name`, `status`, `tenant`, etc.)
 - ✅ Types implicites clairs
 - ✅ Relations bien définies (`propertyId` dans payments)
 
 **Exemple de compatibilité** :
+
 ```javascript
 // Structure actuelle (mockData.js)
 {
@@ -245,10 +274,12 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 ```
 
 ### TODO Balisés ✅
+
 - ✅ `PaiementsPage.vue` : TODO pour Pinia store
 - ✅ `ParametresPage.vue` : TODO pour API + notifications toast
 
 **Exemples** :
+
 ```javascript
 // TODO v0.2.0 : Remplacer par store Pinia
 // import { usePaymentsStore } from '@/stores/payments'
@@ -265,6 +296,7 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 ## 📋 Checklist de Validation Complète
 
 ### Structure & Layout ✅
+
 - [x] Layout uniforme sur 5/5 pages
 - [x] Sidebar responsive fonctionnelle (mobile + desktop)
 - [x] Container centré cohérent (`max-w-7xl` ou `max-w-4xl`)
@@ -272,6 +304,7 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 - [x] Nomenclature uniforme des classes Tailwind
 
 ### Qualité du Code ✅
+
 - [x] Aucune erreur de linting
 - [x] Aucun `console.log()` de production
 - [x] Un seul `console.warn()` acceptable (dates invalides)
@@ -281,6 +314,7 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 - [x] Code documenté avec commentaires JSDoc
 
 ### UX / UI ✅
+
 - [x] Typographie cohérente (`text-3xl font-bold` sur titres)
 - [x] Alignement parfait (headers `mb-8`, descriptions `text-gray-600`)
 - [x] Empty states clairs et centrés (3/3 pages concernées)
@@ -289,12 +323,14 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 - [x] Transitions fluides sur interactions
 
 ### Performance & Maintenance ✅
+
 - [x] Code factorisé (utils/formatters.js, utils/constants.js)
 - [x] 0 duplication de fonctions
 - [x] Composants légers et autonomes
 - [x] Pas de re-render inutile (computed optimisés)
 
 ### Préparation Backend ✅
+
 - [x] Structure prête pour `stores/` (Pinia)
 - [x] Structure prête pour `api/` (Axios/Supabase)
 - [x] Structure prête pour `composables/`
@@ -310,6 +346,7 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 **Statut** : Tous les points critiques sont validés. Le code est prêt pour la production.
 
 **Améliorations Optionnelles (v0.2.0)** :
+
 1. Accessibilité : Ajouter plus d'attributs ARIA
 2. Validation : Ajouter PropType pour validation stricte
 3. Performance : Lazy loading des routes (déjà possible avec Vue Router)
@@ -318,14 +355,14 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 
 ## 📊 Métriques de Stabilité Finale
 
-| Critère | Score | Détail |
-|---------|-------|--------|
-| **Structure & Cohérence** | ⭐⭐⭐⭐⭐ | Layout uniforme, composants réutilisés |
-| **Qualité du Code** | ⭐⭐⭐⭐⭐ | Aucune erreur, bonnes pratiques Vue 3 |
-| **UX / UI** | ⭐⭐⭐⭐⭐ | Typographie cohérente, empty states, navigation |
-| **Responsiveness** | ⭐⭐⭐⭐⭐ | Mobile/desktop optimisé, transitions fluides |
-| **Performance** | ⭐⭐⭐⭐⭐ | Code factorisé, 0 duplication, computed optimisés |
-| **Préparation Backend** | ⭐⭐⭐⭐⭐ | Structure API-ready, TODO clairs, compatible Pinia |
+| Critère                   | Score      | Détail                                             |
+| ------------------------- | ---------- | -------------------------------------------------- |
+| **Structure & Cohérence** | ⭐⭐⭐⭐⭐ | Layout uniforme, composants réutilisés             |
+| **Qualité du Code**       | ⭐⭐⭐⭐⭐ | Aucune erreur, bonnes pratiques Vue 3              |
+| **UX / UI**               | ⭐⭐⭐⭐⭐ | Typographie cohérente, empty states, navigation    |
+| **Responsiveness**        | ⭐⭐⭐⭐⭐ | Mobile/desktop optimisé, transitions fluides       |
+| **Performance**           | ⭐⭐⭐⭐⭐ | Code factorisé, 0 duplication, computed optimisés  |
+| **Préparation Backend**   | ⭐⭐⭐⭐⭐ | Structure API-ready, TODO clairs, compatible Pinia |
 
 **Score Moyen** : **⭐⭐⭐⭐⭐ (5/5)**
 
@@ -336,6 +373,7 @@ GET /api/properties → [{ id, name, status, tenant, ... }]
 ### Validation Finale ✅
 
 Le projet **Doogoo v0.1.0** est **100% stable et prêt pour** :
+
 - ✅ **Production** : Code propre, cohérent, performant
 - ✅ **Déploiement** : Structure solide, responsive complet
 - ✅ **v0.2.0** : Migration backend prête (Pinia + API + Auth)
@@ -343,12 +381,14 @@ Le projet **Doogoo v0.1.0** est **100% stable et prêt pour** :
 ### Prochaines Étapes Recommandées
 
 1. **Commit final** :
+
    ```bash
    git add .
    git commit -m "chore(audit): finalize v0.1.0 stable release — front-end fully validated and production-ready"
    ```
 
 2. **Tag de version** :
+
    ```bash
    git tag -a v0.1.0 -m "Version stable v0.1.0 - Front-end complet et validé"
    ```
@@ -375,4 +415,3 @@ Le projet **Doogoo v0.1.0** est **100% stable et prêt pour** :
 **Document créé le** : Décembre 2024  
 **Validé par** : Audit technique complet + Validation UX/UI + Vérification de stabilité  
 **Version** : v0.1.0 → **STABLE RELEASE**
-

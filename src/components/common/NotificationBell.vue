@@ -4,11 +4,11 @@
     <button
       @click="toggleDropdown"
       ref="bellButtonRef"
-      class="relative p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+      class="relative p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50"
       :aria-label="`${unreadCount} notification${unreadCount > 1 ? 's' : ''} non lue${unreadCount > 1 ? 's' : ''}`"
       :aria-expanded="isDropdownOpen"
     >
-      <Bell class="w-5 h-5 text-zinc-300" />
+      <Bell class="w-5 h-5 text-zinc-500" />
       <!-- Badge rouge avec nombre -->
       <span
         v-if="unreadCount > 0"
@@ -31,19 +31,19 @@
         v-if="isDropdownOpen"
         ref="dropdownRef"
         :class="[
-          'absolute w-80 md:w-96 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl z-50 max-h-[500px] overflow-hidden flex flex-col',
-          props.position === 'sidebar' 
-            ? 'left-full top-0 ml-4' 
-            : 'right-0 top-full mt-2'
+          'absolute w-80 md:w-96 bg-white border border-zinc-100 rounded-xl shadow-xl z-50 max-h-[500px] overflow-hidden flex flex-col',
+          props.position === 'sidebar' ? 'left-full top-0 ml-4' : 'right-0 top-full mt-2'
         ]"
       >
         <!-- Header du dropdown -->
-        <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-zinc-900/95 backdrop-blur-sm">
-          <h3 class="text-sm font-semibold text-white">Notifications</h3>
+        <div
+          class="px-4 py-3 border-b border-zinc-100 flex items-center justify-between bg-white/95 backdrop-blur-sm"
+        >
+          <h3 class="text-sm font-semibold text-zinc-900">Notifications</h3>
           <button
             v-if="unreadCount > 0"
             @click="markAllAsRead"
-            class="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+            class="text-xs text-primary-600 hover:text-primary-700 transition-colors"
           >
             Tout marquer comme lu
           </button>
@@ -52,21 +52,23 @@
         <!-- Liste des notifications -->
         <div class="overflow-y-auto flex-1">
           <div v-if="alertsStore.loading" class="p-4 text-center">
-            <div class="inline-block w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+            <div
+              class="inline-block w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"
+            ></div>
             <p class="text-zinc-400 text-sm mt-2">Chargement...</p>
           </div>
 
           <div v-else-if="recentAlerts.length === 0" class="p-6 text-center">
             <CheckCircle class="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-            <p class="text-zinc-400 text-sm">Aucune notification</p>
+            <p class="text-zinc-500 text-sm">Aucune notification</p>
           </div>
 
-          <div v-else class="divide-y divide-white/5">
+          <div v-else class="divide-y divide-zinc-100">
             <button
               v-for="alert in recentAlerts"
               :key="alert.id"
               @click="handleAlertClick(alert)"
-              class="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors group"
+              class="w-full px-4 py-3 text-left hover:bg-zinc-50 transition-colors group"
               :class="{
                 'bg-rose-500/5': alert.severity === 'high' && !isRead(alert.id),
                 'bg-amber-500/5': alert.severity === 'medium' && !isRead(alert.id),
@@ -83,25 +85,16 @@
                     'bg-blue-500/10 text-blue-400': alert.severity === 'low'
                   }"
                 >
-                  <AlertCircle
-                    v-if="alert.severity === 'high'"
-                    class="w-4 h-4"
-                  />
-                  <AlertTriangle
-                    v-else-if="alert.severity === 'medium'"
-                    class="w-4 h-4"
-                  />
-                  <Info
-                    v-else
-                    class="w-4 h-4"
-                  />
+                  <AlertCircle v-if="alert.severity === 'high'" class="w-4 h-4" />
+                  <AlertTriangle v-else-if="alert.severity === 'medium'" class="w-4 h-4" />
+                  <Info v-else class="w-4 h-4" />
                 </div>
 
                 <!-- Contenu -->
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2 mb-1">
                     <p
-                      class="text-sm font-medium text-white truncate"
+                      class="text-sm font-medium text-zinc-900 truncate"
                       :class="{
                         'font-semibold': !isRead(alert.id)
                       }"
@@ -111,10 +104,10 @@
                     <!-- Indicateur non lu -->
                     <span
                       v-if="!isRead(alert.id)"
-                      class="flex-shrink-0 w-2 h-2 rounded-full bg-violet-500"
+                      class="flex-shrink-0 w-2 h-2 rounded-full bg-primary-500"
                     ></span>
                   </div>
-                  <p class="text-xs text-zinc-400 line-clamp-2">{{ alert.message }}</p>
+                  <p class="text-xs text-zinc-500 line-clamp-2">{{ alert.message }}</p>
                   <p v-if="alert.date" class="text-xs text-zinc-500 mt-1">
                     {{ formatRelativeTime(alert.date) }}
                   </p>
@@ -125,11 +118,11 @@
         </div>
 
         <!-- Footer avec lien vers toutes les alertes -->
-        <div class="px-4 py-3 border-t border-white/10 bg-zinc-900/95 backdrop-blur-sm">
+        <div class="px-4 py-3 border-t border-zinc-100 bg-white/95 backdrop-blur-sm">
           <router-link
             to="/alertes"
             @click="closeDropdown"
-            class="block text-center text-sm text-violet-400 hover:text-violet-300 transition-colors font-medium"
+            class="block text-center text-sm text-primary-600 hover:text-primary-700 transition-colors font-medium"
           >
             Voir toutes les alertes
           </router-link>
@@ -156,7 +149,7 @@ const props = defineProps({
   position: {
     type: String,
     default: 'header',
-    validator: (value) => ['header', 'sidebar'].includes(value)
+    validator: value => ['header', 'sidebar'].includes(value)
   }
 })
 
@@ -172,9 +165,7 @@ const bellButtonRef = ref(null)
  * Computed : 5 dernières alertes non lues
  */
 const recentAlerts = computed(() => {
-  return alertsStore.alerts
-    .filter(alert => !alertsStore.isRead(alert.id))
-    .slice(0, 5)
+  return alertsStore.alerts.filter(alert => !alertsStore.isRead(alert.id)).slice(0, 5)
 })
 
 /**
@@ -205,18 +196,18 @@ const closeDropdown = () => {
 /**
  * Vérifie si une alerte est lue (utilise directement le store)
  */
-const isRead = (alertId) => alertsStore.isRead(alertId)
+const isRead = alertId => alertsStore.isRead(alertId)
 
 /**
  * Gère le clic sur une alerte
  */
-const handleAlertClick = async (alert) => {
+const handleAlertClick = async alert => {
   // Marque comme lue
   await alertsStore.markAsRead(alert.id)
-  
+
   // Ferme le dropdown
   closeDropdown()
-  
+
   // Navigue vers l'URL d'action si disponible
   if (alert.actionUrl) {
     router.push(alert.actionUrl)
@@ -236,7 +227,7 @@ const markAllAsRead = async () => {
 /**
  * Formate la date en temps relatif
  */
-const formatRelativeTime = (dateString) => {
+const formatRelativeTime = dateString => {
   const date = new Date(dateString)
   const now = new Date()
   const diffMs = now - date
@@ -244,13 +235,12 @@ const formatRelativeTime = (dateString) => {
   const diffHours = Math.floor(diffMs / 3600000)
   const diffDays = Math.floor(diffMs / 86400000)
 
-  if (diffMins < 1) return 'À l\'instant'
+  if (diffMins < 1) return "À l'instant"
   if (diffMins < 60) return `Il y a ${diffMins} min`
   if (diffHours < 24) return `Il y a ${diffHours}h`
   if (diffDays < 7) return `Il y a ${diffDays}j`
   return formatDate(date)
 }
-
 
 /**
  * Charge les alertes au montage
@@ -262,9 +252,9 @@ onMounted(async () => {
 /**
  * Gère les clics en dehors du dropdown
  */
-const handleClickOutside = (event) => {
+const handleClickOutside = event => {
   if (!isDropdownOpen.value) return
-  
+
   // Vérifie si le clic est en dehors du conteneur (bouton + dropdown)
   if (containerRef.value && !containerRef.value.contains(event.target)) {
     closeDropdown()

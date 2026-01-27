@@ -201,7 +201,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { supabase } from '@/lib/supabaseClient'
+import { authApi } from '@/api'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
@@ -245,22 +245,19 @@ const checkResetToken = async () => {
       // Nettoie l'URL en supprimant le hash
       window.history.replaceState(null, '', window.location.pathname + window.location.search)
 
-      // Échange les tokens avec Supabase pour créer une session temporaire
-      const { data, error } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-      })
+      // Échange les tokens avec Supabase via l'API layer
+      const result = await authApi.setSessionFromResetToken(accessToken, refreshToken)
 
-      if (error) {
-        console.error("Erreur lors de l'échange des tokens de réinitialisation:", error)
-        errorMessage.value = t('auth.reset.tokenError')
+      if (!result.success) {
+        console.error("Erreur lors de l'échange des tokens de réinitialisation:", result.message)
+        errorMessage.value = result.message || t('auth.reset.tokenError')
         return false
       }
 
-      if (data.session) {
+      if (result.data?.session) {
         // Met à jour le store auth avec la session temporaire
-        authStore.user = data.user
-        authStore.session = data.session
+        authStore.user = result.data.user
+        authStore.session = result.data.session
         hasResetToken.value = true
         return true
       }
@@ -342,20 +339,11 @@ const handleUpdatePassword = async () => {
   isUpdating.value = true
 
   try {
-    // Met à jour le mot de passe via Supabase
-    const { error: updateError } = await supabase.auth.updateUser({
-      password: form.value.newPassword
-    })
+    // Met à jour le mot de passe via l'API layer
+    const result = await authApi.updatePasswordAfterReset(form.value.newPassword)
 
-    if (updateError) {
-      let errorMsg = t('auth.reset.updateError')
-
-      if (updateError.message.includes('weak') || updateError.message.includes('strength')) {
-        errorMsg = t('auth.reset.passwordTooWeak')
-      } else {
-        errorMsg = updateError.message || errorMsg
-      }
-
+    if (!result.success) {
+      const errorMsg = result.message || t('auth.reset.updateError')
       errorMessage.value = errorMsg
       toastStore.error(errorMsg)
       isUpdating.value = false

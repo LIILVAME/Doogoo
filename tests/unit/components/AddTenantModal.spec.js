@@ -103,6 +103,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.rent = 1200
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
 
       // Act
       await wrapper.vm.handleSubmit()
@@ -117,6 +119,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = ''
       wrapper.vm.form.rent = 1200
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
 
       // Act
       await wrapper.vm.handleSubmit()
@@ -131,6 +135,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.rent = null
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
 
       // Act
       await wrapper.vm.handleSubmit()
@@ -145,6 +151,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.rent = 0
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
 
       // Act
       await wrapper.vm.handleSubmit()
@@ -159,6 +167,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.rent = -100
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
 
       // Act
       await wrapper.vm.handleSubmit()
@@ -174,6 +184,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.status = PAYMENT_STATUS.ON_TIME
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
     })
 
     it('should convert rent string to number in prepareTenantData', () => {
@@ -213,6 +225,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.rent = 1200
       wrapper.vm.form.status = PAYMENT_STATUS.ON_TIME
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
     })
 
     it('should trim name field', async () => {
@@ -271,6 +285,8 @@ describe('AddTenantModal - prepareTenantData Logic', () => {
       wrapper.vm.form.name = 'Jean Dupont'
       wrapper.vm.form.entryDate = '2024-01-01'
       wrapper.vm.form.rent = 1200
+      wrapper.vm.form.birthDate = '1990-01-01'
+      wrapper.vm.form.birthPlace = 'Paris'
 
       // Act
       await wrapper.vm.handleSubmit()

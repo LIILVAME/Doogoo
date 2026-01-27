@@ -9,10 +9,7 @@
       />
 
       <!-- Header avec statistiques -->
-      <PageHeader
-        :title="$t('properties.myProperties')"
-        :subtitle="$t('properties.subtitle')"
-      >
+      <PageHeader :title="$t('properties.myProperties')" :subtitle="$t('properties.subtitle')">
         <template #actions>
           <button
             @click="isAddModalOpen = true"

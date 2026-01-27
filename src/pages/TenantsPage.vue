@@ -9,10 +9,7 @@
       />
 
       <!-- Header avec statistiques -->
-      <PageHeader
-        :title="$t('tenants.title')"
-        :subtitle="$t('tenants.subtitle')"
-      >
+      <PageHeader :title="$t('tenants.title')" :subtitle="$t('tenants.subtitle')">
         <template #actions>
           <button
             @click="isModalOpen = true"
@@ -35,7 +32,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          class="block w-full pl-10 pr-3 py-2 border border-white/10 rounded-xl leading-5 bg-white/5 text-white placeholder-zinc-400 focus:outline-none focus:bg-white/10 focus:ring-1 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all duration-200"
+          class="block w-full pl-10 pr-3 py-2 border border-zinc-200 rounded-xl leading-5 bg-white text-zinc-900 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all duration-200 shadow-sm"
           :placeholder="$t('common.search')"
         />
       </div>
@@ -50,7 +47,7 @@
             'px-4 py-2 rounded-xl font-medium transition-all duration-200 text-sm border',
             activeFilter === filter.value
               ? 'bg-violet-600 text-white border-violet-500 shadow-lg shadow-violet-500/20'
-              : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-white'
+              : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-300 shadow-sm'
           ]"
         >
           {{ filter.label }}
@@ -451,20 +448,29 @@ const handleGenerateLease = async tenant => {
   try {
     // 1. Récupère les données du propriétaire (bailleur)
     const profile = await authStore.fetchProfile(true) // force = true pour avoir les dernières données
-    
+
     // Construction du nom complet depuis first_name + last_name (ou fallback sur full_name legacy)
-    const fullName = profile?.first_name && profile?.last_name
-      ? `${profile.first_name} ${profile.last_name}`
-      : profile?.full_name || authStore.user?.user_metadata?.full_name || authStore.user?.email || 'Non renseigné'
-    
+    const fullName =
+      profile?.first_name && profile?.last_name
+        ? `${profile.first_name} ${profile.last_name}`
+        : profile?.full_name ||
+          authStore.user?.user_metadata?.full_name ||
+          authStore.user?.email ||
+          'Non renseigné'
+
     // Construction de l'adresse structurée (ou fallback sur address legacy)
-    const addressFull = [
-      profile?.address_line,
-      profile?.postal_code && profile?.city
-        ? `${profile.postal_code} ${profile.city}`
-        : profile?.city || profile?.postal_code
-    ].filter(Boolean).join(', ') || profile?.address || ''
-    
+    const addressFull =
+      [
+        profile?.address_line,
+        profile?.postal_code && profile?.city
+          ? `${profile.postal_code} ${profile.city}`
+          : profile?.city || profile?.postal_code
+      ]
+        .filter(Boolean)
+        .join(', ') ||
+      profile?.address ||
+      ''
+
     const ownerData = {
       fullName,
       name: fullName,
@@ -478,11 +484,11 @@ const handleGenerateLease = async tenant => {
       // Type de bailleur
       landlordType: profile?.landlord_type || 'individual',
       // Informations juridiques (si société)
-      company: profile?.landlord_type === 'company' ? (profile?.company || '') : '',
-      legalForm: profile?.landlord_type === 'company' ? (profile?.legal_form || '') : '',
-      siret: profile?.landlord_type === 'company' ? (profile?.siret || '') : '',
-      rcs: profile?.landlord_type === 'company' ? (profile?.rcs || '') : '',
-      capitalSocial: profile?.landlord_type === 'company' ? (profile?.capital_social || '') : '',
+      company: profile?.landlord_type === 'company' ? profile?.company || '' : '',
+      legalForm: profile?.landlord_type === 'company' ? profile?.legal_form || '' : '',
+      siret: profile?.landlord_type === 'company' ? profile?.siret || '' : '',
+      rcs: profile?.landlord_type === 'company' ? profile?.rcs || '' : '',
+      capitalSocial: profile?.landlord_type === 'company' ? profile?.capital_social || '' : '',
       // Informations bancaires
       iban: profile?.iban || '',
       bic: profile?.bic || '',

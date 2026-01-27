@@ -42,18 +42,22 @@ git push -u origin main
 **⚠️ IMPORTANT** : Remplacez `votre-username` et `vylo` par vos valeurs réelles dans :
 
 #### `vite.config.js`
+
 ```javascript
-const base = process.env.NODE_ENV === 'production' 
-  ? '/mon-nom-de-repo/'  // ⚠️ À modifier
-  : '/'
+const base =
+  process.env.NODE_ENV === 'production'
+    ? '/mon-nom-de-repo/' // ⚠️ À modifier
+    : '/'
 ```
 
 #### `public/404.html`
+
 ```javascript
-const base = '/mon-nom-de-repo/'; // ⚠️ À modifier
+const base = '/mon-nom-de-repo/' // ⚠️ À modifier
 ```
 
 #### `README.md`
+
 - Remplacer tous les `votre-username/vylo` par votre repo
 - Mettre à jour les liens de badges CI/CD
 - Mettre à jour le lien "Démo Live"
@@ -71,6 +75,7 @@ const base = '/mon-nom-de-repo/'; // ⚠️ À modifier
 ### 2. Vérifier les workflows
 
 Les workflows suivants doivent exister :
+
 - `.github/workflows/deploy.yml` : Déploiement automatique
 - `.github/workflows/ci.yml` : Tests et linting
 
@@ -212,4 +217,3 @@ Avant de considérer la configuration comme complète :
 ---
 
 **Une fois toutes les étapes complétées, votre projet est prêt pour la production !** 🎉
-

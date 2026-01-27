@@ -20,12 +20,14 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ### 1. Structure & Cohérence ✅
 
 #### ✅ Layout Uniforme
+
 - **5/5 pages** utilisent le même layout flex
 - Container `max-w-7xl mx-auto` cohérent
 - Padding responsive identique : `px-6 pt-16 pb-8 md:px-10 md:pt-10 md:pb-10`
 - Sidebar responsive (menu hamburger mobile)
 
 #### ✅ Réutilisation des Composants
+
 - `PropertyCard` → DashboardPage + BiensPage
 - `PaymentsSection` → DashboardPage + PaiementsPage
 - `TenantInfo` → PropertyCard + LocatairesPage
@@ -33,6 +35,7 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 - `StatCard` → DashboardHeader
 
 #### ✅ Imports Cohérents
+
 - Alias `@/` utilisé partout
 - Utilitaires centralisés : `@/utils/formatters`, `@/utils/constants`
 - Aucune duplication
@@ -42,6 +45,7 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ### 2. Qualité du Code ✅
 
 #### ✅ Bonnes Pratiques Vue 3
+
 - ❌ Aucun `v-if` avec `v-for` (corrigé)
 - ✅ Tous les `v-for` ont une `key` unique
 - ✅ Composition API (`<script setup>`) partout
@@ -49,12 +53,14 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 - ✅ Computed properties optimisés
 
 #### ✅ Nettoyage Effectué
+
 - ✅ `console.log()` supprimé/remplacé par TODO
 - ✅ `alert()` temporaire (marqué TODO v0.2.0)
 - ✅ Computed dans templates optimisés
 - ✅ Code documenté avec commentaires
 
 #### ✅ Performance
+
 - ✅ Filtrage dans computed (pas de double filtrage)
 - ✅ Empty states optimisés
 - ✅ Pas de boucles inutiles dans templates
@@ -64,22 +70,26 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ### 3. UX / UI ✅
 
 #### ✅ Typographie Cohérente
-- Titres : `text-3xl font-bold text-gray-900 mb-2`
-- Descriptions : `text-gray-600`
+
+- Titres : `text-3xl font-bold text-neutral-900 mb-2`
+- Descriptions : `text-neutral-600`
 - Sections : `text-xl font-semibold` ou `text-xl font-bold`
 
 #### ✅ Alignement et Espacements
+
 - Headers uniformes : `mb-8`
 - Grilles responsive : `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
 - Cards avec padding cohérent
 
 #### ✅ Empty States
+
 - ✅ BiensPage : Message + icône SVG
 - ✅ LocatairesPage : Message + icône SVG (optimisé)
 - ✅ PaymentsSection : Message + icône SVG intégré
 - Messages clairs et utiles
 
 #### ✅ Navigation
+
 - ✅ Sidebar : Active state `bg-primary-50 text-primary-600`
 - ✅ Router-link utilisé au lieu de `<a href>`
 - ✅ "Voir tout" masqué sur page paiements (amélioration)
@@ -89,12 +99,14 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ### 4. Responsiveness ✅
 
 #### ✅ Mobile (< 1024px)
+
 - Sidebar en overlay avec menu hamburger
 - Contenu pleine largeur
 - Grilles 1 colonne
 - Padding adapté
 
 #### ✅ Desktop (≥ 1024px)
+
 - Sidebar statique dans flex
 - Contenu centré `max-w-7xl`
 - Grilles 2-3 colonnes
@@ -105,16 +117,19 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ### 5. Préparation v0.2.0 ✅
 
 #### ✅ Structure API-Ready
+
 - Données mockées structurées
 - Props compatibles avec API
 - TODO marqués clairement
 
 #### ✅ Compatible Pinia
+
 - Structure données compatible stores
 - Computed isolables
 - Commentaires migration présents
 
 #### ✅ Routes Auth-Ready
+
 - Routes définies
 - Navigation protégée possible
 - Structure compatible guards
@@ -124,14 +139,17 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ## 🔧 Optimisations Finales Appliquées
 
 ### 1. ParametresPage.vue ✅
+
 - `console.log()` → Commentaire TODO
 - `alert()` → Gardé temporairement (TODO v0.2.0)
 
 ### 2. LocatairesPage.vue ✅
+
 - Double filtrage → Computed optimisé
 - Empty state amélioré
 
 ### 3. PaymentsSection.vue ✅
+
 - `<a href="#">` → `<router-link to="/paiements">`
 - Lien "Voir tout" masqué sur page paiements
 
@@ -140,12 +158,14 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 ## 📋 Checklist de Validation
 
 ### Structure ✅
+
 - [x] Layout uniforme (5/5 pages)
 - [x] Sidebar responsive fonctionnelle
 - [x] Container centré cohérent
 - [x] Padding responsive adapté
 
 ### Code ✅
+
 - [x] Aucun `v-if` avec `v-for`
 - [x] Tous les `v-for` ont une `key`
 - [x] Imports propres
@@ -153,6 +173,7 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 - [x] Aucun `console.log` de production
 
 ### UX/UI ✅
+
 - [x] Typographie cohérente
 - [x] Espacements uniformes
 - [x] Empty states présents
@@ -160,12 +181,14 @@ Le projet **Doogoo v0.1.0** a été audité de manière exhaustive. **Toutes les
 - [x] Transitions fluides
 
 ### Responsive ✅
+
 - [x] Mobile : Sidebar overlay
 - [x] Desktop : Sidebar statique
 - [x] Grilles adaptatives
 - [x] Pas de débordement
 
 ### Préparation v0.2.0 ✅
+
 - [x] Structure prête pour API
 - [x] Compatible Pinia
 - [x] Routes prêtes pour auth
@@ -182,6 +205,7 @@ npm install pinia axios
 ```
 
 **Créer structure** :
+
 ```
 src/
 ├── api/
@@ -208,6 +232,7 @@ src/
 ### Phase 3 : Authentification (Semaine 3)
 
 #### Option A : JWT Simple
+
 ```javascript
 // stores/auth.js
 import { defineStore } from 'pinia'
@@ -218,7 +243,7 @@ export const useAuthStore = defineStore('auth', {
     token: localStorage.getItem('token'),
     isAuthenticated: !!localStorage.getItem('token')
   }),
-  
+
   actions: {
     async login(credentials) {
       const response = await fetch('/api/auth/login', {
@@ -232,7 +257,7 @@ export const useAuthStore = defineStore('auth', {
       this.isAuthenticated = true
       localStorage.setItem('token', data.token)
     },
-    
+
     logout() {
       this.token = null
       this.user = null
@@ -244,6 +269,7 @@ export const useAuthStore = defineStore('auth', {
 ```
 
 #### Option B : Supabase Auth (Recommandé)
+
 ```javascript
 import { createClient } from '@supabase/supabase-js'
 
@@ -257,6 +283,7 @@ const supabase = createClient(
 ```
 
 #### Router Guards
+
 ```javascript
 // router/index.js
 import { useAuthStore } from '@/stores/auth'
@@ -264,7 +291,7 @@ import { useAuthStore } from '@/stores/auth'
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  
+
   if (requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else {
@@ -277,14 +304,14 @@ router.beforeEach((to, from, next) => {
 
 ## 📈 Métriques de Qualité
 
-| Critère | Score | Détail |
-|---------|-------|--------|
-| **Structure** | ⭐⭐⭐⭐⭐ | Layout uniforme, composants réutilisés |
-| **Code Quality** | ⭐⭐⭐⭐⭐ | Aucune duplication, bonnes pratiques |
-| **UX/UI** | ⭐⭐⭐⭐⭐ | Cohérent, responsive, empty states |
-| **Performance** | ⭐⭐⭐⭐⭐ | Computed optimisés, pas de double filtrage |
-| **Maintenabilité** | ⭐⭐⭐⭐⭐ | Utilitaires centralisés, TODO clairs |
-| **Préparation v0.2.0** | ⭐⭐⭐⭐⭐ | Structure API-ready, compatible Pinia |
+| Critère                | Score      | Détail                                     |
+| ---------------------- | ---------- | ------------------------------------------ |
+| **Structure**          | ⭐⭐⭐⭐⭐ | Layout uniforme, composants réutilisés     |
+| **Code Quality**       | ⭐⭐⭐⭐⭐ | Aucune duplication, bonnes pratiques       |
+| **UX/UI**              | ⭐⭐⭐⭐⭐ | Cohérent, responsive, empty states         |
+| **Performance**        | ⭐⭐⭐⭐⭐ | Computed optimisés, pas de double filtrage |
+| **Maintenabilité**     | ⭐⭐⭐⭐⭐ | Utilitaires centralisés, TODO clairs       |
+| **Préparation v0.2.0** | ⭐⭐⭐⭐⭐ | Structure API-ready, compatible Pinia      |
 
 **Score Moyen** : **⭐⭐⭐⭐⭐ (5/5)**
 
@@ -295,12 +322,14 @@ router.beforeEach((to, from, next) => {
 ### 1. Migration Pinia
 
 **Ordre recommandé** :
+
 1. `propertiesStore` (le plus simple)
 2. `paymentsStore`
 3. `tenantsStore`
 4. `authStore` (en dernier)
 
 **Stratégie** :
+
 - Commencer avec mockData dans stores
 - Tester réactivité complète
 - Migrer progressivement vers API
@@ -309,6 +338,7 @@ router.beforeEach((to, from, next) => {
 ### 2. Gestion d'Erreurs
 
 **À implémenter** :
+
 ```javascript
 // utils/errorHandler.js
 export function handleApiError(error) {
@@ -321,6 +351,7 @@ export function handleApiError(error) {
 ### 3. Loading States
 
 **Composants à créer** :
+
 - `LoadingSpinner.vue`
 - `ErrorMessage.vue`
 - `EmptyState.vue` (générique)
@@ -328,6 +359,7 @@ export function handleApiError(error) {
 ### 4. Notifications Toast
 
 **À remplacer** :
+
 - `alert()` → Système toast réutilisable
 - Notification service centralisé
 
@@ -336,6 +368,7 @@ export function handleApiError(error) {
 ## ✅ Statut Final
 
 ### Pages Validées ✅
+
 - [x] DashboardPage.vue
 - [x] BiensPage.vue
 - [x] PaiementsPage.vue
@@ -343,6 +376,7 @@ export function handleApiError(error) {
 - [x] ParametresPage.vue
 
 ### Composants Validés ✅
+
 - [x] Sidebar.vue (responsive)
 - [x] PropertyCard.vue
 - [x] TenantInfo.vue
@@ -351,10 +385,12 @@ export function handleApiError(error) {
 - [x] StatCard.vue
 
 ### Utilitaires Validés ✅
+
 - [x] formatters.js
 - [x] constants.js
 
 ### Router Validé ✅
+
 - [x] Toutes les routes configurées
 - [x] Navigation fonctionnelle
 
@@ -373,4 +409,3 @@ Le projet **Doogoo v0.1.0** est **100% stable et prêt pour la production**. Tou
 **Document créé le** : Décembre 2024  
 **Validé par** : Audit technique complet + Validation UX/UI  
 **Version** : v0.1.0 → Stable Release
-

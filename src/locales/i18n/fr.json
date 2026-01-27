@@ -33,6 +33,11 @@
     "uploading": "Upload en cours...",
     "birthDate": "Date de naissance",
     "birthPlace": "Lieu de naissance",
+    "columns": "Colonnes",
+    "selectColumns": "Sélectionner les colonnes",
+    "columnsVisible": "colonnes visibles",
+    "moveUp": "Déplacer vers le haut",
+    "moveDown": "Déplacer vers le bas",
     "placeholders": {
       "birthPlace": "Ex: Paris, Lyon, Marseille"
     }

@@ -128,7 +128,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from '@/composables/useLingui'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { supabase } from '@/lib/supabaseClient'
+import { authApi } from '@/api'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import AuthInput from '@/components/auth/AuthInput.vue'
 import AuthButton from '@/components/auth/AuthButton.vue'
@@ -212,19 +212,16 @@ const handleSignUp = async () => {
     } else {
       // Vérifier si utilisateur a des biens pour décider onboarding vs dashboard
       try {
-        const { count, error } = await supabase
-          .from('properties')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', authStore.user.id)
+        const result = await authApi.checkUserHasProperties(authStore.user.id)
 
-        if (error) {
-          console.warn('Erreur vérification biens (non bloquant):', error)
+        if (!result.success) {
+          console.warn('Erreur vérification biens (non bloquant):', result.message)
           router.push('/dashboard')
           return
         }
 
         // Si 0 bien → Onboarding, sinon → Dashboard
-        const redirectTo = count === 0 ? '/onboarding' : '/dashboard'
+        const redirectTo = result.data.count === 0 ? '/onboarding' : '/dashboard'
         router.push(redirectTo)
       } catch (err) {
         console.error('Erreur check onboarding:', err)

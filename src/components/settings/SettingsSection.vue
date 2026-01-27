@@ -1,6 +1,6 @@
 <template>
   <section class="glass-panel rounded-2xl p-6">
-    <h2 v-if="title" class="text-lg font-semibold text-white mb-6">{{ title }}</h2>
+    <h2 v-if="title" class="text-lg font-semibold text-zinc-900 mb-6">{{ title }}</h2>
     <slot />
   </section>
 </template>
@@ -13,4 +13,3 @@ defineProps({
   }
 })
 </script>
-

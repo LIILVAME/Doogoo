@@ -21,11 +21,11 @@
         <div
           v-for="toast in items"
           :key="toast.id"
-          class="rounded-lg px-4 py-3 shadow-lg border text-sm flex items-start gap-3 bg-white animate-slide-in-right"
+          class="rounded-lg px-4 py-3 shadow-lg border text-sm flex items-start gap-3 bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-700 animate-slide-in-right"
           :class="{
-            'border-success-200': toast.type === 'success',
-            'border-red-200': toast.type === 'error',
-            'border-blue-200': toast.type === 'info'
+            'border-success-200 dark:border-success-700': toast.type === 'success',
+            'border-red-200 dark:border-red-700': toast.type === 'error',
+            'border-blue-200 dark:border-blue-700': toast.type === 'info'
           }"
         >
           <!-- Icône -->
@@ -80,9 +80,9 @@
             <p
               class="font-medium"
               :class="{
-                'text-success-700': toast.type === 'success',
-                'text-red-800': toast.type === 'error',
-                'text-blue-800': toast.type === 'info'
+                'text-success-700 dark:text-success-400': toast.type === 'success',
+                'text-red-800 dark:text-red-400': toast.type === 'error',
+                'text-blue-800 dark:text-blue-400': toast.type === 'info'
               }"
             >
               {{ toast.message }}
@@ -94,9 +94,9 @@
               @click="handleAction(toast)"
               class="mt-2 text-xs font-medium underline hover:no-underline"
               :class="{
-                'text-success-700': toast.type === 'success',
-                'text-red-700': toast.type === 'error',
-                'text-blue-700': toast.type === 'info'
+                'text-success-700 dark:text-success-400': toast.type === 'success',
+                'text-red-700 dark:text-red-400': toast.type === 'error',
+                'text-blue-700 dark:text-blue-400': toast.type === 'info'
               }"
             >
               {{ toast.action.label }}
@@ -105,8 +105,8 @@
 
           <!-- Bouton fermer -->
           <button
-            @click="remove(toast.id)"
-            class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors opacity-60 hover:opacity-100"
+            @click="handleClose(toast.id)"
+            class="shrink-0 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors opacity-60 hover:opacity-100"
             aria-label="Fermer"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,6 +127,7 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useToastStore } from '@/stores/toastStore'
+import { hapticLight } from '@/composables/useHapticFeedback'
 
 const toastStore = useToastStore()
 const { items } = storeToRefs(toastStore)
@@ -136,10 +137,19 @@ const { remove } = toastStore
  * Gère le clic sur une action dans le toast
  */
 const handleAction = toast => {
+  hapticLight()
   if (toast.action?.onClick) {
     toast.action.onClick()
   }
   remove(toast.id)
+}
+
+/**
+ * Gère la fermeture d'un toast
+ */
+const handleClose = toastId => {
+  hapticLight()
+  remove(toastId)
 }
 </script>
 
@@ -165,16 +175,44 @@ const handleAction = toast => {
 
 @keyframes slide-in-right {
   from {
-    transform: translateX(100%);
+    transform: translateX(100%) scale(0.95);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
     opacity: 1;
   }
 }
 
 .animate-slide-in-right {
-  animation: slide-in-right 0.3s ease-out;
+  animation: slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Animation de succès pour les toasts */
+.toast-success-enter-active {
+  animation: toast-success 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toast-success {
+  0% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-5%) scale(1.02);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Respecte prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-right,
+  .toast-success-enter-active {
+    animation: none;
+    transform: none;
+  }
 }
 </style>

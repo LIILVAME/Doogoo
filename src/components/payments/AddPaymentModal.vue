@@ -12,8 +12,12 @@
         <!-- Modal -->
         <div class="flex min-h-full items-center justify-center p-4">
           <div
+            ref="modalRef"
             class="relative w-full max-w-lg mx-4 md:mx-auto max-h-[90vh] overflow-y-auto transform rounded-2xl glass-panel shadow-2xl transition-all"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            :aria-labelledby="'add-payment-modal-title'"
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-white/10 px-6 py-5">
@@ -35,7 +39,9 @@
                     />
                   </svg>
                 </div>
-                <h2 class="text-xl font-semibold text-white">{{ $t('payments.addPayment') }}</h2>
+                <h2 id="add-payment-modal-title" class="text-xl font-semibold text-white">
+                  {{ $t('payments.addPayment') }}
+                </h2>
               </div>
               <button
                 @click="handleClose"
@@ -242,13 +248,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, toRef } from 'vue'
 import { TRANSACTION_STATUS, CURRENCY_SYMBOLS } from '@/utils/constants'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { toNumber } from '@/utils/formDataConverters'
 import { paymentSchema, validate } from '@/utils/validators'
+import { useModalFocusTrap } from '@/composables/useModalFocusTrap'
 
 // Utilise $t dans le template, pas besoin de t dans le script
 
@@ -264,6 +271,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'submit'])
+
+// Focus trap pour accessibilité
+const { modalRef } = useModalFocusTrap(toRef(() => props.isOpen))
 
 const propertiesStore = usePropertiesStore()
 const toastStore = useToastStore()

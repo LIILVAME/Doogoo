@@ -64,6 +64,7 @@ git checkout -b docs/amelioration-doc
 ```
 
 **Convention de nommage des branches** :
+
 - `feature/` : Nouvelles fonctionnalités
 - `fix/` : Corrections de bugs
 - `docs/` : Documentation
@@ -209,6 +210,7 @@ chore(deps): mise à jour de Vue vers 3.4.21
 ### Scope (optionnel)
 
 Le scope indique la partie du code affectée :
+
 - `dashboard`, `landing`, `sidebar`, `api`, `router`, etc.
 
 ---
@@ -219,15 +221,18 @@ Le scope indique la partie du code affectée :
 
 ```markdown
 ## Description
+
 Brève description des changements
 
 ## Type de changement
+
 - [ ] Bug fix
 - [ ] Nouvelle fonctionnalité
 - [ ] Breaking change
 - [ ] Documentation
 
 ## Checklist
+
 - [ ] Mon code suit les standards du projet
 - [ ] J'ai testé mes changements localement
 - [ ] J'ai mis à jour la documentation si nécessaire
@@ -235,9 +240,11 @@ Brève description des changements
 - [ ] J'ai ajouté des tests si nécessaire
 
 ## Screenshots (si UI modifiée)
+
 <!-- Ajouter des captures d'écran -->
 
 ## Issues liées
+
 Closes #123
 ```
 
@@ -274,6 +281,7 @@ Description claire du problème
 
 **Reproduction**
 Étapes pour reproduire :
+
 1. Aller à '...'
 2. Cliquer sur '...'
 3. Voir l'erreur
@@ -288,6 +296,7 @@ Ce qui se passe réellement
 Si applicable
 
 **Environnement**
+
 - OS: [ex: macOS 14.0]
 - Navigateur: [ex: Chrome 120]
 - Version: [ex: 0.1.0]
@@ -324,6 +333,7 @@ Mockups, exemples, etc.
 ## ❓ Questions
 
 Si vous avez des questions :
+
 - 📧 Email : contact@vylo.fr
 - 💬 Issues : Créez une issue avec le label `question`
 - 📖 Documentation : Consultez le README et `docs/`
@@ -337,4 +347,3 @@ Merci de contribuer à Vylo ! Votre aide est précieuse pour améliorer le proje
 ---
 
 **Dernière mise à jour** : 2024-12-04
-

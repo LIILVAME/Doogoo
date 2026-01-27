@@ -222,14 +222,14 @@ const chartOptions = computed(() => {
     xaxis: {
       labels: {
         style: {
-          colors: '#6B7280'
+          colors: '#71717a'
         }
       }
     },
     yaxis: {
       labels: {
         style: {
-          colors: '#6B7280'
+          colors: '#71717a'
         },
         formatter: val => {
           if (props.type === 'radialBar') {

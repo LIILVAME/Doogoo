@@ -4,18 +4,18 @@
 
     <!-- Section Guide de démarrage -->
     <SettingsSection title="Guide de démarrage">
-      <div class="glass-panel rounded-2xl p-6 border border-blue-500/20">
+      <div class="glass-panel rounded-2xl p-6 border border-blue-100 bg-blue-50/50">
         <div class="flex items-start justify-between">
           <div class="flex-1">
-            <h3 class="text-sm font-semibold text-white mb-1">
+            <h3 class="text-sm font-semibold text-zinc-900 mb-1">
               {{ $t('settings.onboarding.title') }}
             </h3>
-            <p class="text-xs text-zinc-300 mb-3">
+            <p class="text-xs text-zinc-600 mb-3">
               {{ $t('settings.onboarding.description') }}
             </p>
             <button
               @click="restartOnboarding"
-              class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 rounded-xl hover:bg-blue-500/20 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              class="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-700 bg-blue-100 border border-blue-200 rounded-xl hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             >
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -30,7 +30,7 @@
           </div>
           <div class="ml-4 flex-shrink-0">
             <svg
-              class="w-8 h-8 text-blue-400 opacity-50"
+              class="w-8 h-8 text-blue-600 opacity-50"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

@@ -2,10 +2,10 @@
   <div v-if="tenant" class="tenant-info">
     <div class="flex items-start justify-between mb-2 sm:mb-3">
       <div class="flex-1 min-w-0 pr-2">
-        <p class="text-xs text-zinc-400 mb-1">{{ $t('payments.tenant') }}</p>
+        <p class="text-xs text-zinc-500 mb-1">{{ $t('payments.tenant') }}</p>
         <p
-          class="font-semibold text-white text-sm sm:text-base truncate transition-colors"
-          :class="{ 'cursor-pointer hover:text-violet-400': clickable }"
+          class="font-semibold text-zinc-900 text-sm sm:text-base truncate transition-colors"
+          :class="{ 'cursor-pointer hover:text-violet-600': clickable }"
           @click="handleClick"
         >
           {{ tenant.name }}
@@ -21,19 +21,19 @@
 
     <div class="grid grid-cols-2 gap-2 sm:gap-3 text-xs sm:text-sm">
       <div>
-        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.entryDate') }}</p>
-        <p class="font-medium text-zinc-200">
+        <p class="text-xs text-zinc-500 mb-1">{{ $t('tenants.entryDate') }}</p>
+        <p class="font-medium text-zinc-700">
           {{ formatDate(tenant.entryDate) }}
         </p>
       </div>
       <div v-if="tenant.exitDate">
-        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.exitDate') }}</p>
-        <p class="font-medium text-zinc-200">
+        <p class="text-xs text-zinc-500 mb-1">{{ $t('tenants.exitDate') }}</p>
+        <p class="font-medium text-zinc-700">
           {{ formatDate(tenant.exitDate) }}
         </p>
       </div>
       <div v-else>
-        <p class="text-xs text-zinc-400 mb-1">{{ $t('tenants.exitDate') }}</p>
+        <p class="text-xs text-zinc-500 mb-1">{{ $t('tenants.exitDate') }}</p>
         <p class="font-medium text-zinc-500">{{ $t('tenants.inProgress') }}</p>
       </div>
     </div>
@@ -100,6 +100,15 @@ const statusText = computed(() => {
 
 <style scoped>
 .tenant-info {
-  @apply mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-gray-100;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+@media (min-width: 640px) {
+  .tenant-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
 }
 </style>
