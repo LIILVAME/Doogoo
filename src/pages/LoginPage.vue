@@ -1,10 +1,10 @@
 <template>
   <AuthLayout>
     <div>
-      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-white">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-zinc-900">
         {{ $t('auth.login.title') }}
       </h2>
-      <p class="text-center text-zinc-400 text-sm mb-6">{{ $t('auth.login.subtitle') }}</p>
+      <p class="text-center text-zinc-500 text-sm mb-6">{{ $t('auth.login.subtitle') }}</p>
 
       <form @submit.prevent="handleLogin" class="space-y-4">
         <!-- Email -->
@@ -33,7 +33,7 @@
         <div class="flex items-center justify-end">
           <router-link
             to="/reset-password"
-            class="text-sm text-violet-400 hover:text-violet-300 font-medium transition-colors"
+            class="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
           >
             {{ $t('auth.login.forgotPassword') }}
           </router-link>
@@ -96,12 +96,12 @@
         />
 
         <!-- Lien d'inscription -->
-        <div class="mt-6 pt-6 border-t border-white/10 text-center">
+        <div class="mt-6 pt-6 border-t border-zinc-100 text-center">
           <p class="text-sm text-zinc-500">
             {{ $t('auth.login.noAccount') }}
             <router-link
               to="/signup"
-              class="text-violet-400 hover:text-violet-300 font-semibold transition-colors ml-1"
+              class="text-primary-600 hover:text-primary-700 font-semibold transition-colors ml-1"
             >
               {{ $t('auth.signup.title') }}
             </router-link>
