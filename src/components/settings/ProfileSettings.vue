@@ -7,10 +7,10 @@
 
     <form v-else @submit.prevent="saveProfile" class="space-y-6">
       <!-- Avatar / Photo de profil -->
-      <div class="flex items-center gap-6 pb-6 border-b border-white/10">
+      <div class="flex items-center gap-6 pb-6 border-b border-zinc-100">
         <div class="relative">
           <div
-            class="w-20 h-20 rounded-full border-2 border-white/10 bg-white/5 flex items-center justify-center overflow-hidden"
+            class="w-20 h-20 rounded-full border-2 border-zinc-100 bg-zinc-50 flex items-center justify-center overflow-hidden"
           >
             <img v-if="preview" :src="preview" alt="Avatar" class="w-full h-full object-cover" />
             <div v-else class="w-full h-full flex items-center justify-center bg-violet-500/10">
@@ -23,7 +23,7 @@
         <div class="flex-1">
           <label
             for="avatar-upload"
-            class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors border-2 border-violet-500 bg-transparent hover:bg-violet-500/10 text-violet-400 hover:text-violet-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors border-2 border-violet-500 bg-transparent hover:bg-violet-50 text-violet-600 hover:text-violet-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :class="{ 'opacity-50 cursor-not-allowed': isUploading }"
           >
             <svg
@@ -64,16 +64,16 @@
             :disabled="isUploading"
             class="hidden"
           />
-          <p class="text-xs text-zinc-400 mt-2">
+          <p class="text-xs text-zinc-500 mt-2">
             {{ isUploading ? 'Upload en cours...' : 'Formats acceptés : JPG, PNG (max 2MB)' }}
           </p>
         </div>
       </div>
 
       <!-- Sélection Type de Bailleur -->
-      <div class="mb-6 pb-6 border-b border-white/10">
-        <label class="block text-sm font-medium text-zinc-300 mb-3">
-          Je suis <span class="text-rose-400">*</span>
+      <div class="mb-6 pb-6 border-b border-zinc-100">
+        <label class="block text-sm font-medium text-zinc-700 mb-3">
+          Je suis <span class="text-rose-500">*</span>
         </label>
         <div class="grid grid-cols-2 gap-4">
           <button
@@ -82,8 +82,8 @@
             :class="[
               'px-4 py-3 rounded-xl border-2 transition-all',
               profile.landlord_type === 'individual'
-                ? 'border-violet-500 bg-violet-500/10 text-white'
-                : 'border-white/10 bg-white/5 text-zinc-400 hover:border-white/20'
+                ? 'border-violet-500 bg-violet-50 text-violet-700'
+                : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300'
             ]"
           >
             <div class="flex items-center justify-center gap-2">
@@ -104,8 +104,8 @@
             :class="[
               'px-4 py-3 rounded-xl border-2 transition-all',
               profile.landlord_type === 'company'
-                ? 'border-violet-500 bg-violet-500/10 text-white'
-                : 'border-white/10 bg-white/5 text-zinc-400 hover:border-white/20'
+                ? 'border-violet-500 bg-violet-50 text-violet-700'
+                : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300'
             ]"
           >
             <div class="flex items-center justify-center gap-2">
@@ -121,7 +121,7 @@
             </div>
           </button>
         </div>
-        <p class="text-xs text-zinc-400 mt-2">
+        <p class="text-xs text-zinc-500 mt-2">
           Cette information est utilisée pour adapter les contrats de bail à votre situation
         </p>
       </div>
@@ -138,14 +138,14 @@
         >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2">
-                Prénom <span class="text-rose-400">*</span>
+              <label class="block text-sm font-medium text-zinc-700 mb-2">
+                Prénom <span class="text-rose-500">*</span>
               </label>
               <input
                 v-model="profile.first_name"
                 type="text"
                 required
-                class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                 :class="{ 'border-red-500/50': errors.first_name }"
                 placeholder="Jean"
                 @blur="validateField('first_name')"
@@ -156,14 +156,14 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2">
-                Nom <span class="text-rose-400">*</span>
+              <label class="block text-sm font-medium text-zinc-700 mb-2">
+                Nom <span class="text-rose-500">*</span>
               </label>
               <input
                 v-model="profile.last_name"
                 type="text"
                 required
-                class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                 :class="{ 'border-red-500/50': errors.last_name }"
                 placeholder="Dupont"
                 @blur="validateField('last_name')"
@@ -174,25 +174,25 @@
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2">
-                Email <span class="text-rose-400">*</span>
+              <label class="block text-sm font-medium text-zinc-700 mb-2">
+                Email <span class="text-rose-500">*</span>
               </label>
               <input
                 :value="profile.email"
                 type="email"
                 disabled
-                class="w-full bg-white/5 border border-white/10 text-zinc-500 rounded-xl px-4 py-2 cursor-not-allowed opacity-60"
+                class="w-full bg-zinc-50 border border-zinc-200 text-zinc-500 rounded-xl px-4 py-2 cursor-not-allowed"
                 placeholder="votre@email.com"
               />
               <p class="text-xs text-zinc-500 mt-1">L'email ne peut pas être modifié ici</p>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2"> Téléphone </label>
+              <label class="block text-sm font-medium text-zinc-700 mb-2"> Téléphone </label>
               <input
                 v-model="profile.phone"
                 type="tel"
-                class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                 :class="{ 'border-red-500/50': errors.phone }"
                 placeholder="06 12 34 56 78"
                 @blur="validateField('phone')"
@@ -215,25 +215,25 @@
         >
           <div class="space-y-4 pt-4">
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2">
+              <label class="block text-sm font-medium text-zinc-700 mb-2">
                 Adresse (ligne 1)
               </label>
               <input
                 v-model="profile.address_line"
                 type="text"
-                class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                 placeholder="123 Rue de la République"
               />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="md:col-span-1">
-                <label class="block text-sm font-medium text-zinc-300 mb-2"> Code postal </label>
+                <label class="block text-sm font-medium text-zinc-700 mb-2"> Code postal </label>
                 <input
                   v-model="profile.postal_code"
                   type="text"
                   maxlength="5"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   :class="{ 'border-red-500/50': errors.postal_code }"
                   placeholder="75001"
                   @blur="validateField('postal_code')"
@@ -244,11 +244,11 @@
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-zinc-300 mb-2"> Ville </label>
+                <label class="block text-sm font-medium text-zinc-700 mb-2"> Ville </label>
                 <input
                   v-model="profile.city"
                   type="text"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   :class="{ 'border-red-500/50': errors.city }"
                   placeholder="Paris"
                   @blur="validateField('city')"
@@ -271,43 +271,43 @@
           <div class="space-y-4 pt-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2">
+                <label class="block text-sm font-medium text-zinc-700 mb-2">
                   Nom de l'entreprise / Société
                 </label>
                 <input
                   v-model="profile.company"
                   type="text"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   placeholder="SCI Dupont, SARL..."
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2">
+                <label class="block text-sm font-medium text-zinc-700 mb-2">
                   Forme juridique
                 </label>
                 <select
                   v-model="profile.legal_form"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                 >
-                  <option value="" class="bg-zinc-900">Sélectionnez...</option>
-                  <option value="SCI" class="bg-zinc-900">SCI (Société Civile Immobilière)</option>
-                  <option value="SARL" class="bg-zinc-900">SARL</option>
-                  <option value="SAS" class="bg-zinc-900">SAS</option>
-                  <option value="SA" class="bg-zinc-900">SA</option>
-                  <option value="SNC" class="bg-zinc-900">SNC</option>
-                  <option value="Autre" class="bg-zinc-900">Autre</option>
+                  <option value="" class="bg-white">Sélectionnez...</option>
+                  <option value="SCI" class="bg-white">SCI (Société Civile Immobilière)</option>
+                  <option value="SARL" class="bg-white">SARL</option>
+                  <option value="SAS" class="bg-white">SAS</option>
+                  <option value="SA" class="bg-white">SA</option>
+                  <option value="SNC" class="bg-white">SNC</option>
+                  <option value="Autre" class="bg-white">Autre</option>
                 </select>
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2"> SIRET </label>
+                <label class="block text-sm font-medium text-zinc-700 mb-2"> SIRET </label>
                 <input
                   v-model="profile.siret"
                   type="text"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   :class="{ 'border-red-500/50': errors.siret }"
                   placeholder="12345678901234"
                   @blur="validateField('siret')"
@@ -316,22 +316,22 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2"> RCS </label>
+                <label class="block text-sm font-medium text-zinc-700 mb-2"> RCS </label>
                 <input
                   v-model="profile.rcs"
                   type="text"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   placeholder="RCS Paris B 123 456 789"
                 />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2"> Capital social </label>
+              <label class="block text-sm font-medium text-zinc-700 mb-2"> Capital social </label>
               <input
                 v-model="profile.capital_social"
                 type="text"
-                class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                 placeholder="10 000 €"
               />
               <p class="text-xs text-zinc-500 mt-1">
@@ -351,11 +351,11 @@
         >
           <div class="space-y-4 pt-4">
             <div>
-              <label class="block text-sm font-medium text-zinc-300 mb-2"> IBAN </label>
+              <label class="block text-sm font-medium text-zinc-700 mb-2"> IBAN </label>
               <input
                 v-model="profile.iban"
                 type="text"
-                class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors uppercase"
+                class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors uppercase"
                 :class="{ 'border-red-500/50': errors.iban }"
                 placeholder="FR76 1234 5678 9012 3456 7890 123"
                 @blur="validateField('iban')"
@@ -365,11 +365,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2"> BIC </label>
+                <label class="block text-sm font-medium text-zinc-700 mb-2"> BIC </label>
                 <input
                   v-model="profile.bic"
                   type="text"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors uppercase"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors uppercase"
                   :class="{ 'border-red-500/50': errors.bic }"
                   placeholder="BNPAFRPP"
                   @blur="validateField('bic')"
@@ -378,13 +378,13 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-zinc-300 mb-2">
+                <label class="block text-sm font-medium text-zinc-700 mb-2">
                   Nom de la banque
                 </label>
                 <input
                   v-model="profile.bank_name"
                   type="text"
-                  class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
+                  class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors"
                   placeholder="Banque Populaire, Crédit Agricole..."
                 />
               </div>
@@ -405,12 +405,12 @@
               <img
                 :src="profile.signature_url"
                 alt="Signature"
-                class="max-w-xs border border-white/10 rounded-lg p-4 bg-white/5"
+                class="max-w-xs border border-zinc-200 rounded-lg p-4 bg-zinc-50"
               />
             </div>
             <label
               for="signature-upload"
-              class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors border-2 border-violet-500 bg-transparent hover:bg-violet-500/10 text-violet-400 hover:text-violet-300 cursor-pointer"
+              class="inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors border-2 border-violet-500 bg-transparent hover:bg-violet-50 text-violet-600 hover:text-violet-700 cursor-pointer"
               :class="{ 'opacity-50 cursor-not-allowed': isUploadingSignature }"
             >
               <svg
@@ -463,7 +463,7 @@
               :disabled="isUploadingSignature"
               class="hidden"
             />
-            <p class="text-xs text-zinc-400 mt-2">
+            <p class="text-xs text-zinc-500 mt-2">
               Formats acceptés : JPG, PNG (recommandé: fond transparent, max 2MB)
             </p>
             <button
@@ -484,7 +484,7 @@
       </div>
 
       <!-- Actions -->
-      <div class="flex justify-end pt-4 border-t border-white/10">
+      <div class="flex justify-end pt-4 border-t border-zinc-100">
         <button
           type="submit"
           :disabled="isSaving"

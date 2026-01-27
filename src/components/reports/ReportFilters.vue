@@ -1,21 +1,21 @@
 <template>
-  <div class="glass-panel rounded-2xl p-5 mb-6">
+  <div class="bg-white border border-zinc-200 rounded-2xl p-5 mb-6 shadow-sm">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <!-- Période -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-2">
           {{ $t('reports.filters.period') }}
         </label>
         <select
           :value="selectedMonth"
           @change="$emit('update:period', $event.target.value)"
-          class="w-full px-3 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors"
+          class="w-full px-3 py-2.5 bg-white border border-zinc-200 text-zinc-900 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors shadow-sm"
         >
           <option
             v-for="month in availableMonths"
             :key="month.value"
             :value="month.value"
-            class="bg-zinc-900"
+            class="bg-white"
           >
             {{ month.label }}
           </option>
@@ -24,17 +24,17 @@
 
       <!-- Type de rapport -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-2">
           {{ $t('reports.filters.type') }}
         </label>
         <select
           :value="reportType"
           @change="$emit('update:reportType', $event.target.value)"
-          class="w-full px-3 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors"
+          class="w-full px-3 py-2.5 bg-white border border-zinc-200 text-zinc-900 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors shadow-sm"
         >
-          <option value="global" class="bg-zinc-900">{{ $t('reports.types.global') }}</option>
-          <option value="monthly" class="bg-zinc-900">{{ $t('reports.types.monthly') }}</option>
-          <option value="rental-status" class="bg-zinc-900">
+          <option value="global" class="bg-white">{{ $t('reports.types.global') }}</option>
+          <option value="monthly" class="bg-white">{{ $t('reports.types.monthly') }}</option>
+          <option value="rental-status" class="bg-white">
             {{ $t('reports.types.rentalStatus') }}
           </option>
         </select>
@@ -42,20 +42,20 @@
 
       <!-- Filtrer par bien -->
       <div>
-        <label class="block text-sm font-medium text-zinc-300 mb-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-2">
           {{ $t('reports.filters.property') }}
         </label>
         <select
           :value="selectedProperty"
           @change="$emit('update:property', $event.target.value)"
-          class="w-full px-3 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors"
+          class="w-full px-3 py-2.5 bg-white border border-zinc-200 text-zinc-900 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-colors shadow-sm"
         >
-          <option value="all" class="bg-zinc-900">{{ $t('reports.filters.allProperties') }}</option>
+          <option value="all" class="bg-white">{{ $t('reports.filters.allProperties') }}</option>
           <option
             v-for="property in properties"
             :key="property.id"
             :value="property.id"
-            class="bg-zinc-900"
+            class="bg-white"
           >
             {{ property.name }}
           </option>

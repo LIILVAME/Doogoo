@@ -1,11 +1,11 @@
 <template>
   <div id="payments-section" data-section="payments" class="glass-panel rounded-2xl p-6">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-xl font-bold text-white">{{ $t('dashboard.payments') }}</h3>
+      <h3 class="text-xl font-bold text-zinc-900">{{ $t('dashboard.payments') }}</h3>
       <router-link
         v-if="showViewAllLink"
         to="/paiements"
-        class="text-sm text-violet-400 hover:text-violet-300 transition-colors"
+        class="text-sm text-violet-600 hover:text-violet-700 transition-colors"
       >
         {{ $t('common.viewAll') }}
       </router-link>
@@ -15,15 +15,15 @@
       <div
         v-for="i in 3"
         :key="i"
-        class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 animate-pulse"
+        class="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-100 animate-pulse"
       >
         <div class="flex-1">
           <div class="h-4 w-32 bg-white/10 rounded mb-2"></div>
           <div class="h-3 w-24 bg-white/10 rounded"></div>
         </div>
         <div class="text-right">
-          <div class="h-6 w-20 bg-white/10 rounded mb-1 ml-auto"></div>
-          <div class="h-4 w-16 bg-white/10 rounded ml-auto"></div>
+          <div class="h-6 w-20 bg-zinc-200 rounded mb-1 ml-auto"></div>
+          <div class="h-4 w-16 bg-zinc-200 rounded ml-auto"></div>
         </div>
       </div>
     </div>
@@ -36,7 +36,9 @@
       class="bg-transparent"
     >
       <template #illustration>
-        <div class="w-20 h-20 mx-auto flex items-center justify-center bg-white/5 rounded-full mb-4">
+        <div
+          class="w-20 h-20 mx-auto flex items-center justify-center bg-zinc-100 rounded-full mb-4"
+        >
           <svg
             class="w-10 h-10 text-zinc-500"
             fill="none"
@@ -58,18 +60,18 @@
       <div
         v-for="payment in payments"
         :key="payment.id"
-        class="relative flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors group"
+        class="relative flex items-center justify-between p-4 bg-white rounded-xl border border-zinc-100 hover:bg-zinc-50 transition-colors group shadow-sm"
       >
         <div class="flex-1">
-          <p class="font-semibold text-white">{{ payment.tenant }}</p>
-          <p class="text-sm text-zinc-400">{{ payment.property }}</p>
-          <p class="text-xs text-zinc-500 mt-1">
+          <p class="font-semibold text-zinc-900">{{ payment.tenant }}</p>
+          <p class="text-sm text-zinc-500">{{ payment.property }}</p>
+          <p class="text-xs text-zinc-400 mt-1">
             {{ $t('payments.dueDate') }}: {{ formatDate(payment.dueDate, { shortMonth: false }) }}
           </p>
         </div>
         <div class="flex items-center gap-4">
           <div class="text-right">
-            <p class="text-lg font-bold text-white mb-1">{{ formatCurrency(payment.amount) }}</p>
+            <p class="text-lg font-bold text-zinc-900 mb-1">{{ formatCurrency(payment.amount) }}</p>
             <span
               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
               :class="getStatusClass(payment.status)"
@@ -133,10 +135,10 @@ const showViewAllLink = computed(() => {
  */
 const getStatusClass = status => {
   const classes = {
-    [TRANSACTION_STATUS.PAID]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    [TRANSACTION_STATUS.PENDING]: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    [TRANSACTION_STATUS.LATE]: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-    [TRANSACTION_STATUS.PARTIAL]: 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+    [TRANSACTION_STATUS.PAID]: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    [TRANSACTION_STATUS.PENDING]: 'bg-amber-50 text-amber-700 border-amber-200',
+    [TRANSACTION_STATUS.LATE]: 'bg-rose-50 text-rose-700 border-rose-200',
+    [TRANSACTION_STATUS.PARTIAL]: 'bg-blue-50 text-blue-700 border-blue-200'
   }
   return classes[status] || classes[TRANSACTION_STATUS.PENDING]
 }

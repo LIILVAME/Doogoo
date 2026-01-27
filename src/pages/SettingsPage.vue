@@ -19,21 +19,23 @@
           <select
             :value="activeSection"
             @change="handleSectionChange($event.target.value)"
-            class="w-full bg-white/5 border border-white/10 text-zinc-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all hover:bg-white/10 cursor-pointer appearance-none"
+            class="w-full bg-white border border-zinc-200 text-zinc-900 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-all hover:bg-zinc-50 cursor-pointer appearance-none shadow-sm"
           >
-            <option value="general" class="bg-zinc-900">
+            <option value="general" class="bg-white text-zinc-900">
               {{ $t('settings.sections.general') }}
             </option>
-            <option value="notifications" class="bg-zinc-900">
+            <option value="notifications" class="bg-white text-zinc-900">
               {{ $t('settings.sections.notifications') }}
             </option>
-            <option value="security" class="bg-zinc-900">
+            <option value="security" class="bg-white text-zinc-900">
               {{ $t('settings.sections.security') }}
             </option>
-            <option value="language-currency" class="bg-zinc-900">
+            <option value="language-currency" class="bg-white text-zinc-900">
               {{ $t('settings.sections.languageCurrency') }}
             </option>
-            <option value="theme" class="bg-zinc-900">{{ $t('settings.sections.theme') }}</option>
+            <option value="theme" class="bg-white text-zinc-900">
+              {{ $t('settings.sections.theme') }}
+            </option>
           </select>
         </div>
 
@@ -41,8 +43,8 @@
         <div class="flex-1">
           <!-- Header -->
           <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white mb-2">{{ $t('settings.title') }}</h1>
-            <p class="text-zinc-400">{{ $t('settings.subtitle') }}</p>
+            <h1 class="text-3xl font-bold text-zinc-900 mb-2">{{ $t('settings.title') }}</h1>
+            <p class="text-zinc-500">{{ $t('settings.subtitle') }}</p>
           </div>
 
           <!-- Contenu dynamique selon la section active -->

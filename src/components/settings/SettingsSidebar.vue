@@ -9,13 +9,13 @@
           :class="[
             'w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
             activeSection === section.id
-              ? 'bg-white/10 text-white shadow-lg shadow-black/20'
-              : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
+              ? 'bg-violet-50 text-violet-700 shadow-sm border border-violet-100'
+              : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-200 border border-transparent'
           ]"
         >
           <span
             class="mr-3"
-            :class="activeSection === section.id ? 'text-violet-400' : 'text-zinc-500'"
+            :class="activeSection === section.id ? 'text-violet-600' : 'text-zinc-400'"
             aria-hidden="true"
           >
             <svg

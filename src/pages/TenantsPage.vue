@@ -32,7 +32,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          class="block w-full pl-10 pr-3 py-2 border border-white/10 rounded-xl leading-5 bg-white/5 text-white placeholder-zinc-400 focus:outline-none focus:bg-white/10 focus:ring-1 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all duration-200"
+          class="block w-full pl-10 pr-3 py-2 border border-zinc-200 rounded-xl leading-5 bg-white text-zinc-900 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all duration-200 shadow-sm"
           :placeholder="$t('common.search')"
         />
       </div>
@@ -47,7 +47,7 @@
             'px-4 py-2 rounded-xl font-medium transition-all duration-200 text-sm border',
             activeFilter === filter.value
               ? 'bg-violet-600 text-white border-violet-500 shadow-lg shadow-violet-500/20'
-              : 'bg-white/5 text-zinc-400 border-white/10 hover:bg-white/10 hover:text-white'
+              : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-300 shadow-sm'
           ]"
         >
           {{ filter.label }}

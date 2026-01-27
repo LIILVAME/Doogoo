@@ -1,13 +1,13 @@
 <template>
-  <div class="border border-white/10 rounded-xl overflow-hidden bg-white/5">
+  <div class="border border-zinc-200 rounded-xl overflow-hidden bg-white">
     <button
       type="button"
       @click="$emit('toggle')"
-      class="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+      class="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-50 transition-colors"
     >
       <div class="flex items-center gap-3 flex-1">
         <!-- Icône -->
-        <div class="text-zinc-400">
+        <div class="text-zinc-500">
           <svg
             v-if="icon === 'user'"
             class="w-5 h-5"
@@ -84,13 +84,7 @@
               d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
             />
           </svg>
-          <svg
-            v-else
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -102,8 +96,8 @@
 
         <!-- Titre et description -->
         <div class="text-left flex-1">
-          <h3 class="text-sm font-semibold text-white">{{ title }}</h3>
-          <p v-if="description" class="text-xs text-zinc-400 mt-0.5">{{ description }}</p>
+          <h3 class="text-sm font-semibold text-zinc-900">{{ title }}</h3>
+          <p v-if="description" class="text-xs text-zinc-500 mt-0.5">{{ description }}</p>
         </div>
       </div>
 
@@ -115,12 +109,7 @@
         stroke="currentColor"
         viewBox="0 0 24 24"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M19 9l-7 7-7-7"
-        />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
     </button>
 

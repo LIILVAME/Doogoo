@@ -1,7 +1,7 @@
 <template>
   <div
     @click="navigateToDetails"
-    class="glass-panel rounded-2xl cursor-pointer hover:bg-white/5 transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col min-h-[320px] sm:min-h-[350px] lg:min-h-[380px] min-w-[280px] sm:min-w-[320px] group relative overflow-hidden"
+    class="glass-panel glass-panel-hover rounded-2xl cursor-pointer transition-all duration-300 transform hover:-translate-y-1 active:scale-[0.98] flex flex-col min-h-[320px] sm:min-h-[350px] lg:min-h-[380px] min-w-[280px] sm:min-w-[320px] group relative overflow-hidden"
   >
     <!-- Glow effect on hover -->
     <div
@@ -65,14 +65,14 @@
 
         <div class="flex flex-wrap gap-2 mb-4">
           <span
-            class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center"
+            class="px-2 py-1 text-xs font-medium text-white bg-black/40 backdrop-blur-md rounded-md flex items-center"
           >
             <i class="ri-building-line mr-1"></i>
             {{ getTypeName(property.type) }}
           </span>
           <span
             v-if="property.surface"
-            class="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-800 rounded-md flex items-center"
+            class="px-2 py-1 text-xs font-medium text-white bg-black/40 backdrop-blur-md rounded-md flex items-center"
           >
             <i class="ri-ruler-line mr-1"></i>
             {{ property.surface }} m²
@@ -90,10 +90,10 @@
       <!-- Informations locatives -->
       <div class="flex-1 flex flex-col">
         <div class="flex items-end justify-between mb-4">
-          <span class="text-sm text-gray-500 uppercase font-semibold">{{
+          <span class="text-sm text-zinc-500 uppercase font-semibold">{{
             $t('properties.monthlyRent')
           }}</span>
-          <span class="text-2xl font-bold text-white">{{ formatCurrency(property.rent) }}</span>
+          <span class="text-2xl font-bold text-zinc-900">{{ formatCurrency(property.rent) }}</span>
         </div>
 
         <!-- Informations locataire ou placeholder -->
@@ -108,7 +108,7 @@
           <!-- Placeholder pour les biens sans locataire -->
           <div
             v-else
-            class="border border-dashed border-white/10 rounded-xl bg-white/5 pt-2 sm:pt-4 mt-1 min-h-[60px] flex items-center justify-center"
+            class="border border-dashed border-zinc-200 rounded-xl bg-zinc-50 pt-2 sm:pt-4 mt-1 min-h-[60px] flex items-center justify-center"
           >
             <p class="text-zinc-500 text-xs sm:text-sm italic text-center px-2">
               {{ $t('tenants.noTenants') }}
@@ -120,11 +120,11 @@
 
     <!-- Actions -->
     <div
-      class="px-4 sm:px-5 py-3 border-t border-white/5 flex items-center gap-2 sm:gap-3 bg-black/20"
+      class="px-4 sm:px-5 py-3 border-t border-zinc-100 flex items-center gap-2 sm:gap-3 bg-zinc-50/50"
     >
       <button
         @click.stop="handleEdit"
-        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-violet-300 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
+        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-violet-600 bg-violet-500/10 border border-violet-500/20 rounded-lg hover:bg-violet-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
       >
         <svg
           class="w-4 h-4 sm:mr-2 flex-shrink-0"
@@ -143,7 +143,7 @@
       </button>
       <button
         @click.stop="handleDelete"
-        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
+        class="flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-rose-600 bg-rose-500/10 border border-rose-500/20 rounded-lg hover:bg-rose-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center min-w-0"
       >
         <svg
           class="w-4 h-4 sm:mr-2 flex-shrink-0"
