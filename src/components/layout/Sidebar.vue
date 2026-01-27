@@ -10,14 +10,14 @@
     <!-- Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-zinc-50 border-r border-zinc-200 transition-all duration-300 ease-in-out h-screen shadow-xl md:shadow-none md:relative md:translate-x-0 flex flex-col',
+        'fixed inset-y-0 left-0 z-50 w-64 md:w-20 bg-zinc-100 border-r border-zinc-300 transition-all duration-300 ease-in-out h-screen shadow-xl md:shadow-none md:relative md:translate-x-0 flex flex-col',
         isOpen || isDesktop ? 'translate-x-0' : '-translate-x-full'
       ]"
       style="overflow: hidden"
     >
       <!-- Header (fixe en haut) -->
       <div
-        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-zinc-200 bg-zinc-50 z-10"
+        class="flex-none w-full h-20 flex items-center justify-center px-6 md:px-0 border-b border-zinc-300 bg-zinc-100 z-10"
       >
         <router-link
           to="/dashboard"
@@ -74,7 +74,7 @@
               :class="[
                 isActive(item.path)
                   ? 'bg-primary-100 text-primary-700'
-                  : 'text-zinc-700 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
+                  : 'text-zinc-900 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
               ]"
             >
               <!-- Indicateur actif (mobile) -->
@@ -137,7 +137,7 @@
                 :class="[
                   isActive(item.path)
                     ? 'bg-primary-100 text-primary-700'
-                    : 'text-zinc-700 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
+                    : 'text-zinc-900 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
                 ]"
               >
                 <!-- Indicateur actif (mobile) -->
@@ -225,7 +225,7 @@
                 :class="[
                   isActive(item.path)
                     ? 'bg-primary-100 text-primary-700'
-                    : 'text-zinc-700 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
+                    : 'text-zinc-900 hover:bg-white hover:text-zinc-900 md:hover:scale-105'
                 ]"
               >
                 <!-- Indicateur actif (mobile) -->
@@ -281,7 +281,7 @@
 
       <!-- Footer (fixe en bas) -->
       <div
-        class="flex-none w-full border-t border-zinc-200 bg-zinc-50 z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
+        class="flex-none w-full border-t border-zinc-300 bg-zinc-100 z-10 flex items-center justify-center md:flex-col px-4 md:px-0 py-3 md:py-3"
       >
         <!-- Mobile: Layout complet -->
         <div class="flex items-center gap-3 w-full md:hidden">
