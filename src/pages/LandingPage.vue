@@ -51,13 +51,11 @@
     </nav>
 
     <!-- Hero Section -->
-    <main id="hero" class="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
+    <main id="hero" class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
       <!-- Background Effects -->
+      <div class="absolute inset-0 w-full h-full glow-bg-light pointer-events-none z-0"></div>
       <div
-        class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[900px] glow-bg-light pointer-events-none z-0"
-      ></div>
-      <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-100 rounded-full blur-3xl pointer-events-none z-0"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-100/50 rounded-full blur-[100px] pointer-events-none z-0 mix-blend-multiply"
       ></div>
 
       <div class="relative z-10 max-w-6xl mx-auto px-6">
@@ -182,69 +180,117 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div class="text-center">
-            <div class="text-4xl md:text-5xl font-bold text-primary-600 mb-2">+134</div>
-            <p class="text-zinc-500">Biens gérés</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+          <div
+            class="p-8 rounded-3xl bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-6"
+            >
+              <Building2 class="w-6 h-6" />
+            </div>
+            <div class="text-4xl md:text-5xl font-bold text-zinc-900 mb-2 tracking-tight">+134</div>
+            <p class="text-zinc-500 font-medium">Biens gérés avec succès</p>
           </div>
-          <div class="text-center">
-            <div class="text-4xl md:text-5xl font-bold text-success-600 mb-2">+134</div>
-            <p class="text-zinc-500">Valeur des revenus</p>
+          <div
+            class="p-8 rounded-3xl bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-success-50 text-success-600 flex items-center justify-center mb-6"
+            >
+              <Wallet class="w-6 h-6" />
+            </div>
+            <div class="text-4xl md:text-5xl font-bold text-zinc-900 mb-2 tracking-tight">
+              +2.4M€
+            </div>
+            <p class="text-zinc-500 font-medium">De loyers sécurisés</p>
           </div>
-          <div class="text-center">
-            <div class="text-4xl md:text-5xl font-bold text-blue-500 mb-2">+134</div>
-            <p class="text-zinc-500">Locataires satisfaits</p>
+          <div
+            class="p-8 rounded-3xl bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          >
+            <div
+              class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6"
+            >
+              <Users class="w-6 h-6" />
+            </div>
+            <div class="text-4xl md:text-5xl font-bold text-zinc-900 mb-2 tracking-tight">98%</div>
+            <p class="text-zinc-500 font-medium">De satisfaction client</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="glass-panel-light rounded-2xl p-8">
-            <h3 class="text-xl font-semibold text-zinc-900 mb-4">Avant Doogoo...</h3>
-            <ul class="space-y-3 text-zinc-600">
+        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          <!-- VS Badge (Desktop) -->
+          <div
+            class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white rounded-full items-center justify-center shadow-lg border border-zinc-100 font-bold text-zinc-400 text-sm"
+          >
+            VS
+          </div>
+
+          <!-- Avant -->
+          <div class="glass-panel-light rounded-2xl p-8 border-danger-100 bg-danger-50/30">
+            <h3 class="text-xl font-semibold text-zinc-900 mb-6 flex items-center gap-2">
+              <span
+                class="w-8 h-8 rounded-full bg-danger-100 flex items-center justify-center text-danger-600"
+              >
+                <X class="w-5 h-5" />
+              </span>
+              Sans Doogoo
+            </h3>
+            <ul class="space-y-4 text-zinc-600">
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
-                <span>Feuilles de calcul dispersées</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-danger-400 mt-2 shrink-0"></span>
+                <span>Feuilles de calcul dispersées et erreurs manuelles</span>
               </li>
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
-                <span>Retards de paiement non détectés</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-danger-400 mt-2 shrink-0"></span>
+                <span>Retards de paiement non détectés immédiatement</span>
               </li>
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
-                <span>Export comptable manuel et chronophage</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-danger-400 mt-2 shrink-0"></span>
+                <span>Préparation comptable longue et fastidieuse</span>
               </li>
               <li class="flex items-start gap-3">
-                <X class="w-5 h-5 text-danger-500 flex-shrink-0 mt-0.5" />
-                <span>Pas de visibilité sur la rentabilité</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-danger-400 mt-2 shrink-0"></span>
+                <span>Aucune vision claire sur la rentabilité réelle</span>
               </li>
             </ul>
           </div>
 
-          <div class="glass-panel-light rounded-2xl p-8 border-primary-200">
+          <!-- Après -->
+          <div
+            class="glass-panel-light rounded-2xl p-8 border-primary-200 bg-white shadow-xl scale-100 md:scale-105 relative z-10 ring-1 ring-primary-100"
+          >
             <h3
               ref="avecH3"
               words-slide-from-right
               text-split
-              class="text-xl font-semibold text-zinc-900 mb-4"
+              class="text-xl font-semibold text-zinc-900 mb-6 flex items-center gap-2"
             >
+              <span
+                class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600"
+              >
+                <Check class="w-5 h-5" />
+              </span>
               Avec Doogoo
             </h3>
-            <ul class="space-y-3 text-zinc-600">
+            <ul class="space-y-4 text-zinc-600">
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
-                <span>Tout centralisé dans une interface unique</span>
+                <Check class="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
+                <span class="font-medium text-zinc-900">Interface unique centralisée</span>
               </li>
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
-                <span>Alertes automatiques en cas de retard</span>
+                <Check class="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
+                <span class="font-medium text-zinc-900">Alertes automatiques &amp; Relances</span>
               </li>
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
-                <span>Export comptable en un clic (CSV, PDF, XLS)</span>
+                <Check class="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
+                <span class="font-medium text-zinc-900"
+                  >Comptabilité automatisée (Exports clairs)</span
+                >
               </li>
               <li class="flex items-start gap-3">
-                <Check class="w-5 h-5 text-success-500 flex-shrink-0 mt-0.5" />
-                <span>Tableaux de bord en temps réel</span>
+                <Check class="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
+                <span class="font-medium text-zinc-900">Tableaux de bord temps réel</span>
               </li>
             </ul>
           </div>
@@ -1514,6 +1560,13 @@ button,
   border-radius: 9999px !important;
 }
 
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
 /* Button text animation */
 .text.is-white {
   color: white;
@@ -1524,9 +1577,28 @@ button,
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(228, 228, 231, 0.6); /* zinc-200 */
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(228, 228, 231, 0.6);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.glass-panel-light:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 10px 10px -5px rgba(0, 0, 0, 0.01);
+  border-color: rgba(99, 102, 241, 0.2); /* primary-500/20 */
 }
 
 .gradient-text {
@@ -1537,7 +1609,28 @@ button,
 }
 
 .glow-bg {
-  background: radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+.glow-bg-light {
+  background:
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(167, 139, 250, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(52, 211, 153, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+  filter: blur(40px);
+  animation: pulse-glow 8s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
 }
 
 /* Propal-style Hero Headlines */
@@ -1645,7 +1738,7 @@ h6 {
 }
 
 .h1.is-white {
-  color: #ffffff;
+  color: #18181b; /* zinc-900 */
 }
 
 .h1.is-emerald {

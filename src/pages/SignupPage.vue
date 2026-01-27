@@ -1,10 +1,10 @@
 <template>
   <AuthLayout>
     <div>
-      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-white">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-zinc-900">
         {{ $t('auth.signup.title') }}
       </h2>
-      <p class="text-center text-zinc-400 text-sm mb-6">{{ $t('auth.signup.subtitle') }}</p>
+      <p class="text-center text-zinc-500 text-sm mb-6">{{ $t('auth.signup.subtitle') }}</p>
 
       <form @submit.prevent="handleSignUp" class="space-y-4">
         <!-- Nom complet -->
@@ -106,12 +106,12 @@
         />
 
         <!-- Lien retour connexion -->
-        <div class="mt-6 pt-6 border-t border-white/10 text-center">
+        <div class="mt-6 pt-6 border-t border-zinc-100 text-center">
           <p class="text-sm text-zinc-500">
             {{ $t('auth.signup.hasAccount') }}
             <router-link
               to="/login"
-              class="text-violet-400 hover:text-violet-300 font-semibold transition-colors ml-1"
+              class="text-primary-600 hover:text-primary-700 font-semibold transition-colors ml-1"
             >
               {{ $t('auth.login.title') }}
             </router-link>

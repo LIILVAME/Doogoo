@@ -3,10 +3,10 @@
     <div>
       <!-- ÉTAPE 1 : Demande de réinitialisation (formulaire email) -->
       <div v-if="!hasResetToken && !emailSent">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-zinc-900">
           {{ $t('auth.reset.title') }}
         </h2>
-        <p class="text-center text-gray-500 text-sm mb-6">{{ $t('auth.reset.subtitle') }}</p>
+        <p class="text-center text-zinc-500 text-sm mb-6">{{ $t('auth.reset.subtitle') }}</p>
 
         <form @submit.prevent="handleResetPassword" class="space-y-4">
           <AuthInput
@@ -49,7 +49,7 @@
           />
 
           <!-- Lien retour connexion -->
-          <div class="mt-6 pt-6 border-t border-gray-200 text-center">
+          <div class="mt-6 pt-6 border-t border-zinc-100 text-center">
             <router-link
               to="/login"
               class="text-sm text-success-700 hover:text-success-500 font-semibold transition-colors"
@@ -80,10 +80,10 @@
               ></path>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-2">
+          <h3 class="text-xl font-semibold text-zinc-900 mb-2">
             {{ $t('auth.reset.successTitle') }}
           </h3>
-          <p class="text-gray-600 mb-6">
+          <p class="text-zinc-600 mb-6">
             {{ $t('auth.reset.successMessage', { email: form.email }) }}
           </p>
 
@@ -93,10 +93,10 @@
 
       <!-- ÉTAPE 3 : Formulaire de nouveau mot de passe (après clic sur le lien email) -->
       <div v-if="hasResetToken">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-gray-900">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2 text-center text-zinc-900">
           {{ $t('auth.reset.newPasswordTitle') }}
         </h2>
-        <p class="text-center text-gray-500 text-sm mb-6">
+        <p class="text-center text-zinc-500 text-sm mb-6">
           {{ $t('auth.reset.newPasswordSubtitle') }}
         </p>
 
@@ -181,7 +181,7 @@
           />
 
           <!-- Lien retour connexion -->
-          <div class="mt-6 pt-6 border-t border-gray-200 text-center">
+          <div class="mt-6 pt-6 border-t border-zinc-100 text-center">
             <router-link
               to="/login"
               class="text-sm text-success-700 hover:text-success-500 font-semibold transition-colors"

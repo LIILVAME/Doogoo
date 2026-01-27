@@ -7,8 +7,8 @@
       'flex items-center justify-center transition-all duration-200',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       variant === 'primary'
-        ? 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-lg shadow-white/5 hover:-translate-y-0.5 disabled:hover:translate-y-0'
-        : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:-translate-y-0.5 disabled:hover:translate-y-0'
+        ? 'bg-primary-600 text-white hover:bg-primary-700 shadow-md shadow-primary-500/20 hover:-translate-y-0.5 disabled:hover:translate-y-0 disabled:bg-zinc-200 disabled:text-zinc-500 disabled:shadow-none'
+        : 'bg-white text-zinc-700 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 hover:-translate-y-0.5 disabled:hover:translate-y-0'
     ]"
     @click="handleClick"
   >

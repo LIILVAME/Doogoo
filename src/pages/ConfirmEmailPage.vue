@@ -21,12 +21,12 @@
       </div>
 
       <!-- Titre -->
-      <h2 class="text-2xl sm:text-3xl font-bold mb-3 text-gray-900">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-3 text-zinc-900">
         {{ $t('auth.confirm.title') }}
       </h2>
 
       <!-- Message -->
-      <p class="text-gray-600 mb-8 max-w-md mx-auto">
+      <p class="text-zinc-600 mb-8 max-w-md mx-auto">
         {{ $t('auth.confirm.message') }}
       </p>
 
