@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 space-y-6 w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -11,62 +11,35 @@
       <!-- Header avec statistiques -->
       <PageHeader :title="$t('tenants.title')" :subtitle="$t('tenants.subtitle')">
         <template #actions>
-          <button
+          <Button
             @click="isModalOpen = true"
-            class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg shadow-white/5 hover:opacity-90"
+            variant="primary"
+            class="shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             <Plus class="w-5 h-5 mr-2" />
             {{ $t('tenants.addTenant') }}
-          </button>
+          </Button>
         </template>
       </PageHeader>
 
       <!-- Statistiques globales -->
       <StatsGrid :stats="statsArray" />
 
-      <!-- Barre de recherche -->
-      <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search class="h-5 w-5 text-zinc-400" />
-        </div>
-        <input
-          v-model="searchQuery"
-          type="text"
-          class="block w-full pl-10 pr-3 py-2 border border-zinc-200 rounded-xl leading-5 bg-white text-zinc-900 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all duration-200 shadow-sm"
-          :placeholder="$t('common.search')"
-        />
-      </div>
+      <!-- Filtres et recherche -->
+      <TenantsFilters
+        :search-term="searchQuery"
+        :active-filter="activeFilter"
+        :filter-counts="filterCounts"
+        @search="searchQuery = $event"
+        @filter="activeFilter = $event"
+      />
 
-      <!-- Filtres -->
-      <div class="mb-6 flex flex-wrap items-center gap-4">
-        <button
-          v-for="filter in filters"
-          :key="filter.value"
-          @click="activeFilter = filter.value"
-          :class="[
-            'px-4 py-2 rounded-xl font-medium transition-all duration-200 text-sm border',
-            activeFilter === filter.value
-              ? 'bg-violet-600 text-white border-violet-500 shadow-lg shadow-violet-500/20'
-              : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-300 shadow-sm'
-          ]"
-        >
-          {{ filter.label }}
-        </button>
-      </div>
-
-      <!-- État de chargement initial (première fois, pas de données) -->
+      <!-- État de chargement avec skeletons (uniquement si aucune donnée) -->
       <div
-        v-if="
-          propertiesStore.loading &&
-          propertiesStore.properties.length === 0 &&
-          !propertiesStore.error
-        "
-        class="text-center py-16"
+        v-if="propertiesStore.loading && propertiesStore.properties.length === 0"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"
-        ></div>
-        <p class="text-zinc-400">{{ $t('tenants.loading') }}</p>
+        <SkeletonCard v-for="n in 6" :key="n" />
       </div>
 
       <!-- Erreur (uniquement si pas de données en cache) -->
@@ -168,21 +141,24 @@ import StatsGrid from '@/components/shared/StatsGrid.vue'
 import TenantsList from '../components/tenants/TenantsList.vue'
 import AddTenantModal from '../components/tenants/AddTenantModal.vue'
 import EditTenantModal from '../components/tenants/EditTenantModal.vue'
+import TenantsFilters from '@/components/tenants/TenantsFilters.vue'
 import InlineLoader from '../components/common/InlineLoader.vue'
+import SkeletonCard from '@/components/ui/SkeletonCard.vue'
 import ConfirmModal from '@/components/modals/ConfirmModal.vue'
 import LeaseTemplate from '../components/documents/LeaseTemplate.vue'
 import { useTenantsStore } from '@/stores/tenantsStore'
 import { usePropertiesStore } from '@/stores/propertiesStore'
 import { useAuthStore } from '@/stores/authStore'
-import { PAYMENT_STATUS } from '@/utils/constants'
 import { formatCurrency } from '@/utils/formatters'
-import { Users, CheckCircle, AlertCircle, Wallet, Plus, Search } from 'lucide-vue-next'
+import { Plus, Users, CheckCircle, AlertCircle, Wallet } from 'lucide-vue-next'
+import { useDashboardMetrics } from '@/composables/useDashboardMetrics'
 
 const { t } = useI18n()
 const route = useRoute()
 const tenantsStore = useTenantsStore()
 const propertiesStore = usePropertiesStore()
 const authStore = useAuthStore()
+const { metrics } = useDashboardMetrics()
 
 const searchQuery = ref('')
 
@@ -265,51 +241,65 @@ const stats = computed(() => ({
 }))
 
 /**
+ * Compteurs pour les filtres
+ */
+const filterCounts = computed(() => ({
+  all: stats.value.totalTenants,
+  onTime: stats.value.onTimeTenants,
+  late: stats.value.lateTenants
+}))
+
+/**
  * Statistiques formatées pour StatsGrid
  */
-const statsArray = computed(() => [
-  {
-    label: t('common.all'),
-    value: stats.value.totalTenants.toString(),
-    icon: Users,
-    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
-    iconBgColor: 'bg-opacity-10 bg-violet-500',
-    iconColor: 'text-violet-200'
-  },
-  {
-    label: t('status.onTime'),
-    value: stats.value.onTimeTenants.toString(),
-    icon: CheckCircle,
-    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
-    iconBgColor: 'bg-opacity-10 bg-emerald-500',
-    iconColor: 'text-emerald-200'
-  },
-  {
-    label: t('status.late'),
-    value: stats.value.lateTenants.toString(),
-    icon: AlertCircle,
-    glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
-    iconBgColor: 'bg-opacity-10 bg-rose-500',
-    iconColor: 'text-rose-200'
-  },
-  {
-    label: t('tenants.totalRent'),
-    value: formatCurrency(stats.value.totalRent),
-    icon: Wallet,
-    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
-    iconBgColor: 'bg-opacity-10 bg-amber-500',
-    iconColor: 'text-amber-200'
-  }
-])
+const statsArray = computed(() => {
+  const m = metrics.value
+  const loading = tenantsStore.loading
+
+  return [
+    {
+      label: t('common.all'),
+      value: stats.value.totalTenants.toString(),
+      icon: Users,
+      trend: loading ? null : m.tenant.tenantTrend,
+      glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+      iconBgColor: 'bg-opacity-10 bg-violet-500',
+      iconColor: 'text-violet-200'
+    },
+    {
+      label: t('status.onTime'),
+      value: stats.value.onTimeTenants.toString(),
+      icon: CheckCircle,
+      trend: loading ? null : m.paymentActivity.paid.trend,
+      glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+      iconBgColor: 'bg-opacity-10 bg-emerald-500',
+      iconColor: 'text-emerald-200'
+    },
+    {
+      label: t('status.late'),
+      value: stats.value.lateTenants.toString(),
+      icon: AlertCircle,
+      trend: loading ? null : m.paymentActivity.late.trend,
+      glowColor: 'bg-rose-500/10 group-hover:bg-rose-500/20',
+      iconBgColor: 'bg-opacity-10 bg-rose-500',
+      iconColor: 'text-rose-200'
+    },
+    {
+      label: t('tenants.totalRent'),
+      value: formatCurrency(stats.value.totalRent),
+      icon: Wallet,
+      trend: loading ? null : m.financial.revenueTrend,
+      glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+      iconBgColor: 'bg-opacity-10 bg-amber-500',
+      iconColor: 'text-amber-200'
+    }
+  ]
+})
 
 /**
  * Filtres disponibles
  */
-const filters = computed(() => [
-  { label: t('common.all'), value: 'all' },
-  { label: t('status.onTime'), value: PAYMENT_STATUS.ON_TIME },
-  { label: t('status.late'), value: PAYMENT_STATUS.LATE }
-])
+// Filters computed property removed as it is now handled in TenantsFilters component
 
 /**
  * Vérifie si des filtres sont actifs

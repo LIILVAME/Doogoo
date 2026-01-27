@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 space-y-6 w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -11,13 +11,14 @@
       <!-- Header avec statistiques -->
       <PageHeader :title="$t('properties.myProperties')" :subtitle="$t('properties.subtitle')">
         <template #actions>
-          <button
+          <Button
             @click="isAddModalOpen = true"
-            class="btn-primary flex items-center justify-center shrink-0 bg-white text-zinc-950 hover:bg-zinc-200 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-lg shadow-white/5 hover:opacity-90"
+            variant="primary"
+            class="shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             <Plus class="w-5 h-5 mr-2" />
             {{ $t('properties.addProperty') }}
-          </button>
+          </Button>
         </template>
       </PageHeader>
 
@@ -137,10 +138,13 @@ import { usePropertiesStore } from '@/stores/propertiesStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
 import { useI18n } from '@/composables/useLingui'
 import { formatCurrency } from '@/utils/formatters'
+import { useDashboardMetrics } from '@/composables/useDashboardMetrics'
+import Button from '@/components/ui/Button.vue'
 import { Building2, Users, Home, Wallet, Plus } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const propertiesStore = usePropertiesStore()
+const { metrics } = useDashboardMetrics()
 const route = useRoute()
 const router = useRouter()
 
@@ -232,40 +236,48 @@ const stats = computed(() => ({
 /**
  * Statistiques formatées pour StatsGrid
  */
-const statsArray = computed(() => [
-  {
-    label: t('common.all'),
-    value: stats.value.totalProperties.toString(),
-    icon: Building2,
-    glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
-    iconBgColor: 'bg-opacity-10 bg-violet-500',
-    iconColor: 'text-violet-200'
-  },
-  {
-    label: t('properties.occupied'),
-    value: stats.value.occupiedProperties.toString(),
-    icon: Users,
-    glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
-    iconBgColor: 'bg-opacity-10 bg-emerald-500',
-    iconColor: 'text-emerald-200'
-  },
-  {
-    label: t('properties.free'),
-    value: stats.value.vacantProperties.toString(),
-    icon: Home,
-    glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
-    iconBgColor: 'bg-opacity-10 bg-zinc-500',
-    iconColor: 'text-zinc-200'
-  },
-  {
-    label: t('dashboard.rentCollected'),
-    value: formatCurrency(stats.value.totalRent),
-    icon: Wallet,
-    glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
-    iconBgColor: 'bg-opacity-10 bg-amber-500',
-    iconColor: 'text-amber-200'
-  }
-])
+const statsArray = computed(() => {
+  const isLoading = propertiesStore.loading
+  const m = metrics.value
+
+  return [
+    {
+      label: t('common.all'),
+      value: isLoading ? '...' : stats.value.totalProperties.toString(),
+      icon: Building2,
+      trend: isLoading ? null : m.property.propertyTrend,
+      glowColor: 'bg-violet-500/10 group-hover:bg-violet-500/20',
+      iconBgColor: 'bg-violet-50 border-violet-100',
+      iconColor: 'text-violet-600'
+    },
+    {
+      label: t('properties.occupied'),
+      value: isLoading ? '...' : stats.value.occupiedProperties.toString(),
+      icon: Users,
+      trend: isLoading ? null : m.property.occupiedTrend,
+      glowColor: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+      iconBgColor: 'bg-emerald-50 border-emerald-100',
+      iconColor: 'text-emerald-600'
+    },
+    {
+      label: t('properties.free'),
+      value: isLoading ? '...' : stats.value.vacantProperties.toString(),
+      icon: Home,
+      glowColor: 'bg-zinc-500/10 group-hover:bg-zinc-500/20',
+      iconBgColor: 'bg-zinc-50 border-zinc-100',
+      iconColor: 'text-zinc-600'
+    },
+    {
+      label: t('dashboard.rentCollected'),
+      value: isLoading ? '...' : formatCurrency(stats.value.totalRent),
+      icon: Wallet,
+      trend: isLoading ? null : m.financial.revenueTrend,
+      glowColor: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+      iconBgColor: 'bg-amber-50 border-amber-100',
+      iconColor: 'text-amber-600'
+    }
+  ]
+})
 
 /**
  * Compteurs pour les filtres

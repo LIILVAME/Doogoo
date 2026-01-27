@@ -1,6 +1,6 @@
 <template>
   <DashboardLayout>
-    <div class="p-6 lg:p-8 xl:p-10 w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
       <PullToRefresh
         :is-pulling="isPulling"
         :pull-distance="pullDistance"
@@ -43,20 +43,12 @@
       <!-- KPIs Section -->
       <StatsGrid v-if="reportData" :stats="reportStatsArray" />
 
-      <!-- Loading State avec progression -->
-      <div v-if="reportsStore.loading && !reportData" class="text-center py-12">
-        <InlineLoader />
-        <p class="mt-4 text-zinc-400 mb-4">{{ $t('reports.loading') }}</p>
-        <!-- Barre de progression -->
-        <div class="max-w-md mx-auto">
-          <div class="w-full bg-zinc-200 rounded-full h-2 mb-2">
-            <div
-              class="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-              :style="{ width: `${progress}%` }"
-            ></div>
-          </div>
-          <p class="text-sm text-zinc-500">{{ progress }}%</p>
-        </div>
+      <!-- Loading State avec skeletons -->
+      <div
+        v-if="reportsStore.loading && !reportData"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+      >
+        <SkeletonCard v-for="n in 4" :key="n" />
       </div>
 
       <!-- Chart and Table Section -->
@@ -126,10 +118,11 @@ import { usePullToRefresh } from '@/composables/usePullToRefresh'
 import PullToRefresh from '../components/common/PullToRefresh.vue'
 import { useI18n } from '@/composables/useLingui'
 import DashboardLayout from '@/layouts/DashboardLayout.vue'
-import InlineLoader from '../components/common/InlineLoader.vue'
+
 import EmptyState from '../components/common/EmptyState.vue'
 import LoadingOverlay from '../components/common/LoadingOverlay.vue'
 import StatsGrid from '@/components/shared/StatsGrid.vue'
+import SkeletonCard from '@/components/ui/SkeletonCard.vue'
 import ReportFilters from '../components/reports/ReportFilters.vue'
 import ReportSummary from '../components/reports/ReportSummary.vue'
 import ReportTable from '../components/reports/ReportTable.vue'

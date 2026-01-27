@@ -24,58 +24,22 @@
           </button>
         </div>
 
-        <!-- Filtres -->
-        <div class="flex flex-wrap items-center gap-2 mb-6">
-          <button
-            v-for="filter in filters"
-            :key="filter.id"
-            @click="activeFilter = filter.id"
-            class="px-4 py-2 rounded-xl text-sm font-medium transition-colors"
-            :class="
-              activeFilter === filter.id
-                ? filter.activeClass
-                : 'bg-white text-zinc-500 hover:bg-zinc-50 border border-zinc-200'
-            "
-          >
-            {{ filter.label }}
-            <span
-              v-if="filter.count > 0"
-              class="ml-2 px-1.5 py-0.5 rounded-full text-xs"
-              :class="
-                activeFilter === filter.id ? filter.badgeActiveClass : 'bg-zinc-100 text-zinc-500'
-              "
-            >
-              {{ filter.count }}
-            </span>
-          </button>
-        </div>
+        <!-- Filtres et Recherche -->
+        <AlertsFilters
+          :search-term="searchTerm"
+          :active-filter="activeFilter"
+          :filter-counts="filterCounts"
+          @search="searchTerm = $event"
+          @filter="activeFilter = $event"
+        />
 
         <!-- Statistiques des alertes -->
         <StatsGrid :stats="alertStatsArray" />
       </div>
 
       <!-- État de chargement avec skeletons -->
-      <div v-if="alertsStore.loading" class="space-y-4">
-        <div
-          v-for="n in 3"
-          :key="n"
-          class="bg-white border border-zinc-200 rounded-2xl p-6 animate-pulse"
-        >
-          <!-- Header skeleton -->
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex-1">
-              <div class="h-4 bg-zinc-200 rounded w-24 mb-3"></div>
-              <div class="h-6 bg-zinc-200 rounded w-3/4 mb-2"></div>
-              <div class="h-4 bg-zinc-200 rounded w-1/2"></div>
-            </div>
-            <div class="h-8 bg-zinc-200 rounded w-20"></div>
-          </div>
-          <!-- Content skeleton -->
-          <div class="space-y-2 mt-4">
-            <div class="h-3 bg-zinc-200 rounded w-full"></div>
-            <div class="h-3 bg-zinc-200 rounded w-5/6"></div>
-          </div>
-        </div>
+      <div v-if="alertsStore.loading" class="grid grid-cols-1 gap-4">
+        <SkeletonCard v-for="n in 3" :key="n" />
       </div>
 
       <!-- Erreur -->
@@ -212,11 +176,16 @@ import Button from '@/components/ui/Button.vue'
 import StatsGrid from '@/components/shared/StatsGrid.vue'
 import { useAlertsStore } from '@/stores/alertsStore'
 import { formatDate } from '@/utils/formatters'
+
 import { AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-vue-next'
+import AlertsFilters from '@/components/alerts/AlertsFilters.vue'
+import SkeletonCard from '@/components/ui/SkeletonCard.vue'
+import { useDashboardMetrics } from '@/composables/useDashboardMetrics'
 
 const { t } = useI18n()
 
 const alertsStore = useAlertsStore()
+const { metrics } = useDashboardMetrics()
 
 // Filtre actif
 const activeFilter = ref('all')
@@ -232,6 +201,13 @@ const filteredAlerts = computed(() => {
     filtered = filtered.filter(a => a.severity === 'high')
   } else if (activeFilter.value === 'info') {
     filtered = filtered.filter(a => a.severity === 'low')
+  }
+  // Applique la recherche
+  if (searchTerm.value.trim()) {
+    const query = searchTerm.value.toLowerCase()
+    filtered = filtered.filter(
+      a => a.title.toLowerCase().includes(query) || a.message.toLowerCase().includes(query)
+    )
   }
   // 'all' : pas de filtre
 
@@ -252,62 +228,53 @@ const unreadCount = computed(() => {
   return alertsStore.alerts.filter(alert => !alertsStore.isRead(alert.id)).length
 })
 
+// Recherche
+const searchTerm = ref('')
+
 /**
- * Filtres disponibles
+ * Compteurs pour les filtres
  */
-const filters = computed(() => [
-  {
-    id: 'all',
-    label: 'Toutes',
-    count: alertsStore.alerts.length,
-    activeClass: 'bg-violet-50 text-violet-700 border border-violet-200',
-    badgeActiveClass: 'bg-violet-100 text-violet-700'
-  },
-  {
-    id: 'critical',
-    label: 'Critiques',
-    count: alertsStore.highSeverityAlerts.length,
-    activeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
-    badgeActiveClass: 'bg-rose-100 text-rose-700'
-  },
-  {
-    id: 'info',
-    label: 'Informations',
-    count: alertsStore.lowSeverityAlerts.length,
-    activeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-    badgeActiveClass: 'bg-blue-100 text-blue-700'
-  }
-])
+const filterCounts = computed(() => ({
+  all: alertsStore.alerts.length,
+  critical: alertsStore.highSeverityAlerts.length,
+  info: alertsStore.lowSeverityAlerts.length
+}))
 
 /**
  * Stats pour StatsGrid
  */
-const alertStatsArray = computed(() => [
-  {
-    label: t('alerts.criticalAlerts'),
-    value: alertsStore.highSeverityAlerts.length.toString(),
-    icon: AlertTriangle,
-    glowColor: 'bg-rose-50 group-hover:bg-rose-100',
-    iconBgColor: 'bg-rose-50',
-    iconColor: 'text-rose-600'
-  },
-  {
-    label: t('alerts.mediumAlerts'),
-    value: alertsStore.mediumSeverityAlerts.length.toString(),
-    icon: AlertCircle,
-    glowColor: 'bg-amber-50 group-hover:bg-amber-100',
-    iconBgColor: 'bg-amber-50',
-    iconColor: 'text-amber-600'
-  },
-  {
-    label: t('alerts.information'),
-    value: alertsStore.lowSeverityAlerts.length.toString(),
-    icon: Info,
-    glowColor: 'bg-blue-50 group-hover:bg-blue-100',
-    iconBgColor: 'bg-blue-50',
-    iconColor: 'text-blue-600'
-  }
-])
+const alertStatsArray = computed(() => {
+  const m = metrics.value
+  const loading = alertsStore.loading
+
+  return [
+    {
+      label: t('alerts.criticalAlerts'),
+      value: alertsStore.highSeverityAlerts.length.toString(),
+      icon: AlertTriangle,
+      trend: loading ? null : m.paymentActivity.late.trend, // Proxy using late payments trend
+      glowColor: 'bg-rose-50 group-hover:bg-rose-100',
+      iconBgColor: 'bg-rose-50',
+      iconColor: 'text-rose-600'
+    },
+    {
+      label: t('alerts.mediumAlerts'),
+      value: alertsStore.mediumSeverityAlerts.length.toString(),
+      icon: AlertCircle,
+      glowColor: 'bg-amber-50 group-hover:bg-amber-100',
+      iconBgColor: 'bg-amber-50',
+      iconColor: 'text-amber-600'
+    },
+    {
+      label: t('alerts.information'),
+      value: alertsStore.lowSeverityAlerts.length.toString(),
+      icon: Info,
+      glowColor: 'bg-blue-50 group-hover:bg-blue-100',
+      iconBgColor: 'bg-blue-50',
+      iconColor: 'text-blue-600'
+    }
+  ]
+})
 
 const { isPulling, pullDistance, isRefreshing } = usePullToRefresh(
   async () => {

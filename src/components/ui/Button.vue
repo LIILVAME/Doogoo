@@ -42,7 +42,7 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: v => ['primary', 'secondary', 'ghost', 'danger'].includes(v)
+    validator: v => ['primary', 'secondary', 'ghost', 'danger', 'outline'].includes(v)
   },
   size: {
     type: String,
@@ -78,7 +78,7 @@ const emit = defineEmits(['click'])
  */
 const baseClasses = [
   'inline-flex items-center justify-center',
-  'font-medium rounded-full',
+  'font-medium rounded-xl',
   'transition-all duration-200',
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none'
@@ -99,6 +99,13 @@ const variantClasses = {
     'border-2 border-brand',
     'bg-transparent hover:bg-brand-50',
     'text-brand hover:text-brand-hover',
+    'focus-visible:ring-brand'
+  ],
+  outline: [
+    'border border-border-default',
+    'bg-bg-page hover:bg-bg-subtle',
+    'text-text-primary hover:text-brand',
+    'shadow-sm hover:shadow-md',
     'focus-visible:ring-brand'
   ],
   ghost: [

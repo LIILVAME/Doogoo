@@ -1,0 +1,29 @@
+/**
+ * API centralisée - Point d'entrée unique pour toutes les interactions Supabase
+ *
+ * Utilisation dans les stores :
+ * ```ts
+ * import { propertiesApi, paymentsApi, tenantsApi } from '@/api'
+ *
+ * const result = await propertiesApi.getProperties(userId)
+ * if (result.success) {
+ *   // Utiliser result.data
+ * } else {
+ *   // Gérer result.message
+ * }
+ * ```
+ */
+
+export * as propertiesApi from './properties'
+export * as paymentsApi from './payments'
+export * as tenantsApi from './tenants'
+
+export * as documentsApi from './documents'
+
+export * as authApi from './auth'
+
+export { analyticsApi } from './analytics'
+
+export { reportsApi } from './reports'
+
+export { alertsApi } from './alerts'

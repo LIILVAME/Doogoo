@@ -34,7 +34,7 @@ export interface Property {
   status: 'occupied' | 'vacant'
   rent: number
   tenant?: Tenant | null
-  image?: string
+  image?: string | null
   created_at?: string
   updated_at?: string
 }

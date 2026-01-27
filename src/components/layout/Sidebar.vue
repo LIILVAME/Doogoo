@@ -639,16 +639,16 @@ const gestionItems = computed(() => [
     iconClass: iconMap.building
   },
   {
-    name: t('sidebar.payments'),
-    path: '/paiements',
-    icon: 'currency',
-    iconClass: iconMap.currency
-  },
-  {
     name: t('sidebar.tenants'),
     path: '/locataires',
     icon: 'users',
     iconClass: iconMap.users
+  },
+  {
+    name: t('sidebar.payments'),
+    path: '/paiements',
+    icon: 'currency',
+    iconClass: iconMap.currency
   }
 ])
 
@@ -746,8 +746,10 @@ const handleFlyoutHover = (event, menuId) => {
     clearTimeout(flyoutHoverTimeout)
   }
 
+  const target = event.currentTarget
+
   flyoutHoverTimeout = setTimeout(() => {
-    const target = event.currentTarget
+    if (!target) return
     const rect = target.getBoundingClientRect()
 
     // Calcule la position du centre de l'icône

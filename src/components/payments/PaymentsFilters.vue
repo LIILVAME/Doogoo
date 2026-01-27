@@ -17,7 +17,7 @@
       <input
         type="text"
         v-model="localSearchTerm"
-        :placeholder="$t('properties.searchPlaceholder')"
+        :placeholder="$t('common.search')"
         @input="$emit('search', localSearchTerm)"
         class="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-100 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-brand/5 focus:border-brand transition-all shadow-sm hover:border-zinc-200"
       />
@@ -25,7 +25,7 @@
 
     <!-- Segmented Control Filtres -->
     <div
-      class="flex p-1 bg-zinc-100/50 rounded-2xl self-start md:self-center border border-zinc-100"
+      class="flex p-1 bg-zinc-100/50 rounded-2xl self-start md:self-center border border-zinc-100 overflow-x-auto max-w-full"
     >
       <button
         v-for="filter in filters"
@@ -58,7 +58,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useI18n } from '@/composables/useLingui'
-import { PROPERTY_STATUS } from '@/utils/constants'
+import { TRANSACTION_STATUS } from '@/utils/constants'
 
 const { t } = useI18n()
 
@@ -75,8 +75,9 @@ const props = defineProps({
     type: Object,
     default: () => ({
       all: 0,
-      occupied: 0,
-      vacant: 0
+      pending: 0,
+      late: 0,
+      paid: 0
     })
   }
 })
@@ -91,11 +92,12 @@ const localSearchTerm = ref(props.searchTerm)
 const filters = computed(() => [
   { label: t('common.all'), value: 'all', count: props.filterCounts.all },
   {
-    label: t('properties.occupied'),
-    value: PROPERTY_STATUS.OCCUPIED,
-    count: props.filterCounts.occupied
+    label: t('payments.pending'),
+    value: TRANSACTION_STATUS.PENDING,
+    count: props.filterCounts.pending
   },
-  { label: t('properties.free'), value: PROPERTY_STATUS.VACANT, count: props.filterCounts.vacant }
+  { label: t('payments.late'), value: TRANSACTION_STATUS.LATE, count: props.filterCounts.late },
+  { label: t('payments.paid'), value: TRANSACTION_STATUS.PAID, count: props.filterCounts.paid }
 ])
 
 /**

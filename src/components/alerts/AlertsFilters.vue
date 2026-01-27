@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-    <!-- Barre de recherche Premium -->
+    <!-- Barre de recherche (pour les alertes, on peut filtrer par titre/message) -->
     <div class="relative flex-1 max-w-md group">
       <div
         class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-brand text-zinc-400"
@@ -17,7 +17,7 @@
       <input
         type="text"
         v-model="localSearchTerm"
-        :placeholder="$t('properties.searchPlaceholder')"
+        :placeholder="$t('common.search')"
         @input="$emit('search', localSearchTerm)"
         class="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-100 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-brand/5 focus:border-brand transition-all shadow-sm hover:border-zinc-200"
       />
@@ -58,7 +58,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useI18n } from '@/composables/useLingui'
-import { PROPERTY_STATUS } from '@/utils/constants'
 
 const { t } = useI18n()
 
@@ -75,8 +74,8 @@ const props = defineProps({
     type: Object,
     default: () => ({
       all: 0,
-      occupied: 0,
-      vacant: 0
+      critical: 0,
+      info: 0
     })
   }
 })
@@ -89,13 +88,17 @@ const localSearchTerm = ref(props.searchTerm)
  * Filtres avec compteurs dynamiques
  */
 const filters = computed(() => [
-  { label: t('common.all'), value: 'all', count: props.filterCounts.all },
+  { label: t('common.all') || 'Toutes', value: 'all', count: props.filterCounts.all },
   {
-    label: t('properties.occupied'),
-    value: PROPERTY_STATUS.OCCUPIED,
-    count: props.filterCounts.occupied
+    label: t('alerts.severity.critical') || 'Critiques',
+    value: 'critical',
+    count: props.filterCounts.critical
   },
-  { label: t('properties.free'), value: PROPERTY_STATUS.VACANT, count: props.filterCounts.vacant }
+  {
+    label: t('alerts.severity.info') || 'Infos',
+    value: 'info',
+    count: props.filterCounts.info
+  }
 ])
 
 /**

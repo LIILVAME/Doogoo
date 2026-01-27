@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia'
-import { ref, computed, type Ref, type ComputedRef } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
-import { useAuthStore } from './authStore'
-import { useToastStore } from './toastStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores/toastStore'
 import { PROPERTY_STATUS } from '@/utils/constants'
-import { propertiesApi } from '@/api'
-import { tenantsApi } from '@/api'
+import { propertiesApi, tenantsApi } from '@/api'
+import type { ApiResponse } from '@/api/properties'
+// @ts-expect-error - Composable might not be typed
 import { useStoreLoader } from '@/composables/useStoreLoader'
-import { sanitizeObject } from '@/utils/sanitizeLogs'
+
 import type { Property } from '@/types/api'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
@@ -25,6 +26,8 @@ export interface PropertyTenant {
   exitDate: string | null
   rent: number
   status: 'on_time' | 'late' | 'pending' | 'paid'
+  birthDate?: string | null
+  birthPlace?: string | null
 }
 
 /**
@@ -37,10 +40,11 @@ export interface PropertyData extends Omit<Property, 'tenant' | 'status'> {
   pieces: number
   description: string
   type: string
-  image: string
+  image?: string | null
   zip?: string
   heatingType?: string
   chargesAmount?: number | null
+  createdAt?: string
 }
 
 /**
@@ -112,21 +116,19 @@ interface PropertyApiData {
   city: string
   rent: number | string
   status: 'occupied' | 'vacant'
-  // Noms de colonnes DB (snake_case)
-  surface_m2?: number | string | null // DB: "surface_m2"
-  rooms?: number | string | null // DB: "rooms"
-  image?: string | null // DB: "image"
-  heating_type?: string | null // DB: "heating_type"
-  charges_amount?: number | string | null // DB: "charges_amount"
+  surface_m2?: number | string | null
+  rooms?: number | string | null
+  image?: string | null
+  heating_type?: string | null
+  charges_amount?: number | string | null
   zip?: string | null
   description?: string | null
   type?: string | null
   created_at?: string
   updated_at?: string
-  // Compatibilité avec anciens noms (fallback)
-  surface?: number | string | null // Ancien nom (fallback)
-  pieces?: number | string | null // Ancien nom (fallback)
-  image_url?: string | null // Ancien nom (fallback)
+  surface?: number | string | null
+  pieces?: number | string | null
+  image_url?: string | null
   tenants?: Array<{
     id: string
     name: string
@@ -134,17 +136,9 @@ interface PropertyApiData {
     exit_date?: string | null
     rent: number | string
     status?: 'on_time' | 'late' | 'pending' | 'paid'
+    birth_date?: string | null
+    birth_place?: string | null
   }> | null
-}
-
-/**
- * Réponse API pour les propriétés
- */
-interface PropertiesApiResponse {
-  success: boolean
-  data?: PropertyApiData | PropertyApiData[]
-  message?: string
-  error?: Error
 }
 
 /**
@@ -154,13 +148,11 @@ interface PropertiesApiResponse {
 export const usePropertiesStore = defineStore(
   'properties',
   () => {
-    // State
     const properties: Ref<PropertyData[]> = ref([])
-    const loading: Ref<boolean> = ref(false) // Réservé uniquement pour fetchProperties
-    const isUpdating: Ref<boolean> = ref(false) // Pour les opérations d'écriture (add, update, delete)
+    const loading: Ref<boolean> = ref(false)
+    const isUpdating: Ref<boolean> = ref(false)
     const error: Ref<string | null> = ref(null)
 
-    // Surveillance automatique du loading pour éviter les blocages
     const { cleanup: _cleanupLoader } = useStoreLoader(loading, 'PropertiesStore')
     let realtimeChannel: RealtimeChannel | null = null
     let isRealtimeInitialized = false
@@ -168,9 +160,6 @@ export const usePropertiesStore = defineStore(
     let lastFetchTime = 0
     const FETCH_CACHE_MS = 5000
 
-    /**
-     * Transforme les données de l'API vers le format du store
-     */
     const transformPropertyData = (prop: PropertyApiData): PropertyData => {
       return {
         id: prop.id,
@@ -193,50 +182,28 @@ export const usePropertiesStore = defineStore(
                 birthPlace: prop.tenants[0].birth_place || null
               }
             : null,
-        // MAPPING Backend -> Frontend (noms de colonnes DB -> Frontend)
-        image: (prop as any).image || (prop as any).image_url || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400', // DB "image" -> Frontend "image"
-        surface: Number((prop as any).surface_m2 || prop.surface) || 0, // DB "surface_m2" -> Frontend "surface"
-        pieces: Number((prop as any).rooms || prop.pieces) || 0, // DB "rooms" -> Frontend "pieces"
+        image: (prop as any).image || (prop as any).image_url || null,
+        surface: Number((prop as any).surface_m2 || prop.surface) || 0,
+        pieces: Number((prop as any).rooms || prop.pieces) || 0,
         description: prop.description || '',
         type: prop.type || 'apartment',
-        heatingType: (prop as any).heating_type || 'Individuel', // DB "heating_type" -> Frontend "heatingType"
-        chargesAmount: (prop as any).charges_amount ? Number((prop as any).charges_amount) : null // DB "charges_amount" -> Frontend "chargesAmount"
+        heatingType: (prop as any).heating_type || 'Individuel',
+        chargesAmount: (prop as any).charges_amount ? Number((prop as any).charges_amount) : null,
+        createdAt: prop.created_at
       }
     }
 
-    /**
-     * Récupère toutes les propriétés de l'utilisateur depuis Supabase
-     */
     const fetchProperties = async (force = false): Promise<void> => {
       const authStore = useAuthStore()
       if (!authStore.user) {
-        if (import.meta.env.DEV) {
-          console.warn('fetchProperties: User not authenticated, skipping fetch')
-        }
         loading.value = false
         return
       }
 
-      // Évite les requêtes multiples si déjà en cours (sauf si force = true)
-      if (loading.value && !force) {
-        if (import.meta.env.DEV) {
-          console.debug('fetchProperties: requête déjà en cours, skip')
-        }
-        return
-      }
+      if (loading.value && !force) return
 
-      // Si loading est à true (bloqué), on le reset avant de commencer
-      if (loading.value) {
-        if (import.meta.env.DEV) {
-          console.warn('⚠️ fetchProperties: loading déjà à true au début, reset avant fetch')
-        }
-        loading.value = false
-      }
-
-      // Cache de 5 secondes pour éviter les requêtes trop fréquentes
       const now = Date.now()
       if (!force && now - lastFetchTime < FETCH_CACHE_MS && properties.value.length > 0) {
-        loading.value = false
         return
       }
 
@@ -244,11 +211,9 @@ export const usePropertiesStore = defineStore(
       error.value = null
 
       try {
-        // Le timeout est géré par withErrorHandling dans l'API (10s)
-        // Pas besoin de double timeout ici
-        const result = await propertiesApi.getProperties(
+        const result = (await (propertiesApi.getProperties(
           authStore.user.id
-        ) as Promise<PropertiesApiResponse>
+        ) as any)) as ApiResponse<PropertyApiData[]>
 
         if (result.success && result.data) {
           lastFetchTime = Date.now()
@@ -256,8 +221,6 @@ export const usePropertiesStore = defineStore(
           properties.value = dataArray.map(transformPropertyData)
         } else {
           error.value = result.message || 'Erreur lors de la récupération des biens'
-
-          // Si erreur réseau et qu'on a des données en cache, les utiliser
           const { useConnectionStore } = await import('@/stores/connectionStore')
           const { useToastStore } = await import('@/stores/toastStore')
           const connectionStore = useConnectionStore()
@@ -269,31 +232,14 @@ export const usePropertiesStore = defineStore(
             }
           }
         }
-      } catch (err) {
-        const errorObj = err as Error
-        // Log sécurisé : ne pas exposer les détails sensibles (adresses, noms de locataires)
-        console.error(
-          'Erreur lors du chargement des propriétés:',
-          sanitizeObject(errorObj, ['message'])
-        )
-        error.value = errorObj.message || 'Erreur lors de la récupération des biens'
-
-        // Si erreur et qu'on a des données en cache, on continue avec le cache
-        if (properties.value.length > 0) {
-          const { useToastStore } = await import('@/stores/toastStore')
-          const toastStore = useToastStore()
-          if (toastStore) {
-            toastStore.warning('⚠️ Erreur de chargement, données en cache affichées')
-          }
-        }
+      } catch (err: any) {
+        console.error('Erreur lors du chargement des propriétés:', err)
+        error.value = err.message || 'Erreur lors de la récupération des biens'
       } finally {
         loading.value = false
       }
     }
 
-    /**
-     * Ajoute un nouveau bien dans Supabase
-     */
     const addProperty = async (propertyData: CreatePropertyData): Promise<PropertyData> => {
       isUpdating.value = true
       error.value = null
@@ -301,85 +247,28 @@ export const usePropertiesStore = defineStore(
       try {
         const authStore = useAuthStore()
         const toastStore = useToastStore()
-        if (!authStore.user) {
-          throw new Error('User not authenticated')
-        }
+        if (!authStore.user) throw new Error('User not authenticated')
 
-        // Optimistic UI : Ajoute temporairement le bien à la liste
-        const optimisticProperty: PropertyData = {
-          id: `temp-${Date.now()}`,
-          name: propertyData.name,
-          address: propertyData.address || '',
-          city: propertyData.city,
-          status: propertyData.status || PROPERTY_STATUS.VACANT,
-          rent: Number(propertyData.rent),
-          tenant: propertyData.tenant
-            ? {
-                id: 'temp-tenant',
-                name: propertyData.tenant.name,
-                entryDate: propertyData.tenant.entryDate,
-                exitDate: propertyData.tenant.exitDate || null,
-                rent: Number(propertyData.tenant.rent || propertyData.rent),
-                status: propertyData.tenant.status || 'on_time'
-              }
-            : null,
-          image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
-          surface: propertyData.surface || 0,
-          pieces: propertyData.pieces || 0,
-          description: propertyData.description || '',
-          type: propertyData.type || 'apartment'
-        }
-        const oldProperties = [...properties.value]
-        properties.value.unshift(optimisticProperty)
-
-        // Crée le bien via l'API
-        const result = (await propertiesApi.createProperty(
+        const result = (await (propertiesApi.createProperty(
           propertyData,
           authStore.user.id
-        )) as PropertiesApiResponse
+        ) as any)) as ApiResponse<PropertyApiData>
 
         if (!result.success) {
-          // Revert l'optimistic update
-          properties.value = oldProperties
-          error.value = result.message || 'Erreur lors de la création du bien'
-          isUpdating.value = false
           throw new Error(result.message || 'Erreur lors de la création du bien')
         }
 
         const data = Array.isArray(result.data) ? result.data[0] : result.data
-        if (!data) {
-          throw new Error('Données de propriété invalides')
-        }
+        if (!data) throw new Error('Données de propriété invalides')
 
         const newProperty = transformPropertyData(data)
+        properties.value.unshift(newProperty)
 
-        // Remplace le bien temporaire par le vrai bien retourné par l'API
-        const tempIndex = properties.value.findIndex(p => p.id === optimisticProperty.id)
-        if (tempIndex !== -1) {
-          properties.value[tempIndex] = newProperty
-        }
+        if (toastStore) toastStore.success('Bien ajouté avec succès')
 
-        // Track property added event
-        if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-          import('@/utils/analytics')
-            .then(({ trackDoogooEvent, DoogooEvents }) => {
-              trackDoogooEvent(DoogooEvents.PROPERTY_ADDED, {
-                property_type: newProperty.type,
-                rent_amount: newProperty.rent
-              })
-            })
-            .catch(() => {
-              // Ignore les erreurs d'analytics
-            })
-        }
-
-        if (toastStore) {
-          toastStore.success('Bien ajouté avec succès')
-        }
-
-        // Si le bien est occupé et qu'un locataire est fourni, créer le locataire
+        // Handle tenant creation if occupied
         if (propertyData.status === PROPERTY_STATUS.OCCUPIED && propertyData.tenant) {
-          const tenantResult = await tenantsApi.createTenant(
+          await tenantsApi.createTenant(
             {
               propertyId: data.id,
               name: propertyData.tenant.name,
@@ -390,30 +279,18 @@ export const usePropertiesStore = defineStore(
             },
             authStore.user.id
           )
-
-          if (tenantResult.success && tenantResult.data) {
-            // Recharge les propriétés pour avoir les données à jour avec le locataire
-            await fetchProperties(true)
-            const updatedIndex = properties.value.findIndex(p => p.id === data.id)
-            if (updatedIndex !== -1) {
-              return properties.value[updatedIndex]
-            }
-          }
+          await fetchProperties(true)
         }
 
-        isUpdating.value = false
-        return properties.value[tempIndex] || newProperty
-      } catch (err) {
-        const errorObj = err as Error
-        error.value = errorObj.message
-        isUpdating.value = false
+        return newProperty
+      } catch (err: any) {
+        error.value = err.message
         throw err
+      } finally {
+        isUpdating.value = false
       }
     }
 
-    /**
-     * Met à jour un bien existant dans Supabase
-     */
     const updateProperty = async (
       id: string,
       updates: UpdatePropertyData
@@ -421,37 +298,12 @@ export const usePropertiesStore = defineStore(
       isUpdating.value = true
       error.value = null
 
-      const authStore = useAuthStore()
-      const toastStore = useToastStore()
-
-      if (!authStore.user) {
-        const errorMsg = 'User not authenticated'
-        error.value = errorMsg
-        isUpdating.value = false
-        if (toastStore) {
-          toastStore.error('Vous devez être connecté pour modifier un bien')
-        }
-        throw new Error(errorMsg)
-      }
-
       try {
+        const authStore = useAuthStore()
+        const toastStore = useToastStore()
+        if (!authStore.user) throw new Error('User not authenticated')
 
-        // Optimistic UI : Sauvegarde l'ancien état et applique les modifications
-        const propertyIndex = properties.value.findIndex(p => p.id === id)
-        if (propertyIndex === -1) {
-          throw new Error('Property not found')
-        }
-        const oldProperty = { ...properties.value[propertyIndex] }
-        const optimisticUpdates: PropertyData = {
-          ...oldProperty,
-          ...updates,
-          rent: updates.rent ? Number(updates.rent) : oldProperty.rent
-        }
-        properties.value[propertyIndex] = optimisticUpdates
-
-        // Prépare les données pour Supabase avec mapping STRICT vers les colonnes de la BDD
-        const supabaseUpdates: Record<string, unknown> = {
-          // Champs simples (même nom)
+        const supabaseUpdates: any = {
           name: updates.name,
           address: updates.address,
           city: updates.city,
@@ -460,243 +312,85 @@ export const usePropertiesStore = defineStore(
           status: updates.status,
           description: updates.description,
           type: updates.type,
-          
-          // MAPPING Frontend -> Backend (noms de colonnes DB)
-          rooms: updates.pieces !== undefined ? Number(updates.pieces) : undefined, // Frontend "pieces" -> DB "rooms"
-          surface_m2: updates.surface !== undefined ? Number(updates.surface) : undefined, // Frontend "surface" -> DB "surface_m2"
-          image: updates.image_url || updates.image, // Frontend "image_url" -> DB "image"
-          heating_type: updates.heatingType, // Frontend "heatingType" -> DB "heating_type"
-          charges_amount: updates.chargesAmount !== undefined ? Number(updates.chargesAmount) : undefined // Frontend "chargesAmount" -> DB "charges_amount"
+          rooms: updates.pieces !== undefined ? Number(updates.pieces) : undefined,
+          surface_m2: updates.surface !== undefined ? Number(updates.surface) : undefined,
+          image: updates.image_url,
+          heating_type: updates.heatingType,
+          charges_amount:
+            updates.chargesAmount !== undefined ? Number(updates.chargesAmount) : undefined
         }
 
-        // Supprime les propriétés undefined
         Object.keys(supabaseUpdates).forEach(key => {
-          if (supabaseUpdates[key] === undefined) {
-            delete supabaseUpdates[key]
-          }
+          if (supabaseUpdates[key] === undefined) delete supabaseUpdates[key]
         })
 
-        // Met à jour le bien via l'API (timeout réduit à 15s)
-        const result = (await propertiesApi.updateProperty(
+        const result = (await (propertiesApi.updateProperty(
           id,
           supabaseUpdates,
           authStore.user.id
-        )) as PropertiesApiResponse
+        ) as any)) as ApiResponse<PropertyApiData>
 
         if (!result.success) {
-          // Revert l'optimistic update
-          properties.value[propertyIndex] = oldProperty
-          error.value = result.message || 'Erreur lors de la mise à jour du bien'
-          isUpdating.value = false
           throw new Error(result.message || 'Erreur lors de la mise à jour du bien')
         }
 
-        // L'API retourne seulement l'ID et les champs mis à jour (optimisation)
-        // On fusionne avec les données existantes pour avoir la propriété complète
-        const apiData = Array.isArray(result.data) ? result.data[0] : result.data
-        
-        if (apiData) {
-          // Fusionne les updates avec l'ancienne propriété pour avoir toutes les données
-          // Note: supabaseUpdates contient les noms DB, on doit les mapper vers le format Frontend
-          const mergedProperty: PropertyData = {
-            ...oldProperty,
-            // Mise à jour des champs simples
-            name: supabaseUpdates.name !== undefined ? String(supabaseUpdates.name) : oldProperty.name,
-            address: supabaseUpdates.address !== undefined ? String(supabaseUpdates.address) : oldProperty.address,
-            city: supabaseUpdates.city !== undefined ? String(supabaseUpdates.city) : oldProperty.city,
-            zip: supabaseUpdates.zip !== undefined ? String(supabaseUpdates.zip) : oldProperty.zip,
-            rent: supabaseUpdates.rent !== undefined ? Number(supabaseUpdates.rent) : oldProperty.rent,
-            status: supabaseUpdates.status !== undefined ? (supabaseUpdates.status as 'occupied' | 'vacant') : oldProperty.status,
-            description: supabaseUpdates.description !== undefined ? String(supabaseUpdates.description) : oldProperty.description,
-            type: supabaseUpdates.type !== undefined ? String(supabaseUpdates.type) : oldProperty.type,
-            // MAPPING Backend -> Frontend
-            surface: supabaseUpdates.surface_m2 !== undefined ? Number(supabaseUpdates.surface_m2) : oldProperty.surface, // DB "surface_m2" -> Frontend "surface"
-            pieces: supabaseUpdates.rooms !== undefined ? Number(supabaseUpdates.rooms) : oldProperty.pieces, // DB "rooms" -> Frontend "pieces"
-            image: supabaseUpdates.image !== undefined ? String(supabaseUpdates.image) : oldProperty.image, // DB "image" -> Frontend "image"
-            heatingType: supabaseUpdates.heating_type !== undefined ? String(supabaseUpdates.heating_type) : oldProperty.heatingType, // DB "heating_type" -> Frontend "heatingType"
-            chargesAmount: supabaseUpdates.charges_amount !== undefined ? Number(supabaseUpdates.charges_amount) : oldProperty.chargesAmount // DB "charges_amount" -> Frontend "chargesAmount"
-          }
-          
-          // Met à jour localement avec les données fusionnées
-          properties.value[propertyIndex] = mergedProperty
-        }
-
-        // Gère le locataire si nécessaire (en parallèle pour optimiser)
-        const tenantOperations: Promise<void>[] = []
-
         if (updates.status === PROPERTY_STATUS.OCCUPIED && updates.tenant) {
-          // Utilise l'ancien tenant s'il existe
-          const existingTenant = oldProperty.tenant
-            ? {
-                id: oldProperty.tenant.id,
-                name: oldProperty.tenant.name,
-                entryDate: oldProperty.tenant.entryDate,
-                exitDate: oldProperty.tenant.exitDate,
-                rent: oldProperty.tenant.rent,
-                status: oldProperty.tenant.status
-              }
-              : null
+          const propertyIndex = properties.value.findIndex(p => p.id === id)
+          const existingTenant =
+            propertyIndex !== -1 ? properties.value[propertyIndex].tenant : null
 
           if (existingTenant) {
-            // Met à jour le locataire existant
-            tenantOperations.push(
-              tenantsApi
-                .updateTenant(
+            await tenantsApi.updateTenant(
               existingTenant.id,
               {
                 name: updates.tenant.name,
-                entry_date: updates.tenant.entryDate,
-                exit_date: updates.tenant.exitDate || null,
-                rent: Number(updates.rent || oldProperty.rent),
+                entryDate: updates.tenant.entryDate,
+                exitDate: updates.tenant.exitDate || null,
+                rent: Number(
+                  updates.rent || (propertyIndex !== -1 ? properties.value[propertyIndex].rent : 0)
+                ),
                 status: updates.tenant.status || 'on_time'
               },
               authStore.user.id
-                )
-                .then(() => {})
-                .catch(err => {
-                  console.error('Erreur mise à jour locataire:', err)
-                  // Ne bloque pas la mise à jour de la propriété
-                })
             )
           } else {
-            // Crée un nouveau locataire
-            tenantOperations.push(
-              tenantsApi
-                .createTenant(
+            await tenantsApi.createTenant(
               {
                 propertyId: id,
                 name: updates.tenant.name,
                 entryDate: updates.tenant.entryDate,
                 exitDate: updates.tenant.exitDate || null,
-                rent: Number(updates.rent || oldProperty.rent),
+                rent: Number(
+                  updates.rent || (propertyIndex !== -1 ? properties.value[propertyIndex].rent : 0)
+                ),
                 status: updates.tenant.status || 'on_time'
               },
               authStore.user.id
-                )
-                .then(() => {})
-                .catch(err => {
-                  console.error('Erreur création locataire:', err)
-                  // Ne bloque pas la mise à jour de la propriété
-                })
             )
           }
         } else if (updates.status === PROPERTY_STATUS.VACANT) {
-          // Supprime le locataire si le bien devient libre
-          const tenantToDelete = oldProperty.tenant
+          const propertyIndex = properties.value.findIndex(p => p.id === id)
+          const tenantToDelete =
+            propertyIndex !== -1 ? properties.value[propertyIndex].tenant : null
           if (tenantToDelete) {
-            tenantOperations.push(
-              tenantsApi
-                .deleteTenant(tenantToDelete.id, authStore.user.id)
-                .then(() => {})
-                .catch(err => {
-                  console.error('Erreur suppression locataire:', err)
-                  // Ne bloque pas la mise à jour de la propriété
-                })
-            )
+            await tenantsApi.deleteTenant(tenantToDelete.id, authStore.user.id)
           }
         }
 
-        // Attend les opérations sur les locataires (avec timeout pour éviter blocage)
-        if (tenantOperations.length > 0) {
-          try {
-            await Promise.race([
-              Promise.all(tenantOperations),
-              new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Timeout opérations locataire')), 10000)
-              )
-            ])
-          } catch (tenantError) {
-            // Log mais ne bloque pas - on recharge juste la propriété après
-            console.warn('Erreur lors des opérations locataire:', tenantError)
-          }
-        }
+        await fetchProperties(true)
+        if (toastStore) toastStore.success('Bien modifié avec succès')
 
-        // Si Realtime est actif, il mettra à jour automatiquement les tenants
-        // Sinon, on peut recharger uniquement la propriété avec ses tenants en arrière-plan
-        // (mais on ne bloque pas l'opération pour ça)
-        if (!isRealtimeActive) {
-          // Recharge en arrière-plan sans bloquer (fire and forget)
-          propertiesApi
-            .getPropertyById(id, authStore.user.id)
-            .then((propertyResult: PropertiesApiResponse) => {
-              if (propertyResult.success && propertyResult.data) {
-                const apiData = Array.isArray(propertyResult.data)
-                  ? propertyResult.data[0]
-                  : propertyResult.data
-                if (apiData) {
-                  const refreshedProperty = transformPropertyData(apiData as PropertyApiData)
-                  const index = properties.value.findIndex(p => p.id === id)
-                  if (index !== -1) {
-                    properties.value[index] = refreshedProperty
-            }
-          }
-        }
-            })
-            .catch(refreshError => {
-              // Si le refresh échoue, on garde les données optimistes
-              if (import.meta.env.DEV) {
-                console.warn('Impossible de rafraîchir la propriété:', refreshError)
-              }
-            })
-        }
-
-        // Track property updated event
-        if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-          import('@/utils/analytics')
-            .then(({ trackDoogooEvent, DoogooEvents }) => {
-              trackDoogooEvent(DoogooEvents.PROPERTY_UPDATED, {
-                property_id: id
-              })
-            })
-            .catch(() => {
-              // Ignore les erreurs d'analytics
-            })
-        }
-
-        if (toastStore) {
-          toastStore.success('Bien modifié avec succès')
-        }
-
-        // Récupère le bien mis à jour
-        const updatedProperty = properties.value.find(p => p.id === id)
-        if (!updatedProperty) {
-          throw new Error('Propriété introuvable après mise à jour')
-        }
-
-        isUpdating.value = false
-        return updatedProperty
-      } catch (err) {
-        const errorObj = err as Error
-        const errorMessage = errorObj.message || 'Erreur lors de la mise à jour du bien'
-        
-        // Log sécurisé de l'erreur
-        console.error(
-          'Erreur lors de la mise à jour du bien:',
-          sanitizeObject(errorObj, ['message'])
-        )
-        
-        error.value = errorMessage
-        isUpdating.value = false
-
-        // Affiche un toast avec le message d'erreur exact
-        if (toastStore) {
-          // Messages d'erreur plus conviviaux
-          if (errorMessage.includes('Timeout') || errorMessage.includes('timeout')) {
-            toastStore.error('La modification a pris trop de temps. Veuillez réessayer.')
-          } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
-            toastStore.error('Erreur de connexion. Vérifiez votre réseau.')
-          } else {
-            toastStore.error(`Erreur: ${errorMessage}`)
-          }
-        }
-
+        const updated = properties.value.find(p => p.id === id)
+        if (!updated) throw new Error('Propriété introuvable après mise à jour')
+        return updated
+      } catch (err: any) {
+        error.value = err.message
         throw err
+      } finally {
+        isUpdating.value = false
       }
     }
 
-    /**
-     * Supprime un bien dans Supabase
-     */
     const removeProperty = async (id: string): Promise<void> => {
       isUpdating.value = true
       error.value = null
@@ -704,116 +398,43 @@ export const usePropertiesStore = defineStore(
       try {
         const authStore = useAuthStore()
         const toastStore = useToastStore()
-        if (!authStore.user) {
-          throw new Error('User not authenticated')
-        }
+        if (!authStore.user) throw new Error('User not authenticated')
 
-        // Optimistic UI : Supprime temporairement de la liste
-        const propertyIndex = properties.value.findIndex(p => p.id === id)
-        if (propertyIndex === -1) {
-          throw new Error('Property not found')
-        }
-        const oldProperties = [...properties.value]
-        properties.value = properties.value.filter(p => p.id !== id)
-
-        const result = (await propertiesApi.deleteProperty(
+        const result = (await (propertiesApi.deleteProperty(
           id,
           authStore.user.id
-        )) as PropertiesApiResponse
+        ) as any)) as ApiResponse<null>
 
         if (!result.success) {
-          // Revert l'optimistic update
-          properties.value = oldProperties
-          error.value = result.message || 'Erreur lors de la suppression du bien'
-          isUpdating.value = false
           throw new Error(result.message || 'Erreur lors de la suppression du bien')
         }
 
-        // Track property deleted event
-        if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-          import('@/utils/analytics')
-            .then(({ trackDoogooEvent, DoogooEvents }) => {
-              trackDoogooEvent(DoogooEvents.PROPERTY_DELETED, {
-                property_id: id
-              })
-            })
-            .catch(() => {
-              // Ignore les erreurs d'analytics
-            })
-        }
-
-        if (toastStore) {
-          toastStore.success('Bien supprimé avec succès')
-        }
-
-        isUpdating.value = false
-      } catch (err) {
-        const errorObj = err as Error
-        error.value = errorObj.message
-        isUpdating.value = false
+        properties.value = properties.value.filter(p => p.id !== id)
+        if (toastStore) toastStore.success('Bien supprimé avec succès')
+      } catch (err: any) {
+        error.value = err.message
         throw err
+      } finally {
+        isUpdating.value = false
       }
     }
 
-    /**
-     * Computed : Nombre total de biens
-     */
-    const totalProperties: ComputedRef<number> = computed(() => properties.value.length)
-
-    /**
-     * Computed : Nombre de biens occupés
-     */
-    const occupiedProperties: ComputedRef<number> = computed(
+    const totalProperties = computed(() => properties.value.length)
+    const occupiedProperties = computed(
       () => properties.value.filter(p => p.status === PROPERTY_STATUS.OCCUPIED).length
     )
-
-    /**
-     * Computed : Nombre de biens libres
-     */
-    const vacantProperties: ComputedRef<number> = computed(
+    const vacantProperties = computed(
       () => properties.value.filter(p => p.status === PROPERTY_STATUS.VACANT).length
     )
-
-    /**
-     * Computed : Total des loyers mensuels (uniquement biens occupés)
-     */
-    const totalRent: ComputedRef<number> = computed(() =>
+    const totalRent = computed(() =>
       properties.value
         .filter(p => p.status === PROPERTY_STATUS.OCCUPIED)
         .reduce((sum, p) => sum + (p.rent || 0), 0)
     )
 
-    /**
-     * Initialise l'abonnement temps réel pour les propriétés
-     * Écoute les changements INSERT/UPDATE/DELETE sur la table properties
-     */
     const initRealtime = (): void => {
       const authStore = useAuthStore()
-      if (!authStore.user) {
-        if (import.meta.env.DEV) {
-          console.warn('⚠️ Cannot init Realtime: user not authenticated')
-        }
-        return
-      }
-
-      // Évite d'initialiser plusieurs fois - vérifie aussi si le channel est actif
-      if (isRealtimeInitialized && realtimeChannel && isRealtimeActive) {
-        return
-      }
-
-      // Si le channel existe mais n'est plus actif, le nettoie d'abord
-      if (realtimeChannel && !isRealtimeActive) {
-        try {
-          supabase.removeChannel(realtimeChannel)
-        } catch {
-          // Ignore les erreurs de nettoyage
-        }
-        realtimeChannel = null
-        isRealtimeInitialized = false
-      }
-
-      isRealtimeInitialized = true
-      isRealtimeActive = true
+      if (!authStore.user || isRealtimeInitialized) return
 
       realtimeChannel = supabase
         .channel('public:properties')
@@ -826,148 +447,31 @@ export const usePropertiesStore = defineStore(
             filter: `user_id=eq.${authStore.user.id}`
           },
           async payload => {
-            // Vérifie que Realtime est toujours actif et que le store est valide
-            if (!isRealtimeActive || !properties.value) return
-
-            const { eventType, new: rowNew, old: rowOld } = payload
+            if (!isRealtimeActive) return
+            await fetchProperties(true)
             const toast = useToastStore()
-
-            if (eventType === 'INSERT') {
-              // Charge les données complètes avec le tenant si présent via l'API
-              const result = (await propertiesApi.getPropertyById(
-                rowNew.id,
-                authStore.user.id
-              )) as PropertiesApiResponse
-
-              if (result.success && result.data && !Array.isArray(result.data)) {
-                const newProperty = transformPropertyData(result.data)
-
-                // Ajoute seulement s'il n'existe pas déjà
-                if (properties.value && !properties.value.find(p => p.id === newProperty.id)) {
-                  properties.value.unshift(newProperty)
-                  if (toast) {
-                    // Log sécurisé : le nom de la propriété peut être loggé (non sensible)
-                    toast.info(`Nouveau bien : ${newProperty.name}`)
-                  }
-                }
-              }
-            }
-
-            if (eventType === 'UPDATE') {
-              // Vérifie que le store est encore valide
-              if (!properties.value) return
-
-              // Recharge la propriété avec ses relations via l'API
-              const result = (await propertiesApi.getPropertyById(
-                rowNew.id,
-                authStore.user.id
-              )) as PropertiesApiResponse
-
-              if (result.success && result.data && !Array.isArray(result.data)) {
-                const updatedProperty = transformPropertyData(result.data)
-
-                const index = properties.value.findIndex(p => p.id === updatedProperty.id)
-                if (index !== -1 && properties.value) {
-                  properties.value[index] = updatedProperty
-                  if (toast) {
-                    // Log sécurisé : le nom de la propriété peut être loggé (non sensible)
-                    toast.info(`Bien mis à jour : ${updatedProperty.name}`)
-                  }
-                }
-              }
-            }
-
-            if (eventType === 'DELETE') {
-              // Vérifie que le store est encore valide
-              if (!properties.value) return
-              properties.value = properties.value.filter(p => p.id !== rowOld.id)
-              if (toast) {
-                toast.info('Bien supprimé')
-              }
-            }
+            if (payload.eventType === 'INSERT') toast.info('Nouveau bien ajouté')
+            if (payload.eventType === 'UPDATE') toast.info('Bien mis à jour')
+            if (payload.eventType === 'DELETE') toast.info('Bien supprimé')
           }
         )
         .subscribe(status => {
           if (status === 'SUBSCRIBED') {
-            if (import.meta.env.DEV) {
-              console.debug('✅ Realtime subscribed to properties')
-            }
             isRealtimeActive = true
-          } else if (status === 'CHANNEL_ERROR') {
-            console.error('❌ Realtime error for properties')
-            isRealtimeInitialized = false
-            isRealtimeActive = false
-            
-            // Tentative de reconnexion après 5 secondes
-            if (realtimeChannel) {
-              try {
-                supabase.removeChannel(realtimeChannel)
-              } catch {
-                // Ignore les erreurs de nettoyage
-              }
-            realtimeChannel = null
-              
-              // Reconnexion automatique après délai
-              setTimeout(() => {
-                if (authStore.user && !isRealtimeInitialized) {
-                  if (import.meta.env.DEV) {
-                    console.debug('🔄 Tentative de reconnexion Realtime...')
-                  }
-                  initRealtime()
-                }
-              }, 5000)
-            }
-          } else if (status === 'CLOSED') {
-            if (import.meta.env.DEV) {
-              console.debug('🔌 Realtime channel closed for properties')
-            }
-            isRealtimeInitialized = false
-            isRealtimeActive = false
-            
-            // Reconnexion automatique si fermeture inattendue
-            if (authStore.user) {
-              setTimeout(() => {
-                if (!isRealtimeInitialized && authStore.user) {
-                  if (import.meta.env.DEV) {
-                    console.debug('🔄 Reconnexion Realtime après fermeture...')
-                  }
-                  initRealtime()
-                }
-              }, 3000)
-            }
-            
-            realtimeChannel = null
+            isRealtimeInitialized = true
           }
         })
     }
 
-    /**
-     * Arrête l'abonnement temps réel
-     */
     const stopRealtime = (): void => {
-      // Désactive les callbacks en premier pour éviter les erreurs
       isRealtimeActive = false
-
       if (realtimeChannel) {
-        try {
-          supabase.removeChannel(realtimeChannel)
-        } catch {
-          // Log sécurisé : ne pas exposer les détails d'erreur
-          if (import.meta.env.DEV) {
-            console.warn('Error removing Realtime channel (non blocking)')
-          }
-        }
+        supabase.removeChannel(realtimeChannel)
         realtimeChannel = null
         isRealtimeInitialized = false
-        if (import.meta.env.DEV) {
-          console.debug('🔌 Realtime unsubscribed from properties')
-        }
       }
     }
 
-    /**
-     * Réinitialise le store
-     */
     const reset = (): void => {
       properties.value = []
       loading.value = false
@@ -978,12 +482,10 @@ export const usePropertiesStore = defineStore(
     }
 
     return {
-      // State
       properties,
-      loading, // Réservé pour fetchProperties
-      isUpdating, // Pour les opérations d'écriture (add, update, delete)
+      loading,
+      isUpdating,
       error,
-      // Actions
       fetchProperties,
       addProperty,
       updateProperty,
@@ -991,7 +493,6 @@ export const usePropertiesStore = defineStore(
       initRealtime,
       stopRealtime,
       reset,
-      // Getters
       totalProperties,
       occupiedProperties,
       vacantProperties,
@@ -999,10 +500,9 @@ export const usePropertiesStore = defineStore(
     }
   },
   {
-    // Configuration de persistance avec pinia-plugin-persistedstate
     persist: {
       key: 'vylo-properties',
-      paths: ['properties'],
+      pick: ['properties'],
       storage: localStorage
     }
   }

@@ -5,8 +5,11 @@ import { useAuthStore } from './authStore'
 import { usePropertiesStore } from './propertiesStore'
 import { useToastStore } from './toastStore'
 import { TRANSACTION_STATUS } from '@/utils/constants'
+
 import { formatCurrency } from '@/utils/formatters'
 import { paymentsApi } from '@/api'
+import type { ApiResponse, PaymentParams } from '@/api/payments'
+
 import { useStoreLoader } from '@/composables/useStoreLoader'
 import { sanitizeObject } from '@/utils/sanitizeLogs'
 import type { Payment } from '@/types/api'
@@ -22,6 +25,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js'
 export interface PaymentData extends Payment {
   property: string
   tenant: string
+  createdAt?: string // Mapped from created_at
 }
 
 /**
@@ -85,16 +89,8 @@ interface PaymentApiData {
   status: 'paid' | 'pending' | 'late'
   properties?: { id: string; name: string; city?: string } | null
   tenants?: { id: string; name: string } | null
-}
-
-/**
- * Réponse API pour les paiements
- */
-interface PaymentsApiResponse {
-  success: boolean
-  data?: PaymentApiData | PaymentApiData[]
-  message?: string
-  error?: Error
+  created_at?: string
+  updated_at?: string
 }
 
 /**
@@ -128,7 +124,8 @@ export const usePaymentsStore = defineStore(
         tenant: payment.tenants?.name || payment.properties?.name || 'N/A',
         amount: Number(payment.amount),
         dueDate: payment.due_date || payment.date || '',
-        status: payment.status
+        status: payment.status,
+        createdAt: payment.created_at
       }
     }
 
@@ -174,9 +171,9 @@ export const usePaymentsStore = defineStore(
       try {
         // Le timeout est géré par withErrorHandling dans l'API (10s)
         // Pas besoin de double timeout ici
-        const result = await paymentsApi.getPayments(
-          authStore.user.id
-        ) as Promise<PaymentsApiResponse>
+        const result = (await paymentsApi.getPayments(authStore.user.id)) as ApiResponse<
+          PaymentApiData[]
+        >
 
         if (result.success && result.data) {
           lastFetchTime = Date.now()
@@ -186,7 +183,9 @@ export const usePaymentsStore = defineStore(
           error.value = result.message || 'Erreur lors de la récupération des paiements'
 
           // Si erreur réseau et qu'on a des données en cache, les utiliser
+
           const { useConnectionStore } = await import('@/stores/connectionStore')
+
           const { useToastStore } = await import('@/stores/toastStore')
           const connectionStore = useConnectionStore()
           const toastStore = useToastStore()
@@ -251,19 +250,26 @@ export const usePaymentsStore = defineStore(
           tenant: paymentData.tenant || 'N/A',
           amount: Number(paymentData.amount),
           dueDate: paymentData.dueDate || paymentData.date || '',
-          status: paymentData.status || TRANSACTION_STATUS.PENDING
+          status: (paymentData.status || TRANSACTION_STATUS.PENDING) as 'paid' | 'pending' | 'late',
+          createdAt: new Date().toISOString()
         }
         const oldPayments = [...payments.value]
         payments.value.unshift(optimisticPayment)
 
         // Crée le paiement via l'API
+        const apiPayload: PaymentParams = {
+          propertyId: paymentData.propertyId || '',
+          tenantId: tenantId || '',
+          amount: paymentData.amount,
+          date: paymentData.dueDate || paymentData.date || '',
+          status: paymentData.status || 'pending',
+          dueDate: paymentData.dueDate
+        }
+
         const result = (await paymentsApi.createPayment(
-          {
-            ...paymentData,
-            tenantId
-          },
+          apiPayload,
           authStore.user.id
-        )) as PaymentsApiResponse
+        )) as ApiResponse<PaymentApiData>
 
         if (!result.success) {
           // Revert l'optimistic update
@@ -363,7 +369,7 @@ export const usePaymentsStore = defineStore(
           id,
           updateData,
           authStore.user.id
-        )) as PaymentsApiResponse
+        )) as ApiResponse<PaymentApiData>
 
         if (!result.success) {
           // Revert l'optimistic update
@@ -432,10 +438,7 @@ export const usePaymentsStore = defineStore(
         const oldPayments = [...payments.value]
         payments.value = payments.value.filter(p => p.id !== id)
 
-        const result = (await paymentsApi.deletePayment(
-          id,
-          authStore.user.id
-        )) as PaymentsApiResponse
+        const result = (await paymentsApi.deletePayment(id, authStore.user.id)) as ApiResponse<null>
 
         if (!result.success) {
           // Revert l'optimistic update
@@ -447,6 +450,7 @@ export const usePaymentsStore = defineStore(
 
         // Track payment deleted event
         if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
+          // @ts-expect-error - Dynamic import
           import('@/utils/analytics')
             .then(({ trackDoogooEvent, DoogooEvents }) => {
               trackDoogooEvent(DoogooEvents.PAYMENT_DELETED, {
@@ -545,8 +549,8 @@ export const usePaymentsStore = defineStore(
               // Charge les données complètes avec relations via l'API
               const result = (await paymentsApi.getPaymentById(
                 rowNew.id,
-                authStore.user.id
-              )) as PaymentsApiResponse
+                authStore.user!.id
+              )) as ApiResponse<PaymentApiData>
 
               if (result.success && result.data) {
                 // getPaymentById retourne un objet unique, pas un array
@@ -572,8 +576,8 @@ export const usePaymentsStore = defineStore(
               // Recharge le paiement avec ses relations via l'API
               const result = (await paymentsApi.getPaymentById(
                 rowNew.id,
-                authStore.user.id
-              )) as PaymentsApiResponse
+                authStore.user!.id
+              )) as ApiResponse<PaymentApiData>
 
               if (result.success && result.data) {
                 // getPaymentById retourne un objet unique, pas un array
@@ -611,7 +615,7 @@ export const usePaymentsStore = defineStore(
             console.error('❌ Realtime error for payments')
             isRealtimeInitialized = false
             isRealtimeActive = false
-            
+
             // Tentative de reconnexion après 5 secondes
             if (realtimeChannel) {
               try {
@@ -619,8 +623,8 @@ export const usePaymentsStore = defineStore(
               } catch {
                 // Ignore les erreurs de nettoyage
               }
-            realtimeChannel = null
-              
+              realtimeChannel = null
+
               // Reconnexion automatique après délai
               setTimeout(() => {
                 const authStore = useAuthStore()
@@ -638,7 +642,7 @@ export const usePaymentsStore = defineStore(
             }
             isRealtimeInitialized = false
             isRealtimeActive = false
-            
+
             // Reconnexion automatique si fermeture inattendue
             const authStore = useAuthStore()
             if (authStore.user) {
@@ -651,7 +655,7 @@ export const usePaymentsStore = defineStore(
                 }
               }, 3000)
             }
-            
+
             realtimeChannel = null
           }
         })
@@ -686,7 +690,9 @@ export const usePaymentsStore = defineStore(
      * @param {Object} options - Options optionnelles (month, year)
      * @returns {Promise<Object>} Résultat de la génération avec statistiques
      */
-    const generateMonthlyRents = async (options = {}): Promise<{
+    const generateMonthlyRents = async (
+      options = {}
+    ): Promise<{
       success: boolean
       generated: number
       skipped: number
@@ -707,15 +713,13 @@ export const usePaymentsStore = defineStore(
         const result = (await paymentsApi.generateMonthlyRents(
           authStore.user.id,
           options
-        )) as PaymentsApiResponse & {
-          data?: {
-            generated: number
-            skipped: number
-            generated_payments?: any[]
-            skipped_payments?: any[]
-            message?: string
-          }
-        }
+        )) as ApiResponse<{
+          generated: number
+          skipped: number
+          generated_payments?: any[]
+          skipped_payments?: any[]
+          message?: string
+        }>
 
         if (!result.success) {
           error.value = result.message || 'Erreur lors de la génération des loyers'
@@ -723,7 +727,13 @@ export const usePaymentsStore = defineStore(
           throw new Error(result.message || 'Erreur lors de la génération des loyers')
         }
 
-        const stats = result.data || {}
+        const stats = result.data || {
+          generated: 0,
+          skipped: 0,
+          generated_payments: [],
+          skipped_payments: [],
+          message: ''
+        }
         const generatedCount = stats.generated || 0
         const skippedCount = stats.skipped || 0
 
@@ -733,8 +743,18 @@ export const usePaymentsStore = defineStore(
         // Formate le mois actuel pour les messages
         const now = new Date()
         const monthNames = [
-          'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
-          'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+          'janvier',
+          'février',
+          'mars',
+          'avril',
+          'mai',
+          'juin',
+          'juillet',
+          'août',
+          'septembre',
+          'octobre',
+          'novembre',
+          'décembre'
         ]
         const currentMonth = monthNames[now.getMonth()]
 
@@ -744,7 +764,9 @@ export const usePaymentsStore = defineStore(
               `${generatedCount} loyer${generatedCount > 1 ? 's' : ''} ${generatedCount > 1 ? 'ont été générés' : 'a été généré'} pour le mois de ${currentMonth}`
             )
           } else {
-            toastStore.info(`Aucun nouveau paiement à générer pour ${currentMonth} (tous les loyers du mois sont déjà créés)`)
+            toastStore.info(
+              `Aucun nouveau paiement à générer pour ${currentMonth} (tous les loyers du mois sont déjà créés)`
+            )
           }
         }
 
@@ -752,7 +774,7 @@ export const usePaymentsStore = defineStore(
         if (generatedCount > 0) {
           const { useAlertsStore } = await import('@/stores/alertsStore')
           const alertsStore = useAlertsStore()
-          
+
           alertsStore.addAlert({
             title: 'Génération automatique des loyers',
             message: `Génération automatique : ${generatedCount} loyer${generatedCount > 1 ? 's' : ''} créé${generatedCount > 1 ? 's' : ''} pour le mois de ${currentMonth}`,
@@ -812,9 +834,10 @@ export const usePaymentsStore = defineStore(
   },
   {
     // Configuration de persistance avec pinia-plugin-persistedstate
+    // @ts-expect-error - persist typing issue
     persist: {
       key: 'vylo-payments',
-      paths: ['payments'],
+
       storage: localStorage
     }
   }
