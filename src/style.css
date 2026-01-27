@@ -1,12 +1,52 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Surface colors */
-  --color-surface: #ffffff;
-  --color-surface-alt: #fafafa;
-  --color-border: #e4e4e7; /* zinc-200 */
+  /* ===== BRAND ===== */
+  --color-brand: #7c3aed; /* violet-600 - Primary brand color */
+  --color-brand-hover: #6d28d9; /* violet-700 - Hover state */
+  --color-brand-light: #ede9fe; /* violet-100 - Light backgrounds */
+  --color-brand-50: #f5f3ff; /* violet-50 */
 
-  /* Primary (Indigo Deep) */
+  /* ===== TEXT ===== */
+  --color-text-primary: #18181b; /* zinc-900 - Main text */
+  --color-text-secondary: #52525b; /* zinc-600 - Descriptions */
+  --color-text-muted: #71717a; /* zinc-500 - Disabled/placeholder */
+  --color-text-inverted: #ffffff; /* White text on dark backgrounds */
+
+  /* ===== BACKGROUNDS ===== */
+  --color-bg-page: #ffffff; /* Main page background */
+  --color-bg-card: #ffffff; /* Card backgrounds */
+  --color-bg-subtle: #fafafa; /* zinc-50 - Subtle sections */
+  --color-bg-muted: #f4f4f5; /* zinc-100 - Muted areas */
+
+  /* ===== BORDERS ===== */
+  --color-border-default: #e4e4e7; /* zinc-200 - Standard borders */
+  --color-border-subtle: #f4f4f5; /* zinc-100 - Light borders */
+  --color-border-strong: #d4d4d8; /* zinc-300 - Emphasized borders */
+
+  /* ===== SEMANTIC COLORS ===== */
+  --color-success: #22c55e; /* green-500 */
+  --color-success-light: #f0fdf4; /* green-50 */
+  --color-success-border: #bbf7d0; /* green-200 */
+
+  --color-warning: #f59e0b; /* amber-500 */
+  --color-warning-light: #fffbeb; /* amber-50 */
+  --color-warning-border: #fde68a; /* amber-200 */
+
+  --color-danger: #ef4444; /* red-500 */
+  --color-danger-light: #fef2f2; /* red-50 */
+  --color-danger-border: #fecaca; /* red-200 */
+
+  --color-info: #3b82f6; /* blue-500 */
+  --color-info-light: #eff6ff; /* blue-50 */
+  --color-info-border: #bfdbfe; /* blue-200 */
+
+  /* ===== SURFACE (Legacy support) ===== */
+  --color-surface: var(--color-bg-page);
+  --color-surface-alt: var(--color-bg-subtle);
+  --color-border: var(--color-border-default);
+
+  /* ===== PRIMARY (Legacy Tailwind support) ===== */
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
   --color-primary-200: #c7d2fe;
@@ -19,13 +59,20 @@
   --color-primary-900: #312e81;
   --color-primary-950: #1e1b4b;
 
-  /* Custom palette if needed for @apply */
+  /* ===== GLASS PANEL ===== */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: var(--color-border-default);
+  --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  /* ===== GRADIENT TEXT ===== */
+  --gradient-text-start: #18181b;
+  --gradient-text-end: #52525b;
 }
 
 @layer base {
   body {
-    background-color: white; /* White Canvas */
-    color: #18181b; /* zinc-900 */
+    background-color: var(--color-bg-page);
+    color: var(--color-text-primary);
     margin: 0;
     padding: 0;
     transition:
@@ -33,13 +80,13 @@
       color 0.3s ease;
   }
 
-  /* Dark mode support - update later if needed */
+  /* Dark mode support */
   html.dark body {
-    background-color: #09090b; /* zinc-950 */
+    background-color: #09090b;
     color: #fafafa;
   }
 
-  /* Safe areas iOS - Support des notches et home indicator */
+  /* Safe areas iOS */
   html {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -49,7 +96,6 @@
     padding: 0;
   }
 
-  /* Empêcher le scroll sur tous les éléments sauf ceux qui en ont besoin */
   * {
     max-width: 100%;
   }
@@ -59,43 +105,53 @@
     position: relative;
   }
 
-  /* Classes utilitaires pour safe areas */
+  /* Safe area utilities */
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
-
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
-
   .safe-left {
     padding-left: env(safe-area-inset-left);
   }
-
   .safe-right {
     padding-right: env(safe-area-inset-right);
   }
-
-  /* Pour les éléments fixes en bas (mobile) */
   .safe-fixed-bottom {
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
 }
 
 @layer components {
+  /* ===== BUTTONS ===== */
   .btn-primary {
-    @apply bg-primary-600 text-white px-4 py-2.5 rounded-lg font-medium transition-colors hover:bg-primary-700 active:bg-primary-800 shadow-sm hover:shadow;
+    @apply px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm hover:shadow;
+    background-color: var(--color-brand);
+    color: var(--color-text-inverted);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-brand-hover);
   }
 
   .btn-secondary {
-    @apply bg-white text-zinc-700 border border-zinc-200 px-4 py-2.5 rounded-lg font-medium transition-colors hover:bg-zinc-50 hover:text-zinc-900 hover:border-zinc-300;
+    @apply px-4 py-2.5 rounded-lg font-medium transition-colors;
+    background-color: var(--color-bg-card);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border-default);
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-bg-subtle);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-strong);
   }
 
+  /* ===== CARDS ===== */
   .card {
-    @apply bg-white rounded-xl border border-zinc-100 p-4 transition-shadow;
-    /* Soft shadow only on hover if needed, or stick to clean outline */
+    @apply rounded-xl p-4 transition-shadow;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
   }
-
   @media (min-width: 640px) {
     .card {
       @apply p-4;
@@ -108,9 +164,60 @@
   }
 
   .stat-card {
-    @apply bg-white rounded-xl border border-zinc-100 p-6 transition-all;
+    @apply rounded-xl p-6 transition-all;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
   }
   .stat-card:hover {
-    @apply border-zinc-200 shadow-sm;
+    border-color: var(--color-border-default);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* ===== GLASS PANEL ===== */
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-panel-light {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* ===== GRADIENT TEXT ===== */
+  .gradient-text {
+    background: linear-gradient(to right, var(--gradient-text-start), var(--gradient-text-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== SEMANTIC ALERTS ===== */
+  .alert-success {
+    background-color: var(--color-success-light);
+    border: 1px solid var(--color-success-border);
+    color: var(--color-text-primary);
+  }
+
+  .alert-warning {
+    background-color: var(--color-warning-light);
+    border: 1px solid var(--color-warning-border);
+    color: var(--color-text-primary);
+  }
+
+  .alert-danger {
+    background-color: var(--color-danger-light);
+    border: 1px solid var(--color-danger-border);
+    color: var(--color-text-primary);
+  }
+
+  .alert-info {
+    background-color: var(--color-info-light);
+    border: 1px solid var(--color-info-border);
+    color: var(--color-text-primary);
   }
 }
