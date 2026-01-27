@@ -89,29 +89,29 @@ const baseClasses = [
  */
 const variantClasses = {
   primary: [
-    'bg-primary-500 hover:bg-primary-600 active:bg-primary-700',
+    'bg-brand hover:bg-brand-hover active:bg-violet-800',
     'text-white',
     'shadow-sm hover:shadow-md',
     'hover:scale-[1.02]',
-    'focus-visible:ring-primary-500'
+    'focus-visible:ring-brand'
   ],
   secondary: [
-    'border-2 border-primary-500',
-    'bg-transparent hover:bg-primary-50',
-    'text-primary-600 hover:text-primary-700',
-    'focus-visible:ring-primary-500'
+    'border-2 border-brand',
+    'bg-transparent hover:bg-brand-50',
+    'text-brand hover:text-brand-hover',
+    'focus-visible:ring-brand'
   ],
   ghost: [
-    'bg-transparent hover:bg-primary-50',
-    'text-primary-600 hover:text-primary-700',
-    'focus-visible:ring-primary-500'
+    'bg-transparent hover:bg-brand-50',
+    'text-brand hover:text-brand-hover',
+    'focus-visible:ring-brand'
   ],
   danger: [
-    'bg-danger-500 hover:bg-danger-600 active:bg-danger-700',
+    'bg-danger hover:bg-danger-600 active:bg-danger-700',
     'text-white',
     'shadow-sm hover:shadow-md',
     'hover:scale-[1.02]',
-    'focus-visible:ring-danger-500'
+    'focus-visible:ring-danger'
   ]
 }
 

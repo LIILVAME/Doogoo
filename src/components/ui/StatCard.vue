@@ -7,7 +7,10 @@
       class="absolute -right-10 -top-10 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl group-hover:bg-violet-500/20 transition-all duration-500"
     ></div>
 
-    <div v-if="loading" class="flex items-center justify-between relative z-10 animate-pulse flex-1">
+    <div
+      v-if="loading"
+      class="flex items-center justify-between relative z-10 animate-pulse flex-1"
+    >
       <div class="flex-1 min-w-0">
         <div class="h-4 w-24 bg-white/10 rounded mb-2"></div>
         <div class="h-8 w-16 bg-white/10 rounded"></div>
@@ -18,17 +21,18 @@
     <div v-else class="flex items-start justify-between relative z-10 flex-1 min-h-0">
       <div class="flex-1 min-w-0 pr-4">
         <!-- Label avec hauteur fixe pour alignement parfait -->
-        <p class="text-sm font-medium text-zinc-400 mb-1 h-5 leading-5 truncate">{{ label }}</p>
+        <p class="text-sm font-medium text-text-secondary mb-1 h-5 leading-5 truncate">
+          {{ label }}
+        </p>
         <!-- Value avec hauteur fixe pour alignement parfait -->
-        <p class="text-2xl font-bold text-white tracking-tight h-8 leading-8 mb-0 truncate">{{ value }}</p>
+        <p class="text-2xl font-bold text-text-primary tracking-tight h-8 leading-8 mb-0 truncate">
+          {{ value }}
+        </p>
         <!-- Trend indicator avec hauteur fixe -->
-        <div 
-          v-if="trend && trendValue" 
-          class="flex items-center mt-1 h-5"
-        >
+        <div v-if="trend && trendValue" class="flex items-center mt-1 h-5">
           <svg
             v-if="trend === 'up'"
-            class="w-4 h-4 text-emerald-400 mr-1 flex-shrink-0"
+            class="w-4 h-4 text-success mr-1 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -42,7 +46,7 @@
           </svg>
           <svg
             v-else-if="trend === 'down'"
-            class="w-4 h-4 text-rose-400 mr-1 flex-shrink-0"
+            class="w-4 h-4 text-danger mr-1 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -56,9 +60,9 @@
           </svg>
           <span
             :class="{
-              'text-emerald-400': trend === 'up',
-              'text-rose-400': trend === 'down',
-              'text-zinc-400': trend === 'neutral'
+              'text-success': trend === 'up',
+              'text-danger': trend === 'down',
+              'text-text-muted': trend === 'neutral'
             }"
             class="text-xs font-medium truncate"
           >

@@ -2,47 +2,48 @@
   <div class="mb-6">
     <!-- Barre de recherche -->
     <div class="mb-4">
-      <div class="relative">
-        <input
-          v-model="localSearchTerm"
-          type="text"
-          :placeholder="$t('properties.searchPlaceholder')"
-          class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 pl-10 focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 outline-none transition-colors placeholder-zinc-500"
-          @input="$emit('search', localSearchTerm)"
-        />
-        <svg 
-          class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
+      <Input
+        v-model="localSearchTerm"
+        :placeholder="$t('properties.searchPlaceholder')"
+        @update:model-value="$emit('search', $event)"
+      >
+        <template #icon>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </template>
+      </Input>
     </div>
 
     <!-- Boutons de filtres -->
     <div class="flex flex-wrap items-center gap-3">
-      <button
+      <Button
         v-for="filter in filters"
         :key="filter.value"
         @click="handleFilterClick(filter.value)"
-        :class="[
-          'px-4 py-2 rounded-xl font-medium transition-all text-sm',
-          activeFilter === filter.value
-            ? 'bg-violet-500 text-white shadow-lg shadow-violet-500/30'
-            : 'bg-white/5 text-zinc-300 border border-white/10 hover:bg-white/10 hover:border-white/20'
-        ]"
+        :variant="activeFilter === filter.value ? 'primary' : 'ghost'"
+        size="sm"
+        class="rounded-xl"
+        :class="activeFilter !== filter.value ? 'bg-bg-card border border-border-default' : ''"
       >
         {{ filter.label }}
-        <span 
-          v-if="filter.count !== undefined" 
-          class="ml-2 px-2 py-0.5 rounded-full text-xs"
-          :class="activeFilter === filter.value ? 'bg-violet-400/30' : 'bg-white/10'"
+        <span
+          v-if="filter.count !== undefined"
+          class="ml-2 px-2 py-0.5 rounded-full text-xs transition-colors"
+          :class="
+            activeFilter === filter.value
+              ? 'bg-white/20 text-white'
+              : 'bg-bg-subtle text-text-muted'
+          "
         >
           {{ filter.count }}
         </span>
-      </button>
+      </Button>
     </div>
   </div>
 </template>
@@ -51,6 +52,8 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from '@/composables/useLingui'
 import { PROPERTY_STATUS } from '@/utils/constants'
+import Input from '@/components/ui/Input.vue'
+import Button from '@/components/ui/Button.vue'
 
 const { t } = useI18n()
 
@@ -82,22 +85,28 @@ const localSearchTerm = ref(props.searchTerm)
  */
 const filters = computed(() => [
   { label: t('common.all'), value: 'all', count: props.filterCounts.all },
-  { label: t('properties.occupied'), value: PROPERTY_STATUS.OCCUPIED, count: props.filterCounts.occupied },
+  {
+    label: t('properties.occupied'),
+    value: PROPERTY_STATUS.OCCUPIED,
+    count: props.filterCounts.occupied
+  },
   { label: t('properties.free'), value: PROPERTY_STATUS.VACANT, count: props.filterCounts.vacant }
 ])
 
 /**
  * Synchronise le terme de recherche local avec la prop
  */
-watch(() => props.searchTerm, (newValue) => {
-  localSearchTerm.value = newValue
-})
+watch(
+  () => props.searchTerm,
+  newValue => {
+    localSearchTerm.value = newValue
+  }
+)
 
 /**
  * Gère le clic sur un filtre
  */
-const handleFilterClick = (filterValue) => {
+const handleFilterClick = filterValue => {
   emit('filter', filterValue)
 }
 </script>
-
