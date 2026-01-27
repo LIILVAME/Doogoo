@@ -55,7 +55,7 @@
 
       <!-- Menu (flexible, sans scroll) -->
       <nav
-        class="flex-1 w-full px-4 md:px-0 py-4 md:py-3 space-y-4 md:space-y-2 flex flex-col md:items-center overflow-hidden min-h-0"
+        class="flex-1 w-full px-4 md:px-0 py-4 md:py-3 space-y-4 md:space-y-2 flex flex-col md:items-center overflow-y-auto scrollbar-none min-h-0"
       >
         <!-- Section: GESTION -->
         <div class="w-full md:w-auto">

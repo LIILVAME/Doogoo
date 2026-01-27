@@ -3,7 +3,9 @@
     <!-- Skip Link pour navigation clavier -->
     <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
-    <div class="flex bg-zinc-50 text-zinc-900 font-sans selection:bg-primary-500/30 min-h-screen">
+    <div
+      class="flex bg-zinc-50 text-zinc-900 font-sans selection:bg-primary-500/30 h-screen overflow-hidden"
+    >
       <!-- Note: Sidebar width is md:w-20 (80px) for compact mini sidebar -->
       <!-- Sidebar -->
       <Sidebar />

@@ -4,15 +4,15 @@
  */
 
 import { supabase } from '@/lib/supabaseClient'
-import type { ExchangeRate, SupportedCurrency } from '@/types/api'
+import type { SupportedCurrency } from '@/types/api'
 
 /**
  * In-memory cache for FX rates
  * Key format: "EUR_USD_2024-01-01"
  */
 interface CachedRate {
-    rate: number
-    expires: number
+  rate: number
+  expires: number
 }
 
 const fxCache = new Map<string, CachedRate>()
@@ -21,11 +21,14 @@ const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
 /**
  * Currency metadata for formatting and display
  */
-export const CURRENCY_METADATA: Record<SupportedCurrency, { symbol: string; name: string; locale: string }> = {
-    EUR: { symbol: '€', name: 'Euro', locale: 'fr-FR' },
-    USD: { symbol: '$', name: 'US Dollar', locale: 'en-US' },
-    GBP: { symbol: '£', name: 'British Pound', locale: 'en-GB' },
-    XOF: { symbol: 'CFA', name: 'West African CFA Franc', locale: 'fr-FR' }
+export const CURRENCY_METADATA: Record<
+  SupportedCurrency,
+  { symbol: string; name: string; locale: string }
+> = {
+  EUR: { symbol: '€', name: 'Euro', locale: 'fr-FR' },
+  USD: { symbol: '$', name: 'US Dollar', locale: 'en-US' },
+  GBP: { symbol: '£', name: 'British Pound', locale: 'en-GB' },
+  XOF: { symbol: 'CFA', name: 'West African CFA Franc', locale: 'fr-FR' }
 }
 
 /**
@@ -34,10 +37,10 @@ export const CURRENCY_METADATA: Record<SupportedCurrency, { symbol: string; name
  * @returns ISO date string (YYYY-MM-01)
  */
 function getMonthYear(date: string | Date): string {
-    const d = typeof date === 'string' ? new Date(date) : date
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    return `${year}-${month}-01`
+  const d = typeof date === 'string' ? new Date(date) : date
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  return `${year}-${month}-01`
 }
 
 /**
@@ -48,29 +51,32 @@ function getMonthYear(date: string | Date): string {
  * @returns Exchange rate or null if not found
  */
 async function fetchExchangeRate(
-    sourceCurrency: SupportedCurrency,
-    targetCurrency: SupportedCurrency,
-    monthYear: string
+  sourceCurrency: SupportedCurrency,
+  targetCurrency: SupportedCurrency,
+  monthYear: string
 ): Promise<number | null> {
-    try {
-        const { data, error } = await supabase
-            .from('exchange_rates')
-            .select('rate')
-            .eq('base_currency', sourceCurrency)
-            .eq('target_currency', targetCurrency)
-            .eq('month_year', monthYear)
-            .single()
+  try {
+    const { data, error } = await supabase
+      .from('exchange_rates')
+      .select('rate')
+      .eq('base_currency', sourceCurrency)
+      .eq('target_currency', targetCurrency)
+      .eq('month_year', monthYear)
+      .single()
 
-        if (error || !data) {
-            console.warn(`FX rate not found: ${sourceCurrency}->${targetCurrency} for ${monthYear}`, error)
-            return null
-        }
-
-        return Number(data.rate)
-    } catch (err) {
-        console.error('Error fetching exchange rate:', err)
-        return null
+    if (error || !data) {
+      console.warn(
+        `FX rate not found: ${sourceCurrency}->${targetCurrency} for ${monthYear}`,
+        error
+      )
+      return null
     }
+
+    return Number(data.rate)
+  } catch (err) {
+    console.error('Error fetching exchange rate:', err)
+    return null
+  }
 }
 
 /**
@@ -80,29 +86,29 @@ async function fetchExchangeRate(
  * @returns Current exchange rate or null
  */
 async function getCurrentExchangeRate(
-    sourceCurrency: SupportedCurrency,
-    targetCurrency: SupportedCurrency
+  sourceCurrency: SupportedCurrency,
+  targetCurrency: SupportedCurrency
 ): Promise<number | null> {
-    try {
-        const { data, error } = await supabase
-            .from('exchange_rates')
-            .select('rate')
-            .eq('base_currency', sourceCurrency)
-            .eq('target_currency', targetCurrency)
-            .order('month_year', { ascending: false })
-            .limit(1)
-            .single()
+  try {
+    const { data, error } = await supabase
+      .from('exchange_rates')
+      .select('rate')
+      .eq('base_currency', sourceCurrency)
+      .eq('target_currency', targetCurrency)
+      .order('month_year', { ascending: false })
+      .limit(1)
+      .single()
 
-        if (error || !data) {
-            console.warn(`Current FX rate not found: ${sourceCurrency}->${targetCurrency}`, error)
-            return null
-        }
-
-        return Number(data.rate)
-    } catch (err) {
-        console.error('Error fetching current exchange rate:', err)
-        return null
+    if (error || !data) {
+      console.warn(`Current FX rate not found: ${sourceCurrency}->${targetCurrency}`, error)
+      return null
     }
+
+    return Number(data.rate)
+  } catch (err) {
+    console.error('Error fetching current exchange rate:', err)
+    return null
+  }
 }
 
 /**
@@ -114,63 +120,67 @@ async function getCurrentExchangeRate(
  * @returns Converted amount or null if rate not found
  */
 export async function convertCurrency(
-    amount: number,
-    sourceCurrency: SupportedCurrency,
-    targetCurrency: SupportedCurrency,
-    date: string | Date
+  amount: number,
+  sourceCurrency: SupportedCurrency,
+  targetCurrency: SupportedCurrency,
+  date: string | Date
 ): Promise<number | null> {
-    // Same currency = no conversion
-    if (sourceCurrency === targetCurrency) {
-        return amount
+  // Same currency = no conversion
+  if (sourceCurrency === targetCurrency) {
+    return amount
+  }
+
+  const monthYear = getMonthYear(date)
+  const cacheKey = `${sourceCurrency}_${targetCurrency}_${monthYear}`
+
+  // Check cache
+  const cached = fxCache.get(cacheKey)
+  if (cached && cached.expires > Date.now()) {
+    return amount * cached.rate
+  }
+
+  // Fetch rate from database
+  let rate = await fetchExchangeRate(sourceCurrency, targetCurrency, monthYear)
+
+  // Fallback 1: Try previous month
+  if (rate === null) {
+    const prevMonth = new Date(monthYear)
+    prevMonth.setMonth(prevMonth.getMonth() - 1)
+    const prevMonthYear = getMonthYear(prevMonth)
+
+    rate = await fetchExchangeRate(sourceCurrency, targetCurrency, prevMonthYear)
+
+    if (rate !== null) {
+      console.warn(`Using previous month rate for ${monthYear}: ${prevMonthYear}`)
     }
+  }
 
-    const monthYear = getMonthYear(date)
-    const cacheKey = `${sourceCurrency}_${targetCurrency}_${monthYear}`
+  // Fallback 2: Use current rate
+  if (rate === null) {
+    rate = await getCurrentExchangeRate(sourceCurrency, targetCurrency)
 
-    // Check cache
-    const cached = fxCache.get(cacheKey)
-    if (cached && cached.expires > Date.now()) {
-        return amount * cached.rate
+    if (rate !== null) {
+      console.warn(
+        `Using current rate for historical conversion: ${sourceCurrency}->${targetCurrency}`
+      )
     }
+  }
 
-    // Fetch rate from database
-    let rate = await fetchExchangeRate(sourceCurrency, targetCurrency, monthYear)
+  // Final fallback: Return null (caller should handle)
+  if (rate === null) {
+    console.error(
+      `No exchange rate available: ${sourceCurrency}->${targetCurrency} for ${monthYear}`
+    )
+    return null
+  }
 
-    // Fallback 1: Try previous month
-    if (rate === null) {
-        const prevMonth = new Date(monthYear)
-        prevMonth.setMonth(prevMonth.getMonth() - 1)
-        const prevMonthYear = getMonthYear(prevMonth)
+  // Cache the rate
+  fxCache.set(cacheKey, {
+    rate,
+    expires: Date.now() + CACHE_TTL_MS
+  })
 
-        rate = await fetchExchangeRate(sourceCurrency, targetCurrency, prevMonthYear)
-
-        if (rate !== null) {
-            console.warn(`Using previous month rate for ${monthYear}: ${prevMonthYear}`)
-        }
-    }
-
-    // Fallback 2: Use current rate
-    if (rate === null) {
-        rate = await getCurrentExchangeRate(sourceCurrency, targetCurrency)
-
-        if (rate !== null) {
-            console.warn(`Using current rate for historical conversion: ${sourceCurrency}->${targetCurrency}`)
-        }
-    }
-
-    // Final fallback: Return null (caller should handle)
-    if (rate === null) {
-        console.error(`No exchange rate available: ${sourceCurrency}->${targetCurrency} for ${monthYear}`)
-        return null
-    }
-
-    // Cache the rate
-    fxCache.set(cacheKey, {
-        rate,
-        expires: Date.now() + CACHE_TTL_MS
-    })
-
-    return amount * rate
+  return amount * rate
 }
 
 /**
@@ -180,17 +190,17 @@ export async function convertCurrency(
  * @returns Total amount in target currency
  */
 export async function aggregatePaymentsInCurrency(
-    payments: Array<{ amount: number; currency: SupportedCurrency; dueDate: string }>,
-    targetCurrency: SupportedCurrency = 'USD'
+  payments: Array<{ amount: number; currency: SupportedCurrency; dueDate: string }>,
+  targetCurrency: SupportedCurrency = 'USD'
 ): Promise<number> {
-    const conversions = await Promise.all(
-        payments.map(async (p) => {
-            return await convertCurrency(p.amount, p.currency, targetCurrency, p.dueDate)
-        })
-    )
+  const conversions = await Promise.all(
+    payments.map(async p => {
+      return await convertCurrency(p.amount, p.currency, targetCurrency, p.dueDate)
+    })
+  )
 
-    // Filter out null values (failed conversions) and sum
-    return conversions.reduce((sum, val) => sum + (val || 0), 0)
+  // Filter out null values (failed conversions) and sum
+  return conversions.reduce((sum, val) => sum + (val || 0), 0)
 }
 
 /**
@@ -200,26 +210,26 @@ export async function aggregatePaymentsInCurrency(
  * @returns Total rent in target currency
  */
 export async function aggregateRentsInCurrency(
-    properties: Array<{ rent: number; currency: SupportedCurrency }>,
-    targetCurrency: SupportedCurrency = 'USD'
+  properties: Array<{ rent: number; currency: SupportedCurrency }>,
+  targetCurrency: SupportedCurrency = 'USD'
 ): Promise<number> {
-    // Use current month for rent aggregation
-    const currentMonth = getMonthYear(new Date())
+  // Use current month for rent aggregation
+  const currentMonth = getMonthYear(new Date())
 
-    const conversions = await Promise.all(
-        properties.map(async (p) => {
-            return await convertCurrency(p.rent, p.currency, targetCurrency, currentMonth)
-        })
-    )
+  const conversions = await Promise.all(
+    properties.map(async p => {
+      return await convertCurrency(p.rent, p.currency, targetCurrency, currentMonth)
+    })
+  )
 
-    return conversions.reduce((sum, val) => sum + (val || 0), 0)
+  return conversions.reduce((sum, val) => sum + (val || 0), 0)
 }
 
 /**
  * Clear the FX rate cache (useful for testing or manual refresh)
  */
 export function clearFXCache(): void {
-    fxCache.clear()
+  fxCache.clear()
 }
 
 /**
@@ -229,12 +239,12 @@ export function clearFXCache(): void {
  * @returns Formatted string (e.g., "€1,234.56")
  */
 export function formatWithCurrency(amount: number, currency: SupportedCurrency): string {
-    const metadata = CURRENCY_METADATA[currency]
+  const metadata = CURRENCY_METADATA[currency]
 
-    return new Intl.NumberFormat(metadata.locale, {
-        style: 'currency',
-        currency: currency,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-    }).format(amount)
+  return new Intl.NumberFormat(metadata.locale, {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(amount)
 }
